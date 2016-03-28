@@ -50,10 +50,6 @@ public class AppConstants extends SysConstants {
      * 云盘管理员
      */
     public static final String ROLE_DISK_MANAGER = "disk_manager";
-    /**
-     * 网站管理员
-     */
-    public static final String CMS_SYSTEM_MANAGER = "cms_manager";
 
     private static PropertiesLoader config = null;
 
@@ -151,45 +147,6 @@ public class AppConstants extends SysConstants {
     }
 
 
-    /**
-     * 获取网站文件存储目录
-     */
-    public static String getCkBaseDir() {
-        String code = "cms.basedir";
-        String baseDir = getConfigValue(code);
-        if (StringUtils.isBlank(baseDir)) {
-            baseDir = getAppBasePath() + File.separator + "cms";
-        }
-        return baseDir;
-    }
-
-    /**
-     * lucene全文检索缓存根目录
-     *
-     * @return
-     */
-    public static String getCMSLuceneIndexBase() {
-        String code = "cms.lucene.indexBase";
-        String baseDir = getConfigValue(code);
-        if (StringUtils.isBlank(baseDir)) {
-            baseDir = getAppBasePath() + File.separator + "indexes";
-        }
-        return baseDir;
-    }
-
-    /**
-     * lucene全文检索文章缓存目录
-     *
-     * @return
-     */
-    public static String getCMSLuceneArticle() {
-        String code = "cms.lucene.article";
-        String baseDir = getConfigValue(code);
-        if (StringUtils.isBlank(baseDir)) {
-            baseDir = getCMSLuceneIndexBase() + File.separator + "article";
-        }
-        return baseDir;
-    }
 
     /**
      * 日志保留时间 天(默认值:30).
@@ -303,46 +260,6 @@ public class AppConstants extends SysConstants {
     public static String getPrettyNoticeMaxUploadSize() {
         Integer maxUploadSize = getNoticeMaxUploadSize();
         return PrettyMemoryUtils.prettyByteSize(maxUploadSize);
-    }
-
-    /**
-     * 邮件附件上传大小限制
-     *
-     * @return
-     */
-    public static Integer getEmailMaxUploadSize() {
-        String code = "email.maxUploadSize";
-        String value = getConfigValue(code);
-        if (StringUtils.isBlank(value)) {
-            return getDiskMaxUploadSize();
-        }
-        Integer maxUploadSize = Integer.valueOf(value);
-        return maxUploadSize;
-    }
-
-    /**
-     * 邮件附件上传大小限制 (Accepts units B KB MB GB)
-     *
-     * @return
-     */
-    public static String getPrettyEmailMaxUploadSize() {
-        Integer maxUploadSize = getEmailMaxUploadSize();
-        return PrettyMemoryUtils.prettyByteSize(maxUploadSize);
-    }
-
-    /**
-     * 邮件附件上传大小限制
-     *
-     * @return
-     */
-    public static Integer getEmailMobileMaxUploadSize() {
-        String code = "email.mobile.maxUploadSize";
-        String value = getConfigValue(code);
-        if (StringUtils.isBlank(value)) {
-            return getDiskMaxUploadSize();
-        }
-        Integer maxUploadSize = Integer.valueOf(value);
-        return maxUploadSize;
     }
 
 
@@ -481,25 +398,6 @@ public class AppConstants extends SysConstants {
      */
     public static String getAppFullName() {
         String code = "app.fullName";
-        return getConfigValue(code);
-    }
-
-
-    /**
-     * 根机构编码
-     * @return
-     */
-    public static String getRootCode() {
-        String code = "app.rootCode";
-        return getConfigValue(code);
-    }
-
-    /**
-     * 当前机构编码
-     * @return
-     */
-    public static String getRootCurrentCode() {
-        String code = "app.currentCode";
         return getConfigValue(code);
     }
 
