@@ -3,7 +3,7 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License"); 
  */
-package cn.com.jfit.weixin;
+package test.weixin;
 
 import com.eryansky.fastweixin.company.api.QYMenuAPI;
 import com.eryansky.fastweixin.company.api.QYMessageAPI;
