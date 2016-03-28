@@ -10,7 +10,7 @@ Target Server Type    : MariaDB
 Target Server Version : 100019
 File Encoding         : 65001
 
-Date: 2016-03-28 21:44:52
+Date: 2016-03-28 21:48:48
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -356,23 +356,6 @@ CREATE TABLE `t_sys_dictionary` (
 -- ----------------------------
 -- Records of t_sys_dictionary
 -- ----------------------------
-INSERT INTO `t_sys_dictionary` VALUES ('1', '2014-08-28 08:47:16', 'admin', '0', null, null, '0', 'dic_sys', '系统管理', '1', '系统管理', null, null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('10', '2014-06-23 16:18:59', 'admin', '0', '2014-06-23 16:22:28', 'admin', '2', 'yes_no', '是否', '6', '是否', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('12', '2014-06-24 09:00:58', 'admin', '0', null, null, '0', 'color', '颜色值', '8', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('13', '2014-06-24 09:01:21', 'admin', '0', null, null, '0', 'theme', '主题方案', '9', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('14', '2014-06-24 09:01:32', 'admin', '0', null, null, '0', 'sys_area_type', '区域类型', '10', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('15', '2014-06-24 09:22:40', 'admin', '0', null, null, '0', 'sys_user_type', '用户类型', '11', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('16', '2014-06-24 09:25:28', 'admin', '0', '2015-10-08 13:57:02', '1', '1', 'prj_template_type', '代码模板', '12', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('17', '2014-06-24 09:25:49', 'admin', '0', null, null, '0', 'cms_theme', '站点主题', '13', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('18', '2014-06-24 09:30:02', 'admin', '0', null, null, '0', 'cms_show_modes', '展现方式', '14', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('19', '2014-06-24 09:30:12', 'admin', '0', null, null, '0', 'cms_posid', '推荐位', '15', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('2', '2014-08-28 08:47:47', 'admin', '0', '2015-10-09 14:51:16', '1', '1', 'notice', '内容管理', '2', '内容管理', '1', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('20', '2014-06-24 09:34:37', 'admin', '0', null, null, '0', 'cms_guestbook', '留言板分类', '16', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('21', '2014-06-24 09:34:47', 'admin', '0', null, null, '0', 'cms_del_flag', '内容状态', '17', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('22', '2015-08-14 09:30:12', 'admin', '0', '2015-08-14 09:30:12', '', '0', 'cms_deviceconfig', '显示设备', '19', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('3', '2014-08-29 17:42:18', 'admin', '0', null, null, '0', 'cms', '网站管理', '18', '', null, null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('8', '2014-06-18 14:41:51', 'admin', '0', '2014-06-24 09:30:41', 'admin', '1', 'cms_module', '栏目模型', '4', '', '3', null, null, null);
-INSERT INTO `t_sys_dictionary` VALUES ('9', '2014-06-18 14:42:30', 'admin', '0', null, null, '0', 'show_hide', '隐藏', '5', '', '3', null, null, null);
 
 -- ----------------------------
 -- Table structure for t_sys_dictionary_item
@@ -400,48 +383,6 @@ CREATE TABLE `t_sys_dictionary_item` (
 -- ----------------------------
 -- Records of t_sys_dictionary_item
 -- ----------------------------
-INSERT INTO `t_sys_dictionary_item` VALUES ('10', '2014-06-24 09:18:19', 'admin', '0', '2014-06-24 09:18:47', 'admin', '1', 'cerulean', '天蓝主题', '8', '', 'cerulean', '13', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('11', '2014-06-24 09:19:22', 'admin', '0', null, null, '0', 'readable', '橙色主题', '9', '', 'readable', '13', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('12', '2014-06-24 09:19:43', 'admin', '0', null, null, '0', 'united', '红色主题', '10', '', 'united', '13', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('13', '2014-06-24 09:19:59', 'admin', '0', null, null, '0', 'flat', 'Flat主题', '11', '', 'flat', '13', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('16', '2014-06-24 09:23:08', 'admin', '0', '2014-06-24 09:23:41', 'admin', '1', 'sys_user_type1', '系统管理', '14', '', 'sys_user_type2', '15', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('17', '2014-06-24 09:23:32', 'admin', '0', null, null, '0', 'sys_user_type2', '部门经理', '15', '', '2', '15', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('18', '2014-06-24 09:24:03', 'admin', '0', null, null, '0', 'sys_user_type3', '普通用户', '16', '', '3', '15', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('19', '2014-06-24 09:24:40', 'admin', '0', null, null, '0', 'show_hide1', '显示', '17', '', '1', '9', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('20', '2014-06-24 09:25:00', 'admin', '0', null, null, '0', 'show_hide0', '隐藏', '18', '', '0', '9', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('21', '2014-06-24 09:26:34', 'admin', '0', null, null, '0', 'red', '红色', '19', '', 'red', '12', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('22', '2014-06-24 09:26:50', 'admin', '0', null, null, '0', 'green', '绿色', '20', '', 'green', '12', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('23', '2014-06-24 09:27:08', 'admin', '0', null, null, '0', 'blue', '蓝色', '21', '', 'blue', '12', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('24', '2014-06-24 09:28:36', 'admin', '0', null, null, '0', 'basic', '基础主题', '22', '', 'basic', '17', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('25', '2014-06-24 09:29:02', 'admin', '0', null, null, '0', 'cms_theme_blue', '蓝色主题', '23', '', 'blue', '17', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('26', '2014-06-24 09:29:45', 'admin', '0', null, null, '0', 'cms_theme_red', '站点红色主题', '24', '', 'red', '17', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('27', '2014-06-24 09:31:11', 'admin', '0', null, null, '0', 'cms_show_modes0', '默认展现方式', '25', '', '0', '18', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('28', '2014-06-24 09:31:35', 'admin', '0', null, null, '0', 'cms_show_modes1', '首栏目内容列表', '26', '', '1', '18', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('29', '2014-06-24 09:31:52', 'admin', '0', null, null, '0', 'cms_show_modes2', '栏目第一条内容', '27', '', '2', '18', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('30', '2014-06-24 09:32:21', 'admin', '0', null, null, '0', 'cms_posid1', '首页焦点图', '28', '', '1', '19', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('31', '2014-06-24 09:32:43', 'admin', '0', null, null, '0', 'cms_posid2', '栏目页文章推荐', '29', '', '2', '19', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('32', '2014-06-24 09:33:15', 'admin', '0', '2015-10-08 15:58:21', '1', '2', 'article', '文章模型', '30', '', 'article', '8', '', '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('33', '2014-06-24 09:33:33', 'admin', '0', null, null, '0', 'picture', '图片模型', '31', '', 'picture', '8', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('34', '2014-06-24 09:33:56', 'admin', '0', null, null, '0', 'download', '下载模型', '32', '', 'download', '8', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('35', '2014-06-24 09:34:09', 'admin', '0', null, null, '0', 'link', '链接模型', '33', '', 'link', '8', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('36', '2014-06-24 09:34:23', 'admin', '0', null, null, '0', 'special', '专题模型', '34', '', 'special', '8', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('37', '2014-06-24 09:35:07', 'admin', '0', '2014-06-24 09:43:08', 'admin', '1', 'cms_guestbook1', '咨询', '35', '', '1', '20', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('404e43317be441f0860d1e0d3187c100', '2015-08-10 16:19:08', '1', '0', '2015-08-10 16:20:19', '1', '2', 'cms_del_flag1', '已删除', '3', null, '1', '21', null, '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('43', '2014-06-24 09:42:30', 'admin', '0', null, null, '0', 'cms_guestbook2', '建议', '36', '', '2', '20', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('44', '2014-06-24 09:43:03', 'admin', '0', null, null, '0', 'cms_guestbook3', '投诉', '37', '', '3', '20', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('45', '2014-06-24 09:43:23', 'admin', '0', null, null, '0', 'cms_guestbook4', '其它', '38', '', '4', '20', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('48', '2014-06-24 09:44:22', 'admin', '0', '2015-08-10 16:20:16', '1', '1', 'cms_del_flag2', '审核', '2', '', '2', '21', null, '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('49', '2014-06-30 08:31:18', 'admin', '0', null, null, '0', 'yes_no1', '是', '42', '', '1', '10', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('50', '2014-06-30 08:31:33', 'admin', '0', null, null, '0', 'yes_no0', '否', '43', '', '0', '10', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('672fd5c422ec4ae68c6523b144175809', '2015-09-30 11:15:04', '1', '0', '2015-09-30 11:15:04', '1', '0', 'bug_02', '会议', '47', null, 'bug_02', '2', '', '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('67e904c40d104932a5af714b079e60d7', '2015-08-27 17:23:38', '1', '0', '2015-08-27 17:23:38', '1', '0', 'cms_posid3', '首页推荐', '46', null, '3', '19', null, '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('7', '2014-06-24 09:03:05', 'admin', '0', null, null, '0', 'yellow', '黄色', '5', '', 'yellow', '12', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('8', '2014-06-24 09:03:47', 'admin', '0', '2014-06-24 09:05:45', 'admin', '1', 'orange', '橙色', '6', '', 'orange', '12', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('9', '2014-06-24 09:18:02', 'admin', '0', null, null, '0', 'default', '默认主题', '7', '', 'default', '13', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('c4b513af682d43dfbf391a15eaa352bf', '2015-08-14 12:38:56', '1', '0', '2015-08-14 12:38:56', '1', '0', 'cms_deviceconfig1', 'PC端显示', '44', null, '1', '22', null, '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('cbf8e5fea47f4dd18e705df027cdbd3f', '2015-08-10 16:18:51', '1', '0', '2015-08-10 16:20:09', '1', '3', 'cms_del_flag0', '正常', '1', null, '0', '21', null, '');
-INSERT INTO `t_sys_dictionary_item` VALUES ('cms_theme', '2014-08-28 08:48:08', 'admin', '0', '2014-08-29 08:30:50', 'admin', '2', 'bug01', '内部通知', '1', '', 'bug01', '2', null, null);
-INSERT INTO `t_sys_dictionary_item` VALUES ('d7eecac8cda241ff8b85ea3816fe91e1', '2015-08-14 12:39:30', '1', '0', '2015-08-14 12:39:30', '1', '0', 'cms_deviceconfig2', '移动端显示', '45', null, '2', '22', null, '');
 
 -- ----------------------------
 -- Table structure for t_sys_log
