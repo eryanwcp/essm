@@ -1,0 +1,14 @@
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/js/easyui-extend.js -o ../src/main/webapp/static/js/easyui-1.4/extend/js/easyui-extend-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/js/validatebox-extend.js -o ../src/main/webapp/static/js/easyui-1.4/extend/js/validatebox-extend-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/js/validatebox-ajax.js -o ../src/main/webapp/static/js/easyui-1.4/extend/js/validatebox-ajax-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/jquery/jquery-extend.js -o ../src/main/webapp/static/js/jquery/jquery-extend-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/jquery/jquery.cookie.js -o ../src/main/webapp/static/js/jquery/jquery.cookie-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-scrollview.js -o ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-scrollview-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/my97/jquery.easyui.my97.js -o ../src/main/webapp/static/js/easyui-1.4/extend/my97/jquery.easyui.my97-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-scrollview2.js -o ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-scrollview2-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-bufferview.js -o ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-bufferview-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-groupview.js -o ../src/main/webapp/static/js/easyui-1.4/datagridview/datagrid-groupview-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/app/jquery.app.js -o ../src/main/webapp/static/js/easyui-1.4/extend/app/jquery.app-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/extend/app/initApp.js -o ../src/main/webapp/static/js/easyui-1.4/extend/app/initApp-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4/portal/jquery.portal.js -o ../src/main/webapp/static/js/easyui-1.4/portal/jquery.portal-min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/uploadify/scripts/jquery.uploadify.mine.js -o ../src/main/webapp/static/js/uploadify/scripts/jquery.uploadify.mine-min.js

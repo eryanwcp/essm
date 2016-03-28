@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.VersionLogDao">
+    
+	<sql id="sysVersionLogColumns">
+		a.id AS "id",
+		a.version_log_type AS "versionLogType",
+		a.version_name AS "versionName",
+		a.version_code AS "versionCode",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.remark AS "remark",
+		a.file_id AS "fileId"
+	</sql>
+	
+	<sql id="sysVersionLogJoins">
+		LEFT JOIN t_sys_user u ON u.id = a.update_user
+	</sql>
+    
+	<select id="get" resultType="VersionLog">
+		SELECT 
+			<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+
+	<select id="getByVersionCode" resultType="VersionLog">
+		SELECT
+		<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		WHERE a.version_code = #{versionCode}
+		<if test="versionLogType != null and versionLogType != ''">
+			AND a.version_log_type = #{versionLogType}
+		</if>
+	</select>
+
+	<select id="getLatestVersionLog" resultType="VersionLog">
+		SELECT
+		<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		WHERE a.version_log_type = #{versionLogType}
+		AND a.version_code = (SELECT MAX(c.version_code) FROM t_sys_version_log c WHERE c.version_log_type = #{versionLogType})
+	</select>
+
+
+	<select id="findList" resultType="VersionLog">
+		SELECT 
+			<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		<where>
+			1=1
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findQueryList" resultType="VersionLog">
+		SELECT
+		<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		<where>
+			1=1
+			<if test="versionLogType != null">
+				AND a.version_log_type = #{versionLogType}
+			</if>
+			<if test="versionName != null and versionName != ''">
+				AND (a.version_name LIKE
+				<if test="dbName == 'db2'">'%'||#{versionName}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{versionName}, '%')</if>
+				OR a.version_code LIKE
+				<if test="dbName == 'db2'">'%'||#{versionName}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{versionName}, '%')</if>)
+			</if>
+
+			<if test="remark != null and remark != ''">
+				AND a.remark LIKE
+				<if test="dbName == 'db2'">'%'||#{remark}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{remark}, '%')</if>
+			</if>
+
+			<choose>
+				<when test="startTime != null and endTime != null">
+					AND a.update_time BETWEEN #{startTime} AND #{endTime}
+				</when>
+				<when test="startTime != null and endTime == null">
+					AND a.update_time <![CDATA[>=]]> #{startTime}
+				</when>
+				<when test="startTime == null and endTime != null">
+					AND a.update_time <![CDATA[<=]]> #{endTime}
+				</when>
+			</choose>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="VersionLog">
+		SELECT 
+			<include refid="sysVersionLogColumns"/>
+		FROM t_sys_version_log a
+		<include refid="sysVersionLogJoins"/>
+		<where>
+			1=1
+		</where>		
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_sys_version_log(
+			id,
+			version_log_type,
+			version_name,
+			version_code,
+			update_user,
+			update_time,
+			remark,
+			file_id
+		) VALUES (
+			#{id},
+			#{versionLogType},
+			#{versionName},
+			#{versionCode},
+			#{updateUser},
+			#{updateTime},
+			#{remark},
+			#{fileId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_version_log SET
+			version_log_type = #{versionLogType},
+			version_name = #{versionName},
+			version_code = #{versionCode},
+			browser_type = #{browserType},
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			remark = #{remark},
+			file_id = #{fileId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM t_sys_version_log
+		WHERE id = #{id}
+	</update>
+
+	<delete id="removeAll">
+		DELETE FROM t_sys_version_log
+	</delete>
+
+
+</mapper>

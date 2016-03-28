@@ -1,0 +1,18 @@
+li {
+	list-style-type: none
+}
+.image-grid {
+	margin: -20px 0px 0px -40px; padding-left: 25px; width: 100%
+}
+.image-grid:after {
+	display: block; height: 0px; clear: both; overflow: hidden; content: ""
+}
+.image-grid li {
+	text-align: center; line-height: 17px; margin: 20px 0px 0px 35px; width: 64px; float: left; height: 113px; color: #686f74; overflow: hidden
+}
+.image-grid li img {
+	display: block
+}
+.image-grid li strong {
+	display: block
+}

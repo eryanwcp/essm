@@ -1,0 +1,114 @@
+﻿* {
+	font-size: 13px;
+	font-family: '微软雅黑','新宋体','宋体'
+}
+
+body {
+	/*cursor:url(../img/cursor_tree.cur),default;*/
+}
+
+a {
+	color: Black;
+	text-decoration: none;
+}
+
+a:hover {
+	color: Red;
+	text-decoration: underline;
+}
+
+.easyui-accordion ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 10px;
+}
+
+.easyui-accordion ul li {
+	padding: 0px;
+}
+
+.easyui-accordion ul li a {
+	line-height: 24px;
+}
+
+.easyui-accordion ul li div {
+	margin: 2px 0px;
+	padding-left: 10px;
+	padding-top: 2px;
+}
+
+.easyui-accordion ul li div.hover {
+	border: 1px dashed #99BBE8;
+	background: #E0ECFF;
+	cursor: pointer;
+}
+
+.easyui-accordion ul li div.hover a {
+	color: #416AA3;
+}
+
+.easyui-accordion ul li div.selected {
+	border: 1px solid #99BBE8;
+	background: #E0ECFF;
+	cursor: default;
+}
+
+.easyui-accordion ul li div.selected a {
+	color: #416AA3;
+	font-weight: bold;
+}
+.toolbar-btn-separator {
+    border-right: 1px solid #fff;
+    border-left: 1px solid #ccc;
+: 3px 0px 1px 0px;
+}
+.icon {
+	padding: 2px 9px;
+	background: url(../img/icon/tabicons.png) no-repeat;
+}
+
+.icon-sys {
+	background: url(../img/icon/directory.png) no-repeat;
+}
+
+.eu-input{
+    height:28px;
+}
+
+/*bootstrap兼容问题和easyui的bug*/
+.panel-header, .panel-body {
+    border-width: 0px;
+}
+.datagrid,.combo-p{
+    border:solid 1px #D4D4D4;
+}
+.datagrid *{
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+}
+
+/*form*/
+.dialog-form {
+    margin: 0;
+    padding: 5px 20px 20px 20px;
+}
+
+.dialog-form div {
+    margin-bottom: 5px;
+}
+
+.dialog-form div textarea {
+    position: relative; resize: none; height: 75px; width: 260px;
+}
+
+.dialog-form div .easyui-validatebox{
+    width: 260px;
+    height:28px;
+}
+
+.dialog-form div label {
+    display: inline-block;
+    text-align: left;
+    width: 96px;
+}

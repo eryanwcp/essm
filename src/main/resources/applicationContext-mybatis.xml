@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+       default-lazy-init="true">
+
+    <description>Spring Mybatis Configuration</description>
+
+    <!-- 加载配置属性文件 -->
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/appconfig.properties" />
+
+    <!-- MyBatis begin -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="defaultDataSource"/>
+        <property name="typeAliasesPackage" value="com.eryansky.modules.sys.mapper,com.eryansky.modules.cms.mapper,com.eryansky.modules.notice.mapper"/>
+        <property name="typeAliasesSuperType" value="com.eryansky.common.persistence.AbstractBaseEntity"/>
+        <property name="mapperLocations" value="classpath:/mappings/modules/**/*.xml"/>
+        <property name="configLocation" value="classpath:/mybatis-config.xml"></property>
+    </bean>
+    <!-- MyBatis begin -->
+    <!-- 扫描basePackage下所有以@MyBatisRepository注解的接口-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.eryansky.modules.sys.dao,com.eryansky.modules.cms.dao,com.eryansky.modules.notice.dao"/>
+        <property name="annotationClass" value="com.eryansky.common.orm.mybatis.MyBatisDao"/>
+    </bean>
+    <!-- MyBatis end -->
+
+    <bean class="com.eryansky.common.persistence.MapperLoader"></bean>
+
+</beans>

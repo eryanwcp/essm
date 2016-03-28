@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+
+    <display-name>es</display-name>
+
+    <!-- Spring ApplicationContext配置文件的路径,可使用通配符,多个路径用','号分隔
+        此参数用于后面的Spring Context Loader -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:applicationContext.xml,
+            classpath*:applicationContext-ehcache.xml,
+            classpath*:applicationContext-task.xml,
+             classpath*:applicationContext-mybatis.xml
+        </param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>appconfig</param-name>
+        <param-value>classpath:/appconfig.properties</param-value>
+    </context-param>
+
+
+    <!-- Filter 定义  -->
+    <!-- Character Encoding filter -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <!-- Filter 映射 -->
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Spring监听器 Spring的ApplicationContext 载入 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- Spring 刷新Introspector防止内存泄露 -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+
+    <!-- 系统启动监听 默认：com.eryansky.common.web.listener.DefaultSystemInitListener -->
+    <listener>
+        <listener-class>com.eryansky.listener.SystemInitListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>com.eryansky.modules.cms.listener.CMSInitListener</listener-class>
+    </listener>
+
+    <!-- 可以使用RequestContextHolder.currentRequestAttributes() 获取到请求的attr -->
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <!-- 表单输入特殊字符Html转译、敏感词汇转译拦截器-->
+    <!--
+    <filter>
+        <filter-name>InputReplaceFilter</filter-name>
+        <filter-class>com.eryansky.common.web.filter.InputReplaceFilter</filter-class>
+        <init-param>
+            <param-name>file</param-name>
+            <param-value>WEB-INF/classes/sensitive.properties</param-value>
+        </init-param>
+    </filter>
+     -->
+
+    <!--
+   <filter-mapping>
+       <filter-name>InputReplaceFilter</filter-name>
+       <url-pattern>/*</url-pattern>
+   </filter-mapping>
+    -->
+
+    <!--<filter>-->
+        <!--<filter-name>AccessLogFilter</filter-name>-->
+        <!--<filter-class>com.eryansky.core.web.filter.AccessLogFilter</filter-class>-->
+        <!--&lt;!&ndash;<async-supported>true</async-supported>&ndash;&gt;-->
+        <!--<init-param>-->
+            <!--<param-name>blackListURL</param-name>-->
+            <!--<param-value>/static/**,*.js,*.css,*.jpg,*.gif,*.png,*.ico</param-value>-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>whiteListURL</param-name>-->
+            <!--<param-value>/**</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+
+
+    <!--<filter-mapping>-->
+        <!--<filter-name>AccessLogFilter</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+        <!--<dispatcher>REQUEST</dispatcher>-->
+    <!--</filter-mapping>-->
+
+
+    <!-- 生产环境下使用 Response Header Added Filter -->
+    <!--<filter>-->
+        <!--<filter-name>expiresHeaderFilter</filter-name>-->
+        <!--<filter-class>com.eryansky.common.web.filter.ResponseHeaderFilter</filter-class>-->
+        <!--<init-param>-->
+            <!--<param-name>Cache-Control</param-name>-->
+            <!--<param-value>public, max-age=31536000</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>expiresHeaderFilter</filter-name>-->
+        <!--<url-pattern>/static/*</url-pattern>-->
+    <!--</filter-mapping>-->
+
+
+    <!-- ehcache Gzip过滤器 -->
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.js</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.png</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.jpg</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.gif</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>*.json</url-pattern>
+    </filter-mapping>
+
+    <!-- SiteMesh -->
+    <filter>
+        <filter-name>sitemeshFilter</filter-name>
+        <filter-class>com.eryansky.core.web.filter.MySiteMeshFilter</filter-class>
+        <init-param>
+            <param-name>whiteListURL</param-name> <!-- 配置白名单url 表示走过滤器的url order：2-->
+            <param-value>
+                /f/**
+                /a/**
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>sitemeshFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>CustomHttpServletRequestFilter</filter-name>
+        <filter-class>com.eryansky.common.web.filter.CustomHttpServletRequestFilter</filter-class>
+        <init-param>
+            <param-name>whiteListURL</param-name> <!-- 配置白名单url 表示走过滤器的url order：2-->
+            <param-value>
+                /a/iweboffice/server**
+                /a/proxy**
+                /a/proxy/**
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CustomHttpServletRequestFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Spring MVC -->
+    <servlet>
+        <servlet-name>SpringMVC</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath*:/applicationContent-mvc*.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SpringMVC</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+    <!-- 本地静态内容展示与下载的Servlet -->
+    <servlet>
+        <servlet-name>StaticContentServlet</servlet-name>
+        <servlet-class>com.eryansky.common.web.servlet.StaticContentServlet</servlet-class>
+        <init-param>
+            <param-name>CacheManager</param-name>
+            <param-value>ehCacheManagerFactory</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cacheKey</param-name>
+            <param-value>contentInfoCache</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>StaticContentServlet</servlet-name>
+        <url-pattern>/servlet/StaticContentServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- 获取远程静态内容并进行展示的Servlet -->
+    <servlet>
+        <servlet-name>RemoteContentServlet</servlet-name>
+        <servlet-class>com.eryansky.common.web.servlet.RemoteContentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RemoteContentServlet</servlet-name>
+        <url-pattern>/servlet/RemoteContentServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Servlet 验证码 -->
+    <servlet>
+        <servlet-name>ValidateCodeServlet</servlet-name>
+        <servlet-class>com.eryansky.common.web.servlet.ValidateCodeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ValidateCodeServlet</servlet-name>
+        <url-pattern>/servlet/ValidateCodeServlet</url-pattern>
+    </servlet-mapping>
+
+    <!--hightcharts导出下载功能-->
+    <!--<servlet>-->
+        <!--<servlet-name>DownloadChartServlet</servlet-name>-->
+        <!--<servlet-class>com.eryansky.common.web.servlet.DownloadChartServlet</servlet-class>-->
+    <!--</servlet>-->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>DownloadChartServlet</servlet-name>-->
+        <!--<url-pattern>/servlet/DownloadChartServlet</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <!-- CKFinder -->
+    <servlet>
+        <servlet-name>CKFinderConnectorServlet</servlet-name>
+        <!--<servlet-class>com.ckfinder.connector.ConnectorServlet</servlet-class>-->
+        <servlet-class>com.eryansky.core.cms.CKFinderConnectorServlet</servlet-class>
+        <init-param>
+            <param-name>XMLConfig</param-name>
+            <param-value>/WEB-INF/ckfinder.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>configuration</param-name>
+            <param-value>com.eryansky.core.cms.CKFinderConfig</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CKFinderConnectorServlet</servlet-name>
+        <url-pattern>/static/js/ckfinder/core/connector/java/connector.java</url-pattern>
+    </servlet-mapping>
+    <filter>
+        <filter-name>FileUploadFilter</filter-name>
+        <filter-class>com.ckfinder.connector.FileUploadFilter</filter-class>
+        <init-param>
+            <param-name>sessionCookieName</param-name>
+            <param-value>JSESSIONID</param-value>
+        </init-param>
+        <init-param>
+            <param-name>sessionParameterName</param-name>
+            <param-value>jsessionid</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>FileUploadFilter</filter-name>
+        <url-pattern>/static/js/ckfinder/core/connector/java/connector.java</url-pattern>
+    </filter-mapping>
+
+    <!-- 查看CKFinder的图片-->
+    <servlet>
+        <servlet-name>cKFinderFilesServlet</servlet-name>
+        <servlet-class>com.eryansky.core.cms.CKFinderFilesServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>cKFinderFilesServlet</servlet-name>
+        <url-pattern>/userfiles/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- 配置静态资源不经过spring mvc -->
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>/static/*</url-pattern>-->
+    <!--</servlet-mapping>-->
+
+    <!-- session超时定义,单位为分钟 -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- 出错页面定义 -->
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/common/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/common/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/common/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/common/403.jsp</location>
+    </error-page>
+
+    <!--标签tag-->
+    <jsp-config>
+        <taglib>
+            <taglib-uri>/essh-tags</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/es.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
+    <!--Android下载支持（非必要） 指定ContentType即可：application/vnd.android.package-archive-->
+    <mime-mapping>
+        <extension>apk</extension>
+        <mime-type>application/vnd.android.package-archive</mime-type>
+    </mime-mapping>
+
+    <!-- jndi数据源配置 -->
+    <!-- 
+	<resource-ref>  
+		<description>jndi数据源</description>  
+		<res-ref-name>jdbc/mysql</res-ref-name>  
+		<res-type>javax.sql.DataSource</res-type>  
+		<res-auth>Container</res-auth>  
+	</resource-ref>  
+     -->
+    <!--集群-->
+    <distributable/>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>securedapp</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+            <!--<transport-guarantee>CONFIDENTIAL</transport-guarantee>-->
+        </user-data-constraint>
+    </security-constraint>
+</web-app>

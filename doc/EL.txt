@@ -1,0 +1,255 @@
+EL表达式
+ 1、EL简介
+ 1）语法结构
+        ${expression}
+ 2）[]与.运算符
+      EL 提供.和[]两种运算符来存取数据。
+      当要存取的属性名称中包含一些特殊字符，如.或?等并非字母或数字的符号，就一定要使用 []。
+ 例如：
+          ${user.My-Name}应当改为${user["My-Name"] }
+      如果要动态取值时，就可以用[]来做，而.无法做到动态取值。例如：
+          ${sessionScope.user[data]}中data 是一个变量
+ 3）变量
+      EL存取变量数据的方法很简单，例如：${username}。它的意思是取出某一范围中名称为
+ username的变量。
+      因为我们并没有指定哪一个范围的username，所以它会依序从Page、Request、Session、
+ Application范围查找。
+      假如途中找到username，就直接回传，不再继续找下去，但是假如全部的范围都没有找到时，
+ 就回传null。
+      属性范围在EL中的名称
+          Page         PageScope
+          Request         RequestScope
+          Session         SessionScope
+          Application     ApplicationScope
+ 4) 1--EL表达式用${}表示,可用在所有的HTML和JSP标签中作用是代替JSP页面中复杂的JAVA代码.
+ 2--EL表达式可操作常量 变量 和隐式对象. 最常用的 隐式对象有${param}和${paramValues}. 
+ ${param}表示返回请求参数中单个字符串的值. ${paramValues}表示返回请求参数的一组
+ 值.pageScope表示页面范围的变量.requestScope表示请求对象的变量. sessionScope表示会话
+ 范围内的变量.applicationScope表示应用范围的变量.
+ 3 --&lt;%@ page isELIgnored="true"%&gt; 表示是否禁用EL语言,TRUE表示禁止.FALSE表示不禁
+ 止.JSP2.0中默认的启用EL语言.
+              4-- EL语言可显示 逻辑表达式如${true and false}结果是false     关系表达式如${5&gt;6} 结
+ 果是false     算术表达式如 ${5+5} 结果是10
+              5--EL中的变量搜索范围是:page request session application   点运算符(.)和"[ ]"都是
+ 表示获取变量的值.区别是[ ]可以显示非词类的变量
+ 
+ 2、EL隐含对象
+ 1)与范围有关的隐含对象
+ 与范围有关的EL 隐含对象包含以下四个：pageScope、requestScope、sessionScope 和
+ applicationScope；
+ 它们基本上就和JSP的pageContext、request、session和application一样；
+ 在EL中，这四个隐含对象只能用来取得范围属性值，即getAttribute(String name)，却不能取得
+ 其他相关信息。
+ 例如：我们要取得session中储存一个属性username的值，可以利用下列方法：
+      session.getAttribute("username") 取得username的值，
+ 在EL中则使用下列方法
+      ${sessionScope.username}
+ 2)与输入有关的隐含对象
+ 与输入有关的隐含对象有两个：param和paramValues，它们是EL中比较特别的隐含对象。
+ 例如我们要取得用户的请求参数时，可以利用下列方法：
+      request.getParameter(String name)
+      request.getParameterValues(String name)
+ 在EL中则可以使用param和paramValues两者来取得数据。
+      ${param.name}
+      ${paramValues.name}
+ 
+ 3.其他隐含对象
+ 1)cookie
+ JSTL并没有提供设定cookie的动作，
+ 例：要取得cookie中有一个设定名称为userCountry的值，可以使用${cookie.userCountry}     来
+ 取得它。
+ 2)header和headerValues
+ header 储存用户浏览器和服务端用来沟通的数据
+ 例：要取得用户浏览器的版本，可以使用${header["User-Agent"]}。
+ 另外在鲜少机会下，有可能同一标头名称拥有不同的值，此时必须改为使用headerValues 来取得
+ 这些值。
+ 3)initParam
+ initParam取得设定web站点的环境参数(Context)
+ 例：一般的方法String userid = (String)application.getInitParameter("userid");
+      可以使用 ${initParam.userid}来取得名称为userid
+ 4)pageContext
+ pageContext取得其他有关用户要求或页面的详细信息。
+      ${pageContext.request.queryString}         取得请求的参数字符串
+      ${pageContext.request.requestURL}         取得请求的URL，但不包括请求之参数字符串
+      ${pageContext.request.contextPath}         服务的web application 的名称
+      ${pageContext.request.method}           取得HTTP 的方法(GET、POST)
+      ${pageContext.request.protocol}         取得使用的协议(HTTP/1.1、HTTP/1.0)
+      ${pageContext.request.remoteUser}         取得用户名称
+      ${pageContext.request.remoteAddr }         取得用户的IP 地址
+      ${pageContext.session.new}             判断session 是否为新的
+      ${pageContext.session.id}               取得session 的ID
+      ${pageContext.servletContext.serverInfo}   取得主机端的服务信息
+    4) 条件标签&gt;
+ 1.算术运算符有五个：+、-、*或$、/或div、%或mod
+ 2.关系运算符有六个：==或eq、!=或ne、&lt;或lt、&gt;或gt、&lt;=或le、&gt;=或ge
+ 3.逻辑运算符有三个：&amp;&amp;或and、||或or、!或not
+ 4.其它运算符有三个：Empty运算符、条件运算符、()运算符
+      例：${empty param.name}、${A?B:C}、${A*(B+C)}
+ 5) EL函数(functions)
+ 语法：ns:function( arg1, arg2, arg3 …. argN)
+ 其中ns为前置名称(prefix)，它必须和taglib 指令的前置名称一置
+        6) 补充：
+ &lt;%@ taglib prefix="c" http://java.sun.com/jstl/core_rt"&gt;http://java.sun.com/jstl/core_rt" %&gt;
+ FOREACH:
+ &lt;c:forEach items="${messages}"
+ var="item"
+ begin="0"
+ end="9"
+ step="1"
+ varStatus="var"&gt;
+ ……
+ &lt;/c:forEach&gt;
+ OUT:
+ &lt;c:out value="/${logininfo.username}"/&gt;
+ c:out&gt;将value 中的内容输出到当前位置，这里也就是把logininfo 对象的
+ username属性值输出到页面当前位置。
+ ${……}是JSP2.0 中的Expression Language（EL）的语法。它定义了一个表达式，
+ 其中的表达式可以是一个常量（如上），也可以是一个具体的表达语句（如forEach循环体中
+ 的情况）。典型案例如下：
+ ? ${logininfo.username}
+ 这表明引用logininfo 对象的username 属性。我们可以通过“.”操作符引
+ 用对象的属性，也可以用“[]”引用对象属性，如${logininfo[username]}
+ 与${logininfo.username}达到了同样的效果。
+ “[]”引用方式的意义在于，如果属性名中出现了特殊字符，如“.”或者“-”，
+ 此时就必须使用“[]”获取属性值以避免语法上的冲突（系统开发时应尽量避免
+ 这一现象的出现）。
+ 与之等同的JSP Script大致如下：
+ LoginInfo logininfo =
+ (LoginInfo)session.getAttribute(“logininfo”);
+ String username = logininfo.getUsername();
+ 可以看到，EL大大节省了编码量。
+ 这里引出的另外一个问题就是，EL 将从哪里找到logininfo 对象，对于
+ ${logininfo.username}这样的表达式而言，首先会从当前页面中寻找之前是
+ 否定义了变量logininfo，如果没有找到则依次到Request、Session、
+ Application 范围内寻找，直到找到为止。如果直到最后依然没有找到匹配的
+ 变量，则返回null.
+ 如果我们需要指定变量的寻找范围，可以在EL表达式中指定搜寻范围：
+ ${pageScope.logininfo.username}
+ ${requestScope.logininfo.username}
+ ${sessionScope.logininfo.username}
+ ${applicationScope.logininfo.username}
+ 在Spring 中，所有逻辑处理单元返回的结果数据，都将作为Attribute 被放
+ 置到HttpServletRequest 对象中返回（具体实现可参见Spring 源码中
+ org.springframework.web.servlet.view.InternalResourceView.
+ exposeModelAsRequestAttributes方法的实现代码），也就是说Spring
+ MVC 中，结果数据对象默认都是requestScope。因此，在Spring MVC 中，
+ 以下寻址方法应慎用：
+ ${sessionScope.logininfo.username}
+ ${applicationScope.logininfo.username}
+ ? ${1＋2}
+ 结果为表达式计算结果，即整数值3。
+ ? ${i&gt;1}
+ 如果变量值i&gt;1的话，将返回bool类型true。与上例比较，可以发现EL会自
+ 动根据表达式计算结果返回不同的数据类型。
+ 表达式的写法与java代码中的表达式编写方式大致相同。
+ IF / CHOOSE:
+ &lt;c:if test="${var.index % 2 == 0}"&gt;
+ *
+ &lt;/c:if&gt;
+ 判定条件一般为一个EL表达式。
+ &lt;c:if&gt;并没有提供else子句，使用的时候可能有些不便，此时我们可以通过&lt;c:choose&gt;
+ tag来达到类似的目的：
+ &lt;c:choose&gt;
+ &lt;c:when test="${var.index % 2 == 0}"&gt;
+ *
+ &lt;/c:when&gt;
+ &lt;c:otherwise&gt;
+ !
+ &lt;/c:otherwise&gt;
+ &lt;/c:choose&gt;
+ 类似Java 中的switch 语句，&lt;c:choose&gt;提供了复杂判定条件下的简化处理手法。其
+ 中&lt;c:when&gt;子句类似case子句，可以出现多次。上面的代码，在奇数行时输出“*”号，
+ 而偶数行时输出“!”。
+ 经验：1、如果EL表达式无法解析：– &lt;%@ page isELIgnored="false" %&gt;
+ 
+ 
+ 
+ 
+ EL表达式总是用大括号括起，而且前面有一个美元符（$）前缀：${expression}。
+表示式中第一个命名变量要么式一个隐式对象，要么是某个作用域（页面作用域、请求作用域、会话作用域或应用作用域）中的一个属性。
+点 号操作符允许你使用一个Map键或一个bean性质名来访问值，例如，使用${foo.bar}可以得到bar的值，在此，bar是Map foo的Map键名，或者是bean foo的一个性质。放在点号操作符右边的东西必须遵循Java的标识符命名规则！（换句话说，必须以一个字母、下划线或美元符开头，第一个字符后面可以有 数字，但不能有其他字符）。
+点号右边只能放合法的Java标识符。例如，${foo.1}键就不可以。
+[]操作符比点号功能更强大，因为利用[]可以访问数组和List，可以把包含命名变量的表达式放在中括号里，而且可以做任意层次的嵌套，只要你受得了。
+例如，如果musicList是一个ArrayList，可以用${musicList[0]}或${musicList[“0”]}来访问列表的第一个值。EL并不关心列表索引加不加引号。
+如果中括号里的内容没有用引号引起来，容器就会进行计算。如果确实放在引号里，而且不是一个数组或List的索引，容器就会把它看作是性质或键的直接命名。
+除 了一个EL隐式对象（PageContext）外，其他EL隐式对象都是Map。从这些隐式对象可以得到任意4个作用域中的属性、请求参数值、首部值、 cookie值和上下文初始化参数。非映射的隐式对象是pageContext，它是PageContext对象的一个引用。
+不 要把隐式EL作用域对象（属性的Map）与属性所绑定的对象混为一谈。换句话说，不要把requestScope隐式对象与具体的JSP隐式对象 request混淆。访问请求对象只有一条路，这就是通过pageContext隐式对象来访问（不过，想从请求得到的一些东西通过其他EL隐式对象也可 以得到，包括param/paramValues、header/headerValues和cookie）。
+EL允许你调用一个普通Java类中的公共静态方法。函数名不一定与具体的方法名相匹配！例如，${foo:roolIt()}并不意味着包含函数的类中肯定有一个名为roolIt()的方法。
+使 用一个TLD将函数名（例如roolIt()）映射到一个具体的静态方法。使用元素声明一个函数，包括函数 的(roolIt())、完全限定类以及，其中包括返回类型以及方法名和参数表。
+要在JSP中使用函数，必须使用taglib指令声明一个命名空间。在taglib指令中放一个prefix属性，告诉容器你要的函数在哪个TLD里能找到。例如：
+基本语法
+一、EL简介
+1.语法结构
+    ${expression}
+2.[]与.运算符
+    EL 提供.和[]两种运算符来存取数据。
+    当要存取的属性名称中包含一些特殊字符，如.或?等并非字母或数字的符号，就一定要使用 []。例如：
+        ${user.My-Name}应当改为${user["My-Name"] }
+    如果要动态取值时，就可以用[]来做，而.无法做到动态取值。例如：
+        ${sessionScope.user[data]}中data 是一个变量
+3.变量
+    EL存取变量数据的方法很简单，例如：${username}。它的意思是取出某一范围中名称为username的变量。
+    因为我们并没有指定哪一个范围的username，所以它会依序从Page、Request、Session、Application范围查找。
+    假如途中找到username，就直接回传，不再继续找下去，但是假如全部的范围都没有找到时，就回传null。
+    属性范围在EL中的名称
+        Page         PageScope
+        Request         RequestScope
+        Session         SessionScope
+        Application     ApplicationScope
+        
+二、EL隐含对象
+1.与范围有关的隐含对象
+与范围有关的EL 隐含对象包含以下四个：pageScope、requestScope、sessionScope 和applicationScope；
+它们基本上就和JSP的pageContext、request、session和application一样；
+在EL中，这四个隐含对象只能用来取得范围属性值，即getAttribute(String name)，却不能取得其他相关信息。
+例如：我们要取得session中储存一个属性username的值，可以利用下列方法：
+    session.getAttribute("username") 取得username的值，
+在EL中则使用下列方法
+    ${sessionScope.username}
+2.与输入有关的隐含对象
+与输入有关的隐含对象有两个：param和paramValues，它们是EL中比较特别的隐含对象。
+例如我们要取得用户的请求参数时，可以利用下列方法：
+    request.getParameter(String name)
+    request.getParameterValues(String name)
+在EL中则可以使用param和paramValues两者来取得数据。
+    ${param.name}
+    ${paramValues.name}
+3.其他隐含对象
+cookie
+JSTL并没有提供设定cookie的动作，
+例：要取得cookie中有一个设定名称为userCountry的值，可以使用${cookie.userCountry}来取得它。
+header和headerValues
+header 储存用户浏览器和服务端用来沟通的数据
+例：要取得用户浏览器的版本，可以使用${header["User-Agent"]}。
+另外在鲜少机会下，有可能同一标头名称拥有不同的值，此时必须改为使用headerValues 来取得这些值。
+initParam
+initParam取得设定web站点的环境参数(Context)
+例：一般的方法String userid = (String)application.getInitParameter("userid");
+    可以使用 ${initParam.userid}来取得名称为userid
+pageContext
+pageContext取得其他有关用户要求或页面的详细信息。
+    ${pageContext.request.queryString}         取得请求的参数字符串
+    ${pageContext.request.requestURL}         取得请求的URL，但不包括请求之参数字符串
+    ${pageContext.request.contextPath}         服务的web application 的名称
+    ${pageContext.request.method}           取得HTTP 的方法(GET、POST)
+    ${pageContext.request.protocol}         取得使用的协议(HTTP/1.1、HTTP/1.0)
+    ${pageContext.request.remoteUser}         取得用户名称
+    ${pageContext.request.remoteAddr }         取得用户的IP 地址
+    ${pageContext.session.new}             判断session 是否为新的
+    ${pageContext.session.id}               取得session 的ID
+    ${pageContext.servletContext.serverInfo}   取得主机端的服务信息
+三、EL运算符
+1.算术运算符有五个：+、-、*或$、/或div、%或mod
+2.关系运算符有六个：==或eq、!=或ne、或gt、=或ge
+3.逻辑运算符有三个：&&或and、||或or、!或not
+4.其它运算符有三个：Empty运算符、条件运算符、()运算符
+    例：${empty param.name}、${A?B:C}、${A*(B+C)}
+四、EL函数(functions)。
+语法：ns:function( arg1, arg2, arg3 …. argN)
+其中ns为前置名称(prefix)，它必须和taglib 指令的前置名称一置
+1    EL表达式用${}表示,可用在所有的HTML和JSP标签中 作用是代替JSP页面中复杂的JAVA代码.
+        2   EL表达式可操作常量 变量 和隐式对象. 最常用的 隐式对象有${param}和${paramValues}. ${param}表示返回请求参数中单个字符串的值. ${paramValues}表示返回请求参数的一组值.pageScope表示页面范围的变量.requestScope表示请求对象的变量. sessionScope表示会话范围内的变量.applicationScope表示应用范围的变量.
+        3    表示是否禁用EL语言,TRUE表示禁止.FALSE表示不禁止.JSP2.0中默认的启用EL语言.
+        4   EL语言可显示 逻辑表达式如${true and false}结果是false    关系表达式如${5>6} 结果是false     算术表达式如 ${5+5} 结果是10
+        5   EL中的变量搜索范围是:page request session application   点运算符(.)和"[ ]"都是表示获取变量的值.区别是[ ]可以显示非词类的变量
+${uplist[0].lzid == zulist.zname?'selected':'' }

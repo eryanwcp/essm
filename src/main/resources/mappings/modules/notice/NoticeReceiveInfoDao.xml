@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.notice.dao.NoticeReceiveInfoDao">
+
+	<sql id="noticeReceiveInfoColumns">
+		a.id AS "id",
+		a.notice_id AS "noticeId",
+		a.user_id AS "userId",
+		a.is_read AS "isRead",
+		a.read_time AS "readTime"
+	</sql>
+
+	<sql id="noticeJoins">
+		LEFT JOIN t_notice n ON n.id = a.notice_id
+	</sql>
+
+	<select id="get" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getUserNotice" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		<where>
+			<if test="userId != null and userId != ''">
+				AND a.user_id = #{userId}
+			</if>
+			<if test="noticeId != null and noticeId != ''">
+				AND a.notice_id = #{noticeId}
+			</if>
+		</where>
+	</select>
+
+
+	<select id="findList" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		<where>
+			n.status = #{STATUS_NORMAL}
+			<if test="userId != null and userId != ''">
+				AND a.user_id = #{userId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findQueryList" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		<where>
+			n.status = #{status}
+			<if test="noticeId != null and noticeId != ''">
+				AND a.notice_id = #{noticeId}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.user_id = #{userId}
+			</if>
+
+			<if test="isRead != null">
+				AND a.is_read = #{isRead}
+			</if>
+			<if test="isTop != null">
+				AND n.is_top = #{isTop}
+			</if>
+			<if test="publishUserId != null and publishUserId != ''">
+				AND n.user_id = #{publishUserId}
+			</if>
+			<if test="mode != null">
+				AND n.mode = #{mode}
+			</if>
+
+			<if test="title != null and title != ''">
+				AND n.title LIKE
+				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+			<if test="content != null and content != ''">
+				AND n.content LIKE
+				<if test="dbName == 'db2'">'%'||#{content}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
+			</if>
+
+			<!--<if test="publishUserIds != null and publishUserIds.size() !=0">-->
+				<!--AND n.user_id IN-->
+				<!--<foreach collection="publishUserIds" item="publishUserId" index="index"-->
+						 <!--open="(" close=")" separator=",">-->
+					<!--#{publishUserId,jdbcType=VARCHAR}-->
+				<!--</foreach>-->
+			<!--</if>-->
+
+			<choose>
+				<when test="startTime != null and endTime != null">
+					AND n.publish_time BETWEEN #{startTime} AND #{endTime}
+				</when>
+				<when test="startTime != null and endTime == null">
+					AND n.publish_time <![CDATA[>=]]> #{startTime}
+				</when>
+				<when test="startTime == null and endTime != null">
+					AND n.publish_time <![CDATA[<=]]> #{endTime}
+				</when>
+			</choose>
+		</where>
+		ORDER BY n.is_top DESC ,n.publish_time DESC
+	</select>
+
+	<select id="findAllList" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<select id="findUserUnreadNotices" resultType="NoticeReceiveInfo">
+		SELECT
+		<include refid="noticeReceiveInfoColumns"/>
+		FROM t_notice_receive_info a
+		<include refid="noticeJoins"/>
+		<where>
+			n.status = #{notice.STATUS_NORMAL}
+			<if test="notice != null and notice.mode != null">
+				AND n.mode = #{notice.mode}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.user_id = #{userId}
+			</if>
+			<if test="isRead != null">
+				AND a.is_read = #{isRead}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_notice_receive_info(
+		id,
+		notice_id,
+		user_id,
+		is_read,
+		read_time
+		) VALUES (
+		#{id},
+		#{noticeId},
+		#{userId},
+		#{isRead},
+		#{readTime}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE t_notice_receive_info SET
+		notice_id = #{noticeId},
+		user_id = #{userId},
+		is_read = #{isRead},
+		read_time = #{readTime}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE t_notice_receive_info SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

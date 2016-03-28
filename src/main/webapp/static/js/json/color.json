@@ -1,0 +1,31 @@
+[
+    {
+        "value": "black",
+        "text": "黑色"
+    },
+    {
+        "value": "red",
+        "text": "红色"
+    },
+    {
+        "value": "green",
+        "text": "绿色"
+    },
+    {
+        "value": "blue",
+        "text": "蓝色"
+    },
+    {
+        "value": "yellow",
+        "text": "黄色"
+    },
+
+    {
+        "value": "gray",
+        "text": "灰色"
+    },
+    {
+        "value": "white",
+        "text": "白色"
+    }
+]

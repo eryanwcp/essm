@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.cms.dao.LinkDao">
+
+	<sql id="cmsLinkColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.category_id AS "category.id",
+		a.title AS "title",
+		a.color AS "color",
+		a.image AS "image",
+		a.href AS "href",
+		a.weight AS "weight",
+		a.weight_date AS "weightDate",
+		a.remark AS "remark",
+		c.name AS "category.name",
+		u.name AS "user.name"
+	</sql>
+
+	<sql id="cmsLinkJoins">
+		JOIN t_cms_category c ON c.id = a.category_id
+		JOIN t_sys_user u ON u.id = a.create_user
+	</sql>
+
+	<select id="get" resultType="Link">
+		SELECT
+		<include refid="cmsLinkColumns"/>
+		FROM t_cms_link a
+		<include refid="cmsLinkJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="Link">
+		SELECT
+		<include refid="cmsLinkColumns"/>
+		FROM t_cms_link a
+		<include refid="cmsLinkJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+			<if test="category != null and category.id != null and category.id != ''">
+				AND a.category_id = #{category.id}
+			</if>
+			<if test="title != null and title != ''">
+				AND a.title LIKE
+				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="Link">
+		SELECT
+		<include refid="cmsLinkColumns"/>
+		FROM t_cms_link a
+		<include refid="cmsLinkJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_cms_link(
+		id,
+		status,
+		version,
+		create_user,
+		create_time,
+		update_user,
+		update_time,
+		category_id,
+		title,
+		color,
+		image,
+		href,
+		weight,
+		weight_date,
+		remark
+		) VALUES (
+		#{id},
+		#{status},
+		0,
+		#{createUser},
+		#{createTime},
+		#{updateUser},
+		#{updateTime},
+		#{category.id},
+		#{title},
+		#{color},
+		#{image},
+		#{href},
+		#{weight},
+		#{weightDate},
+		#{remark}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE t_cms_link SET
+		status = #{status},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime},
+		category_id = #{category.id},
+		title = #{title},
+		color = #{color},
+		image = #{image},
+		href = #{href},
+		weight = #{weight},
+		weight_date = #{weightDate},
+		remark = #{remark}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE t_cms_link SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<select id="findByIdIn" resultType="Link">
+		SELECT
+		<include refid="cmsLinkColumns"/>
+		from t_cms_link a where
+		<where>
+			id in (${id});
+		</where>
+	</select>
+
+	<update id="updateExpiredWeight">
+		update t_cms_link SET
+		weight=0
+		WHERE weight &gt; 0 AND weight_date &lt;
+		<if test="dbName == 'db2'">sysdate</if>
+		<if test="dbName == 'mysql'">CURDATE()</if>
+	</update>
+</mapper>

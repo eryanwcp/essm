@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.DictionaryItemDao">
+    
+	<sql id="sysDictionaryItemColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.name AS "name",
+		a.code AS "code",
+		a.value AS "value",
+		a.remark AS "remark",
+		a.order_no AS "orderNo",
+		a.parent_id AS "parent.id",
+		a.dictionary_id AS "dictionary.id",
+		d.code AS "dictionary.code",
+		d.name AS "dictionary.name",
+		p.name AS "parent.name",
+		p.code AS "parent.code"
+	</sql>
+	
+	<sql id="sysDictionaryItemJoins">
+		LEFT JOIN t_sys_dictionary_item p ON p.id = a.parent_id
+		JOIN t_sys_dictionary d ON d.id = a.dictionary_id
+	</sql>
+    
+	<select id="get" resultType="DictionaryItem">
+		SELECT 
+			<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByCode" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="dictionary != null and dictionary.id != null and dictionary.id != ''">
+			AND a.dictionary_id = #{dictionary.id}
+		</if>
+		<if test="code != null and code != ''">
+			AND a.code = #{code}
+		</if>
+	</select>
+
+	<select id="findByDictionary" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="dictionary != null and dictionary.id != null and dictionary.id != ''">
+			AND a.dictionary_id = #{dictionary.id}
+		</if>
+		<if test="dictionary != null and dictionary.code != null and dictionary.code != ''">
+			AND d.code = #{dictionary.code} AND d.status = #{STATUS_NORMAL}
+		</if>
+		ORDER BY a.order_no ASC
+	</select>
+
+	<select id="findParentsByDictionary" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="dictionary != null and dictionary.id != null and dictionary.id != ''">
+			AND a.dictionary_id = #{dictionary.id}
+		</if>
+		AND (a.parent_id is null OR a.parent_id = '')
+	</select>
+
+	<select id="getByDictionaryItem" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="dictionary != null and dictionary.code != null and dictionary.code != ''">
+			AND d.code = #{dictionary.code} AND d.status = #{STATUS_NORMAL}
+		</if>
+
+		<if test="code != null and code != ''">
+			AND a.code = #{code}
+		</if>
+		<if test="value != null and value != ''">
+			AND a.value = #{value}
+		</if>
+	</select>
+
+	<select id="getMaxSort" resultType="int">
+		SELECT
+		MAX(a.order_no)
+		FROM t_sys_dictionary_item a
+		WHERE a.status = #{STATUS_NORMAL}
+	</select>
+
+	<select id="findChilds" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		AND a.parent_id = #{id}
+	</select>
+
+
+	<select id="findList" resultType="DictionaryItem">
+		SELECT
+		<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+			<if test="dictionary != null and dictionary.id != null and dictionary.id != ''">
+				AND a.dictionary_id = #{dictionary.id}
+			</if>
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+				<if test="dbName == 'db2'">'%'||#{name}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+			<if test="code != null and code != ''">
+				AND a.name LIKE
+				<if test="dbName == 'db2'">'%'||#{code}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{code}, '%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.order_no ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictionaryItem">
+		SELECT 
+			<include refid="sysDictionaryItemColumns"/>
+		FROM t_sys_dictionary_item a
+		<include refid="sysDictionaryItemJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>		
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_sys_dictionary_item(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			name,
+			code,
+			value,
+			remark,
+			order_no,
+			parent_id,
+			dictionary_id
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{name},
+			#{code},
+			#{value},
+			#{remark},
+			#{orderNo},
+			#{parent.id},
+			#{dictionary.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_dictionary_item SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			name = #{name},
+			code = #{code},
+			value = #{value},
+			remark = #{remark},
+			order_no = #{orderNo},
+			parent_id = #{parent.id},
+			dictionary_id = #{dictionary.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_sys_dictionary_item SET
+			status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="removeAll">
+		DELETE FROM t_sys_dictionary_item
+	</delete>
+
+</mapper>

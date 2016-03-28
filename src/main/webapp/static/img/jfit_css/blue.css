@@ -1,0 +1,74 @@
+
+.backgroundcontainer{
+ 	min-height: 450px;
+    margin-top: 18px;
+}
+.background_top{
+	background:url(../jfit/category_top_bg.png) no-repeat;
+	height:44px;
+}
+.ground p{
+	width: 225px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    color: white;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 10px;
+    margin:0px;
+}
+.ground1 .breadcrumb{
+    /*width: 873px;*/
+    height: 44px;
+    line-height:44px;
+    /*float: left;*/
+    padding:0 0 0 72px;
+    margin:0px;
+    color:#878787;
+    background-color:transparent;
+}
+.icon {
+	/* min-height: 130px; */ 
+    width: 321px;
+    float: left;
+}
+.tanhuang_top{
+	background:url(../jfit/tanhuang_top.png) no-repeat;
+	width:321px;
+	height:20px;
+}
+.tanhuang_center{
+	/*min-height:180px;*/
+	margin:0px;
+	padding-top:20px;
+	/*background:url(../jfit/tanhuang_center.png) repeat-y;*/
+}
+.tanhuang_center li {
+    padding-bottom: 45px;
+    list-style:none;
+    padding-left:18px;
+}
+
+.tanhuang_center a {
+    background:url(../jfit/category_li.png) no-repeat;
+    float: left;
+    height: 35px;
+    width: 140px;
+    color:#fff;
+    line-height: 35px;
+    text-align: center;
+    letter-spacing: 5px;
+}
+.tanhuang_center a:hover,.tanhuang_center a:active{
+	color: #2586ab;
+    text-decoration: none;
+}
+.showbody {
+	width:820px;
+	width:820px;
+    float: left;
+    padding-top: 10px;
+    margin-left:5px;
+}

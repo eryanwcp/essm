@@ -1,0 +1,15 @@
+<!--<Context antiResourceLocking="true">-->
+<Context>
+    <!-- jndi MySQL数据源配置 -->
+    <!--<Resource name="jdbc/mysql"-->
+              <!--type="javax.sql.DataSource"-->
+              <!--username="root"-->
+              <!--password="root"-->
+              <!--driverClassName="com.mysql.jdbc.Driver"-->
+              <!--url="jdbc:mysql://localhost:3306/essh?useUnicode=true&amp;characterEncoding=UTF-8"-->
+              <!--maxIdle="200"-->
+              <!--maxWait="500"-->
+              <!--maxActive="20"-->
+            <!--/>-->
+</Context>	
+

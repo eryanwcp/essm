@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.cms.dao.CommentDao">
+    
+	<sql id="cmsCommentDaoColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.category_id AS "category.id",
+		a.content_id AS "contentId",
+		a.title AS "title",
+		a.content AS "content",
+		a.name AS "name",
+		a.ip AS "ip",
+		a.audit_user_id AS "auditUser.id",
+		a.audit_date AS "auditDate"
+	</sql>
+	
+	<sql id="cmsCommentDaoJoins">
+	</sql>
+    
+	<select id="get" resultType="Comment">
+		SELECT 
+			<include refid="cmsCommentDaoColumns"/>
+		FROM t_cms_comment a
+		<include refid="cmsCommentDaoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Comment">
+		SELECT 
+			<include refid="cmsCommentDaoColumns"/>
+		FROM t_cms_comment a
+		<include refid="cmsCommentDaoJoins"/>
+		<where>
+			a.status = #{status}
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Comment">
+		SELECT 
+			<include refid="cmsCommentDaoColumns"/>
+		FROM t_cms_comment a
+		<include refid="cmsCommentDaoJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>		
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.create_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_cms_comment(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			category_id,
+			content_id,
+			title,
+			content,
+			name,
+			ip,
+			audit_user_id,
+			audit_date,
+			status
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{category.id},
+			#{contentId},
+			#{title},
+			#{content},
+			#{name},
+			#{ip},
+			#{auditUser.id},
+			#{auditDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_cms_comment SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			category_id = #{category.id},
+			content_id = #{contentId},
+			title = #{title},
+			content = #{content},
+			name = #{name},
+			ip = #{ip},
+			audit_user_id = #{auditUser.id},
+			audit_date = #{auditDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_cms_comment SET
+			status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

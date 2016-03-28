@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.DictionaryDao">
+    
+	<sql id="sysDictionaryColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.name AS "name",
+		a.code AS "code",
+		a.remark AS "remark",
+		a.order_no AS "orderNo",
+		d.name AS "group.name",
+		a.group_id AS "group.id"
+	</sql>
+	
+	<sql id="sysDictionaryJoins">
+		LEFT JOIN t_sys_dictionary d ON d.code = a.group_id
+	</sql>
+    
+	<select id="get" resultType="Dictionary">
+		SELECT 
+			<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getByCode" resultType="Dictionary" >
+		SELECT
+		<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="code != null and code != ''">
+			AND a.code = #{code}
+		</if>
+	</select>
+
+	<select id="getBy" resultType="Dictionary">
+		SELECT
+		<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<if test="name != null and name != ''">
+			AND a.name = #{name}
+		</if>
+		<if test="group != null and group.id != null and group.id != ''">
+			AND a.group_id = #{group.id}
+		</if>
+	</select>
+
+	<select id="findParents" resultType="Dictionary">
+		SELECT
+		<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+			AND (a.group_id is null OR a.group_id  = '')
+		ORDER BY a.order_no ASC
+	</select>
+
+	<select id="findChilds" resultType="Dictionary">
+		SELECT
+		<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+			AND a.group_id = #{id}
+		ORDER BY a.order_no ASC
+	</select>
+
+
+
+	<select id="getMaxSort" resultType="int">
+		SELECT
+		 MAX(a.order_no)
+		FROM t_sys_dictionary a
+		WHERE a.status = #{STATUS_NORMAL}
+	</select>
+
+
+	
+	<select id="findList" resultType="Dictionary">
+		SELECT 
+			<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE
+					<if test="dbName == 'db2'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.order_no ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Dictionary">
+		SELECT 
+			<include refid="sysDictionaryColumns"/>
+		FROM t_sys_dictionary a
+		<include refid="sysDictionaryJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>		
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.order_no ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_sys_dictionary(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			name,
+			code,
+			remark,
+			order_no,
+			group_id
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{name},
+			#{code},
+			#{remark},
+			#{orderNo},
+			#{group.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_dictionary SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			name = #{name},
+			code = #{code},
+			remark = #{remark},
+			order_no = #{orderNo},
+			group_id = #{group.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_sys_dictionary SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="removeAll">
+		DELETE FROM t_sys_dictionary
+	</delete>
+
+</mapper>

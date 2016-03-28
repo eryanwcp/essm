@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Custom suite" parallel="none">
+  <test verbose="1" name="mp" annotations="JDK">
+    <classes>
+      <class name="test.ngtest.AddTest">
+        <methods>
+          <include name="testAdd"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

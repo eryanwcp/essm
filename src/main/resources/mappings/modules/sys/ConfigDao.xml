@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.ConfigDao">
+    
+	<sql id="sysConfigColumns">
+		a.id AS "id",
+		a.code AS "code",
+		a.value AS "value",
+		a.remark AS "remark"
+	</sql>
+	
+	<sql id="sysConfigJoins">
+	</sql>
+    
+	<select id="get" resultType="Config">
+		SELECT 
+			<include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<include refid="sysConfigJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="getBy" resultType="Config">
+		SELECT
+		<include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<include refid="sysConfigJoins"/>
+		WHERE 1=1
+		<if test="code != null and code != ''">
+			AND a.code = #{code}
+		</if>
+	</select>
+	
+	<select id="findList" resultType="Config">
+		SELECT 
+			<include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<include refid="sysConfigJoins"/>
+		<where>
+			1=1
+			<if test="code != null and code != ''">
+				AND a.code LIKE
+					<if test="dbName == 'db2'">'%'||#{code}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{code}, '%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findQueryList" resultType="Config">
+		SELECT
+		<include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<include refid="sysConfigJoins"/>
+		<where>
+			1=1
+			<if test="query != null and query != ''">
+				AND (a.code LIKE
+					<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.value LIKE
+					<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				)
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.code ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Config">
+		SELECT 
+			<include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<include refid="sysConfigJoins"/>
+		<where>
+			1=1
+		</where>		
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_sys_config(
+			id,
+			code,
+			value,
+			remark
+		) VALUES (
+			#{id},
+			#{code},
+			#{value},
+			#{remark}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_config SET
+			code = #{code},
+			value = #{value},
+			remark = #{remark}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delete">
+		DELETE FROM t_sys_config
+		WHERE id = #{id}
+	</delete>
+
+</mapper>

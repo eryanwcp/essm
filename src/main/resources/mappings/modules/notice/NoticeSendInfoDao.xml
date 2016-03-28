@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.notice.dao.NoticeSendInfoDao">
+
+	<sql id="noticeSendInfoColumns">
+		a.id AS "id",
+		a.notice_id AS "noticeId",
+		a.receive_object_type AS "receiveObjectType",
+		a.receive_object_id AS "receiveObjectId"
+	</sql>
+
+	<sql id="noticeJoins">
+	JOIN t_notice n ON n.id = a.notice_id
+	</sql>
+
+	<select id="get" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<include refid="noticeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<include refid="noticeJoins"/>
+		<where>
+			n.status = #{STATUS_NORMAL}
+			<if test="noticeId != null and noticeId != ''">
+				AND n.notice_id  = #{noticeId}
+			</if>
+			<if test="notice != null and notice.title != null and notice.title != ''">
+				AND n.title LIKE
+				<if test="dbName == 'db2'">'%'||#{notice.title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{notice.title}, '%')</if>
+			</if>
+			<if test="notice != null and notice.content != null and notice.content != ''">
+				AND n.content LIKE
+				<if test="dbName == 'db2'">'%'||#{notice.content}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{notice.content}, '%')</if>
+			</if>
+			<if test="notice != null and notice.userId != null and notice.userId != ''">
+				AND n.userId = #{notice.userId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<select id="findQueryList" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<where>
+			<if test="notice != null and notice.id != null and notice.id != ''">
+				AND a.notice_id  = #{notice.id}
+			</if>
+			<if test="receiveObjectType != null">
+				AND a.receive_object_type = #{receiveObjectType}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="findAllList" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<include refid="noticeJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_notice_send_info(
+		id,
+		notice_id,
+		receive_object_type,
+		receive_object_id
+		) VALUES (
+		#{id},
+		#{noticeId},
+		#{receiveObjectType},
+		#{receiveObjectId}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE t_notice_send_info SET
+		notice_id = #{noticeId},
+		receive_object_type = #{receiveObjectType},
+		receive_object_id = #{receiveObjectId}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE t_notice_send_info SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

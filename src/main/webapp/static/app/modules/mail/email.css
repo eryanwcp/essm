@@ -1,0 +1,24 @@
+div[class^="UU_"]{
+    background:url("img/user.png") left center no-repeat;
+    text-indent: 1.2em;
+}
+div[class^="UG_"]{
+    background:url("img/user_group.png") left center no-repeat;
+    text-indent: 1.2em;
+}
+
+div[class^="OG_"]{
+    background:url("img/office.png") left center no-repeat;
+    text-indent: 1.2em;
+}
+
+
+div[class^="CC_"]{
+    background:url("img/contact.png") left center no-repeat;
+    text-indent: 1.5em;
+}
+
+div[class^="CG_"]{
+    background:url("img/contact_group.png") left center no-repeat;
+    text-indent: 1.5em;
+}

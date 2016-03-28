@@ -1,0 +1,21 @@
+/**
+*  Copyright (c) 2012-2014 http://www.eryansky.com
+*
+*  Licensed under the Apache License, Version 2.0 (the "License");
+*/
+package ${servicePackage};
+
+import com.eryansky.common.orm.mybatis.MyBatisDao;
+import com.eryansky.common.persistence.CrudDao;
+
+import ${entityPackage}.${entityName};
+/**
+ * $tableComment
+ * @author 尔演&Eryan eryanwcp@gmail.com
+ * @date ${date}
+ */
+@MyBatisDao
+public interface ${entityName}Dao extends CrudDao<${entityName}> {
+
+
+}

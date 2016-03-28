@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Uploadfy上次示例</title>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+</head>
+
+<body>
+	<script type="text/javascript" src="../easyui-1.3.4/jquery.js"></script>
+	<script type="text/javascript" src="scripts/jquery.uploadify.js"></script>
+	<link href="css/uploadify.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript">  
+$(function() {  
+    $("#file").uploadify({  
+        method   : 'post',  
+        swf           : 'scripts/uploadify.swf',  // uploadify.swf在项目中的路径  
+        uploader      : '/essh/sys/bug!upload.action',  // 后台UploadController处理上传的方法  
+        fileObjName     : 'file',         // The name of the file object to use in your server-side script  
+        fileSizeLimit   : 0,                  // The maximum size of an uploadable file in KB (Accepts units B KB MB GB if string, 0 for no limit)  
+        successTimeout  : 30,                 // The number of seconds to wait for Flash to detect the server's response after the file has finished uploading  
+        removeCompleted : false,              // Remove queue items from the queue when they are done uploading  
+        fileSizeLimit : '10MB',  
+        buttonText      : '选择文件',  
+        height        : 30,  
+        width         : 120  
+    });  
+});  
+</script>  
+		 
+<h1>UPLOADIFY DEMO</h1>  
+<div class="controls">  
+    <div id="queue"></div>  
+    <input id="file" name="file" type="file" multiple="true">   
+</div> 
+</body>
+</html>

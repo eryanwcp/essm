@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:jee="http://www.springframework.org/schema/jee"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+        default-autowire="byName" default-lazy-init="false">
+
+    <description>spring基础配置</description>
+
+    <!-- 定义受环境影响易变的变量 -->
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/appconfig.properties,classpath*:/config.properties" />
+
+    <!-- 提供对@Required,@Autowired以及JSR 250'的@Resource注解的支持 -->
+    <context:annotation-config />
+
+    <!-- 使用annotation 自动注册bean,并保证@Required,@Autowired的属性被注入 -->
+    <context:component-scan base-package="com.eryansky.common.orm,com.jfit.timer,com.eryansky.modules.*.service,com.eryansky.core.db.service" />
+
+    <!-- 1.jndi数据源 -->
+    <!-- <jee:jndi-lookup id="dataSource" jndi-name="${jndi.name}" /> -->
+
+    <!-- 2.DBCP数据源 数据源配置,使用应用内的DBCP数据库连接池 -->
+    <bean id="defaultDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+
+        <property name="initialSize" value="20" />
+        <property name="maxActive" value="500" />
+        <property name="maxIdle" value="500" />
+        <property name="maxWait" value="500" />
+        <property name="removeAbandoned" value="true"/>
+        <property name="testWhileIdle" value="false" />
+        <property name="testOnBorrow" value="true" />
+        <property name="testOnReturn" value="false" />
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
+        <property name="defaultAutoCommit" value="false" />
+    </bean>
+
+    <bean id="dataSource" class="com.eryansky.common.datasource.DynamicDataSource">
+        <property name="defaultTargetDataSource" ref="defaultDataSource"/>
+        <property name="targetDataSources">
+            <map>
+                <!-- 注意这里的value是和上面的DataSource的id对应，key要和下面的DataSourceContextHolder中的常量对应 -->
+                <entry value-ref="defaultDataSource" key="defaultDataSource"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- Hibernate配置 -->
+    <bean id="defaultSessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="defaultDataSource" />
+        <property name="namingStrategy">
+            <bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+                <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
+
+                <prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+                <prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+                <prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
+                <prop key="net.sf.ehcache.configurationResourceName">${net.sf.ehcache.configurationResourceName}</prop>
+
+                <prop key="hibernate.jdbc.batch_size">0</prop>
+
+                <!--<prop key="hibernate.use_nationalized_character_data">false</prop>-->
+            </props>
+        </property>
+        <property name="packagesToScan">
+            <list>
+                <value>com.eryansky.modules.*.entity</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 动态SessionFactory -->
+    <bean id="sessionFactory" class="com.eryansky.common.datasource.DynamicSessionFactoryImpl">
+        <property name="defaultTargetSessionFactory" ref="defaultSessionFactory"/>
+        <property name="targetSessionFactorys">
+            <map>
+                <entry value-ref="defaultSessionFactory" key="defaultSessionFactory"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- JDBC配置 -->
+    <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> -->
+    <!--<property name="dataSource">-->
+    <!--<ref bean="dataSource"/>-->
+    <!--</property> -->
+    <!--</bean>-->
+
+    <!-- 事务管理器配置, Hibernate单数据源事务 -->
+    <bean id="transactionManager" class="com.eryansky.common.datasource.DynamicTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!--<bean id="transactionManager"-->
+          <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+        <!--<property name="dataSource" ref="dataSource" />-->
+    <!--</bean>-->
+
+    <!-- 1.使用annotation定义事务 -->
+    <!-- proxy-target-class ture:动态代理(需cglib类库的支持)  false:接口(Spring默认方式) -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- proxy-target-class true:CGLIB代理 false:JDK代理-->
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+
+
+    <!-- 2.声明式事务配置 -->
+    <aop:config proxy-target-class="true">
+        <aop:advisor pointcut="execution(* com.eryansky.modules..*.service..*Manager.*(..))" advice-ref="txAdvice" />
+    </aop:config>
+
+    <!-- 通知  默认事务管理器：transaction-manager="transactionManager" -->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="load*" read-only="true" />
+            <tx:method name="find*" read-only="true" />
+            <tx:method name="query*" read-only="true" />
+            <tx:method name="search*" read-only="true" />
+            <tx:method name="is*" read-only="true" />
+            <tx:method name="count*" read-only="true" />
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+
+    <!--Spring上下文获取工具-->
+    <bean class="com.eryansky.common.spring.SpringContextHolder"></bean>
+    <!--安全日志拦截切面-->
+    <bean name="securityLogAspect" class="com.eryansky.modules.sys.aop.SecurityLogAspect"></bean>
+    <!--同步CMS栏目到资源权限-->
+    <bean class="com.eryansky.modules.cms.aop.CMSToResourceAspect"></bean>
+
+    <!-- 配置 JSR303 Bean Validator 定义 -->
+    <!-- 以下 validator  ConversionService 在使用 mvc:annotation-driven 会 自动注册-->
+    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
+        <!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+        <property name="validationMessageSource" ref="messageSource"/>
+    </bean>
+
+    <!-- 国际化的消息资源文件（本系统中主要用于显示/错误消息定制） -->
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <!-- 在web环境中一定要定位到classpath 否则默认到当前web应用下找  -->
+                <value>classpath:messages</value>
+                <value>classpath:org/hibernate/validator/ValidationMessages</value>
+            </list>
+        </property>
+        <property name="useCodeAsDefaultMessage" value="false"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="cacheSeconds" value="60"/>
+    </bean>
+
+    <!--邮件发送/接收执行器-->
+    <bean id="receiverExcutor" class="com.eryansky.modules.mail.utils.ReceiverExcutor" destroy-method="shutdown"></bean>
+    <bean id="senderExcutor" class="com.eryansky.modules.mail.utils.SenderExcutor" destroy-method="shutdown"></bean>
+
+    <!--本地磁盘存储 非集群环境使用-->
+    <bean id="iFileManager" class="com.eryansky.modules.disk.extend.DISKManager"></bean>
+    <!--FTP存储服务器 集群环境使用-->
+    <!--<bean id="iFileManager" class="com.jfit.modules.disk.extend.FTPManager" init-method="init"  destroy-method="destroy">-->
+        <!--<property name="url" value="127.0.0.1"></property>-->
+        <!--<property name="port" value="2121"></property>-->
+        <!--<property name="username" value="admin"></property>-->
+        <!--<property name="password" value="admin"></property>-->
+    <!--</bean>-->
+
+    <!--Spring的事务管理是与数据源绑定的，一旦程序执行到事务管理的那一层（如service）的话，由于在进入该层之前事务已经通过拦截器开启，
+        所以请在Controller层设置注解（数据源/SessionFactory）切换、或编码方式-->
+    <!--动态数据源切换AOP拦截器-->
+    <bean name="dataSourceMethodInterceptor" class="com.eryansky.common.datasource.DataSourceMethodInterceptor"></bean>
+    <!--动态SessionFactory切换AOP拦截器-->
+    <!--<bean name="sessionFactoryMethodInterceptor" class="com.eryansky.common.datasource.SessionFactoryMethodInterceptor"></bean>-->
+
+    <!-- 参与动态切换数据源的切入点对象 (切入点对象，确定何时何地调用拦截器) -->
+    <bean id="methodDataSourcePointCut" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <!-- 配置缓存aop切面 -->
+        <property name="advice" ref="dataSourceMethodInterceptor" />
+        <!--<property name="advice" ref="sessionFactoryMethodInterceptor" />-->
+        <!-- 配置哪些方法参与缓存策略 -->
+        <!--
+            .表示符合任何单一字元
+            ###  +表示符合前一个字元一次或多次
+            ###  *表示符合前一个字元零次或多次
+            ###  \Escape任何Regular expression使用到的符号
+        -->
+        <!-- .*表示前面的前缀(包括包名) 表示print方法-->
+        <property name="patterns">
+            <list>
+                <value>com.eryansky.modules.dc.web.*Controller.*(..)</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--企业微信号配置-->
+    <bean id="qyapiConfig" class="com.eryansky.fastweixin.company.api.config.QYAPIConfig">
+        <constructor-arg name="corpid" value="${weixin.cropId}"></constructor-arg>
+        <constructor-arg name="corpsecret" value="${weixin.corpSecret}"></constructor-arg>
+        <constructor-arg name="enableJsApi" value="${weixin.enableJsApi}"></constructor-arg>
+    </bean>
+</beans>

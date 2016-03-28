@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.LogDao">
+
+	<sql id="sysLogColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.type AS "type",
+		a.ip AS "ip",
+		a.device_type AS "deviceType",
+		a.browser_type AS "browserType",
+		a.user_agent AS "userAgent",
+		a.user_id AS "userId",
+		a.oper_time AS "operTime",
+		a.action_time AS "actionTime",
+		a.title AS "title",
+		a.module AS "module",
+		a.action AS "action",
+		a.remark AS "remark",
+		a.exception AS "exception",
+		u.name AS "userName"
+	</sql>
+
+	<sql id="sysLogJoins">
+		LEFT JOIN t_sys_user u ON u.id = a.user_id
+	</sql>
+
+	<select id="get" resultType="Log">
+		SELECT
+		<include refid="sysLogColumns"/>
+		FROM t_sys_log a
+		<include refid="sysLogJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<select id="findList" resultType="Log">
+		SELECT
+		<include refid="sysLogColumns"/>
+		FROM t_sys_log a
+		<include refid="sysLogJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+			<if test="title != null and title != ''">
+				AND a.title LIKE
+				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+			</if>
+			<if test="type != null">
+				AND a.type = #{type}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND ( u.name LIKE
+				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+				OR u.login_name LIKE
+				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+				)
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findAllList" resultType="Log">
+		SELECT
+		<include refid="sysLogColumns"/>
+		FROM t_sys_log a
+		<include refid="sysLogJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--查询用户登录次数-->
+	<select id="getUserLoginCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		t_sys_log t
+		WHERE
+		t.action LIKE  CONCAT('%', '用户登录', '%')
+		AND t.user_id = #{userId}
+		<choose>
+			<when test="startTime != null and endTime != null">
+				AND a.create_time BETWEEN #{startTime} AND #{endTime}
+			</when>
+			<when test="startTime != null and endTime == null">
+				AND a.create_time <![CDATA[>=]]> #{startTime}
+			</when>
+			<when test="startTime == null and endTime != null">
+				AND a.create_time <![CDATA[<=]]> #{endTime}
+			</when>
+		</choose>
+	</select>
+
+	<!--查询标题为null的数据-->
+	<select id="findNullData" resultType="Log">
+		SELECT
+		<include refid="sysLogColumns"/>
+		FROM t_sys_log a
+		<include refid="sysLogJoins"/>
+		WHERE
+		a.title IS NULL
+	</select>
+
+	<!--根据“module”查询标题不为null的数据-->
+	<select id="getNotNullData" resultType="Log">
+		SELECT
+		<include refid="sysLogColumns"/>
+		FROM t_sys_log a
+		<include refid="sysLogJoins"/>
+		WHERE
+		a.title IS NOT NULL
+		AND
+		a.module = #{module} LIMIT 1;
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_sys_log(
+		id,
+		status,
+		version,
+		create_user,
+		create_time,
+		update_user,
+		update_time,
+		type,
+		ip,
+		device_type,
+		browser_type,
+		user_agent,
+		user_id,
+		oper_time,
+		action_time,
+		title,
+		module,
+		action,
+		remark,
+		exception
+		) VALUES (
+		#{id},
+		#{status},
+		0,
+		#{createUser},
+		#{createTime},
+		#{updateUser},
+		#{updateTime},
+		#{type},
+		#{ip},
+		#{deviceType},
+		#{browserType},
+		#{userAgent},
+		#{userId},
+		#{operTime},
+		#{actionTime},
+		#{title},
+		#{module},
+		#{action},
+		#{remark},
+		#{exception}
+		)
+	</insert>
+
+	<update id="update">
+		UPDATE t_sys_log SET
+		status = #{status},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime},
+		device_type = #{deviceType},
+		browser_type = #{browserType},
+		user_agent = #{userAgent},
+		user_id = #{userId},
+		oper_time = #{operTime},
+		action_time = #{actionTime},
+		title = #{title},
+		module = #{module},
+		action = #{action},
+		remark = #{remark},
+		exception = #{exception}
+		WHERE id = #{id}
+	</update>
+
+	<update id="delete">
+		UPDATE t_sys_log SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="remove">
+		DELETE FROM t_sys_log
+		WHERE id = #{id}
+	</delete>
+
+	<delete id="removeAll">
+		DELETE FROM t_sys_log
+	</delete>
+
+	<delete id="clearInvalidLog" >
+		DELETE FROM t_sys_log
+		<where>
+			<if test="operTime != null ">
+				oper_time <![CDATA[<]]> #{operTime}
+			</if>
+		</where>
+	</delete>
+
+</mapper>
