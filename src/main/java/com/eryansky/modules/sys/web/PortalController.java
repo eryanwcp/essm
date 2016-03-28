@@ -16,8 +16,6 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.annotation.Mobile;
-import com.eryansky.modules.mail.entity.Inbox;
-import com.eryansky.modules.mail.service.InboxManager;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
@@ -53,8 +51,6 @@ public class PortalController extends SimpleController {
     @Autowired
     private UserManager userManager;
     @Autowired
-    private InboxManager inboxManager;
-    @Autowired
     private NoticeService noticeService;
     @Autowired
     private NoticeReceiveInfoService noticeReceiveInfoService;
@@ -82,14 +78,12 @@ public class PortalController extends SimpleController {
         Map<String, Long> map = Maps.newHashMap();
         // 当前登录用户
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        long inboxs = inboxManager.getUserUnreadEmailNum(null,sessionInfo.getUserId());
         long noticeReceiveInfos = 0;
         Page<NoticeReceiveInfo> page = new Page<NoticeReceiveInfo>(request);
         page = noticeReceiveInfoService.findUserUnreadNotices(page,sessionInfo.getUserId());
         if(Collections3.isNotEmpty(page.getResult())){
             noticeReceiveInfos = page.getTotalCount();
         }
-        map.put("inboxs", inboxs);
         map.put("noticeReceiveInfos", noticeReceiveInfos);
 
         if(AppConstants.getIsSecurityOn()){
@@ -173,25 +167,6 @@ public class PortalController extends SimpleController {
             page = noticeReceiveInfoService.findReadNoticePage(page,new NoticeReceiveInfo(), sessionInfo.getUserId(),null);
             modelAnView.addObject("page", page);
 
-        }
-
-        return modelAnView;
-    }
-
-
-
-    /**
-     * 我的邮件
-     *
-     * @return
-     */
-    @RequestMapping("email")
-    public ModelAndView email() {
-        ModelAndView modelAnView = new ModelAndView("layout/portal-email");
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        if (sessionInfo != null) {
-            List<Inbox> inboxs = inboxManager.getUserNewInboxs(sessionInfo.getUserId(), null);
-            modelAnView.addObject("inboxs", inboxs);
         }
 
         return modelAnView;

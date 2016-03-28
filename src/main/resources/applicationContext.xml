@@ -147,8 +147,6 @@
     <bean class="com.eryansky.common.spring.SpringContextHolder"></bean>
     <!--安全日志拦截切面-->
     <bean name="securityLogAspect" class="com.eryansky.modules.sys.aop.SecurityLogAspect"></bean>
-    <!--同步CMS栏目到资源权限-->
-    <bean class="com.eryansky.modules.cms.aop.CMSToResourceAspect"></bean>
 
     <!-- 配置 JSR303 Bean Validator 定义 -->
     <!-- 以下 validator  ConversionService 在使用 mvc:annotation-driven 会 自动注册-->
@@ -171,10 +169,6 @@
         <property name="defaultEncoding" value="UTF-8"/>
         <property name="cacheSeconds" value="60"/>
     </bean>
-
-    <!--邮件发送/接收执行器-->
-    <bean id="receiverExcutor" class="com.eryansky.modules.mail.utils.ReceiverExcutor" destroy-method="shutdown"></bean>
-    <bean id="senderExcutor" class="com.eryansky.modules.mail.utils.SenderExcutor" destroy-method="shutdown"></bean>
 
     <!--本地磁盘存储 非集群环境使用-->
     <bean id="iFileManager" class="com.eryansky.modules.disk.extend.DISKManager"></bean>

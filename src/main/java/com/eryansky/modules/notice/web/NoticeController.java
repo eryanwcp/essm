@@ -18,6 +18,7 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityUtils;
@@ -30,7 +31,6 @@ import com.eryansky.modules.disk.entity.File;
 import com.eryansky.modules.disk.service.DiskManager;
 import com.eryansky.modules.disk.service.FileManager;
 import com.eryansky.modules.disk.utils.DiskUtils;
-import com.eryansky.modules.mail._enum.ReceiveObjectType;
 import com.eryansky.modules.notice._enum.IsTop;
 import com.eryansky.modules.notice._enum.NoticeMode;
 import com.eryansky.modules.notice._enum.NoticeReceiveScope;
@@ -336,7 +336,7 @@ public class NoticeController extends SimpleController {
         }
 
         noticeService.save(notice,true);
-        saveNoticeSendInfos(noticeUserIds,notice.getId(),ReceiveObjectType.User.getValue());
+        saveNoticeSendInfos(noticeUserIds,notice.getId(), ReceiveObjectType.User.getValue());
         saveNoticeSendInfos(noticeOrganIds,notice.getId(),ReceiveObjectType.Organ.getValue());
 
         if(OperateType.Publish.equals(operateType)) {

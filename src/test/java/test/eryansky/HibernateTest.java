@@ -10,8 +10,6 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.entity.StatusState;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.google.common.collect.Lists;
-import com.eryansky.modules.mail.task.MailAsyncTaskService;
-import com.eryansky.modules.mail.utils.EmailUtils;
 import com.eryansky.modules.sys.entity.Organ;
 import com.eryansky.modules.sys.entity.Role;
 import com.eryansky.modules.sys.entity.User;
@@ -62,8 +60,6 @@ public class HibernateTest {
     private UserManager userManager;
     @Autowired
     private RoleManager roleManager;
-    @Autowired
-    private MailAsyncTaskService mailTaskService;
 
     @Resource(name = "defaultSessionFactory")
     private SessionFactory sessionFactory;
@@ -216,17 +212,6 @@ public class HibernateTest {
 //        System.out.println(d2.getTime() - d1.getTime());
     }
 
-
-    @Test
-    public void mail(){
-        try {
-//            mailTaskService.addUserMailMonitor("1");
-            EmailUtils.syncToInbox("1","adbaea8f99e840b0a9a0622b221a033a");
-            Thread.sleep(10*60*1000L);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
     public void organs(){

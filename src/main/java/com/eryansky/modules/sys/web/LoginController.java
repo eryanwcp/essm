@@ -18,10 +18,10 @@ import com.eryansky.common.utils.encode.Encrypt;
 import com.eryansky.common.web.servlet.ValidateCodeServlet;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.common.web.utils.CookieUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.eryansky.core.cms.CookieUtils;
 import com.eryansky.core.security.SecurityConstants;
 import com.eryansky.core.security.SecurityType;
 import com.eryansky.core.security.SecurityUtils;
@@ -75,7 +75,7 @@ public class LoginController extends SimpleController {
     @RequestMapping(value = {"welcome", ""})
     public ModelAndView welcome() throws Exception {
         ModelAndView modelAndView = new ModelAndView("login");
-        String loginName = CookieUtils.getCookie(SpringMVCHolder.getRequest(),"loginName");
+        String loginName = CookieUtils.getCookie(SpringMVCHolder.getRequest(), "loginName");
         boolean isValidateCodeLogin = isValidateCodeLogin(loginName, false, false);
         modelAndView.addObject("isValidateCodeLogin",isValidateCodeLogin);
         return modelAndView;

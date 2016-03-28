@@ -17,7 +17,6 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
-import com.eryansky.modules.mail.service.ContactGroupManager;
 import com.eryansky.modules.notice._enum.IsTop;
 import com.eryansky.modules.notice._enum.NoticeMode;
 import com.eryansky.modules.notice._enum.NoticeReceiveScope;
@@ -53,8 +52,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 	private OrganManager organManager;
     @Autowired
 	private UserManager userManager;
-    @Autowired
-	private ContactGroupManager contactGroupManager;
 
     public void save(Notice entity,boolean updateFile) {
         super.save(entity);

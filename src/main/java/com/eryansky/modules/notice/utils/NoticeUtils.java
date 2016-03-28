@@ -11,7 +11,7 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
-import com.eryansky.modules.mail._enum.ReceiveObjectType;
+import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;

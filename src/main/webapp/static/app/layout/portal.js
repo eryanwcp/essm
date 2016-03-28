@@ -16,20 +16,6 @@ $(function() {
                 eu.addTab(window.parent.layout_center_tabs,"我的通知",url,true,"eu-icon-notice_user_comment");
             }
         }]
-    },{
-        id : 'p2',
-        href:ctxAdmin+'/portal/email',
-        title : protal_titles[1],
-        iconCls:'eu-icon-mail_unread',
-        height : 300,
-        collapsible : true,
-        tools:[{
-            iconCls:'eu-icon-more',
-            handler:function(){
-                var url =ctxAdmin+'/mail/email';
-                eu.addTab(window.parent.layout_center_tabs,"我的邮箱",url,true,"icon-email");
-            }
-        }]
     }];
 
     $('#layout_portal_portal').portal({
@@ -43,7 +29,7 @@ $(function() {
     });
     var state = $.cookie('portal-state');
     if (!state) {
-        state = 'p1:p2';/*冒号代表列，逗号代表行*/
+        state = 'p1';/*冒号代表列，逗号代表行*/
     }
     addPortalPanels(state);
     $('#layout_portal_portal').portal('resize');
@@ -145,7 +131,6 @@ function mymessages(refreshPanel,tipMessage){
             if (data.code==1){
                 if(refreshPanel){
                     $("#p1").panel("refresh");
-                    $("#p2").panel("refresh");
                 }
 
                 var hashNewMessage = false;//是否提示声音
@@ -158,18 +143,6 @@ function mymessages(refreshPanel,tipMessage){
                     messagesHtml ="&nbsp;"+"<span>"+obj["noticeReceiveInfos"]+"</span>&nbsp;条";
                 }
                 $("#p1").panel("setTitle",protal_titles[0]+messagesHtml);
-
-
-                if(obj["inboxs"]>0){
-                    hashNewMessage = true;
-                    messagesHtml ="&nbsp;"+"<span  style='color: #FE6600;font-size: 16px;'>"+obj["inboxs"]+"</span>&nbsp条";
-                }else{
-                    messagesHtml ="&nbsp;"+"<span>"+obj["inboxs"]+"</span>&nbsp;条";
-                }
-                $("#p2").panel("setTitle",protal_titles[1]+messagesHtml);
-                if(hashNewMessage){
-                    tipMsg();
-                }
 
                 if(obj["tipPasswordType"] != undefined){
                     var tipPasswordMsg = '';
