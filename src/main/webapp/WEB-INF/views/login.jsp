@@ -1,4 +1,4 @@
-<%@ page import="com.eryansky.core.cms.CookieUtils" %>
+<%@ page import="com.eryansky.common.web.utils.CookieUtils" %>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" language="java" %>
 <%@ include file="/common/taglibs.jsp" %>
 <%
@@ -67,7 +67,6 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="http://www.jfit.com.cn"><img src="${ctxStatic}/img/logo_jfit.png" alt="锦峰软件" style="height:40px;"></a>
             <div id="qr" style="float: right"></div>
         </div>
     </div>
@@ -121,7 +120,7 @@
     </div>
 </div>
 <footer class="white navbar-fixed-bottom">
-    版权所有 &copy; 2013-${fns:getDate('yyyy')} <a target="_blank" href="http://www.jfit.com.cn">江西省锦峰软件科技有限公司</a> 客户服务电话：400-166-8882
+    版权所有 &copy; 2013-${fns:getDate('yyyy')} <a target="_blank" href="客户服务电话：400-166-8882">XXX件科技有限公司</a>
 </footer>
 </body>
 </html>

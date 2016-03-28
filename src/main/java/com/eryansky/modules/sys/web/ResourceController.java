@@ -16,11 +16,6 @@ import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.BaseController;
-import com.eryansky.modules.cms.mapper.Category;
-import com.eryansky.modules.cms.mapper.Site;
-import com.eryansky.modules.cms.service.CategoryService;
-import com.eryansky.modules.cms.service.SiteService;
-import com.eryansky.modules.cms.utils.CmsUtils;
 import com.eryansky.modules.sys._enum.ResourceType;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.modules.sys.service.ResourceManager;
@@ -232,45 +227,5 @@ public class ResourceController extends BaseController<Resource,String> {
         return result;
     }
 
-
-    @Autowired
-    private SiteService siteService;
-    @Autowired
-    private CategoryService categoryService;
-    /**
-     * 同步全部CMS栏目到资源
-     * @param status 状态 {@link com.eryansky.common.orm.entity.StatusState}
-     * @return
-     */
-    @RequestMapping(value = {"synchronousCMSCategory"})
-    @ResponseBody
-    public Result synchronousCMSCategory(String status){
-        List<Site> siteList = siteService.findAll();
-        for (Site site : siteList) {
-            resourceManager.iSynchronous(ResourceType.CMS.getValue(), CmsUtils.SITE_PREFIX + site.getId(), site.getName(), null, StatusState.NORMAL.getValue());
-            List<Category> list = categoryService.findByParentId("1", site.getId());
-            for (Category category : list) {
-                recursive(category, site.getId(), CmsUtils.SITE_PREFIX + site.getId(), status);
-            }
-
-        }
-
-        return Result.successResult();
-    }
-
-    private void recursive(Category category, String siteId, String parentId, String status){
-        Category parentCategory = category.getParent();
-        if (parentId == null && parentCategory != null) {
-            parentId = CmsUtils.CATEGORY_PREFIX + parentCategory.getId();
-        }
-
-        resourceManager.iSynchronous(ResourceType.CMS.getValue(), CmsUtils.CATEGORY_PREFIX + category.getId(), category.getName(), parentId, status);
-        List<Category> categoryList = categoryService.findByParentId(category.getId(), siteId);
-        if(Collections3.isNotEmpty(categoryList)){
-            for(Category category1:categoryList){
-                recursive(category1, siteId, category1.getParent() == null ? null : CmsUtils.CATEGORY_PREFIX + category1.getParent().getId(), status);
-            }
-        }
-    }
 
 }

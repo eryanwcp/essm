@@ -5,7 +5,6 @@
 <head>
 <title>${fns:getAppFullName()}</title>
     <%@ include file="/common/meta.jsp"%>
-    <%@ include file="/WEB-INF/views/include/dialog.jsp" %>
 <script type="text/javascript" src="${ctxStatic}/js/session-keep.js?_=${sysInitTime}" charset="utf-8"></script>
     <script type="text/javascript" charset="utf-8">
         var indexLayout;

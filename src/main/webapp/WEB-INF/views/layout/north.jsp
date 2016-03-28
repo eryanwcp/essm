@@ -3,7 +3,6 @@
 <%--<script type="text/javascript" src="${ctxStatic}/app/layout/north.js" charset="utf-8"></script>--%>
 <div style="height: 100%;background-image: url(${ctxStatic}/img/top_bg.png); background-repeat: repeat-x;">
     <div title="${fns:getAppFullName()}" style="float: left;padding-left: 10px;padding-top:10px;">
-        <img title="锦峰软件" alt="锦峰软件" src="${ctxStatic}/img/logo_jfit.png" style="height: 51px;vertical-align: middle;">
         <span style="font-size:24px;vertical-align: middle;">${fns:getAppFullName()}</span>
     </div>
 	<%--<div style="float: right; position: absolute; bottom: 20px; right: 10px">--%>

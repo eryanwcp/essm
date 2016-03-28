@@ -62,8 +62,6 @@ public class LoginController extends SimpleController {
     private UserManager userManager;
     @Autowired
     private ResourceManager resourceManager;
-    @Autowired
-    private DefaultEntityManager defaultEntityManager;
 
     /**
      * 欢迎页面
@@ -186,8 +184,7 @@ public class LoginController extends SimpleController {
 
             //设置调整URL 如果session中包含未被授权的URL 则跳转到该页面
 //            String resultUrl = request.getContextPath()+ AppConstants.getAdminPath()  + "/login/index?theme=" + theme;
-            String resultUrl = request.getContextPath();
-//            String resultUrl = request.getContextPath()+ AppConstants.getAdminPath();
+            String resultUrl = request.getContextPath()+ AppConstants.getAdminPath();
             Object unAuthorityUrl = request.getSession().getAttribute(SecurityConstants.SESSION_UNAUTHORITY_URL);
             if (unAuthorityUrl != null) {
                 resultUrl = unAuthorityUrl.toString();
