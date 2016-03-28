@@ -2,7 +2,7 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../config/ehcache.xsd">
 
 
-    <diskStore path="java.io.tmpdir/es/ehcache"/>
+    <diskStore path="java.io.tmpdir/essm/ehcache"/>
 
     <!-- 默认缓存配置. -->
     <defaultCache maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600"
