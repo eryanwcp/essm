@@ -13,6 +13,7 @@ import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.orm.hibernate.HibernateDao;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.entity.Role;
 import com.eryansky.modules.sys.entity.User;
 import com.eryansky.utils.CacheConstants;
@@ -37,40 +38,40 @@ public class RoleManager extends EntityManager<Role, String> {
     @Autowired
     private UserManager userManager;
 
-	private HibernateDao<Role, String> roleDao;
+    private HibernateDao<Role, String> roleDao;
 
-	@Autowired
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		roleDao = new HibernateDao<Role, String>(sessionFactory,
-				Role.class);
-	}
-	
-	@Override
-	protected HibernateDao<Role, String> getEntityDao() {
-		return roleDao;
-	}
-	
-	/**
-	 * 删除角色.
-	 * <br>删除角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
-	 */
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        roleDao = new HibernateDao<Role, String>(sessionFactory,
+                Role.class);
+    }
+
+    @Override
+    protected HibernateDao<Role, String> getEntityDao() {
+        return roleDao;
+    }
+
+    /**
+     * 删除角色.
+     * <br>删除角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
+     */
     @CacheEvict(value = {  CacheConstants.ROLE_ALL_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
             CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE},allEntries = true)
-	@Override
-	public void deleteByIds(List<String> ids) throws DaoException,
-			SystemException, ServiceException {
+    @Override
+    public void deleteByIds(List<String> ids) throws DaoException,
+            SystemException, ServiceException {
         logger.debug("清空缓存:{}", CacheConstants.ROLE_ALL_CACHE
                 +","+CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
                 +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE
                 +","+CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE);
         super.deleteByIds(ids);
-	}
-	/**
-	 * 新增或修改角色.
-	 * <br>修改角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
-	 */
+    }
+    /**
+     * 新增或修改角色.
+     * <br>修改角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
+     */
     @CacheEvict(value = {  CacheConstants.ROLE_ALL_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
@@ -80,24 +81,24 @@ public class RoleManager extends EntityManager<Role, String> {
                 +","+CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
                 +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE
                 +","+CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE);
-		Assert.notNull(entity, "参数[entity]为空!");
-		roleDao.saveOrUpdate(entity);
-		logger.warn("保存色Role:{}",entity.getId());
-	}
-	
-	/**
-	 * 新增或修改角色.
-	 * <br>修改角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
-	 */
+        Assert.notNull(entity, "参数[entity]为空!");
+        roleDao.saveOrUpdate(entity);
+        logger.warn("保存色Role:{}",entity.getId());
+    }
+
+    /**
+     * 新增或修改角色.
+     * <br>修改角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
+     */
     @CacheEvict(value = {  CacheConstants.ROLE_ALL_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
             CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE},allEntries = true)
     public void merge(Role entity) throws DaoException,SystemException,ServiceException {
-		Assert.notNull(entity, "参数[entity]为空!");
-		roleDao.merge(entity);
-		logger.warn("保存色Role:{}",entity.getId());
-	}
+        Assert.notNull(entity, "参数[entity]为空!");
+        roleDao.merge(entity);
+        logger.warn("保存色Role:{}",entity.getId());
+    }
 
     /**
      * 新增或修改角色.
@@ -141,9 +142,30 @@ public class RoleManager extends EntityManager<Role, String> {
     @Cacheable(value = { CacheConstants.ROLE_ALL_CACHE})
     public List<Role> getAll() throws DaoException,SystemException,ServiceException {
         List<Role> list = super.getAll();
-		logger.debug("缓存:{}",CacheConstants.ROLE_ALL_CACHE);
-		return list;
-	}
+        logger.debug("缓存:{}",CacheConstants.ROLE_ALL_CACHE);
+        return list;
+    }
+
+    /**
+     * 查找机构角色
+     * @param organId 机构ID
+     * @return
+     */
+    public List<Role> findRolesByOrganId(String organId) {
+        Parameter parameter = new Parameter(Role.STATUS_NORMAL,organId);
+        return getEntityDao().find("select r from Role r where r.status = :p1 and (r.organId = :p2) ",parameter);
+    }
+
+
+    /**
+     * 查找机构角色以及系统角色
+     * @param organId 机构ID
+     * @return
+     */
+    public List<Role> findOrganRolesAndSystemRoles(String organId) {
+        Parameter parameter = new Parameter(Role.STATUS_NORMAL,organId, YesOrNo.YES.getValue());
+        return getEntityDao().find("select r from Role r where r.status = :p1 and (r.organId = :p2 or r.isSystem = :p3) ",parameter);
+    }
 
     /**
      * 根据ID查找

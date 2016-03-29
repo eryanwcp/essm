@@ -32,6 +32,7 @@ $(function () {
         columns: [
             [
                 {field: 'id', title: '主键', hidden: true, sortable: true, align: 'right', width: 80},
+                {field: 'isSystemView', title: '系统角色', width: 60},
                 {field: 'organName', title: '所属机构', width: 200},
                 {field: 'dataScopeView', title: '数据范围', width: 200},
                 {field: 'resourceNames', title: '关联资源', width: 420},

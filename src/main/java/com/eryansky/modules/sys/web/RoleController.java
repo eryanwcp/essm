@@ -10,12 +10,15 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.Page;
+import com.eryansky.common.orm.PropertyFilter;
 import com.eryansky.common.orm.hibernate.EntityManager;
+import com.eryansky.common.orm.hibernate.HibernateWebUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.BaseController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.modules.sys.entity.Role;
@@ -34,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.List;
 
@@ -64,6 +68,25 @@ public class RoleController extends BaseController<Role,String> {
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/role";
+    }
+
+    @Override
+    public Datagrid<Role> datagrid() {
+        HttpServletRequest request = SpringMVCHolder.getRequest();
+        // 自动构造属性过滤器
+        List<PropertyFilter> filters = HibernateWebUtils.buildPropertyFilters(request);
+        Page<Role> p = new Page<Role>(request);
+
+        User user = SecurityUtils.getCurrentUser();
+        String organId = user.getCompanyId();
+        PropertyFilter propertyFilter = new PropertyFilter("EQS_organId",organId);
+        if (!SecurityUtils.isCurrentUserAdmin()) {
+            filters.add(propertyFilter);
+        }
+
+        p = getEntityManager().findPage(p, filters,true);
+        Datagrid<Role> datagrid = new Datagrid<Role>(p.getTotalCount(), p.getResult());
+        return datagrid;
     }
 
     /**
@@ -97,14 +120,6 @@ public class RoleController extends BaseController<Role,String> {
     public Result save(@ModelAttribute("model") Role role) {
 //        getEntityManager().evict(role);
         Result result;
-        // 名称重复校验
-        Role nameCheckRole = roleManager.findUniqueBy("name", role.getName());
-        if (nameCheckRole != null && !nameCheckRole.getId().equals(role.getId())) {
-            result = new Result(Result.WARN, "名称为[" + role.getName() + "]已存在,请修正!", "name");
-            logger.debug(result.toString());
-            return result;
-        }
-
         // 编码重复校验
         if (StringUtils.isNotBlank(role.getCode())) {
             Role checkRole = roleManager.findUniqueBy("code", role.getCode());
@@ -211,7 +226,7 @@ public class RoleController extends BaseController<Role,String> {
         modelAndView.addObject("dataScope", "2");//不分级授权
         modelAndView.addObject("cascade", "true");//不分级授权
         modelAndView.addObject("multiple", "");
-        modelAndView.addObject("userDatagridData", JsonMapper.getInstance().toJson(new Datagrid()));
+        modelAndView.addObject("userDatagridData",JsonMapper.getInstance().toJson(new Datagrid()));
         return modelAndView;
     }
 
@@ -224,7 +239,7 @@ public class RoleController extends BaseController<Role,String> {
     @RequestMapping(value = {"addRoleUser"})
     @ResponseBody
     public Result addRoleUser(String roleId,
-                             @RequestParam(value = "userIds", required = true)List<String> userIds){
+                              @RequestParam(value = "userIds", required = true)List<String> userIds){
         Role role = roleManager.loadById(roleId);
         List<User> roleUsers = role.getUsers();
         for(String userId:userIds){
@@ -255,7 +270,7 @@ public class RoleController extends BaseController<Role,String> {
     @RequestMapping(value = {"removeRoleUser"})
     @ResponseBody
     public Result removeRoleUser(String roleId,
-                             @RequestParam(value = "userIds", required = true)List<String> userIds){
+                                 @RequestParam(value = "userIds", required = true)List<String> userIds){
         Role role = roleManager.loadById(roleId);
         List<User> roleUsers = role.getUsers();
         Iterator<User> iterator = roleUsers.iterator();
@@ -302,7 +317,6 @@ public class RoleController extends BaseController<Role,String> {
         return result;
     }
 
-
     /**
      * 数据范围下拉列表
      * @param selectType {@link SelectType}
@@ -331,18 +345,23 @@ public class RoleController extends BaseController<Role,String> {
     @RequestMapping(value = {"combobox"})
     @ResponseBody
     public List<Combobox> combobox(String selectType) throws Exception {
-        List<Role> list = roleManager.getAll();
+        User user = SecurityUtils.getCurrentUser();
+        String organId = user.getCompanyId();
+
+        List<Role> list = roleManager.findOrganRolesAndSystemRoles(organId);
         List<Combobox> cList = Lists.newArrayList();
         Combobox titleCombobox = SelectType.combobox(selectType);
         if (titleCombobox != null) {
             cList.add(titleCombobox);
         }
         for (Role r : list) {
-            Combobox combobox = new Combobox(r.getId() + "", r.getName());
+            Combobox combobox = new Combobox(r.getId(), r.getName());
             cList.add(combobox);
         }
         return cList;
     }
+
+
 
     /**
      * 机构树.

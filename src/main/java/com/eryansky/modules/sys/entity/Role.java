@@ -75,7 +75,7 @@ public class Role extends DataEntity<Role> {
      */
     private String isActivity = YesOrNo.YES.getValue();
     /**
-     * 权限类型 {@link com.eryansky.modules.sys._enum.RoleType}
+     * 权限类型 {@link com.jfit.modules.sys._enum.RoleType}
      */
     private String roleType;
     /**
@@ -205,6 +205,7 @@ public class Role extends DataEntity<Role> {
     }
 
 
+
     @ElementCollection
     @CollectionTable(name = "t_sys_role_organ", joinColumns = {@JoinColumn(name = "role_id")})
     @Column(name = "organ_id",length = 36)
@@ -214,6 +215,15 @@ public class Role extends DataEntity<Role> {
 
     public void setOrganIds(List<String> organIds) {
         this.organIds = organIds;
+    }
+
+    /**
+     * 附属机构名称
+     * @return
+     */
+    @Transient
+    public String getOrganIdsNames() {
+        return OrganUtils.getOrganNames(organIds);
     }
 
     /**
@@ -290,9 +300,20 @@ public class Role extends DataEntity<Role> {
         return str;
     }
 
+    @Transient
+    public String getIsSystemView() {
+        YesOrNo s = YesOrNo.getYesOrNoByValue(isSystem);
+        String str = "";
+        if (s != null) {
+            str = s.getDescription();
+        }
+        return str;
+    }
+
 
     @Override
     public String toString() {
         return JsonMapper.getInstance().toJson(this);
     }
 }
+

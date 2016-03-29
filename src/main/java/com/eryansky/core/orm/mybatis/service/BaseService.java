@@ -159,7 +159,7 @@ public abstract class BaseService {
                 sqlString.append(" WHERE id = '" + user.getOffice().getId() + "'");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.CUSTOM.getValue().equals(dataScopeString)) {//TODO
-                sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_role_organ ro123456, T_SYS_ORGAN o123456");
+                sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_role_organ ro123456, t_sys_organ o123456");
                 sqlString.append(" WHERE ro123456.organ_id = o123456.id");
                 sqlString.append(" AND ro123456.role_id = '" + roleId + "'");
                 sqlString.append(" AND o123456." + where + ")");

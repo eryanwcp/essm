@@ -1,4 +1,5 @@
 var organIds = organIds;
+var isSystem = isSystem;
 
 var $organ_combotree;
 var $organIds_combotree;
@@ -22,6 +23,16 @@ $(function () {
         });
         $organIds_combotree.combotree('setValues',tempData);
         $organIds_combotree.combotree("showPanel");
+    });
+    $('input[name=isSystem][value='+isSystem+']').prop("checked",'checked');
+    $("input[name='isSystem']").change(function(){
+        var value = $(this).val();
+        if("1" == value){
+            $("#div_organId").hide();
+            $organ_combotree.combotree('clear');
+        }else{
+            $("#div_organId").show();
+        }
     });
 });
 
