@@ -126,14 +126,14 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "datagrid" })
     @ResponseBody
     public String datagrid(NoticeQueryVo noticeQueryVo) {
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         Page<Notice> page = new Page<Notice>(SpringMVCHolder.getRequest());
-        String userId = sessionInfo.getUserId();// 发布人ID
-        if (NoticeUtils.isNoticeAdmin(userId)) {
-            userId = null;// 管理员 查询所有
-        }
+//        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+//        String userId = sessionInfo.getUserId();// 发布人ID
+//        if (NoticeUtils.isNoticeAdmin(userId)) {
+//            userId = null;// 管理员 查询所有
+//        }
         noticeQueryVo.syncEndTime();
-        page = noticeService.findPage(page, new Notice(), userId, noticeQueryVo);
+        page = noticeService.findPage(page, new Notice(), null, noticeQueryVo);
         Datagrid<Notice> dg = new Datagrid<Notice>(page.getTotalCount(), page.getResult());
         String json = JsonMapper.getInstance().toJson(dg);
         return json;

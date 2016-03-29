@@ -1,238 +1,111 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.eryansky.modules.notice.dao.NoticeDao">
+<mapper namespace="com.eryansky.modules.notice.dao.NoticeSendInfoDao">
 
-	<sql id="noticeColumns">
+	<sql id="noticeSendInfoColumns">
 		a.id AS "id",
-		a.status AS "status",
-		a.version AS "version",
-		a.create_user AS "createUser",
-		a.create_time AS "createTime",
-		a.update_user AS "updateUser",
-		a.update_time AS "updateTime",
-		a.title AS "title",
-		a.content AS "content",
-		a.type AS "type",
-		a.receive_scope AS "receiveScope",
-		a.is_top AS "isTop",
-		a.end_top_day AS "endTopDay",
-		a.mode AS "mode",
-		a.publish_time AS "publishTime",
-		a.effect_time AS "effectTime",
-		a.invalid_time AS "invalidTime",
-		a.user_id AS "userId",
-		a.organ_id AS "organId",
-		a.is_record_read AS "isRecordRead"
+		a.notice_id AS "noticeId",
+		a.receive_object_type AS "receiveObjectType",
+		a.receive_object_id AS "receiveObjectId"
 	</sql>
 
 	<sql id="noticeJoins">
-		LEFT JOIN t_sys_user u ON u.id = a.user_id
-		LEFT JOIN t_sys_organ o ON o.id = a.organ_id
+		JOIN t_notice n ON n.id = a.notice_id
 	</sql>
 
-	<select id="get" resultType="Notice">
+	<select id="get" resultType="NoticeSendInfo">
 		SELECT
-		<include refid="noticeColumns"/>
-		FROM t_notice a
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
 		<include refid="noticeJoins"/>
 		WHERE a.id = #{id}
 	</select>
 
-	<select id="findList" resultType="Notice">
+	<select id="findList" resultType="NoticeSendInfo">
 		SELECT
-		<include refid="noticeColumns"/>
-		FROM t_notice a
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<include refid="noticeJoins"/>
+		<where>
+			n.status = #{STATUS_NORMAL}
+			<if test="noticeId != null and noticeId != ''">
+				AND n.notice_id  = #{noticeId}
+			</if>
+			<if test="notice != null and notice.title != null and notice.title != ''">
+				AND n.title LIKE
+				<if test="dbName == 'db2'">'%'||#{notice.title}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{notice.title}, '%')</if>
+			</if>
+			<if test="notice != null and notice.content != null and notice.content != ''">
+				AND n.content LIKE
+				<if test="dbName == 'db2'">'%'||#{notice.content}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{notice.content}, '%')</if>
+			</if>
+			<if test="notice != null and notice.userId != null and notice.userId != ''">
+				AND n.userId = #{notice.userId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<select id="findQueryList" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
+		<where>
+			<if test="notice != null and notice.id != null and notice.id != ''">
+				AND a.notice_id  = #{notice.id}
+			</if>
+			<if test="receiveObjectType != null">
+				AND a.receive_object_type = #{receiveObjectType}
+			</if>
+
+		</where>
+	</select>
+
+	<select id="findAllList" resultType="NoticeSendInfo">
+		SELECT
+		<include refid="noticeSendInfoColumns"/>
+		FROM t_notice_send_info a
 		<include refid="noticeJoins"/>
 		<where>
 			a.status = #{STATUS_NORMAL}
-			<if test="title != null and title != ''">
-				AND a.title LIKE
-				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
-			</if>
-			<if test="content != null and content != ''">
-				AND a.content LIKE
-				<if test="dbName == 'db2'">'%'||#{content}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
-			</if>
-			<if test="type != null and type != ''">
-				AND a.type = #{type}
-			</if>
-			<if test="mode != null and mode != ''">
-				AND a.mode = #{mode}
-			</if>
 		</where>
 		<choose>
 			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
 			</when>
-			<otherwise>
-				ORDER BY a.update_time DESC
-			</otherwise>
 		</choose>
-	</select>
-
-	<select id="findAllList" resultType="Notice">
-		SELECT
-		<include refid="noticeColumns"/>
-		FROM t_notice a
-		<include refid="noticeJoins"/>
-		<where>
-			a.status = #{STATUS_NORMAL}
-		</where>
-		<choose>
-			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
-				ORDER BY ${entityPage.orderBy} ${entityPage.order}
-			</when>
-			<otherwise>
-				ORDER BY a.update_time DESC
-			</otherwise>
-		</choose>
-	</select>
-
-
-	<select id="findQueryList" resultType="Notice">
-		SELECT
-		<include refid="noticeColumns"/>
-		FROM t_notice a
-		<include refid="noticeJoins"/>
-		<where>
-			a.status = #{status}
-			<if test="userId != null and userId != ''">
-				AND a.user_id = #{userId}
-			</if>
-			<if test="title != null and title != ''">
-				AND a.title LIKE
-				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
-			</if>
-			<if test="content != null and content != ''">
-				AND a.content LIKE
-				<if test="dbName == 'db2'">'%'||#{content}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
-			</if>
-			<if test="isTop != null">
-				AND a.is_top = #{isTop}
-			</if>
-			/*TODO 分页查询存在问题*/
-			<!--<if test="publishUserIds != null and publishUserIds.size() !=0">-->
-				<!--AND a.user_id IN-->
-				<!--<foreach collection="publishUserIds" item="item" index="index" open="(" separator="," close=")" >-->
-					<!--#{item,jdbcType=VARCHAR}-->
-				<!--</foreach>-->
-			<!--</if>-->
-			<if test="mode != null">
-				AND a.mode = #{mode}
-			</if>
-
-			<choose>
-				<when test="startTime != null and endTime != null">
-					AND a.publish_time BETWEEN #{startTime} AND #{endTime}
-				</when>
-				<when test="startTime != null and endTime == null">
-					AND a.publish_time <![CDATA[>=]]> #{startTime}
-				</when>
-				<when test="startTime == null and endTime != null">
-					AND a.publish_time <![CDATA[<=]]> #{endTime}
-				</when>
-			</choose>
-		</where>
-		<choose>
-			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
-				ORDER BY ${entityPage.orderBy} ${entityPage.order}
-			</when>
-			<otherwise>
-				ORDER BY a.update_time DESC
-			</otherwise>
-		</choose>
-	</select>
-	<select id="findNoticeFiles" resultType="java.lang.String">
-		SELECT a.file_id
-		FROM t_notice_file a
-		WHERE a.notice_id = #{noticeId}
 	</select>
 
 	<insert id="insert">
-		INSERT INTO t_notice(
+		INSERT INTO t_notice_send_info(
 		id,
-		status,
-		version,
-		create_user,
-		create_time,
-		update_user,
-		update_time,
-		title,
-		content,
-		type,
-		receive_scope,
-		is_top,
-		end_top_day,
-		mode,
-		publish_time,
-		effect_time,
-		invalid_time,
-		user_id,
-		organ_id,
-		is_record_read
+		notice_id,
+		receive_object_type,
+		receive_object_id
 		) VALUES (
 		#{id},
-		#{status},
-		0,
-		#{createUser},
-		#{createTime},
-		#{updateUser},
-		#{updateTime},
-		#{title},
-		#{content},
-		#{type},
-		#{receiveScope},
-		#{isTop},
-		#{endTopDay},
-		#{mode},
-		#{publishTime},
-		#{effectTime},
-		#{invalidTime},
-		#{userId},
-		#{organId},
-		#{isRecordRead}
+		#{noticeId},
+		#{receiveObjectType},
+		#{receiveObjectId}
 		)
 	</insert>
 
-	<delete id="deleteNoticeFile">
-		DELETE FROM t_notice_file WHERE notice_id = #{id}
-	</delete>
-
-	<insert id="insertNoticeFile">
-		INSERT INTO t_notice_file(notice_id, file_id)
-		<foreach collection="fileIds" item="fileId" separator=" union all ">
-			SELECT #{id}, #{fileId} FROM dual
-		</foreach>
-	</insert>
-
 	<update id="update">
-		UPDATE t_notice SET
-		status = #{status},
-		version = version +1,
-		update_user = #{updateUser},
-		update_time = #{updateTime},
-		title = #{title},
-		content = #{content},
-		type = #{type},
-		receive_scope = #{receiveScope},
-		is_top = #{isTop},
-		end_top_day = #{endTopDay},
-		mode = #{mode},
-		publish_time = #{publishTime},
-		effect_time = #{effectTime},
-		invalid_time = #{invalidTime},
-		user_id = #{userId},
-		organ_id = #{organId},
-		is_record_read = #{isRecordRead}
+		UPDATE t_notice_send_info SET
+		notice_id = #{noticeId},
+		receive_object_type = #{receiveObjectType},
+		receive_object_id = #{receiveObjectId}
 		WHERE id = #{id}
 	</update>
 
 	<update id="delete">
-		UPDATE t_notice SET
+		UPDATE t_notice_send_info SET
 		status = #{STATUS_DELETE}
 		WHERE id = #{id}
 	</update>

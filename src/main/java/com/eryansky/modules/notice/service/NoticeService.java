@@ -15,6 +15,7 @@ import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.security.SecurityUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.notice._enum.IsTop;
@@ -28,14 +29,12 @@ import com.eryansky.modules.sys.entity.User;
 import com.eryansky.modules.sys.service.OrganManager;
 import com.eryansky.modules.sys.service.UserManager;
 import com.eryansky.utils.YesOrNo;
+import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 通知管理
@@ -117,6 +116,9 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
         notice.setEntityPage(page);
         parameter.put(BaseInterceptor.PAGE,page);
         parameter.put("dbName",notice.getDbName());
+        Map<String,String> sqlMap = Maps.newHashMap();
+        sqlMap.put("dsf",super.dataScopeFilter(SecurityUtils.getCurrentUser(), "o", "u"));
+        parameter.put("sqlMap",sqlMap);
         page.setResult(dao.findQueryList(parameter));
 
         return page;
