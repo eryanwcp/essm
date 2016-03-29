@@ -56,27 +56,10 @@ public class DiskUtils {
     private static UserManager userManager = SpringContextHolder.getBean(UserManager.class);
     private static DiskManager diskManager = SpringContextHolder.getBean(DiskManager.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
-
-    /**
-     * 文件夹标识 邮件
-     */
-    public static String FOLDER_EMAIL = "email";
     /**
      * 文件夹标识 通知
      */
     public static String FOLDER_NOTICE = "notice";
-    /**
-     * 文件夹标识 Excel
-     */
-    public static String FOLDER_Excel = "excel";
-    /**
-     * 文件夹标识 系统
-     */
-    public static String FOLDER_VERSIONLOG = "versionLog";
-    /**
-     * 文件夹标识 工作流
-     */
-    public static String FOLDER_WORKFLOW = "workflow";
     /**
      * kindeditor
      */
@@ -85,10 +68,6 @@ public class DiskUtils {
      * 用户头像
      */
     public static String FOLDER_USER_PHOTO = "userphoto";
-    /**
-     * 会议附件
-     */
-    public static String FOLDER_MEETING_FILE = "meetingfile";
     /**
      * 文件上传失败提示信息
      */
@@ -120,18 +99,6 @@ public class DiskUtils {
         Folder folder = new Folder();
         folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
         folder.setCode(FOLDER_USER_PHOTO);
-        return getDISKStoreDir(folder, userId);
-    }
-
-    /**
-     * 会议附件
-     * @param userId
-     * @return
-     */
-    public static String getUserMeetingFileRelativePath(String userId) {
-        Folder folder = new Folder();
-        folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
-        folder.setCode(FOLDER_MEETING_FILE);
         return getDISKStoreDir(folder, userId);
     }
 
@@ -262,23 +229,6 @@ public class DiskUtils {
         return diskManager.checkSystemFolderByCode(FOLDER_NOTICE,userId);
     }
 
-    /**
-     * 获取用户Excel文件夹
-     * @param userId
-     * @return
-     */
-    public static Folder getExcelFolder(String userId) {
-        return diskManager.checkSystemFolderByCode(FOLDER_Excel,userId);
-    }
-
-    /**
-     * 获取用户邮件文件夹
-     * @param userId
-     * @return
-     */
-    public static Folder getUserEmaliFolder(String userId) {
-        return diskManager.checkSystemFolderByCode(FOLDER_EMAIL,userId);
-    }
 
     /**
      * 获取用户头像文件夹
@@ -385,55 +335,6 @@ public class DiskUtils {
 
 
     /**
-     * 保存邮件文件
-     *
-     * @param sessionInfo
-     * @param multipartFile
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveEmailFile(SessionInfo sessionInfo, MultipartFile multipartFile)
-            throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        return saveSystemFile(DiskUtils.FOLDER_EMAIL, sessionInfo,multipartFile);
-    }
-
-
-    /**
-     * 保持用户邮件 外部邮件系统
-     * @param userId
-     * @param inputStream
-     * @param fileName
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveUserMailFile(String userId,InputStream inputStream,String fileName) throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = getSystemFolderByCode("_MAIL", userId);
-        String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
-        File file = new File();
-        file.setFolder(folder);
-        file.setCode(code);
-        file.setUserId(userId);
-        file.setName(fileName);
-        file.setFilePath(storeFilePath);
-        file.setFileSize(Long.valueOf(inputStream.available()));
-        file.setFileSuffix(FilenameUtils.getExtension(fileName));
-        iFileManager.saveFile(file.getFilePath(),inputStream, true);
-        diskManager.saveFile(file);
-        return file;
-    }
-
-    /**
      * 保存通知文件
      *
      * @param sessionInfo
@@ -449,63 +350,6 @@ public class DiskUtils {
             FileUploadBase.FileSizeLimitExceededException,
             FileNameLengthLimitExceededException, IOException {
         return saveSystemFile(DiskUtils.FOLDER_NOTICE, sessionInfo,
-                multipartFile);
-    }
-
-    /**
-     * 保存Excel文件
-     *
-     * @param sessionInfo
-     * @param workbook
-     * @param fileName
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveExcelFile(SessionInfo sessionInfo, HSSFWorkbook workbook,String fileName)
-            throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        return saveExcelFile(DiskUtils.FOLDER_Excel, sessionInfo, workbook, fileName);
-    }
-
-    /**
-     * 保存系统文件
-     *
-     * @param sessionInfo
-     * @param multipartFile
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveVersionLog(SessionInfo sessionInfo, MultipartFile multipartFile)
-            throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        return saveSystemFile(DiskUtils.FOLDER_VERSIONLOG, sessionInfo,
-                multipartFile);
-    }
-
-    /**
-     * 保存工作流
-     *
-     * @param sessionInfo
-     * @param multipartFile
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveWorkFlowFile(SessionInfo sessionInfo, MultipartFile multipartFile)
-            throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        return saveSystemFile(DiskUtils.FOLDER_WORKFLOW, sessionInfo,
                 multipartFile);
     }
 

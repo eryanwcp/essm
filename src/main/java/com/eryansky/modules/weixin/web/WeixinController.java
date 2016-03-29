@@ -57,7 +57,7 @@ public class WeixinController extends WeixinControllerSupport {
     protected BaseMsg handleTextMsg(TextReqMsg msg) {
         String content = msg.getContent();
         log.debug("用户发送到服务器的内容:{}", content);
-        return new TextMsg("").addLink("江西烟草移动门户", "https://mp.jxtobacco.gov.cn/mp/m");
+        return new TextMsg(msg.getContent());
     }
 
     /*1.1版本新增，重写父类方法，加入自定义微信消息处理器

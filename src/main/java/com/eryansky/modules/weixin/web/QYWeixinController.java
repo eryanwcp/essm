@@ -94,7 +94,7 @@ public class QYWeixinController extends QYWeixinControllerSupport {
      */
     @Mobile
     @RequiresUser(required = true)
-    @Logging(logType = LogType.access,value = "主页（微信企业号）")
+    @Logging(logType = LogType.access,value = "主页（微信）")
     @RequestMapping("index")
     public ModelAndView index(HttpServletRequest request){
         ModelAndView modelAndView = new ModelAndView("layout/index");

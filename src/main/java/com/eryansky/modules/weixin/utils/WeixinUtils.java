@@ -24,7 +24,7 @@ public class WeixinUtils {
     private WeixinUtils(){}
 
     public static void main(String[] args) {
-        String toURL = "http://www.jfit.com.cn/labor/m/libary";
+        String toURL = "http://localhost/essm/m/libary";
         System.out.println(WeixinUtils.getOauth2URL(toURL));
     }
 
