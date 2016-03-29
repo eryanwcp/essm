@@ -474,9 +474,6 @@ CREATE TABLE `t_sys_post` (
 -- ----------------------------
 -- Records of t_sys_post
 -- ----------------------------
-INSERT INTO `t_sys_post` VALUES ('7577f76fe02b40d3b6295cfd57651d43', '2015-10-19 11:31:54', '1', '1', '2015-10-19 11:32:07', '1', '1', '', '12', '', 'c28497402a5848bb9283ce4f36ce01b8');
-INSERT INTO `t_sys_post` VALUES ('b37b38c0d6df4a64946af57dd4d47aa7', '2015-10-13 14:55:37', '1', '0', '2015-10-13 15:16:33', '1', '3', '', '11', '', '1');
-INSERT INTO `t_sys_post` VALUES ('f6bf3e44470d439fa2521eaaf583f688', '2015-07-15 11:14:48', '1', '0', '2015-10-19 14:18:49', '1', '1', '', '123', '', '1');
 
 -- ----------------------------
 -- Table structure for t_sys_post_organ
@@ -492,11 +489,6 @@ CREATE TABLE `t_sys_post_organ` (
 -- ----------------------------
 -- Records of t_sys_post_organ
 -- ----------------------------
-INSERT INTO `t_sys_post_organ` VALUES ('b37b38c0d6df4a64946af57dd4d47aa7', '1');
-INSERT INTO `t_sys_post_organ` VALUES ('7577f76fe02b40d3b6295cfd57651d43', 'c28497402a5848bb9283ce4f36ce01b8');
-INSERT INTO `t_sys_post_organ` VALUES ('7577f76fe02b40d3b6295cfd57651d43', 'a06e91c7bd8b44fbae1f19b869f7e431');
-INSERT INTO `t_sys_post_organ` VALUES ('f6bf3e44470d439fa2521eaaf583f688', 'c28497402a5848bb9283ce4f36ce01b8');
-INSERT INTO `t_sys_post_organ` VALUES ('f6bf3e44470d439fa2521eaaf583f688', 'a06e91c7bd8b44fbae1f19b869f7e431');
 
 -- ----------------------------
 -- Table structure for t_sys_resource
@@ -565,10 +557,6 @@ CREATE TABLE `t_sys_role` (
 -- ----------------------------
 -- Records of t_sys_role
 -- ----------------------------
-INSERT INTO `t_sys_role` VALUES ('178491aff86b486395ac825cad70cf63', '2015-12-08 17:07:24', '1', '0', '2015-12-08 17:13:02', '1', '4', 'tzgg', '通知公告人员', '', '8', '1', '1', null, null);
-INSERT INTO `t_sys_role` VALUES ('1f370cb140db4365b9efe104edd712ad', '2015-12-09 10:30:06', '1', '0', '2015-12-09 11:23:04', '1', '2', '', '12', '', '8', '1', '1', null, null);
-INSERT INTO `t_sys_role` VALUES ('3737c96066bf4dedbd6687df5aa41224', '2015-10-15 13:51:04', '1', '1', '2015-12-08 17:12:46', '1', '9', '', '123', '', '8', '1', '1', null, null);
-INSERT INTO `t_sys_role` VALUES ('a47a816aa7e84dc7a8fcc92e93589bcc', '2015-10-13 11:40:26', '1', '0', '2015-12-08 17:08:14', '1', '24', 'base', '员工', '', '8', '1', '1', null, null);
 
 -- ----------------------------
 -- Table structure for t_sys_role_organ
