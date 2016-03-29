@@ -16,6 +16,7 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.BaseController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.modules.sys.entity.Role;
 import com.eryansky.modules.sys.entity.User;
@@ -210,7 +211,7 @@ public class RoleController extends BaseController<Role,String> {
         modelAndView.addObject("dataScope", "2");//不分级授权
         modelAndView.addObject("cascade", "true");//不分级授权
         modelAndView.addObject("multiple", "");
-        modelAndView.addObject("userDatagridData",JsonMapper.getInstance().toJson(new Datagrid()));
+        modelAndView.addObject("userDatagridData", JsonMapper.getInstance().toJson(new Datagrid()));
         return modelAndView;
     }
 
@@ -301,6 +302,28 @@ public class RoleController extends BaseController<Role,String> {
         return result;
     }
 
+
+    /**
+     * 数据范围下拉列表
+     * @param selectType {@link SelectType}
+     * @return
+     */
+    @RequestMapping(value = {"dataScope"})
+    @ResponseBody
+    public List<Combobox> dataScope(String selectType){
+        DataScope[] list = DataScope.values();
+        List<Combobox> cList = Lists.newArrayList();
+
+        Combobox titleCombobox = SelectType.combobox(selectType);
+        if(titleCombobox != null){
+            cList.add(titleCombobox);
+        }
+        for (DataScope r : list) {
+            Combobox combobox = new Combobox(r.getValue() + "", r.getDescription());
+            cList.add(combobox);
+        }
+        return cList;
+    }
 
     /**
      * 角色下拉框列表.

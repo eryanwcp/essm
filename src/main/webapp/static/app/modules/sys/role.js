@@ -32,8 +32,10 @@ $(function () {
         columns: [
             [
                 {field: 'id', title: '主键', hidden: true, sortable: true, align: 'right', width: 80},
+                {field: 'organName', title: '所属机构', width: 200},
+                {field: 'dataScopeView', title: '数据范围', width: 200},
                 {field: 'resourceNames', title: '关联资源', width: 420},
-                {field: 'remark', title: '描述', width: 200}
+                {field: 'remark', title: '备注', width: 200}
             ]
         ],
         toolbar: [

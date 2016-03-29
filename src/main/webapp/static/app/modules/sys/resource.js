@@ -107,7 +107,7 @@ function showDialog(row){
     }else{
         var selectedNode = $resource_treegrid.treegrid('getSelected');
         if(selectedNode != undefined && selectedNode.type != undefined){
-            inputUrl +="?parentId="+selectedNode.type;
+            inputUrl +="?parentId="+selectedNode['id'];
         }
     }
 

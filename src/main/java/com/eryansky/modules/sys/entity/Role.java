@@ -9,11 +9,13 @@ import com.eryansky.common.orm.PropertyType;
 import com.eryansky.common.orm.annotation.Delete;
 import com.eryansky.common.orm.entity.StatusState;
 import com.eryansky.common.utils.ConvertUtils;
+import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.YesOrNo;
+import com.eryansky.modules.sys.utils.OrganUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
@@ -23,16 +25,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -91,9 +84,9 @@ public class Role extends DataEntity<Role> {
     private String dataScope = DataScope.SELF.getValue();// 数据范围
 
     /**
-     * 按明细设置数据范围
+     * 按明细设置数据范围 授权机构
      */
-    private List<Organ> organs = Lists.newArrayList();
+    private List<String> organIds = Lists.newArrayList();
 
     /**
      * 关联的用户
@@ -212,19 +205,15 @@ public class Role extends DataEntity<Role> {
     }
 
 
-    @JsonIgnore
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    // 中间表定义,表名采用默认命名规则
-    @JoinTable(name = "t_sys_role_organ", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn(name = "organ_id") })
-    @Where(clause = "status = "+ STATUS_NORMAL)
-    @OrderBy("orderNo")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    public List<Organ> getOrgans() {
-        return organs;
+    @ElementCollection
+    @CollectionTable(name = "t_sys_role_organ", joinColumns = {@JoinColumn(name = "role_id")})
+    @Column(name = "organ_id",length = 36)
+    public List<String> getOrganIds() {
+        return organIds;
     }
 
-    public void setOrgans(List<Organ> organs) {
-        this.organs = organs;
+    public void setOrganIds(List<String> organIds) {
+        this.organIds = organIds;
     }
 
     /**
@@ -278,7 +267,28 @@ public class Role extends DataEntity<Role> {
                 "loginName", ", ");
     }
 
+    /**
+     * 机构名称 VIEW
+     * @return
+     */
+    @Transient
+    public String getOrganName() {
+        if(StringUtils.isNotBlank(this.organId)){
+            return OrganUtils.getOrganName(organId);
+        }
+        return null;
+    }
 
+
+    @Transient
+    public String getDataScopeView() {
+        DataScope s = DataScope.getDataScopeByValue(dataScope);
+        String str = "";
+        if (s != null) {
+            str = s.getDescription();
+        }
+        return str;
+    }
 
 
     @Override
