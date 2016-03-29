@@ -577,7 +577,7 @@ DROP TABLE IF EXISTS `t_sys_role_organ`;
 CREATE TABLE `t_sys_role_organ` (
   `role_id` varchar(36) NOT NULL,
   `organ_id` varchar(36) NOT NULL,
-  KEY `FK_5cpnrv79xvedd9dvowxbuf2mk` (`user_id`) USING BTREE,
+  KEY `FK_5cpnrv79xvedd9dvowxbuf2mk` (`organ_id`) USING BTREE,
   KEY `FK_oorf8snvueb85oo97r33eixmu` (`role_id`) USING BTREE,
   CONSTRAINT `t_sys_role_organ_ibfk_1` FOREIGN KEY (`organ_id`) REFERENCES `t_sys_organ` (`id`),
   CONSTRAINT `t_sys_role_organ_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `t_sys_role` (`id`)
