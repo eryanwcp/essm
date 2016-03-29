@@ -12,14 +12,10 @@ import com.eryansky.core.db.vo.DbConfig;
 import com.eryansky.core.db.vo.SchemaVo;
 import com.eryansky.core.db.vo.TableVo;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * DB2数据源
@@ -292,5 +288,10 @@ public class DB2DiDataSource extends DiDataSource {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
     }
 }
