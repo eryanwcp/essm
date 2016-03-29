@@ -576,10 +576,10 @@ INSERT INTO `t_sys_role` VALUES ('a47a816aa7e84dc7a8fcc92e93589bcc', '2015-10-13
 DROP TABLE IF EXISTS `t_sys_role_organ`;
 CREATE TABLE `t_sys_role_organ` (
   `role_id` varchar(36) NOT NULL,
-  `user_id` varchar(36) NOT NULL,
+  `organ_id` varchar(36) NOT NULL,
   KEY `FK_5cpnrv79xvedd9dvowxbuf2mk` (`user_id`) USING BTREE,
   KEY `FK_oorf8snvueb85oo97r33eixmu` (`role_id`) USING BTREE,
-  CONSTRAINT `t_sys_role_organ_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `t_sys_organ` (`id`),
+  CONSTRAINT `t_sys_role_organ_ibfk_1` FOREIGN KEY (`organ_id`) REFERENCES `t_sys_organ` (`id`),
   CONSTRAINT `t_sys_role_organ_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `t_sys_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

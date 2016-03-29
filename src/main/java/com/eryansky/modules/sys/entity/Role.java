@@ -215,7 +215,7 @@ public class Role extends DataEntity<Role> {
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     // 中间表定义,表名采用默认命名规则
-    @JoinTable(name = "t_sys_role_organ", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
+    @JoinTable(name = "t_sys_role_organ", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = { @JoinColumn(name = "organ_id") })
     @Where(clause = "status = "+ STATUS_NORMAL)
     @OrderBy("orderNo")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
