@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 模型接口，所有需要传输的对象都需要实现，提供转json的方法
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public interface Model extends Serializable {

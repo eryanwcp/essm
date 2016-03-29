@@ -1,7 +1,7 @@
 package com.eryansky.fastweixin.message.req;
 
 /**
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public final class ImageReqMsg extends BaseReqMsg {

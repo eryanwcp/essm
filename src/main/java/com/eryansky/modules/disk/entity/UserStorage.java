@@ -1,7 +1,7 @@
 /**
- *  Copyright (c) 2014 http://www.jfit.com.cn
- *
- *          江西省锦峰软件科技有限公司
+ * Copyright (c) 2012-2014 http://www.eryansky.com
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.modules.disk.entity;
 
@@ -15,7 +15,7 @@ import javax.persistence.Table;
 
 /**
  * 用户云盘存储空间配置
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2014-11-24
  */
 @Entity

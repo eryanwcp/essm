@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2014 http://www.jfit.com.cn
+ * Copyright (c) 2012-2014 http://www.eryansky.com
  * <p/>
- * 江西省锦峰软件科技有限公司
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.modules.notice.mapper;
 
@@ -9,7 +9,7 @@ import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.modules.notice.utils.NoticeUtils;
 
 /**
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-10-15 
  */
 public class NoticeSendInfo extends BaseEntity<NoticeSendInfo> {

@@ -14,7 +14,7 @@ import java.io.PrintWriter;
  * 微信公众平台交互操作基类，提供几乎所有微信公众平台交互方式
  * 基于javaee servlet框架，方便使用此框架的项目集成
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public abstract class WeixinServletSupport extends HttpServlet {

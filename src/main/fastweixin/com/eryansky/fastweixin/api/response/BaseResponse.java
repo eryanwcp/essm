@@ -8,7 +8,7 @@ import com.eryansky.fastweixin.util.StrUtil;
 /**
  * 微信API响应报文对象基类
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public class BaseResponse extends BaseModel {

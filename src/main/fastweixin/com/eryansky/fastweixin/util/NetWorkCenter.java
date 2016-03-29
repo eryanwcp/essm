@@ -314,7 +314,7 @@ public final class NetWorkCenter {
     /**
      * 标识HTTP请求类型枚举
      *
-     * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+     * @author 尔演&Eryan eryanwcp@gmail.com
      * @date 2016-03-15
      */
     enum RequestMethod {
@@ -344,7 +344,7 @@ public final class NetWorkCenter {
     /**
      * 自定义HTTP响应回调接口,用于兼容jdk6
      *
-     * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+     * @author 尔演&Eryan eryanwcp@gmail.com
      * @date 2016-03-15
      */
 //	@FunctionalInterface

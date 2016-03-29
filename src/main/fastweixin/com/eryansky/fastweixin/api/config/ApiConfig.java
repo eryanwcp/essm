@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * API配置类，项目中请保证其为单例
  * 实现观察者模式，用于监控token变化
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public final class ApiConfig extends Observable implements Serializable {

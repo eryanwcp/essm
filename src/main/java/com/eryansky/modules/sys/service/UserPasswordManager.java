@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2014 http://www.jfit.com.cn
+ * Copyright (c) 2012-2014 http://www.eryansky.com
  * <p/>
- * 江西省锦峰软件科技有限公司
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.modules.sys.service;
 
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-05-14 
  */
 @Service

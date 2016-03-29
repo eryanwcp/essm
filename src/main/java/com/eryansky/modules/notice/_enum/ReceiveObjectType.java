@@ -1,25 +1,29 @@
-/**
- * Copyright (c) 2012-2014 http://www.eryansky.com
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
- */
-package com.eryansky.core.db.utils;
+package com.eryansky.modules.notice._enum;
 
 /**
- * 存储策略
- * Author: 尔演&Eryan eryanwcp@gmail.com
- * Date: 2014-04-17 15:42
+ * 接收对象类型
  */
-public enum LoadType {
-
+public enum ReceiveObjectType {
     /**
-     * 更新模式(0)
+     * 用户(0)
      */
-    Update(0, "更新模式"),
+    User(0, "用户"),
     /**
-     * 插入模式(1)
+     * 联系人(1)
      */
-    Insert(1, "插入模式");
+    UserGroup(1, "用户组"),
+    /**
+     * 部门(2)
+     */
+    Organ(2, "部门"),
+    /**
+     * 联系人(3)
+     */
+    Contact(3, "联系人"),
+    /**
+     * 联系人组(4)
+     */
+    ContactGroup(4, "联系人组");
 
     /**
      * 值 Integer型
@@ -30,7 +34,7 @@ public enum LoadType {
      */
     private final String description;
 
-    LoadType(Integer value, String description) {
+    ReceiveObjectType(Integer value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -53,24 +57,23 @@ public enum LoadType {
         return description;
     }
 
-    public static LoadType getLoadType(Integer value) {
+    public static ReceiveObjectType getReceiveObjectType(Integer value) {
         if (null == value)
             return null;
-        for (LoadType _enum : LoadType.values()) {
+        for (ReceiveObjectType _enum : ReceiveObjectType.values()) {
             if (value.equals(_enum.getValue()))
                 return _enum;
         }
         return null;
     }
 
-    public static LoadType getLoadType(String description) {
+    public static ReceiveObjectType getReceiveObjectType(String description) {
         if (null == description)
             return null;
-        for (LoadType _enum : LoadType.values()) {
+        for (ReceiveObjectType _enum : ReceiveObjectType.values()) {
             if (description.equals(_enum.getDescription()))
                 return _enum;
         }
         return null;
     }
-
 }

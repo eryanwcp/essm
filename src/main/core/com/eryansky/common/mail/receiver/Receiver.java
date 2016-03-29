@@ -1,7 +1,7 @@
 /**
- *  Copyright (c) 2014 http://www.jfit.com.cn
- *
- *          江西省锦峰软件科技有限公司
+ * Copyright (c) 2012-2014 http://www.eryansky.com
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.common.mail.receiver;
 
@@ -23,7 +23,7 @@ import java.util.Properties;
 /**
  * 抽象类，接收服务器通道实现与邮件接收服务器直接通讯完成收取邮件、删除邮件、标记邮件、搜索邮件等操作
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-09-14
  */
 public abstract class Receiver {

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * 新建实体类Group，将id，name，count属性移动到Group实体中。本实体采用List封装Groups信息
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public class GetGroupsResponse extends BaseResponse {

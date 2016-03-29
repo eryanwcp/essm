@@ -14,7 +14,7 @@ import java.util.List;
  * API基类，提供一些通用方法
  * 包含自动刷新token、通用get post请求等
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-03-15
  */
 public abstract class QYBaseAPI {

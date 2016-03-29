@@ -1,7 +1,7 @@
 /**
- *  Copyright (c) 2014 http://www.jfit.com.cn
- *
- *          江西省锦峰软件科技有限公司
+ * Copyright (c) 2012-2014 http://www.eryansky.com
+ * <p/>
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.common.mail.support;
 
@@ -17,7 +17,7 @@ import javax.mail.event.MessageCountListener;
 /**
  * 实现新邮件提醒的核心类 (示例程序)
  *
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-09-14
  */
 public abstract class AbstractMonitor implements Runnable, MessageCountListener {
