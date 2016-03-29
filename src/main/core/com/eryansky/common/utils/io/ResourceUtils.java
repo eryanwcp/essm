@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 
 /**
  * 国际化资源工具类.
- * @author 温春平&wencp wencp@strongit.com.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date   2012-12-15 上午8:43:52
  */
 public class ResourceUtils {

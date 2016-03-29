@@ -12,7 +12,7 @@ import net.sf.ehcache.Element;
 
 /**
  * Cache工具类
- * @author 温春平&wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @version 2013-5-29
  */
 public class CacheUtils {

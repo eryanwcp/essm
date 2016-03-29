@@ -89,7 +89,7 @@ public class BootstrapIconTest {
      * 加载文件
      * @return
      * @throws Exception
-     * @author 温春平&wencp wencp@strongit.com.cn
+     * @author 尔演&Eryan eryanwcp@gmail.com
      * @date：    2012-2-17 下午5:22:50
      */
     private ArrayList<String> loadfile() throws Exception{
