@@ -8,7 +8,7 @@ package com.eryansky.core.db.utils;
 import java.util.Map;
 
 /**
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-03-17 17:11
  */
 public class KeyPair<K, V> implements Map.Entry<K, V> {

@@ -7,7 +7,7 @@ package com.eryansky.core.db.utils;
 
 /**
  * 存储策略
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-04-17 15:42
  */
 public enum LoadType {

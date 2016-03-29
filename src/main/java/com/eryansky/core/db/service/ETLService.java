@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * 通用存储、查询管理
  *
- * @author wencp@温春平 wencp@jx.tobacco.gov.cn
+ * @author wencp@尔演&Eryan eryanwcp@gmail.com
  */
 @Service
 public class ETLService {

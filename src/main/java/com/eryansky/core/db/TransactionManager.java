@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 /**
  * JDBC事务管理器
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-02-20 09:50
  */
 public class TransactionManager {

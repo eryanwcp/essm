@@ -7,7 +7,7 @@ package com.eryansky.core.db.vo;
 
 /**
  * 数据包VO 
- * @author 温春平 wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  */
 public class Package {
 	

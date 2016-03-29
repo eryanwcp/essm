@@ -8,7 +8,7 @@ package com.eryansky.core.db.utils;
 /**
  * 操作系统类：
  * 获取System.getProperty("os.name")对应的操作系统
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-02-19 10:33
  */
 public class OSinfo {

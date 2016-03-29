@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 /**
  * 主键冲突异常类
- * @author 温春平 wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  *
  */
 public class ConstraintViolationException extends Exception {

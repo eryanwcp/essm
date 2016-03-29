@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author : 温春平 wencp@jx.tobacco.gov.cn
+ * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date : 2014-08-01 17:44
  */
 public class NoticeUtils {

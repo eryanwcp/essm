@@ -49,7 +49,7 @@ import java.util.Map;
  * <br/>1、支持重试机制(3次).
  * 2、同一实例自动维护Cookie信息.
  *
- * @author 温春平 wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-12-14
  */
 public class HttpCompoents {

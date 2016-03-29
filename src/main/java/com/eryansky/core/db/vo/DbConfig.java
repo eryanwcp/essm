@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * 数据库数据源Vo 
- * @author  温春平 wencp@jx.tobacco.gov.cn
+ * @author  尔演&Eryan eryanwcp@gmail.com
  */
 @SuppressWarnings("serial")
 public class DbConfig implements Serializable {

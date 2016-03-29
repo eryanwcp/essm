@@ -45,7 +45,7 @@ import java.util.Map;
 
 /**
  * ETL - 存储DAO
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-02-14 15:15
  */
 //@Repository

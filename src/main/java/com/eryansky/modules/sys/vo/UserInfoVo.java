@@ -8,7 +8,7 @@ package com.eryansky.modules.sys.vo;
 import com.eryansky.core.security.SessionInfo;
 
 /**
- * Author: 温春平 wencp@jx.tobacco.gov.cn
+ * Author: 尔演&Eryan eryanwcp@gmail.com
  * Date: 2014-04-02 18:17
  */
 public class UserInfoVo extends SessionInfo {

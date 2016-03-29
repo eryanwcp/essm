@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * SQL Server数据源
- * User: 温春平 wencp@jx.tobacco.gov.cn
+ * User: 尔演&Eryan eryanwcp@gmail.com
  * Date: 13-12-26 上午11:19
  */
 public class SQLServerDiDataSource extends DiDataSource{

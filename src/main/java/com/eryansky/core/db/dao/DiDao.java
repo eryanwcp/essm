@@ -45,7 +45,7 @@ import java.util.Map;
 
 /**
  * JDBC操作(元数据、抽取、存储/装载) DAO
- * User: 温春平 wencp@jx.tobacco.gov.cn
+ * User: 尔演&Eryan eryanwcp@gmail.com
  * Date: 13-12-26 下午1:36
  */
 public class DiDao{

@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * 岗位管理 Service
- * @author : 温春平 wencp@jx.tobacco.gov.cn
+ * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date : 2014-06-09 14:07
  */
 @Service

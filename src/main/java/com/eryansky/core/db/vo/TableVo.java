@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * 元数据表 Vo
- * @author 温春平 wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  *
  */
 public class TableVo implements Serializable {

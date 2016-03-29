@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  * 字段
- * @author 温春平 wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  */
 public class ColumnVo implements Serializable {
 

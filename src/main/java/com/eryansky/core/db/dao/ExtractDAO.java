@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  * 抽取DAO
  * 注：由于使用的数据源是动态创建的  使用DButils QueryRunner执行完sql语句之后，会自动关闭ResultSet或者Statement，但是不会关闭Connection对象，需要手动关闭连接对象
- * User: 温春平 wencp@jx.tobacco.gov.cn
+ * User: 尔演&Eryan eryanwcp@gmail.com
  * Date: 14-1-13 下午4:11
  */
 //@Repository
