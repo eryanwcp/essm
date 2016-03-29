@@ -53,7 +53,6 @@ function loadData() {
 function loadOrgan(data) {
     $organ_combotree = $("#organId").combotree({
         data: data,
-        required: true,
         missingMessage: '请选择所属机构.',
         multiple: false,
         editable: false
