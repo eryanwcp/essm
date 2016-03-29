@@ -15,8 +15,10 @@ import com.eryansky.core.db.vo.TableVo;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class MySQLDataSource extends DiDataSource {
 
@@ -196,4 +198,8 @@ public class MySQLDataSource extends DiDataSource {
 
 	}
 
+    @Override
+    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+        return null;
+    }
 }
