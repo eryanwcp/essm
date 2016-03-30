@@ -37,7 +37,7 @@ public class Resources {
 
 
 
-	public static final String BASE_PACKAGE = "com.jfit.modules";
+	public static final String BASE_PACKAGE = "com.eryansky.modules";
 	public static final String ENTITY_PACKAGE = BASE_PACKAGE+"."+MODULE+".mapper";
 	public static final String DAO_PACKAGE = BASE_PACKAGE+"."+MODULE+".dao";
 	public static final String SERVICE_PACKAGE = BASE_PACKAGE+"."+MODULE+".service";

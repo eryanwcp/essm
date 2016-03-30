@@ -75,7 +75,7 @@ public class Role extends DataEntity<Role> {
      */
     private String isActivity = YesOrNo.YES.getValue();
     /**
-     * 权限类型 {@link com.jfit.modules.sys._enum.RoleType}
+     * 权限类型 {@link com.eryansky.modules.sys._enum.RoleType}
      */
     private String roleType;
     /**

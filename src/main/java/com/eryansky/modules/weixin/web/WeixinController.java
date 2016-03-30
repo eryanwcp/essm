@@ -3,6 +3,7 @@
  */
 package com.eryansky.modules.weixin.web;
 
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.fastweixin.handle.EventHandle;
 import com.eryansky.fastweixin.handle.MessageHandle;
 import com.eryansky.fastweixin.message.BaseMsg;
@@ -13,8 +14,8 @@ import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.modules.weixin.utils.WeixinConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
  * 集成微信
  */
 @RequiresUser(required = false)
-@RestController
+@Controller
 @RequestMapping(value = "${mobilePath}/weixin")
 public class WeixinController extends WeixinControllerSupport {
 

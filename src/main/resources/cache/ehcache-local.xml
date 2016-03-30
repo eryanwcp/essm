@@ -70,7 +70,4 @@
     <cache name="sysCache" maxElementsInMemory="100" eternal="true" overflowToDisk="true">
     </cache>
 
-    <cache name="cmsCache" maxElementsInMemory="100" eternal="true" overflowToDisk="true">
-    </cache>
-
 </ehcache>

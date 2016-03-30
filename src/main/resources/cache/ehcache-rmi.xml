@@ -94,7 +94,4 @@
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
     </cache>
 
-    <cache name="cmsCache" maxElementsInMemory="100" eternal="true" overflowToDisk="true">
-        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
-    </cache>
 </ehcache>

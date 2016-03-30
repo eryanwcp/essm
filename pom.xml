@@ -47,7 +47,6 @@
         <!-- jdbc driver setting -->
         <mysql.driver.version>5.1.31</mysql.driver.version>
         <mariadb.driver.version>1.1.8</mariadb.driver.version>
-        <db2.driver.version>10.1</db2.driver.version>
 
         <!-- other setting -->
         <jdk.version>1.6</jdk.version>
