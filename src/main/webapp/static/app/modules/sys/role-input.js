@@ -29,7 +29,7 @@ $(function () {
         var value = $(this).val();
         if("1" == value){
             $("#div_organId").hide();
-            $organ_combotree.combotree('clear');
+            $organ_combotree.combotree("setValue","");
         }else{
             $("#div_organId").show();
         }
@@ -78,7 +78,7 @@ function loadDataScope(data) {
                 $("#div_organIds").show();
             }else{
                 $("#div_organIds").hide();
-                $organIds_combotree.combotree("clear");
+                $organIds_combotree.combotree("setValue","");
             }
         }
     });
