@@ -131,7 +131,7 @@ public abstract class DataEntity<T> extends BaseEntity<T>  implements IDataEntit
 		this.createUser = createUser;
 	}
 
-	@JsonFormat(pattern = DATE_TIME_FORMAT)
+	@JsonFormat(pattern = DATE_TIME_FORMAT, timezone = TIMEZONE)
 	@Override
 	public Date getCreateTime() {
 		return createTime;
@@ -152,7 +152,7 @@ public abstract class DataEntity<T> extends BaseEntity<T>  implements IDataEntit
 		this.updateUser = updateUser;
 	}
 
-	@JsonFormat(pattern = DATE_TIME_FORMAT)
+	@JsonFormat(pattern = DATE_TIME_FORMAT, timezone = TIMEZONE)
 	@Override
 	public Date getUpdateTime() {
 		return updateTime;
