@@ -120,7 +120,7 @@
     </div>
 </div>
 <footer class="white navbar-fixed-bottom">
-    版权所有 &copy; 2013-${fns:getDate('yyyy')} <a target="_blank" href="客户服务电话：400-166-8882">XXX件科技有限公司</a>
+    版权所有 &copy; 2013-${fns:getDate('yyyy')} <a target="_blank" href="#">XXX件科技有限公司</a>
 </footer>
 </body>
 </html>
