@@ -258,9 +258,9 @@ public class SecurityUtils {
      * 获取当前登录用户信息.
      */
     public static String getCurrentUserId() {
-        User user = getCurrentUser();
-        if(user != null){
-            return user.getId();
+        SessionInfo sessionInfo = getCurrentSessionInfo();
+        if(sessionInfo != null){
+            return sessionInfo.getUserId();
         }
         return null;
     }
