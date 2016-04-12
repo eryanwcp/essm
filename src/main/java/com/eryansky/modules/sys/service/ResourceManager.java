@@ -312,7 +312,8 @@ public class ResourceManager extends EntityManager<Resource, String> {
         hql.append(" order by r.orderNo asc");
 
 
-        List<Resource> list =  getEntityDao().find(hql.toString(),parameter);
+        Query query = getEntityDao().distinct(getEntityDao().createQuery(hql.toString(), parameter));
+        List<Resource> list = query.list();
 //        Collections.sort(list, new Comparator<Resource>() {
 //            @Override
 //            public int compare(Resource o1, Resource o2) {
