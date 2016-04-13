@@ -1037,7 +1037,7 @@ public class DiskController extends SimpleController {
      * @param fileId
      *            文件ID
      */
-    @Logging(logType = LogType.access,value = "下载文件[{2}]")
+    @Logging(logType = LogType.access,value = "下载文件[#fileId]")
     @RequiresUser(required = false)
     @RequestMapping(value = { "fileDownload/{fileId}" })
     public ModelAndView fileDownload(HttpServletResponse response,
