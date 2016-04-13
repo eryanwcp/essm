@@ -81,7 +81,7 @@ public class Role extends DataEntity<Role> {
     /**
      * 数据范围 {@link DataScope}
      */
-    private String dataScope = DataScope.SELF.getValue();// 数据范围
+    private String dataScope;// 数据范围
 
     /**
      * 按明细设置数据范围 授权机构

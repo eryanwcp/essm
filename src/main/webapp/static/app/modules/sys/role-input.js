@@ -70,7 +70,7 @@ function loadOrganIds(data) {
 
 function loadDataScope(data) {
     $("#dataScope").combobox({
-        url: ctxAdmin + '/sys/role/dataScope&selectType=select',
+        url: ctxAdmin + '/sys/role/dataScope?selectType=select',
         editable: false,
         onSelect: function (record) {
             var dataScope = record['value'];
