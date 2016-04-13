@@ -8,15 +8,17 @@ package com.eryansky.core.aop.annotation;
 
 import com.eryansky.modules.sys._enum.LogType;
 
-import static com.eryansky.modules.sys._enum.LogType.*;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static com.eryansky.modules.sys._enum.LogType.*;
+import static com.eryansky.modules.sys._enum.LogType.operate;
+
 /**
  * 是否记录日志 用于切面记录日志
+ * <br/>支持SpEL表达式
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -24,9 +26,10 @@ public @interface Logging {
 
     /**
      * 记录日志 默认值：true
+     * <br/>支持SpEL表达式
      * @return
      */
-    boolean logging() default true;
+    String logging() default "true";
 
     /**
      * 日志类型 {@link LogType}
@@ -36,7 +39,7 @@ public @interface Logging {
 
     /**
      * 日志详细信息
-     * <br/>支持占位符 表示第几个参数 例如："{0},{1},..."
+     * <br/>支持SpEL表达式
      * @return
      */
     String value() default "";

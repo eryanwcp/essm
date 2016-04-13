@@ -207,6 +207,23 @@
         <!--</property>-->
     <!--</bean>-->
 
+    <!--安全审计日志-->
+    <bean id="logMethodInterceptor" class="com.eryansky.core.aop.interceptor.LogMethodInterceptor">
+        <property name="defaultMethods">
+            <list>
+                <value>ok</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="logMethodPointCut" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+        <property name="advice" ref="logMethodInterceptor"/>
+        <property name="patterns">
+            <list>
+                <value>com.jfit.modules.*.service.*Manager.*(..)</value>
+                <value>com.jfit.modules.*.service.*Service.*(..)</value>
+            </list>
+        </property>
+    </bean>
     <!--企业微信号配置-->
     <bean id="qyapiConfig" class="com.eryansky.fastweixin.company.api.config.QYAPIConfig">
         <constructor-arg name="corpid" value="${weixin.cropId}"></constructor-arg>
