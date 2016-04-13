@@ -48,6 +48,10 @@ public abstract class BaseService {
         if (user != null && !user.isAdmin()) {
             boolean isDataScopeAll = false;
             for (Role r : user.getRoles()) {
+                if(StringUtils.isBlank(r.getDataScope())){
+                    continue;
+                }
+
                 for (String oa : StringUtils.split(officeAlias, ",")) {
                     if (!dataScope.contains(r.getDataScope()) && StringUtils.isNotBlank(oa)) {
                         if (DataScope.ALL.getValue().equals(r.getDataScope())) {
@@ -121,8 +125,11 @@ public abstract class BaseService {
         StringBuilder sqlString = new StringBuilder();
         // 获取到最大的数据权限范围
         String roleId = "";
-        int dataScopeInteger = 8;
+        int dataScopeInteger = Integer.valueOf(DataScope.SELF.getValue());
         for (Role r : user.getRoles()) {
+            if(StringUtils.isBlank(r.getDataScope())){
+                continue;
+            }
             int ds = Integer.valueOf(r.getDataScope());
             if (ds == 9) {
                 roleId = r.getId();
