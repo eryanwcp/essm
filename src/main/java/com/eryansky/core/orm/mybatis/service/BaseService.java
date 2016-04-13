@@ -131,7 +131,7 @@ public abstract class BaseService {
                 continue;
             }
             int ds = Integer.valueOf(r.getDataScope());
-            if (ds == 9) {
+            if (ds == Integer.valueOf(DataScope.CUSTOM.getValue())) {
                 roleId = r.getId();
                 dataScopeInteger = ds;
                 break;
