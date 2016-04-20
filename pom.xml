@@ -750,8 +750,9 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.1</version>
+                <version>1.9</version>
                 <executions>
+                    <!-- 添加主源码目录 -->
                     <execution>
                         <id>add-source</id>
                         <phase>generate-sources</phase>
@@ -763,13 +764,25 @@
                                 <source>src/main/java</source>
                                 <source>src/main/core</source>
                                 <source>src/main/fastweixin</source>
-                                <source>src/main/codegen</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                    <!-- 添加测试源码目录 -->
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${basedir}/src/main/codegen</source>
+                                <source>${basedir}/src/test/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

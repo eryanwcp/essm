@@ -13,7 +13,7 @@ public class CodeCount {
     static long whiteLine = 0;
 
     public static void main(String args[]) {
-        File f = new File("D:\\work_jf\\workspace\\mp\\src\\main\\java");
+        File f = new File("E:\\MyProject\\GitHub\\essm\\src\\main\\core");
         r(f, ".java");
         p("注释的代码行数:" + commentLine);
         p("空白的代码行数:" + whiteLine);
