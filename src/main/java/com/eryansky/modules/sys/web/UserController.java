@@ -289,7 +289,7 @@ public class UserController extends BaseController<User,String> {
             user.setPassword(Encrypt.e(user.getPassword()));
         } else {// 修改
             User superUser = userManager.getSuperUser();
-            User sessionUser = userManager.getCurrentUser();
+            User sessionUser = SecurityUtils.getCurrentUser();
             if (superUser.getId().equals(user.getId()) && !sessionUser.getId().equals(superUser.getId())) {
                 result = new Result(Result.ERROR, "超级用户信息仅允许自己修改!",null);
                 logger.debug(result.toString());

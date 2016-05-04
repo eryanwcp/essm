@@ -53,7 +53,7 @@ public enum StatusState {
 		return description;
 	}
 
-	public static StatusState getStatusStateByValue(String value) {
+	public static StatusState getByValue(String value) {
 		if (null == value)
 			return null;
 		for (StatusState _enum : StatusState.values()) {
@@ -63,7 +63,7 @@ public enum StatusState {
 		return null;
 	}
 
-	public static StatusState getStatusStateByDescription(String description) {
+	public static StatusState getByDescription(String description) {
 		if (null == description)
 			return null;
 		for (StatusState _enum : StatusState.values()) {

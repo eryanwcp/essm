@@ -99,7 +99,7 @@ public abstract class DataEntity<T> extends BaseEntity<T>  implements IDataEntit
 
 	@Override
 	public String getStatusView() {
-		StatusState s = StatusState.getStatusStateByValue(status);
+		StatusState s = StatusState.getByValue(status);
 		String str = "";
 		if (s != null) {
 			str = s.getDescription();
