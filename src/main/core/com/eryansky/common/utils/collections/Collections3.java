@@ -66,6 +66,27 @@ public class Collections3 {
 	}
 
 	/**
+	 * 提取集合中的对象的一个属性(通过Getter函数), 组合成Set.
+	 *
+	 * @param collection 来源集合.
+	 * @param propertyName 要提取的属性名.
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Set extractToSet(final Collection collection, final String propertyName) {
+		Set set = new HashSet(collection.size());
+
+		try {
+			for (Object obj : collection) {
+				set.add(PropertyUtils.getProperty(obj, propertyName));
+			}
+		} catch (Exception e) {
+			throw ReflectionUtils.convertReflectionExceptionToUnchecked(e);
+		}
+
+		return set;
+	}
+
+	/**
 	 * 提取集合中的对象的一个属性(通过Getter函数), 组合成由分割符分隔的字符串.
 	 * 
 	 * @param collection 来源集合.

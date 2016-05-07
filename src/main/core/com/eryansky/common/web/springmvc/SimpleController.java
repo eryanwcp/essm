@@ -8,6 +8,7 @@ package com.eryansky.common.web.springmvc;
 import com.eryansky.common.utils.BeanValidators;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.mapper.JsonMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -131,6 +133,16 @@ public abstract class SimpleController{
     }
 
     /**
+     * 服务端参数有效性验证
+     * @param object 验证的实体对象
+     * @param groups 验证组，不传入此参数时，同@Valid注解验证
+     * @return 验证成功：继续执行；验证失败：抛出异常跳转400页面。
+     */
+    protected void beanValidator(Object object, Class<?>... groups) {
+        BeanValidators.validateWithException(validator, object, groups);
+    }
+
+    /**
      * 添加Model消息
      *
      * @param messages 消息
@@ -183,6 +195,35 @@ public abstract class SimpleController{
         // String类型转换，将所有传递进来的String进行HTML编码，防止XSS攻击
         binder.registerCustomEditor(String.class, new StringEscapeEditor(true, false));
 
+    }
+
+    /**
+     * 客户端返回JSON字符串
+     * @param response
+     * @param object
+     * @return
+     */
+    protected String renderString(HttpServletResponse response, Object object) {
+        return renderString(response, JsonMapper.getInstance().toJson(object), "application/json");
+    }
+
+
+    /**
+     * 客户端返回字符串
+     * @param response
+     * @param string
+     * @return
+     */
+    protected String renderString(HttpServletResponse response, String string, String type) {
+        try {
+            response.reset();
+            response.setContentType(type);
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().print(string);
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 }

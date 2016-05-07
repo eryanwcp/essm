@@ -1,3 +1,8 @@
+/**
+ *  Copyright (c) 2012-2014 http://www.eryansky.com
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ */
 package com.eryansky.common.utils;
 
 import java.util.List;
@@ -20,9 +25,7 @@ import com.google.common.collect.Maps;
  * 2. List<String>, String内容为propertyPath + separator + message
  * 3. Map<propertyPath, message>
  * 
- * 详情见wiki: https://github.com/springside/springside4/wiki/HibernateValidator
- * @author calvin
- * @version 2013-01-15
+ * @author 尔演&Eryan eryanwcp@gmail.com
  */
 public class BeanValidators {
 

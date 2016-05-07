@@ -1,7 +1,7 @@
 /**
- * Copyright &copy; 2012-2013 <a href="https://github.com/尔演&Eryan eryanwcp@gmail.com/jeesite">JeeSite</a> All rights reserved.
+ *  Copyright (c) 2012-2014 http://www.eryansky.com
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ *  Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.common.orm.mybatis.interceptor;
 

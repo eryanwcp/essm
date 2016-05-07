@@ -41,10 +41,6 @@ import java.util.zip.Inflater;
  */
 public class SysUtils {
 	private static final int DEF_DIV_SCALE = 2;
-	public static final String FULL_DATEFORMAT = "yyyy-MM-dd HH:mm:ss";
-	public static final String CHS_DATEFORMAT = "yyyy年MM月dd日";
-	public static final String SHORT_DATEFORMAT = "yyyy-MM-dd";
-	public static final String SHORT_TIMEFORMAT = "HH:mm:ss";
 	public static final int BUFFER_SIZE = 16 * 1024;
 
 
@@ -160,35 +156,6 @@ public class SysUtils {
 			result++;
 		}
 		return result;
-	}
-
-	public static String getNowDateStr() {
-		String result = dateFormat(getNowDate(), CHS_DATEFORMAT);
-		Calendar c = Calendar.getInstance();
-		for (int i = 0; i < 8; i++) {
-			c.add(Calendar.DAY_OF_MONTH, 1);
-			@SuppressWarnings("unused")
-			int e = c.get(Calendar.DAY_OF_WEEK);
-		}
-		result += "  星期";
-		switch (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-		case Calendar.SUNDAY:
-			return result + "日";
-		case Calendar.MONDAY:
-			return result + "一";
-		case Calendar.TUESDAY:
-			return result + "二";
-		case Calendar.WEDNESDAY:
-			return result + "三";
-		case Calendar.THURSDAY:
-			return result + "四";
-		case Calendar.FRIDAY:
-			return result + "五";
-		case Calendar.SATURDAY:
-			return result + "六";
-		default:
-			return result;
-		}
 	}
 
 
@@ -338,26 +305,6 @@ public class SysUtils {
 		return true;
 	}
 
-	/**
-	 * 清除HTML标记
-	 * 
-	 * @param htmlText
-	 *            带HTML标记的字符串
-	 * @return 纯文本字符串
-	 */
-	public static String cleanHtmlTag(String htmlText) {
-		String reg = "</?[a-z][a-z0-9]*[^<>]*>?";
-		return htmlText.replaceAll(reg, "");
-	}
-
-	/**
-	 * 返回系统当前时间
-	 * 
-	 * @return String 当前时间
-	 */
-	public static String getNowTime() {
-		return dateFormat(getNowDate(), FULL_DATEFORMAT);
-	}
 
 	/**
 	 * 格式化内容，只保留前n个字符，并进一步确认是否要在后面加上...
@@ -595,281 +542,6 @@ public class SysUtils {
 		}
 	}
 
-	/**
-	 * 按照指定方式格式化时间
-	 * 
-	 * @param date
-	 *            时间
-	 * @param type
-	 *            格式
-	 * @return
-	 */
-	public static String dateFormat(Date date, String type) {
-		SimpleDateFormat sdf = new SimpleDateFormat(type);
-		return sdf.format(date);
-	}
-
-	public static String dateFormatTally() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_YEAR, -1);
-		return dateFormat(calendar.getTime(), "yyyyMMdd");
-	}
-
-	public static String dateFormatTallyStr() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_YEAR, -1);
-		return dateFormat(calendar.getTime(), "yyyy-MM-dd");
-	}
-
-	public static String dateFormatAccountMonth() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.MONTH, -1);
-		return dateFormat(calendar.getTime(), "yyyyMM");
-	}
-
-	public static String dateFormatTallyCN() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(Calendar.DAY_OF_YEAR, -1);
-		return dateFormat(calendar.getTime(), "yyyy年MM月dd日");
-	}
-
-	/**
-	 * 按照指定方式格式化时间
-	 * 
-	 * @param type
-	 *            格式
-	 * @return
-	 */
-	public static String dateFormat(String type) {
-		return dateFormat(getNowDate(), type);
-	}
-
-	public static Date getNowDate(int field, int amount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(field, amount);
-		return calendar.getTime();
-	}
-
-	public static String getBeiJingDateTime() {
-		return SysUtils.dateFormat(SysUtils.getNowDate(Calendar.HOUR_OF_DAY, 8),
-				SysUtils.FULL_DATEFORMAT);
-	}
-
-	public static String getBeiJingDate() {
-		return SysUtils.dateFormat(SysUtils.getNowDate(Calendar.HOUR_OF_DAY, 8),
-				SysUtils.SHORT_DATEFORMAT);
-	}
-
-	public static long getNowDateBeginLong(int field, int amount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(field, amount);
-		calendar.set(Calendar.HOUR_OF_DAY, 0);
-		calendar.set(Calendar.MINUTE, 0);
-		calendar.set(Calendar.SECOND, 0);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime().getTime();
-	}
-
-	public static long getNowDateEndLong(int field, int amount) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.add(field, amount);
-		calendar.set(Calendar.HOUR_OF_DAY, 23);
-		calendar.set(Calendar.MINUTE, 59);
-		calendar.set(Calendar.SECOND, 59);
-		calendar.set(Calendar.MILLISECOND, 0);
-		return calendar.getTime().getTime();
-	}
-
-	/**
-	 * 返回系统当前时间的date对象
-	 * 
-	 * @return
-	 */
-	public static Date getNowDate() {
-		return new Date();
-	}
-
-	/**
-	 * 返回系统当前日期
-	 * 
-	 * @return String 日期
-	 */
-	public static String getNowShortDate() {
-		return dateFormat(getNowDate(), SHORT_DATEFORMAT);
-	}
-
-	/**
-	 * 返回系统当前时间
-	 * 
-	 * @return 时间
-	 */
-	public static String getNowShortTime() {
-		return dateFormat(getNowDate(), SHORT_TIMEFORMAT);
-	}
-
-	/**
-	 * 判断时间格式
-	 * 
-	 * @param date
-	 * @param format
-	 * @return
-	 */
-	public static boolean checkDate(String date, String format) {
-		SimpleDateFormat df = new SimpleDateFormat(format);
-		try {
-			df.parse(date);
-		} catch (Exception e) {
-			// 如果不能转换,肯定是错误格式
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * 计算时间差 (时间单位,开始时间,结束时间)<br>
-	 * s - 秒,m - 分,h - 时,d - 天 调用方法
-	 * howLong("h","2007-08-09 10:22:26","2007-08-09 20:21:30") ///9小时56分 返回9小时
-	 * 
-	 * @throws java.text.ParseException
-	 */
-	public static long howLong(String unit, String time1, String time2)
-			throws ParseException {
-		// 时间单位(如：不足1天(24小时) 则返回0)，开始时间，结束时间
-		Date date1 = new SimpleDateFormat(FULL_DATEFORMAT).parse(time1);
-		Date date2 = new SimpleDateFormat(FULL_DATEFORMAT).parse(time2);
-		long ltime = date1.getTime() - date2.getTime() < 0 ? date2.getTime()
-				- date1.getTime() : date1.getTime() - date2.getTime();
-		if (unit.equals("s")) {
-			return ltime / 1000;// 返回秒
-		} else if (unit.equals("m")) {
-			return ltime / 60000;// 返回分钟
-		} else if (unit.equals("h")) {
-			return ltime / 3600000;// 返回小时
-		} else if (unit.equals("d")) {
-			return ltime / 86400000;// 返回天数
-		} else {
-			return 0;
-		}
-	}
-
-	/**
-	 * 转换字符串为date类型
-	 * 
-	 * @param time
-	 * @param type
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static Date parseDate(String time, String type)
-			throws ParseException {
-		return new SimpleDateFormat(type).parse(time);
-	}
-
-	/**
-	 * 转换字符串为date类型
-	 * 
-	 * @param time
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static Date parseDate(String time) throws ParseException {
-		return new SimpleDateFormat(FULL_DATEFORMAT).parse(time);
-	}
-
-	/**
-	 * 返回相差的时间
-	 * 
-	 * @param time
-	 *            时间
-	 * @param tim
-	 *            时间
-	 * @param type
-	 *            类型 'h' - 小时,'m' - 分,'s' - 秒
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static int strDateDiffTimes(String time, int tim, char type)
-			throws ParseException {
-		if (null2String(time).equals("")) {
-			return 1;
-		}
-		long diff = 1;
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(new SimpleDateFormat(FULL_DATEFORMAT).parse(time));
-		switch (type) {
-		case 'h':
-			calendar.add(Calendar.HOUR_OF_DAY, tim);
-			break;
-		case 'm':
-			calendar.add(Calendar.MINUTE, tim);
-			break;
-		case 's':
-			calendar.add(Calendar.SECOND, tim);
-			break;
-		}
-		Date date = calendar.getTime();
-		long ltime = getNowDate().getTime() - date.getTime();
-		switch (type) {
-		case 'h':
-			diff = ltime / 3600000;// 返回小时
-			break;
-		case 'm':
-			diff = ltime / 60000;// 返回分
-			break;
-		case 's':
-			diff = ltime / 1000;// 返回秒
-			break;
-		}
-		if (diff > Integer.MAX_VALUE) {
-			return Integer.MAX_VALUE;
-		} else if (diff < Integer.MIN_VALUE) {
-			return Integer.MIN_VALUE;
-		}
-		return SysUtils.null2Int(diff);
-	}
-
-	/**
-	 * 返回相差的小时数
-	 * 
-	 * @param time
-	 *            时间
-	 * @param hours
-	 *            小时
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static int strDateDiffHours(String time, int hours)
-			throws ParseException {
-		return strDateDiffTimes(time, hours, 'h');
-	}
-
-	/**
-	 * 返回相差的分钟数
-	 * 
-	 * @param time
-	 *            时间
-	 * @param minutes
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static int strDateDiffMinutes(String time, int minutes)
-			throws ParseException {
-		return strDateDiffTimes(time, minutes, 'm');
-	}
-
-	/**
-	 * 返回相差的秒数
-	 * 
-	 * @param time
-	 *            时间
-	 * @param sec
-	 * @return
-	 * @throws java.text.ParseException
-	 */
-	public static int strDateDiffSeconds(String time, int sec)
-			throws ParseException {
-		return strDateDiffTimes(time, sec, 's');
-	}
 
 	/**
 	 * 检测邮件格式
@@ -904,35 +576,6 @@ public class SysUtils {
 		return stringFormat(s, "ISO8859-1", "UTF-8");
 	}
 
-	/**
-	 * URL编码指定字符串
-	 * 
-	 * @param s
-	 *            字符串
-	 * @return URL编码结果
-	 */
-	public static String urlEncode(String s) {
-		try {
-			return URLEncoder.encode(s, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return s;
-		}
-	}
-
-	/**
-	 * URL解码指定字符串
-	 * 
-	 * @param s
-	 *            字符串
-	 * @return 解码结果
-	 */
-	public static String urlDecode(String s) {
-		try {
-			return URLDecoder.decode(s, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			return s;
-		}
-	}
 
 	/**
 	 * 返回指定IP是否在指定的IP数组所限定的范围内<br>
@@ -1264,20 +907,6 @@ public class SysUtils {
 
 	}
 
-	public static boolean mkdir(String mkdirName) {
-		try {
-			File dirFile = new File(mkdirName);
-			boolean bFile = dirFile.exists();
-			if (bFile) {
-				return true;
-			} else {
-				bFile = dirFile.mkdir();
-				return bFile;
-			}
-		} catch (Exception err) {
-			return false;
-		}
-	}
 
 	/**
 	 * 获取置顶邮件的服务器地址
@@ -1382,48 +1011,6 @@ public class SysUtils {
 
 	}
 
-	public static void copy(File src, File dst) {
-		try {
-			InputStream in = null;
-			OutputStream out = null;
-			int byteread = 0;
-			try {
-				in = new BufferedInputStream(new FileInputStream(src),
-						BUFFER_SIZE);
-				out = new BufferedOutputStream(new FileOutputStream(dst),
-						BUFFER_SIZE);
-				byte[] buffer = new byte[BUFFER_SIZE];
-				while ((byteread = in.read(buffer)) != -1) {
-					out.write(buffer, 0, byteread);
-				}
-
-				//
-				// byte[] buffer = new byte[bs];
-				// while (in.read(buffer) > 0) {
-				// out.write(buffer);
-				// buffer = new byte[BUFFER_SIZE];
-				// }
-			} finally {
-				if (null != in) {
-					in.close();
-				}
-				if (null != out) {
-					out.close();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static String decode(String s) {
-		try {
-			return URLDecoder.decode(s, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return s;
-	}
 
 	public static String getIpStringFromBytes(byte[] ip) {
 		StringBuffer sb = new StringBuffer();
@@ -1609,29 +1196,6 @@ public class SysUtils {
 		} catch (Exception e) {
 			return false;
 		}
-	}
-
-	/**
-	 * 得到账务日期
-	 * 
-	 * @param hour
-	 *            超过算第二天
-	 * @return
-	 */
-	public static String getAccDate(int hour) {
-		Calendar calendar = Calendar.getInstance();
-		if (calendar.get(Calendar.HOUR_OF_DAY) >= hour) {
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return dateFormat(calendar.getTime(), "yyyyMMdd");
-	}
-
-	public static String getAccDateShort(int hour) {
-		Calendar calendar = Calendar.getInstance();
-		if (calendar.get(Calendar.HOUR_OF_DAY) >= hour) {
-			calendar.add(Calendar.DAY_OF_YEAR, 1);
-		}
-		return dateFormat(calendar.getTime(), "yyMMdd");
 	}
 
 	public static String fillzero(String str, int len) {

@@ -20,7 +20,7 @@ public class MapUtils {
     /**
      * 判断map是否为空或大小为0
      * 
-     * @param str
+     * @param sourceMap
      * @return 若map为null或长度为0, 返回true; 否则返回false.
      * 
      * <pre>
@@ -31,6 +31,22 @@ public class MapUtils {
      */
     public static boolean isEmpty(Map<?, ?> sourceMap) {
         return (sourceMap == null || sourceMap.size() == 0);
+    }
+
+    /**
+     * 判断map是否不为空
+     *
+     * @param sourceMap
+     * @return 若map为null或长度为0, 返回false; 否则返回true.
+     *
+     * <pre>
+     *      isNotEmpty(null)   =   false;
+     *      isNotEmpty({})     =   fasle;
+     *      isNotEmpty({1, 2})    =   true;
+     * </pre>
+     */
+    public static boolean isNotEmpty(Map<?, ?> sourceMap) {
+        return !isEmpty(sourceMap);
     }
 
     /**

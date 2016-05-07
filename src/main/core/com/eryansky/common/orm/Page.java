@@ -31,6 +31,7 @@ public class Page<T> {
 	public static final String DESC = "desc";
 
 	public static final int DEFAULT_PAGESIZE = 20;
+	public static final int PAGESIZE_ALL = -1;//不分页
 
 	//-- 分页参数 --//
 	protected int pageNo = 1;

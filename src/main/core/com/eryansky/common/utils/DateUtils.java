@@ -18,7 +18,11 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static final String TIME_FORMAT = "HH:mm:ss";
 
+    public static final String TIME_SHORT_FORMAT = "HH:mm";
+
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    public static final String DATE_TIME_SHORT_FORMAT = "yyyy-MM-dd HH:mm";
 
     public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
 
@@ -1372,6 +1376,131 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         if (date == null)
             return null;
         return new SimpleDateFormat(dateFormat).format(date);
+    }
+
+
+
+    /**
+     * 计算时间差 (时间单位,开始时间,结束时间)<br>
+     * s - 秒,m - 分,h - 时,d - 天 调用方法
+     * howLong("h","2007-08-09 10:22:26","2007-08-09 20:21:30") ///9小时56分 返回9小时
+     *
+     * @throws java.text.ParseException
+     */
+    public static long howLong(String unit, String time1, String time2)
+            throws ParseException {
+        // 时间单位(如：不足1天(24小时) 则返回0)，开始时间，结束时间
+        Date date1 = new SimpleDateFormat(DATE_TIME_FORMAT).parse(time1);
+        Date date2 = new SimpleDateFormat(DATE_TIME_FORMAT).parse(time2);
+        long ltime = date1.getTime() - date2.getTime() < 0 ? date2.getTime()
+                - date1.getTime() : date1.getTime() - date2.getTime();
+        if (unit.equals("s")) {
+            return ltime / 1000;// 返回秒
+        } else if (unit.equals("m")) {
+            return ltime / 60000;// 返回分钟
+        } else if (unit.equals("h")) {
+            return ltime / 3600000;// 返回小时
+        } else if (unit.equals("d")) {
+            return ltime / 86400000;// 返回天数
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * 返回相差的时间
+     *
+     * @param time
+     *            时间
+     * @param tim
+     *            时间
+     * @param type
+     *            类型 'h' - 小时,'m' - 分,'s' - 秒
+     * @return
+     * @throws java.text.ParseException
+     */
+    public static int strDateDiffTimes(String time, int tim, char type)
+            throws ParseException {
+        if (StringUtils.isBlank(time)) {
+            return 1;
+        }
+        long diff = 1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new SimpleDateFormat(DATE_TIME_FORMAT).parse(time));
+        switch (type) {
+            case 'h':
+                calendar.add(Calendar.HOUR_OF_DAY, tim);
+                break;
+            case 'm':
+                calendar.add(Calendar.MINUTE, tim);
+                break;
+            case 's':
+                calendar.add(Calendar.SECOND, tim);
+                break;
+        }
+        Date date = calendar.getTime();
+        long ltime = Calendar.getInstance().getTime().getTime() - date.getTime();
+        switch (type) {
+            case 'h':
+                diff = ltime / 3600000;// 返回小时
+                break;
+            case 'm':
+                diff = ltime / 60000;// 返回分
+                break;
+            case 's':
+                diff = ltime / 1000;// 返回秒
+                break;
+        }
+        if (diff > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        } else if (diff < Integer.MIN_VALUE) {
+            return Integer.MIN_VALUE;
+        }
+        return SysUtils.null2Int(diff);
+    }
+
+    /**
+     * 返回相差的小时数
+     *
+     * @param time
+     *            时间
+     * @param hours
+     *            小时
+     * @return
+     * @throws java.text.ParseException
+     */
+    public static int strDateDiffHours(String time, int hours)
+            throws ParseException {
+        return strDateDiffTimes(time, hours, 'h');
+    }
+
+    /**
+     * 返回相差的分钟数
+     *
+     * @param time
+     *            时间
+     * @param minutes
+     * @return
+     * @throws java.text.ParseException
+     */
+    public static int strDateDiffMinutes(String time, int minutes)
+            throws ParseException {
+        return strDateDiffTimes(time, minutes, 'm');
+    }
+
+    /**
+     * 返回相差的秒数
+     *
+     * @param time
+     *            时间
+     * @param sec
+     * @return
+     * @throws java.text.ParseException
+     */
+    public static int strDateDiffSeconds(String time, int sec)
+            throws ParseException {
+        return strDateDiffTimes(time, sec, 's');
     }
 	
 	/**

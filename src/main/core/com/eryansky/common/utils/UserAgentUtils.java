@@ -1,5 +1,7 @@
 /**
- * Copyright &copy; 2012-2014 <a href="https://github.com/thinkgem/jeesite">JeeSite</a> All rights reserved.
+ *  Copyright (c) 2012-2014 http://www.eryansky.com
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.common.utils;
 
@@ -11,8 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户代理字符串识别工具
- * @author ThinkGem
- * @version 2014-6-13
+ * @author 尔演&Eryan eryanwcp@gmail.com
+ * @version 2016-05-03
  */
 public class UserAgentUtils {
 

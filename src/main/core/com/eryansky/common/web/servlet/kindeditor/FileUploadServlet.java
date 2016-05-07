@@ -6,7 +6,7 @@
 package com.eryansky.common.web.servlet.kindeditor;
 
 import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.io.FileUtil;
+import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.google.common.collect.Maps;
 import org.apache.commons.fileupload.FileItem;
@@ -118,7 +118,7 @@ public class FileUploadServlet extends HttpServlet {
 		//检查目录
 		File uploadDir = new File(savePath);
 		if(!uploadDir.isDirectory()){
-			FileUtil.createDirectory(uploadDir.getPath());
+			FileUtils.createDirectory(uploadDir.getPath());
 //			ServletUtils.rendText(getError("上传目录不存在。"), response);
 //			return;
 		}

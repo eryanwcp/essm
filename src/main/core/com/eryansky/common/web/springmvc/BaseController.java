@@ -12,7 +12,7 @@ import com.eryansky.common.orm.PropertyFilter;
 import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.orm.hibernate.HibernateWebUtils;
 import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.reflection.MyBeanUtils;
+import com.eryansky.common.utils.reflection.BeanUtils;
 import com.eryansky.common.utils.reflection.ReflectionUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -55,7 +55,7 @@ public abstract class BaseController<T, PK extends Serializable> extends SimpleC
             //对象拷贝
             if(entity != null){
                 try {
-                    cloneEntity = (T) MyBeanUtils.cloneBean(entity);
+                    cloneEntity = (T) BeanUtils.cloneBean(entity);
                 } catch (Exception e) {
                     cloneEntity = entity;
                     logger.error(e.getMessage(),e);
