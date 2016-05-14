@@ -6,13 +6,13 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>2.3.20160328-SNAPSHOT</version>
+    <version>2.3.20160514-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
     <properties>
         <!-- version setting -->
-        <!--<spring.version>3.2.10.RELEASE</spring.version>-->
+        <!--<spring.version>4.2.6.RELEASE</spring.version>-->
         <spring.version>4.1.6.RELEASE</spring.version>
         <hibernate.version>4.2.14.Final</hibernate.version>
         <hibernate-search.version>4.4.3.Final</hibernate-search.version>

@@ -158,7 +158,7 @@ function dictionaryItemDatagrid() {
             }, {
                 field: 'code',
                 title: '编码',
-                width: 100,
+                width: 200,
                 sortable: true,
                 editor: {
                     type: 'textbox',
@@ -178,7 +178,7 @@ function dictionaryItemDatagrid() {
             }, {
                 field: 'value',
                 title: '属性值',
-                width: 120,
+                width: 200,
                 sortable: true,
                 editor: {
                     type: 'textbox',
@@ -256,7 +256,6 @@ function dictionaryItemDatagrid() {
             $(this).datagrid('clearChecked');
             $(this).datagrid('unselectAll');
             editRow = undefined;
-
         },
         onRowContextMenu: function (e, rowIndex, rowData) {
             e.preventDefault();
@@ -292,7 +291,7 @@ function addDictionaryItem() {
         if (node != null && node['attributes']['groupId'] != null) {
             dictionaryId = node['id'];
         }
-        var row = {id: '', dictionaryId: dictionaryId};
+        var row = {id: '', dictionaryId: dictionaryId,editing:true};
         $dictionaryItem_datagrid.datagrid('appendRow', row);
         editRow = $dictionaryItem_datagrid.datagrid('getRows').length - 1;
         $dictionaryItem_datagrid.datagrid('selectRow', editRow);
@@ -308,6 +307,7 @@ function updateActions(index) {
         index: index,
         row: {}
     });
+    $dictionaryItem_datagrid.datagrid('refreshRow',index);
 }
 /**
  * 开始编辑
