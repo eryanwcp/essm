@@ -1,0 +1,32 @@
+[{
+		"id" : "1",
+		"text" : "资源管理",
+		"href" : "http://localhost/essh/base/resource.action",
+		"icon" : "/essh/js/jquery/easyui-1.3.4/themes/windows/icons/computer.png"
+	}, {
+		"id" : "2",
+		"text" : "角色管理",
+		"href" : "http://localhost/essh/base/role.action",
+		"icon" : "http://localhost/essh/js/jquery/easyui-1.3.4/themes/windows/icons/bin.png"
+	}, {
+		"id" : "3",
+		"text" : "用户管理",
+		"href" : "http://localhost/essh/base/user.action",
+		"icon" : "http://localhost/essh/js/jquery/easyui-1.3.4/themes/windows/icons/dns.png"
+	} , {
+        "id" : "4",
+        "text" : "BUG管理",
+        "href" : "http://localhost/essh/sys/bug.action",
+        "icon" : "http://localhost/essh/js/jquery/easyui-1.3.4/themes/windows/icons/dns.png"
+    }, {
+        "id" : "5",
+        "text" : "字典类型管理",
+        "href" : "http://localhost/essh/sys/dictionary-type.action",
+        "icon" : "http://localhost/essh/js/jquery/easyui-1.3.4/themes/windows/icons/dns.png"
+    }, {
+        "id" : "6",
+        "text" : "数据字典",
+        "href" : "http://localhost/essh/sys/dictionary.action",
+        "icon" : "http://localhost/essh/js/jquery/easyui-1.3.4/themes/windows/icons/dns.png"
+    }
+]
