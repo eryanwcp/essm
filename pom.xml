@@ -12,8 +12,8 @@
 
     <properties>
         <!-- version setting -->
-        <!--<spring.version>4.2.6.RELEASE</spring.version>-->
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>4.2.6.RELEASE</spring.version>
+        <!--<spring.version>4.1.9.RELEASE</spring.version>-->
         <hibernate.version>4.2.14.Final</hibernate.version>
         <hibernate-search.version>4.4.3.Final</hibernate-search.version>
         <hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
