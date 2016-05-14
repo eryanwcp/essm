@@ -53,6 +53,10 @@ public class TreeNode implements Serializable {
 	 */
 	private Boolean checked = false;
 	/**
+	 * ztree 设置节点是否隐藏 checkbox / radio [setting.check.enable = true 时有效]
+	 */
+	private Boolean nocheck = false;
+	/**
 	 * 自定义属性
 	 */
 	private Map<String, Object> attributes = new HashMap<String, Object>(0);
@@ -215,6 +219,15 @@ public class TreeNode implements Serializable {
 	public TreeNode setChecked(Boolean checked) {
 		this.checked = checked;
         return this;
+	}
+
+	public Boolean getNocheck() {
+		return nocheck;
+	}
+
+	public TreeNode setNocheck(Boolean nocheck) {
+		this.nocheck = nocheck;
+		return this;
 	}
 
 	/**

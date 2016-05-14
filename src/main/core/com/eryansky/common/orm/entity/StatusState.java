@@ -21,7 +21,9 @@ public enum StatusState {
 	/** 待审核(2) */
 	AUDIT("2", "待审核"),
 	/** 锁定(3) */
-	LOCK("3", "已锁定");
+	LOCK("3", "锁定"),
+	/** 草稿(4) */
+	DRAFT("4", "草稿");
 
 	/**
 	 * 值 Integer型

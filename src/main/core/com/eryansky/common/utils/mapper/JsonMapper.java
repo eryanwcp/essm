@@ -308,4 +308,23 @@ public class JsonMapper  extends ObjectMapper{
 	public ObjectMapper getMapper() {
 		return this;
 	}
+
+    /**
+     * 对象转换为JSON字符串
+     * @param object
+     * @return
+     */
+    public static String toJsonString(Object object){
+        return JsonMapper.getInstance().toJson(object);
+    }
+
+    /**
+     * JSON字符串转换为对象
+     * @param jsonString
+     * @param clazz
+     * @return
+     */
+    public static Object fromJsonString(String jsonString, Class<?> clazz){
+        return JsonMapper.getInstance().fromJson(jsonString, clazz);
+    }
 }
