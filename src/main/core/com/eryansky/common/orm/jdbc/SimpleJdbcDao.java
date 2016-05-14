@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.simple.ParameterizedBeanPropertyRowMapper;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -287,8 +287,8 @@ public class SimpleJdbcDao {
 
 
 
-    protected ParameterizedBeanPropertyRowMapper resultBeanMapper(Class clazz) {
-        return ParameterizedBeanPropertyRowMapper.newInstance(clazz);
+    protected BeanPropertyRowMapper resultBeanMapper(Class clazz) {
+        return BeanPropertyRowMapper.newInstance(clazz);
     }
 
     protected BeanPropertySqlParameterSource paramBeanMapper(Object object) {
