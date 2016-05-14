@@ -4,9 +4,11 @@ import com.eryansky.fastweixin.api.config.ApiConfig;
 import com.eryansky.fastweixin.api.entity.UserInfo;
 import com.eryansky.fastweixin.api.enums.ResultType;
 import com.eryansky.fastweixin.api.response.*;
+import com.eryansky.fastweixin.exception.WeixinException;
+import com.eryansky.fastweixin.util.BeanUtil;
+import com.eryansky.fastweixin.util.CollectionUtil;
 import com.eryansky.fastweixin.util.JSONUtil;
 import com.eryansky.fastweixin.util.StrUtil;
-import com.eryansky.fastweixin.util.BeanUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ import java.util.Map;
  * 用户管理相关API
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2016-03-15
+ * @date 2016-05-14
  */
 public class UserAPI extends BaseAPI {
 
@@ -29,10 +31,19 @@ public class UserAPI extends BaseAPI {
     }
 
     /**
+     * 获取所有关注者列表
+     * @return 关注者列表对象 最大值：10000
+     */
+    public GetUsersResponse getUsers() {
+        return getUsers(null);
+    }
+
+
+    /**
      * 获取关注者列表
      *
-     * @param nextOpenid 下一个用户的ID
-     * @return 关注者列表对象
+     * @param nextOpenid 第一个拉取的OPENID，不填默认从头开始拉取
+     * @return 关注者列表对象 最大值：10000
      */
     public GetUsersResponse getUsers(String nextOpenid) {
         GetUsersResponse response = null;
@@ -228,6 +239,47 @@ public class UserAPI extends BaseAPI {
         Map<String, Integer> groups = new HashMap<String, Integer>();
         groups.put("id", groupId);
         param.put("group", groups);
+        BaseResponse response = executePost(url, JSONUtil.toJson(param));
+        return ResultType.get(response.getErrcode());
+    }
+
+    /**
+     * 批量为用户打上标签
+     * 标签功能目前支持公众号为用户打上最多三个标签。
+     * @param openidList 用户openid列表
+     * @param tagId 标签ID
+     * @return 结果
+     */
+    public ResultType batchTagsToUser(List<String> openidList, Integer tagId) {
+        BeanUtil.requireNonNull(tagId, "tagId is null");
+        if(CollectionUtil.isEmpty(openidList)) {
+            throw new WeixinException("openId列表为空");
+        }
+        LOG.debug("批量为用户打上标签.....");
+        String url = BASE_API_URL + "cgi-bin/tags/members/batchtagging?access_token=#";
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("openid_list", openidList);
+        param.put("tagid", tagId);
+        BaseResponse response = executePost(url, JSONUtil.toJson(param));
+        return ResultType.get(response.getErrcode());
+    }
+
+    /**
+     * 批量为用户取消标签
+     * @param openidList 用户openid列表
+     * @param tagId 标签ID
+     * @return 结果
+     */
+    public ResultType batchDeleteTagsToUser(List<String> openidList, Integer tagId) {
+        BeanUtil.requireNonNull(tagId, "tagId is null");
+        if(CollectionUtil.isEmpty(openidList)) {
+            throw new WeixinException("openId列表为空");
+        }
+        LOG.debug("批量为用户取消标签.....");
+        String url = BASE_API_URL + "cgi-bin/tags/members/batchuntagging?access_token=#";
+        Map<String, Object> param = new HashMap<String, Object>();
+        param.put("openid_list", openidList);
+        param.put("tagid", tagId);
         BaseResponse response = executePost(url, JSONUtil.toJson(param));
         return ResultType.get(response.getErrcode());
     }
