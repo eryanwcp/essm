@@ -341,6 +341,16 @@ public class User extends DataEntity<User> implements IUser {
         this.defaultOrganId = defaultOrganId;
     }
 
+    /**
+     * 所在部门
+     * @return
+     */
+    @JsonIgnore
+    @Transient
+    public Organ getDefaultOrgan() {
+        return OrganUtils.getOrgan(defaultOrganId);
+    }
+
     @JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "t_sys_user_organ", joinColumns = {@JoinColumn(name = "user_id")},
