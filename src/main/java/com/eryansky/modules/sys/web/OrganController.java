@@ -230,7 +230,7 @@ public class OrganController extends BaseController<Organ,String> {
         if(titleCombobox != null){
             cList.add(titleCombobox);
         }
-        Integer parentType = null;
+        String parentType = null;
         if(StringUtils.isNotBlank(parentId)){
             Organ organ = organManager.loadById(parentId);
             if(organ != null){
@@ -238,27 +238,27 @@ public class OrganController extends BaseController<Organ,String> {
             }
         }
 
-        OrganType _enumParentType = OrganType.getOrganType(parentType);
+        OrganType _enumParentType = OrganType.getByValue(parentType);
         if (_enumParentType != null) {
             if (_enumParentType.equals(OrganType.organ)) {
                 OrganType[] rss = OrganType.values();
                 for (int i = 0; i < rss.length; i++) {
                     Combobox combobox = new Combobox();
-                    combobox.setValue(rss[i].getValue().toString());
+                    combobox.setValue(rss[i].getValue());
                     combobox.setText(rss[i].getDescription());
                     cList.add(combobox);
                 }
             } else if (_enumParentType.equals(OrganType.department)) {
-                Combobox departmentCombobox = new Combobox(OrganType.department.getValue().toString(), OrganType.department.getDescription().toString());
-                Combobox groupCombobox = new Combobox(OrganType.group.getValue().toString(), OrganType.group.getDescription().toString());
+                Combobox departmentCombobox = new Combobox(OrganType.department.getValue(), OrganType.department.getDescription());
+                Combobox groupCombobox = new Combobox(OrganType.group.getValue(), OrganType.group.getDescription());
                 cList.add(departmentCombobox);
                 cList.add(groupCombobox);
             } else if (_enumParentType.equals(OrganType.group)) {
-                Combobox groupCombobox = new Combobox(OrganType.group.getValue().toString(), OrganType.group.getDescription().toString());
+                Combobox groupCombobox = new Combobox(OrganType.group.getValue(), OrganType.group.getDescription());
                 cList.add(groupCombobox);
             }
         } else {
-            Combobox groupCombobox = new Combobox(OrganType.organ.getValue().toString(), OrganType.organ.getDescription().toString());
+            Combobox groupCombobox = new Combobox(OrganType.organ.getValue(), OrganType.organ.getDescription());
             cList.add(groupCombobox);
         }
         return cList;

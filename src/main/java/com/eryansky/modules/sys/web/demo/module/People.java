@@ -1,4 +1,6 @@
-package com.eryansky.modules.sys.web.demo;
+package com.eryansky.modules.sys.web.demo.module;
+
+import java.util.Date;
 
 public class People {
 	/**
@@ -21,6 +23,11 @@ public class People {
 	 * 血型
 	 */
 	private String blood;
+	/**
+	 * 生日
+	 */
+	private Date birthday;
+	
 	public int getCode() {
 		return code;
 	}
@@ -50,6 +57,12 @@ public class People {
 	}
 	public void setBlood(String blood) {
 		this.blood = blood;
+	}
+	public Date getBirthday() {
+		return birthday;
+	}
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
 	}
 	
 }

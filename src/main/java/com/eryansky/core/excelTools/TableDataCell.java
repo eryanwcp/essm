@@ -60,6 +60,7 @@ public class TableDataCell {
 			this.value = format3.format(value);
 		}
 		this.doubleValue = value;
+		this.value = String.valueOf(value);
 	}
 
 	public String getValue() {

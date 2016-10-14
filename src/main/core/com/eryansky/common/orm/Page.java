@@ -6,6 +6,7 @@
 package com.eryansky.common.orm;
 
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.web.utils.CookieUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -63,6 +64,8 @@ public class Page<T> {
 	private String funcParam = ""; // 函数的附加参数，第三个参数值。
 
 	private String message = ""; // 设置提示消息，显示在“共n条”之后
+
+	private boolean isMobile = false;//是否是移动端
 
 
 	//-- 构造函数 --//
@@ -167,6 +170,12 @@ public class Page<T> {
 		String orderBy = request.getParameter("orderBy");
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(orderBy)){
 			this.setOrderBy(orderBy);
+		}
+
+		//显示页面长度
+		if(UserAgentUtils.isMobileOrTablet(request)){
+			isMobile = true;
+			this.length = 3;
 		}
 	}
 
@@ -609,6 +618,9 @@ public class Page<T> {
 	 */
 	@Override
 	public String toString() {
+		if(isMobile){
+			return getAppHtml();
+		}
 
 		StringBuilder sb = new StringBuilder();
 
@@ -686,6 +698,100 @@ public class Page<T> {
 //		sb.insert(0,"<div class=\"page\">\n").append("</div>\n");
 
 		return sb.toString();
+	}
+
+
+	/**
+	 * 默认输出当前分页标签（移动端）
+	 * <div class="page">${page}</div>
+	 */
+	public String getAppHtml() {
+
+		StringBuilder sb = new StringBuilder();
+
+		if (pageNo == first) {// 如果是首页
+			sb.append("<li class=\"disabled\"><a href=\"javascript:\">«</a></li>\n");
+		} else {
+			sb.append("<li><a href=\"javascript:\" onclick=\""+funcName+"("+prev+","+pageSize+",'"+funcParam+"');\">«</a></li>\n");
+		}
+
+		int begin = pageNo - (length / 2);
+
+		if (begin < first) {
+			begin = first;
+		}
+
+		int end = begin + length - 1;
+
+		if (end >= last) {
+			end = last;
+			begin = end - length + 1;
+			if (begin < first) {
+				begin = first;
+			}
+		}
+
+		if (begin > first) {
+			int i = 0;
+			for (i = first; i < first + slider && i < begin; i++) {
+				sb.append("<li><a href=\"javascript:\" onclick=\""+funcName+"("+i+","+pageSize+",'"+funcParam+"');\">"
+						+ (i + 1 - first) + "</a></li>\n");
+			}
+			if (i < begin) {
+				sb.append("<li class=\"disabled\"><a href=\"javascript:\">...</a></li>\n");
+			}
+		}
+
+		for (int i = begin; i <= end; i++) {
+			if (i == pageNo) {
+				sb.append("<li class=\"active\"><a href=\"javascript:\">" + (i + 1 - first)
+						+ "</a></li>\n");
+			} else {
+				sb.append("<li><a href=\"javascript:\" onclick=\""+funcName+"("+i+","+pageSize+",'"+funcParam+"');\">"
+						+ (i + 1 - first) + "</a></li>\n");
+			}
+		}
+
+		if (last - end > slider) {
+			sb.append("<li class=\"disabled\"><a href=\"javascript:\">...</a></li>\n");
+			end = last - slider;
+		}
+
+		for (int i = end + 1; i <= last; i++) {
+			sb.append("<li><a href=\"javascript:\" onclick=\""+funcName+"("+i+","+pageSize+",'"+funcParam+"');\">"
+					+ (i + 1 - first) + "</a></li>\n");
+		}
+
+		if (pageNo == last) {
+			sb.append("<li class=\"disabled\"><a href=\"javascript:\">»</a></li>\n");
+		} else {
+			sb.append("<li><a href=\"javascript:\" onclick=\""+funcName+"("+next+","+pageSize+",'"+funcParam+"');\">"
+					+ "»</a></li>\n");
+		}
+
+		sb.insert(0,"<ul>\n").append("</ul>\n");
+
+		sb.append("<div style=\"clear:both;\"></div>");
+
+//		sb.insert(0,"<div class=\"page\">\n").append("</div>\n");
+
+		return sb.toString();
+	}
+
+	/**
+	 * 显示页面长度
+	 * @return
+	 */
+	public int getLength() {
+		return length;
+	}
+
+	/**
+	 * 设置显示页面长度
+	 * @return
+	 */
+	public void setLength(int length) {
+		this.length = length;
 	}
 
 	/**

@@ -8,6 +8,7 @@ package com.eryansky.common.orm.mybatis.interceptor;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.mybatis.dialect.Dialect;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.reflection.ReflectionUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -16,9 +17,11 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -78,6 +81,19 @@ public class PaginationInterceptor extends BaseInterceptor {
                 }
                 invocation.getArgs()[2] = new RowBounds(RowBounds.NO_ROW_OFFSET, RowBounds.NO_ROW_LIMIT);
                 BoundSql newBoundSql = new BoundSql(mappedStatement.getConfiguration(), pageSql, boundSql.getParameterMappings(), boundSql.getParameterObject());
+
+                //解决MyBatis 分页foreach list item问题！ 升级3.4.0后的问题 此部分为新增内容
+                if (ReflectionUtils.getFieldValue(boundSql, "additionalParameters") != null) {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> mo = ReflectionUtils.getFieldValue(boundSql, "additionalParameters");
+                    ReflectionUtils.setFieldValue(newBoundSql, "additionalParameters", mo);
+                }
+                //解决MyBatis 分页foreach 参数失效
+                if (ReflectionUtils.getFieldValue(boundSql, "metaParameters") != null) {
+                    MetaObject mo = ReflectionUtils.getFieldValue(boundSql, "metaParameters");
+                    ReflectionUtils.setFieldValue(newBoundSql, "metaParameters", mo);
+                }
+
                 MappedStatement newMs = copyFromMappedStatement(mappedStatement, new BoundSqlSqlSource(newBoundSql));
 
                 invocation.getArgs()[0] = newMs;

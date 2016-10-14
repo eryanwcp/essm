@@ -160,36 +160,36 @@ public class ResourceController extends BaseController<Resource,String> {
             cList.add(selectCombobox);
         }
 
-        Integer parentType = null;
+        String parentType = null;
         if(StringUtils.isNotBlank(parentId)){
             Resource resource = resourceManager.loadById(parentId);
             parentType = resource.getType();
         }
 
-        ResourceType parentResourceType = ResourceType.getResourceType(parentType);
+        ResourceType parentResourceType = ResourceType.getByValue(parentType);
         if (parentResourceType != null) {
             if (parentResourceType.equals(ResourceType.app)) {
-                Combobox combobox = new Combobox(ResourceType.app.getValue().toString(),ResourceType.app.getDescription());
+                Combobox combobox = new Combobox(ResourceType.app.getValue(),ResourceType.app.getDescription());
                 cList.add(combobox);
-                combobox = new Combobox(ResourceType.menu.getValue().toString(),ResourceType.menu.getDescription());
+                combobox = new Combobox(ResourceType.menu.getValue(),ResourceType.menu.getDescription());
                 cList.add(combobox);
-                combobox = new Combobox(ResourceType.function.getValue().toString(),ResourceType.function.getDescription());
+                combobox = new Combobox(ResourceType.function.getValue(),ResourceType.function.getDescription());
                 cList.add(combobox);
             }else if (parentResourceType.equals(ResourceType.menu)) {
-                Combobox combobox = new Combobox(ResourceType.menu.getValue().toString(),ResourceType.menu.getDescription());
+                Combobox combobox = new Combobox(ResourceType.menu.getValue(),ResourceType.menu.getDescription());
                 cList.add(combobox);
-                combobox = new Combobox(ResourceType.function.getValue().toString(),ResourceType.function.getDescription());
+                combobox = new Combobox(ResourceType.function.getValue(),ResourceType.function.getDescription());
                 cList.add(combobox);
             } else if (parentResourceType.equals(ResourceType.function)) {
-                Combobox combobox = new Combobox(ResourceType.function.getValue().toString(),ResourceType.function.getDescription());
+                Combobox combobox = new Combobox(ResourceType.function.getValue(),ResourceType.function.getDescription());
                 cList.add(combobox);
             }
         } else {
-            Combobox combobox = new Combobox(ResourceType.app.getValue().toString(),ResourceType.app.getDescription());
+            Combobox combobox = new Combobox(ResourceType.app.getValue(),ResourceType.app.getDescription());
             cList.add(combobox);
-            combobox = new Combobox(ResourceType.menu.getValue().toString(),ResourceType.menu.getDescription());
+            combobox = new Combobox(ResourceType.menu.getValue(),ResourceType.menu.getDescription());
             cList.add(combobox);
-            combobox = new Combobox(ResourceType.function.getValue().toString(),ResourceType.function.getDescription());
+            combobox = new Combobox(ResourceType.function.getValue(),ResourceType.function.getDescription());
             cList.add(combobox);
         }
 

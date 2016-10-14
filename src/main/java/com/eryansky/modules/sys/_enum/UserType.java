@@ -6,22 +6,12 @@
 package com.eryansky.modules.sys._enum;
 
 /**
- *
- * 资源类型标识 枚举类型.
- * <br>菜单(0) 功能(1)
- * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2013-01-28 上午10:48:23
- *
+ * 用户类型
  */
-public enum ResourceType {
-	/** 应用(10) */
-	app("10", "应用"),
-	/** 菜单(0) */
-	menu("0", "菜单"),
-	/** 按钮(1) */
-	function("1", "功能"),
-	/** CMS栏目资源(21) */
-	CMS("21", "栏目");
+public enum UserType {
+
+    System("0", "系统"),
+	User("1", "员工");
 
 	/**
 	 * 值 String型
@@ -32,7 +22,7 @@ public enum ResourceType {
 	 */
 	private final String description;
 
-	ResourceType(String value, String description) {
+    UserType(String value, String description) {
 		this.value = value;
 		this.description = description;
 	}
@@ -46,27 +36,27 @@ public enum ResourceType {
 	}
 
 	/**
-	 * 获取描述信息
-	 * @return description
-	 */
+     * 获取描述信息
+     * @return description
+     */
 	public String getDescription() {
 		return description;
 	}
 
-	public static ResourceType getByValue(String value) {
+	public static UserType getByValue(String value) {
 		if (null == value)
 			return null;
-		for (ResourceType _enum : ResourceType.values()) {
+		for (UserType _enum : UserType.values()) {
 			if (value.equals(_enum.getValue()))
 				return _enum;
 		}
 		return null;
 	}
-
-	public static ResourceType getByDescription(String description) {
+	
+	public static UserType getByDescription(String description) {
 		if (null == description)
 			return null;
-		for (ResourceType _enum : ResourceType.values()) {
+		for (UserType _enum : UserType.values()) {
 			if (description.equals(_enum.getDescription()))
 				return _enum;
 		}

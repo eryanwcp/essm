@@ -9,17 +9,19 @@ import com.eryansky.common.orm.PropertyType;
 import com.eryansky.common.orm.annotation.Delete;
 import com.eryansky.common.persistence.IUser;
 import com.eryansky.common.utils.ConvertUtils;
+import com.eryansky.common.utils.Pinyin4js;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
-import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
+import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.eryansky.core.security.SecurityConstants;
 import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.modules.sys._enum.*;
+import com.eryansky.modules.sys._enum.OrganType;
+import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.*;
@@ -29,6 +31,7 @@ import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -70,7 +73,7 @@ public class User extends DataEntity<User> implements IUser {
     /**
      * 用户类别
      */
-    private Integer userType;
+    private String userType;
 
     /**
      * 用户姓名
@@ -79,7 +82,7 @@ public class User extends DataEntity<User> implements IUser {
     /**
      * 性别 女(0) 男(1) 保密(2) 默认：保密
      */
-    private Integer sex = SexType.secrecy.getValue();
+    private String sex = SexType.secrecy.getValue();
     /**
      * 用户出生日期
      */
@@ -97,11 +100,15 @@ public class User extends DataEntity<User> implements IUser {
     /**
      * 个人邮箱
      */
-    private String personalEmail;
+    private String personEmail;
     /**
      * QQ
      */
     private String qq;
+    /**
+     * 微信号
+     */
+    private String weixin;
     /**
      * 住址
      */
@@ -215,11 +222,12 @@ public class User extends DataEntity<User> implements IUser {
         this.password = password;
     }
 
-    public Integer getUserType() {
+    @Column(length = 36)
+    public String getUserType() {
         return userType;
     }
 
-    public void setUserType(Integer userType) {
+    public void setUserType(String userType) {
         this.userType = userType;
     }
 
@@ -232,11 +240,11 @@ public class User extends DataEntity<User> implements IUser {
         this.name = name;
     }
 
-    public Integer getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(Integer sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -272,12 +280,12 @@ public class User extends DataEntity<User> implements IUser {
     }
 
     @Column(length = 64)
-    public String getPersonalEmail() {
-        return personalEmail;
+    public String getPersonEmail() {
+        return personEmail;
     }
 
-    public void setPersonalEmail(String personalEmail) {
-        this.personalEmail = personalEmail;
+    public void setPersonEmail(String personEmail) {
+        this.personEmail = personEmail;
     }
 
     @Column(length = 36)
@@ -289,6 +297,14 @@ public class User extends DataEntity<User> implements IUser {
         this.qq = qq;
     }
 
+    @Column(length = 64)
+    public String getWeixin() {
+        return weixin;
+    }
+
+    public void setWeixin(String weixin) {
+        this.weixin = weixin;
+    }
 
     @Column(length = 255)
     public String getAddress() {
@@ -339,16 +355,6 @@ public class User extends DataEntity<User> implements IUser {
 
     public void setDefaultOrganId(String defaultOrganId) {
         this.defaultOrganId = defaultOrganId;
-    }
-
-    /**
-     * 所在部门
-     * @return
-     */
-    @JsonIgnore
-    @Transient
-    public Organ getDefaultOrgan() {
-        return OrganUtils.getOrgan(defaultOrganId);
     }
 
     @JsonIgnore
@@ -424,6 +430,18 @@ public class User extends DataEntity<User> implements IUser {
         return sysCode;
     }
 
+    @Transient
+    public String getDefaultOrganCode() {
+        String code = null;
+        if (defaultOrganId != null) {
+            Organ organ = getDefaultOrgan();
+            if(organ != null){
+                code = organ.getCode();
+            }
+        }
+        return code;
+    }
+
 
     @Transient
     public List<String> getResourceIds() {
@@ -461,7 +479,7 @@ public class User extends DataEntity<User> implements IUser {
         if (!Collections3.isEmpty(organs)) {
             return ConvertUtils.convertElementPropertyToList(organs, "id");
         }
-        return null;
+        return new ArrayList<String>(0);
     }
 
     @Transient
@@ -475,7 +493,7 @@ public class User extends DataEntity<User> implements IUser {
      */
     @Transient
     public String getSexView() {
-        SexType ss = SexType.getSexType(sex);
+        SexType ss = SexType.getByValue(sex);
         String str = "";
         if (ss != null) {
             str = ss.getDescription();
@@ -490,10 +508,25 @@ public class User extends DataEntity<User> implements IUser {
      */
     @JsonIgnore
     @Transient
+    public Organ getDefaultOrgan() {
+        return OrganUtils.getOrgan(defaultOrganId);
+    }
+
+    /**
+     * 所在部门
+     * @return
+     */
+    @JsonIgnore
+    @Transient
     public Organ getOffice() {
         Organ currentOrgan = OrganUtils.getOrgan(defaultOrganId);
-        while (currentOrgan != null && !OrganType.department.getValue().equals(currentOrgan.getType())) {
-            currentOrgan = currentOrgan.getParent();
+        while (currentOrgan != null && !OrganType.department.getValue().equals(currentOrgan.getType()) && !OrganType.organ.getValue().equals(currentOrgan.getType())) {
+            Organ parent = currentOrgan.getParent();
+            if(parent != null){
+                currentOrgan = parent;
+            }else{
+                break;
+            }
         }
         return currentOrgan;
     }
@@ -531,7 +564,12 @@ public class User extends DataEntity<User> implements IUser {
     public Organ getCompany() {
         Organ currentOrgan = OrganUtils.getOrgan(defaultOrganId);
         while (currentOrgan != null && !OrganType.organ.getValue().equals(currentOrgan.getType())) {
-            currentOrgan = currentOrgan.getParent();
+            Organ parent = currentOrgan.getParent();
+            if(parent != null){
+                currentOrgan = parent;
+            }else{
+                break;
+            }
         }
         return currentOrgan;
     }
@@ -557,6 +595,51 @@ public class User extends DataEntity<User> implements IUser {
     public String getCompanyName() {
         return OrganUtils.getOrganName(getCompanyId());
     }
+
+    /**
+     * 所在顶级机构
+     * @return
+     */
+    @JsonIgnore
+    @Transient
+    public Organ getRootCompany() {
+        Organ company = getCompany();
+        Organ parent = company.getParent();
+        while (parent != null) {
+            if(OrganType.organ.getValue().equals(parent.getType())){
+                company = parent;
+            }
+            parent = company.getParent();
+        }
+        return company;
+    }
+
+    /**
+     * 顶级机构ID
+     * @return
+     */
+    @Transient
+    public String getRootCompanyId() {
+        Organ organ = getRootCompany();
+        if(organ != null){
+            return organ.getId();
+        }
+        return defaultOrganId;
+    }
+
+    /**
+     * 顶级机构名称
+     * @return
+     */
+    @Transient
+    public String getRootCompanyName() {
+        Organ organ = getRootCompany();
+        if(organ != null){
+            return organ.getName();
+        }
+        return getDefaultOrganName();
+    }
+
 
     /**
      * 得到排序编码 组织机构系统编码 最长
@@ -603,5 +686,20 @@ public class User extends DataEntity<User> implements IUser {
     @Transient
     public boolean isAdmin(){
         return SecurityUtils.isUserAdmin(this.id);
+    }
+
+    /**
+     * 拼音首字母
+     * @return
+     */
+    @Transient
+    public String getNamePinyinHeadChar() {
+        if(StringUtils.isNotBlank(name)){
+            String str = Pinyin4js.getPinYinHeadChar(name);
+            if(str!= null){
+                return str.substring(0,1).toUpperCase();
+            }
+        }
+        return name;
     }
 }

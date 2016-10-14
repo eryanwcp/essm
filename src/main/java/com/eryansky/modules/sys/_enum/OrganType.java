@@ -12,23 +12,23 @@ package com.eryansky.modules.sys._enum;
  * @version 1.0
  */
 public enum OrganType {
-    /** 机构(0) */
-    organ(0, "机构(法人单位)"),
-    /** 部门(1) */
-    department(1, "部门"),
-    /** 小组(2) */
-    group(2, "小组");
+	/** 机构(0) */
+	organ("0", "机构(法人单位)"),
+	/** 部门(1) */
+	department("1", "部门"),
+	/** 小组(2) */
+	group("2", "小组");
 
 	/**
-	 * 值 Integer型
+	 * 值 String型
 	 */
-	private final Integer value;
+	private final String value;
 	/**
 	 * 描述 String型
 	 */
 	private final String description;
 
-	OrganType(Integer value, String description) {
+	OrganType(String value, String description) {
 		this.value = value;
 		this.description = description;
 	}
@@ -37,19 +37,19 @@ public enum OrganType {
 	 * 获取值
 	 * @return value
 	 */
-	public Integer getValue() {
+	public String getValue() {
 		return value;
 	}
 
 	/**
-     * 获取描述信息
-     * @return description
-     */
+	 * 获取描述信息
+	 * @return description
+	 */
 	public String getDescription() {
 		return description;
 	}
 
-	public static OrganType getOrganType(Integer value) {
+	public static OrganType getByValue(String value) {
 		if (null == value)
 			return null;
 		for (OrganType _enum : OrganType.values()) {
@@ -58,8 +58,8 @@ public enum OrganType {
 		}
 		return null;
 	}
-	
-	public static OrganType getOrganType(String description) {
+
+	public static OrganType getByDescription(String description) {
 		if (null == description)
 			return null;
 		for (OrganType _enum : OrganType.values()) {

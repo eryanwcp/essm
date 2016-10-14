@@ -90,7 +90,7 @@ public class Resource extends DataEntity<Resource> {
     /**
      * 资源类型 {@link ResourceType}
      */
-    private Integer type = ResourceType.menu.getValue();
+    private String type = ResourceType.menu.getValue();
     /**
      * 有序的关联对象集合
      */
@@ -142,12 +142,12 @@ public class Resource extends DataEntity<Resource> {
         this.name = name;
     }
 
-    @Column(length = 2)
-    public Integer getType() {
+    @Column(length = 36)
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -316,7 +316,7 @@ public class Resource extends DataEntity<Resource> {
      */
     @Transient
     public String getTypeView() {
-        ResourceType r = ResourceType.getResourceType(type);
+        ResourceType r = ResourceType.getByValue(type);
         String str = "";
         if (r != null) {
             str = r.getDescription();

@@ -17,6 +17,14 @@ public class TableColumn {
 	 * 字符串型
 	 */
 	public static final int COLUMN_TYPE_STRING = 0;
+	/**
+	 * 网络图片
+	 */
+	public static final int COLUMN_TYPE_STRING_NETWORK_IMAGE = 4;
+	/**
+	 * 本地文件图片
+	 */
+	public static final int COLUMN_TYPE_STRING_DISK_IMAGE = 5;
 
 	/**
 	 * 浮点型，保留2位小数
@@ -27,11 +35,14 @@ public class TableColumn {
 	 * 浮点型，保留3位小数
 	 */
 	public static final int COLUMN_TYPE_FLOAT_3 = 2;
-
 	/**
 	 * 整形
 	 */
 	public static final int COLUMN_TYPE_INTEGER = 3;
+	/**
+	 * 公式字段
+	 */
+	public static final int COLUMN_TYPE_FORMULA = 4;
 
 	/**
 	 * 红色背景
@@ -79,7 +90,7 @@ public class TableColumn {
 	private boolean displaySummary = false;
 
 	/**
-	 * 小计的聚集方法
+	 * 小计的聚集方法，包括：sum、avg、max
 	 */
 	private String aggregateRule;
 

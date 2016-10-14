@@ -13,34 +13,22 @@ import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
+import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.eryansky.modules.sys._enum.OrganType;
+import com.eryansky.modules.sys.mapper.Area;
+import com.eryansky.modules.sys.utils.AreaUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
 import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
+import javax.persistence.*;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,7 +64,7 @@ public class Organ extends DataEntity<Organ> {
     /**
      * 机构类型 {@link OrganType}
      */
-    private Integer type ;
+    private String type;
     /**
      * 地址
      */
@@ -121,6 +109,14 @@ public class Organ extends DataEntity<Organ> {
      * 机构用户
      */
     private List<User> users = Lists.newArrayList();
+    /**
+     * 部门副主管
+     */
+    private String deputyManagerUserId;
+    /**
+     * 区域ID
+     */
+    private String areaId;
 
 
     public Organ() {
@@ -185,12 +181,12 @@ public class Organ extends DataEntity<Organ> {
         this.code = code;
     }
 
-    @Column(length = 2)
-    public Integer getType() {
+    @Column(length = 36)
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -249,6 +245,7 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 分管领导ID
+     *
      * @return
      */
     @Column(length = 36)
@@ -265,7 +262,7 @@ public class Organ extends DataEntity<Organ> {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "t_sys_user_organ", joinColumns = {@JoinColumn(name = "organ_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
     @Fetch(FetchMode.SUBSELECT)
-    @Where(clause = "status = "+ STATUS_NORMAL)
+    @Where(clause = "status = " + STATUS_NORMAL)
     @OrderBy("orderNo")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     public List<User> getUsers() {
@@ -295,10 +292,10 @@ public class Organ extends DataEntity<Organ> {
     public void syncParentIds() {
         StringBuffer sb = new StringBuffer();
         Organ parent = this.getParent();
-        if(parent != null){
+        if (parent != null) {
             sb.append(parent.getParentIds())
-                .append(parent.getId()).append(",");
-        }else{
+                    .append(parent.getId()).append(",");
+        } else {
             sb.append("0,");
         }
 
@@ -318,7 +315,7 @@ public class Organ extends DataEntity<Organ> {
             _parent = _parent.getParent();
         }
         Collections.reverse(pIds);
-        for(String id:pIds){
+        for (String id : pIds) {
             sb.append(id).append(",");
         }
 
@@ -336,7 +333,7 @@ public class Organ extends DataEntity<Organ> {
 
     @JsonIgnore
     @OneToMany(mappedBy = "parent", cascade = {CascadeType.REMOVE})
-    @Where(clause = "status <> "+ STATUS_DELETE)
+    @Where(clause = "status <> " + STATUS_DELETE)
     @OrderBy("orderNo")
     public List<Organ> getSubOrgans() {
         return subOrgans;
@@ -354,12 +351,28 @@ public class Organ extends DataEntity<Organ> {
         return null;
     }
 
+    @Transient
+    public String getParentSysCode() {
+        if (parent != null) {
+            return parent.getSysCode();
+        }
+        return null;
+    }
+
+    @Transient
+    public String getParentCode() {
+        if (parent != null) {
+            return parent.getCode();
+        }
+        return null;
+    }
+
     /**
      * 机构类型 显示
      */
     @Transient
     public String getTypeView() {
-        OrganType r = OrganType.getOrganType(type);
+        OrganType r = OrganType.getByValue(type);
         String str = "";
         if (r != null) {
             str = r.getDescription();
@@ -392,9 +405,9 @@ public class Organ extends DataEntity<Organ> {
     }
 
 
-
     /**
      * 部门主管姓名
+     *
      * @return
      */
     @Transient
@@ -413,6 +426,7 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 分管领导名称
+     *
      * @return
      */
     @Transient
@@ -440,6 +454,7 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 机构下默认用户
+     *
      * @return
      */
     @JsonIgnore
@@ -457,11 +472,25 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * Treegrid 关闭状态设置
+     *
      * @return
      */
     @Transient
-    public String getState(){
-        if(Collections3.isNotEmpty(this.getSubOrgans())){
+    public String getState() {
+        if (Collections3.isNotEmpty(this.getSubOrgans()) ) {
+            return TreeNode.STATE_CLOASED;
+        }
+        return TreeNode.STATE_OPEN;
+    }
+
+    /**
+     * Treegrid 关闭状态设置
+     *
+     * @return
+     */
+    @Transient
+    public String getState2() {
+        if (Collections3.isNotEmpty(this.getSubOrgans()) || Collections3.isNotEmpty(this.getUsers())) {
             return TreeNode.STATE_CLOASED;
         }
         return TreeNode.STATE_OPEN;
@@ -469,6 +498,7 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 所在部门
+     *
      * @return
      */
     @JsonIgnore
@@ -484,12 +514,13 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 所在部门
+     *
      * @return
      */
     @Transient
     public String getOfficeId() {
         Organ office = getOffice();
-        if(office != null){
+        if (office != null) {
             return office.getId();
         }
         return this.getId();
@@ -497,6 +528,7 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 所在机构
+     *
      * @return
      */
     @JsonIgnore
@@ -511,14 +543,53 @@ public class Organ extends DataEntity<Organ> {
 
     /**
      * 所在机构ID
+     *
      * @return
      */
     @Transient
     public String getCompanyId() {
         Organ organ = getCompany();
-        if(organ != null){
+        if (organ != null) {
             return organ.getId();
         }
         return this.id;
+    }
+
+    /**
+     * 部门副职 TODO 未实现
+     *
+     * @return
+     */
+    @Transient
+    public List<String> getDeputyIds() {
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    @Column(length = 128)
+    public String getDeputyManagerUserId() {
+        return deputyManagerUserId;
+    }
+
+    public void setDeputyManagerUserId(String deputyManagerUserId) {
+        this.deputyManagerUserId = deputyManagerUserId;
+    }
+
+
+    public void setAreaId(String areaId) {
+        this.areaId = areaId;
+    }
+
+    @Column(length = 36)
+    public String getAreaId() {
+        return areaId;
+    }
+
+    @JsonIgnore
+    @Transient
+    public Area getArea() {
+        return AreaUtils.get(areaId);
     }
 }

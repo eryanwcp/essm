@@ -25,8 +25,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 @Transactional
 public class SimpleJdbcDao {
-	
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Spring  JdbcTemplate

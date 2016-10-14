@@ -6,19 +6,31 @@
 package com.eryansky.core.excelTools;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
+/**数据行对象 Excel导出工具<br>
+ * 封装了数据导出到excel中的行对象，包括行中列数据对象的操作方法等<br>
  * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date : 2014-07-31 20:36
  */
 public class TableDataRow {
+	/**
+	 * 列数据对象集合
+	 */
 	private LinkedList<TableDataCell> cells;
 
+	/**
+	 * 对应的表格数据对象（一对多关系）
+	 */
 	private TableData table;
 
-	private int rowStyle = TableData.STYLE_TYPE_STRING;
+	/**
+	 * 行样式
+	 */
+	private int rowStyle = TableColumn.COLUMN_TYPE_STRING;
 
 	public void addCell(TableDataCell cell) {
 		cells.add(cell);
@@ -56,11 +68,21 @@ public class TableDataRow {
 			addCell(value.toString());
 		} else if (value instanceof Long) {
 			addCell(value.toString());
+		} else if(value instanceof Date){
+			addCell(((Date) value).toLocaleString());
+		} else if(value instanceof Timestamp){
+			addCell(((Timestamp) value).toLocaleString());
 		} else if(value == null){
 			addCell("");
-		}
+		} else
+			addCell(value + "");
 	}
 
+	/**
+	 * 根据列序号获取列数据对象
+	 * @param index
+	 * @return
+	 */
 	public TableDataCell getCellAt(int index) {
 		return cells.get(index);
 	}

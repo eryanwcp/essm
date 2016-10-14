@@ -8,6 +8,7 @@ package com.eryansky.common.orm.mybatis.interceptor;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.orm.mybatis.dialect.Dialect;
+import com.eryansky.common.utils.reflection.ReflectionUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.logging.Log;
@@ -27,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +38,7 @@ import java.util.regex.Pattern;
  * @version 2014-7-16
  */
 public class SQLHelper {
-	
+
     /**
      * 对SQL参数(?)设值,参考org.apache.ibatis.executor.parameter.DefaultParameterHandler
      *
@@ -98,23 +100,42 @@ public class SQLHelper {
      * @throws java.sql.SQLException sql查询错误
      */
     public static int getCount(final String sql, final Connection connection,
-    							final MappedStatement mappedStatement, final Object parameterObject,
-    							final BoundSql boundSql, Log log) throws SQLException {
-        final String countSql = "select count(1) from (" + sql + ") tmp_count";
-//        final String countSql = "select count(1) " + removeSelect(removeOrders(sql));
+                               final MappedStatement mappedStatement, final Object parameterObject,
+                               final BoundSql boundSql, Log log) throws SQLException {
+        String dbName = BaseInterceptor.convertDbNameParameter(parameterObject);
+        final String countSql;
+        if("oracle".equals(dbName)){
+            countSql = "select count(1) from (" + sql + ") tmp_count";
+        }else{
+            countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
+//	        countSql = "select count(1) " + removeSelect(removeOrders(sql));
+        }
         Connection conn = connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-        	if (log.isDebugEnabled()) {
+            if (log.isDebugEnabled()) {
                 log.debug("COUNT SQL: " + StringUtils.replaceEach(countSql, new String[]{"\n", "\t"}, new String[]{" ", " "}));
             }
-        	if (conn == null){
-        		conn = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
+            if (conn == null){
+                conn = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
             }
-        	ps = conn.prepareStatement(countSql);
+            ps = conn.prepareStatement(countSql);
             BoundSql countBS = new BoundSql(mappedStatement.getConfiguration(), countSql,
                     boundSql.getParameterMappings(), parameterObject);
+
+            //解决MyBatis 分页foreach list item问题！ 升级3.4.0后的问题 此部分为新增内容
+            if (ReflectionUtils.getFieldValue(boundSql, "additionalParameters") != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> mo = ReflectionUtils.getFieldValue(boundSql, "additionalParameters");
+                ReflectionUtils.setFieldValue(countBS, "additionalParameters", mo);
+            }
+
+            //解决MyBatis 分页foreach 参数失效
+            if (ReflectionUtils.getFieldValue(boundSql, "metaParameters") != null) {
+                MetaObject mo = ReflectionUtils.getFieldValue(boundSql, "metaParameters");
+                ReflectionUtils.setFieldValue(countBS, "metaParameters", mo);
+            }
             SQLHelper.setParameters(ps, mappedStatement, countBS, parameterObject);
             rs = ps.executeQuery();
             int count = 0;
@@ -127,10 +148,10 @@ public class SQLHelper {
                 rs.close();
             }
             if (ps != null) {
-            	ps.close();
+                ps.close();
             }
             if (conn != null) {
-            	conn.close();
+                conn.close();
             }
         }
     }
@@ -150,33 +171,33 @@ public class SQLHelper {
             return sql;
         }
     }
-    
-    /** 
-     * 去除qlString的select子句。 
+
+    /**
+     * 去除qlString的select子句。
      * @param qlString
-     * @return 
-     */  
+     * @return
+     */
     @SuppressWarnings("unused")
-	private static String removeSelect(String qlString){  
-        int beginPos = qlString.toLowerCase().indexOf("from");  
-        return qlString.substring(beginPos);  
-    }  
-      
-    /** 
-     * 去除hql的orderBy子句。 
+    private static String removeSelect(String qlString){
+        int beginPos = qlString.toLowerCase().indexOf("from");
+        return qlString.substring(beginPos);
+    }
+
+    /**
+     * 去除hql的orderBy子句。
      * @param qlString
-     * @return 
-     */  
+     * @return
+     */
     @SuppressWarnings("unused")
-	private static String removeOrders(String qlString) {  
-        Pattern p = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);  
-        Matcher m = p.matcher(qlString);  
-        StringBuffer sb = new StringBuffer();  
-        while (m.find()) {  
-            m.appendReplacement(sb, "");  
+    private static String removeOrders(String qlString) {
+        Pattern p = Pattern.compile("order\\s*by[\\w|\\W|\\s|\\S]*", Pattern.CASE_INSENSITIVE);
+        Matcher m = p.matcher(qlString);
+        StringBuffer sb = new StringBuffer();
+        while (m.find()) {
+            m.appendReplacement(sb, "");
         }
         m.appendTail(sb);
-        return sb.toString();  
+        return sb.toString();
     }
-    
+
 }

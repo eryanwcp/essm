@@ -73,7 +73,7 @@ public abstract class BaseInterceptor implements Interceptor, Serializable {
      * @throws NoSuchFieldException 无法找到参数
      */
     @SuppressWarnings("unchecked")
-    protected static String convertDbNameParameter(Object parameterObject) {
+    public static String convertDbNameParameter(Object parameterObject) {
         try{
             if(parameterObject instanceof Map) {
                 return (String) ((Map)parameterObject).get(DB_NAME);

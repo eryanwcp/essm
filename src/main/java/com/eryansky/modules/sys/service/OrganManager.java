@@ -16,6 +16,7 @@ import com.eryansky.common.orm.hibernate.HibernateDao;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.google.common.collect.Sets;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.entity.Organ;
@@ -23,7 +24,6 @@ import com.eryansky.modules.sys.entity.User;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,12 +120,39 @@ public class OrganManager extends EntityManager<Organ, String> {
     }
 
     /**
+     * 查询指定机构编码的数据
+     * @param organCodes
+     * @return
+     */
+    public List<Organ> findAll(List<String> organCodes){
+        StringBuffer hql = new StringBuffer();
+        Parameter parameter = new Parameter(StatusState.NORMAL.getValue());
+        hql.append(" from Organ o where o.status = :p1");
+        if(Collections3.isNotEmpty(organCodes)){
+            hql.append(" and (");
+            for(int i=0;i<organCodes.size();i++){
+                String organCode = organCodes.get(i);
+                if(i==0){
+                    hql.append(" o.code like :organCode").append(i);
+                }else{
+                    hql.append(" or o.code like :organCode").append(i);
+                }
+                parameter.put("organCode"+i,organCode);
+            }
+            hql.append(")");
+        }
+        hql.append(" order by  o.orderNo  asc");
+        List<Organ> list = getEntityDao().find(hql.toString(), parameter);
+        return list;
+    }
+
+    /**
      *
      * @param organIds 必须包含的机构ID
      * @param query 查询关键字
      * @return
      */
-    public List<Organ> findWithInclude(List<String> organIds,String query,List<Integer> organTypes){
+    public List<Organ> findWithInclude(List<String> organIds,String query,List<String> organTypes){
         Parameter parameter = new Parameter(StatusState.NORMAL.getValue());
         StringBuffer hql = new StringBuffer();
         hql.append("from Organ o where o.status = :p1 ");
@@ -160,17 +187,82 @@ public class OrganManager extends EntityManager<Organ, String> {
      * @return
      */
     public List<Organ> findDepartmensWithInclude(List<String> organIds,String query){
-        List<Integer> organTypes = new ArrayList<Integer>(1);
+        List<String> organTypes = new ArrayList<String>(1);
         organTypes.add(OrganType.department.getValue());
         return findWithInclude(organIds,query,organTypes);
     }
+
+    /**
+     * 查找所有机构类型机构 {@link OrganType.organ}
+     * @return
+     */
+    public List<Organ> findCompanyOrgans(){
+        List<String> organTypes = new ArrayList<String>(1);
+        organTypes.add(OrganType.organ.getValue());
+        Parameter parameter = new Parameter(StatusState.NORMAL.getValue());
+        StringBuilder hql = new StringBuilder();
+        hql.append("from Organ o where o.status = :p1 ");
+        if(Collections3.isNotEmpty(organTypes)){
+            hql.append(" and o.type in (:organTypes)");
+            parameter.put("organTypes",organTypes);
+        }
+        hql.append(" order by o.orderNo asc");
+        List<Organ> list = organDao.find(hql.toString(), parameter);
+        return list;
+    }
+
+    /**
+     * 查找所有机构类型机构 {@link OrganType.organ}
+     * @return
+     */
+    public List<TreeNode> findCompanyTree(){
+        List<String> organTypes = new ArrayList<String>(1);
+        organTypes.add(OrganType.organ.getValue());
+
+        List<Organ> organs = this.findCompanyOrgans();
+
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
+        Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
+        Iterator<Organ> iterator = organs.iterator();
+        while (iterator.hasNext()){
+            Organ organ = iterator.next();
+            TreeNode treeNode = this.organToTreeNode(organ,null);
+            tempTreeNodes.add(treeNode);
+            tempMap.put(organ.getId(), treeNode);
+        }
+
+        Set<String> keyIds = tempMap.keySet();
+        Iterator<String> iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            TreeNode treeNode = tempMap.get(iteratorKey.next());
+            if(StringUtils.isNotBlank(treeNode.getpId())){
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), tempTreeNodes);
+                if(pTreeNode != null){
+                    pTreeNode.addChild(treeNode);
+                    iteratorKey.remove();
+                }
+            }
+
+        }
+
+        List<TreeNode> result = Lists.newArrayList();
+        keyIds = tempMap.keySet();
+        iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            TreeNode treeNode = tempMap.get(iteratorKey.next());
+            result.add(treeNode);
+
+        }
+        return result;
+    }
+
 
     /**
      * 机构树
      * @return
      */
     public List<TreeNode> findOrganTree(){
-        return findOrganTree(null,null);
+        return findOrganTree(null, null);
     }
 
     /**
@@ -180,7 +272,7 @@ public class OrganManager extends EntityManager<Organ, String> {
      */
     @Cacheable(value = CacheConstants.ORGAN_USER_TREE_CACHE,condition = "#cacheable == true")
     public List<TreeNode> findOrganTree(String parentId,boolean cacheable){
-        return findOrganTree(parentId,null);
+        return findOrganTree(parentId, null);
     }
 
     public List<TreeNode> findOrganTree(String parentId,boolean cacheable,boolean cascade){
@@ -195,7 +287,7 @@ public class OrganManager extends EntityManager<Organ, String> {
      * @return
      */
     public List<TreeNode> findOrganTree(String parentId,String excludeOrganId){
-        return findOrganUserTree(parentId,excludeOrganId,false,null,true);
+        return findOrganUserTree(parentId, excludeOrganId, false, null, true);
     }
 
     /**
@@ -238,15 +330,16 @@ public class OrganManager extends EntityManager<Organ, String> {
             }
         }else{
             if(cascade){
-                organs = this.findOwnerAndChildsOrgans(parentId);
+                organs = this.findChildsOrgans(parentId);
             }else{
-                organs = this.loadById(parentId).getSubOrgans();
+                organs = this.findByParent(parentId,StatusState.NORMAL.getValue());
             }
 
         }
 
         List<TreeNode> tempTreeNodes = Lists.newArrayList();
         Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
+
         Iterator<Organ> iterator = organs.iterator();
         while (iterator.hasNext()){
             Organ organ = iterator.next();
@@ -257,8 +350,8 @@ public class OrganManager extends EntityManager<Organ, String> {
             if(StringUtils.isNotBlank(excludeOrganId) && organ.getParentIds() != null && organ.getParentIds().contains(excludeOrganId)){
                 continue;
             }
-            TreeNode treeNode = this.organToTreeNode(organ);
-            if(addUser){
+            TreeNode treeNode = this.organToTreeNode(organ,addUser);
+            if(cascade && addUser){
                 List<User> organUsers = organ.getDefautUsers();
                 if(Collections3.isNotEmpty(organUsers)){
                     for(User organUser:organUsers){
@@ -274,6 +367,28 @@ public class OrganManager extends EntityManager<Organ, String> {
             }
             tempTreeNodes.add(treeNode);
             tempMap.put(organ.getId(), treeNode);
+        }
+
+
+        if(addUser) {
+            if (parentId != null) {
+                Organ parentOrgan = this.getById(parentId);
+                if (parentOrgan != null) {
+                    List<User> parentOrganUsers = parentOrgan.getUsers();
+                    if (Collections3.isNotEmpty(parentOrganUsers)) {
+                        for (User parentOrganUser : parentOrganUsers) {
+                            TreeNode parentUserTreeNode = userToTreeNode(parentOrganUser);
+                            if (Collections3.isNotEmpty(checkedUserIds)) {
+                                if (checkedUserIds.contains(parentUserTreeNode.getId())) {
+                                    parentUserTreeNode.setChecked(true);
+                                }
+                            }
+                            tempTreeNodes.add(parentUserTreeNode);
+                            tempMap.put(parentOrganUser.getId(), parentUserTreeNode);
+                        }
+                    }
+                }
+            }
         }
 
         Set<String> keyIds = tempMap.keySet();
@@ -307,13 +422,27 @@ public class OrganManager extends EntityManager<Organ, String> {
      * @return
      */
     public TreeNode organToTreeNode(Organ organ){
+        return organToTreeNode(organ, null);
+    }
+
+    /**
+     * 机构转TreeNode
+     * @param organ 机构
+     * @param addUser 状态栏考虑用户
+     * @return
+     */
+    public TreeNode organToTreeNode(Organ organ,Boolean addUser){
         TreeNode treeNode = new TreeNode(organ.getId(),organ.getName());
         if(StringUtils.isBlank(organ.get_parentId())){
             treeNode.setIconCls(ICON_ORGAN_ROOT);
         }else{
             treeNode.setIconCls(ICON_GROUP);
         }
-        treeNode.setState(organ.getState());
+        if(addUser != null && addUser){
+            treeNode.setState(organ.getState2());
+        }else{
+            treeNode.setState(organ.getState());
+        }
         treeNode.setpId(organ.get_parentId());
         treeNode.addAttributes("code", organ.getCode());
         treeNode.addAttributes("sysCode", organ.getSysCode());
@@ -339,13 +468,27 @@ public class OrganManager extends EntityManager<Organ, String> {
         return treeNode;
     }
 
+
+    /**
+     * 用户转TreeNode
+     * @param users 用户
+     * @return
+     */
+    public List<TreeNode> userToTreeNode(List<User> users){
+        List<TreeNode> treeNodes = Lists.newArrayList();
+        for(User user:users){
+            treeNodes.add(userToTreeNode(user));
+        }
+        return treeNodes;
+    }
+
     /**
      * 查找父级节点
      * @param parentId
      * @param treeNodes
      * @return
      */
-    private TreeNode getParentTreeNode(String parentId, List<TreeNode> treeNodes){
+    public TreeNode getParentTreeNode(String parentId, List<TreeNode> treeNodes){
         TreeNode t = null;
         for(TreeNode treeNode:treeNodes){
             if(parentId.equals(treeNode.getId())){
@@ -755,12 +898,7 @@ public class OrganManager extends EntityManager<Organ, String> {
         return list;
     }
 
-    /**
-     * 快速查找方法
-     *
-     * @param unionUsers
-     * @return
-     */
+
     /**
      * 快速查找方法
      *
@@ -942,6 +1080,7 @@ public class OrganManager extends EntityManager<Organ, String> {
 
         return result;
     }
+
     /**
      * 迭代筛选机构用户树只剩下需要的用户
      *
@@ -969,4 +1108,5 @@ public class OrganManager extends EntityManager<Organ, String> {
             }
         }
     }
+
 }

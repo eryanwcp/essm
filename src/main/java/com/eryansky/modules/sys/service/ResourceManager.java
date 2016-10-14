@@ -16,12 +16,15 @@ import com.eryansky.common.orm.hibernate.HibernateDao;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.google.common.collect.Sets;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.ResourceType;
+import com.eryansky.modules.sys.entity.Organ;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.Validate;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -249,7 +252,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findAppAndMenuResourcesByUserId(String userId){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.app.getValue());
         resourceTypes.add(ResourceType.menu.getValue());
         return  findResourcesByUserId(userId, resourceTypes);
@@ -261,7 +264,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findAppResourcesByUserId(String userId){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.app.getValue());
         return  findResourcesByUserId(userId, resourceTypes);
     }
@@ -272,7 +275,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findMenuResourcesByUserId(String userId){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.menu.getValue());
         return  findResourcesByUserId(userId, resourceTypes);
     }
@@ -292,7 +295,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findResourcesByUserId(String userId, List<Integer> resourceTypes){
+    public List<Resource> findResourcesByUserId(String userId, List<String> resourceTypes){
         Parameter parameter = new Parameter(StatusState.NORMAL.getValue(),userId);
         StringBuffer hql = new StringBuffer();
         hql.append("select r from Resource r left join r.users u where r.status = :p1 and u.id = :p2 ");
@@ -312,8 +315,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
         hql.append(" order by r.orderNo asc");
 
 
-        Query query = getEntityDao().distinct(getEntityDao().createQuery(hql.toString(), parameter));
-        List<Resource> list = query.list();
+        List<Resource> list =  getEntityDao().distinct(getEntityDao().createQuery(hql.toString(),parameter)).list();
 //        Collections.sort(list, new Comparator<Resource>() {
 //            @Override
 //            public int compare(Resource o1, Resource o2) {
@@ -399,7 +401,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findAppAndMenuResources(){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.app.getValue());
         resourceTypes.add(ResourceType.menu.getValue());
         return  findResources(resourceTypes);
@@ -410,7 +412,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findAppResources(){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.app.getValue());
         return  findResources(resourceTypes);
     }
@@ -420,7 +422,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @return
      */
     public List<Resource> findMenuResources(){
-        List<Integer> resourceTypes = Lists.newArrayList();
+        List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.menu.getValue());
         return  findResources(resourceTypes);
     }
@@ -438,7 +440,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findResources(List<Integer> resourceTypes){
+    public List<Resource> findResources(List<String> resourceTypes){
         return  findResources(resourceTypes,null);
     }
 
@@ -448,7 +450,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param excludeResourceId 排除的资源ID
      * @return
      */
-    public List<Resource> findResources(List<Integer> resourceTypes, String excludeResourceId){
+    public List<Resource> findResources(List<String> resourceTypes, String excludeResourceId){
         Parameter parameter = new Parameter(StatusState.NORMAL.getValue());
         StringBuffer hql = new StringBuffer();
         hql.append("from Resource r where r.status = :p1 ");
@@ -495,35 +497,70 @@ public class ResourceManager extends EntityManager<Resource, String> {
         if(Collections3.isEmpty(resources)){
             return tempTreeNodes;
         }
+
         Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
         Iterator<Resource> iterator = resources.iterator();
         while (iterator.hasNext()){
             Resource resource = iterator.next();
             TreeNode treeNode = this.resourceToTreeNode(resource);
-            tempTreeNodes.add(treeNode);
+            boolean flag = true;
+            for(TreeNode treeNode0:tempTreeNodes){
+                if(treeNode0.getId().equals(treeNode.getId())){
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag){
+                tempTreeNodes.add(treeNode);
+            }
             tempMap.put(resource.getId(), treeNode);
         }
 
         Set<String> keyIds = tempMap.keySet();
+        Set<String> removeKeyIds = Sets.newHashSet();
         Iterator<String> iteratorKey = keyIds.iterator();
         while (iteratorKey.hasNext()){
-            TreeNode treeNode = tempMap.get(iteratorKey.next());
+            String key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode1:tempTreeNodes){
+                if(treeNode1.getId().equals(key)){
+                    treeNode = treeNode1;
+                    break;
+                }
+            }
             if(StringUtils.isNotBlank(treeNode.getpId())){
                 TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), tempTreeNodes);
                 if(pTreeNode != null){
-                    pTreeNode.addChild(treeNode);
-                    iteratorKey.remove();
+                    for(TreeNode treeNode2:tempTreeNodes){
+                        if(treeNode2.getId().equals(pTreeNode.getId())){
+                            treeNode2.addChild(treeNode);
+                            removeKeyIds.add(treeNode.getId());
+                            break;
+                        }
+                    }
                 }
             }
 
+        }
+
+        //remove
+        if(Collections3.isNotEmpty(removeKeyIds)){
+            keyIds.removeAll(removeKeyIds);
         }
 
         List<TreeNode> result = Lists.newArrayList();
         keyIds = tempMap.keySet();
         iteratorKey = keyIds.iterator();
         while (iteratorKey.hasNext()){
-            TreeNode treeNode = tempMap.get(iteratorKey.next());
-            result.add(treeNode);
+            String _key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode4:tempTreeNodes){
+                if(treeNode4.getId().equals(_key)){
+                    treeNode = treeNode4;
+                    result.add(treeNode);
+                    break;
+                }
+            }
 
         }
         return result;
@@ -788,7 +825,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param status 是否启用 默认值：启用 {@link StatusState}
      * @return
      */
-    public void iSynchronous(Integer resourceType, String code, String name, String parentCode, String status) throws DaoException, SystemException,
+    public void iSynchronous(String resourceType, String code, String name, String parentCode, String status) throws DaoException, SystemException,
             ServiceException {
         Validate.notNull(code, "参数[code]不能为null");
         if (status == null) {
@@ -796,7 +833,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
         }
         Resource parentResource = null;
         if (StringUtils.isNotBlank(parentCode)) {
-            parentResource = this.iGetReource(resourceType, parentCode, status);
+            parentResource = this.iGetReource(resourceType, parentCode, null);
             if (parentResource == null) {
                 throw new SystemException("上级[" + parentCode + "]不存在.");
             }
@@ -804,14 +841,14 @@ public class ResourceManager extends EntityManager<Resource, String> {
 
         Resource resource = null;
         if (StringUtils.isNotBlank(code)) {
-            resource = this.iGetReource(resourceType, code, status);
+            resource = this.iGetReource(resourceType, code, null);
         }
 
         if (resource == null) {
             resource = new Resource();
+            resource.setStatus(status);
         }
 
-        resource.setStatus(status);
         resource.setName(name);
         resource.setCode(code);
         resource.setType(resourceType);
@@ -824,7 +861,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param resourceType 资源类型
      * @param code 资源编码
      */
-    public void iDeleteResource(Integer resourceType, String code) {
+    public void iDeleteResource(String resourceType, String code) {
         Resource resource = iGetReource(resourceType, code, null);
         if (resource == null) {
             throw new SystemException("编码[" + code + "]不存在.");
@@ -841,7 +878,7 @@ public class ResourceManager extends EntityManager<Resource, String> {
      * @param status
      * @return
      */
-    public Resource iGetReource(Integer resourceType, String code, String status) {
+    public Resource iGetReource(String resourceType, String code, String status) {
         Validate.notNull(code, "参数[code]不能为null");
         Parameter parameter = new Parameter(code);
         StringBuffer hql = new StringBuffer();

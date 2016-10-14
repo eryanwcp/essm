@@ -9,56 +9,62 @@ import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.util.Region;
 
+import javax.servlet.http.HttpServletResponse;
 import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 /**
- *@author : 尔演&Eryan eryanwcp@gmail.com
- * @date : 2014-07-31 20:36m
+ * @author : 尔演&Eryan eryanwcp@gmail.com
+ * @date : 2014-07-31 20:36
  */
 public class ExcelUtils {
-	
+
 	/**
 	 * JavaBean转Map
 	 * @param obj
 	 * @return
 	 */
 	public static Map<String, Object> beanToMap(Object obj) {
-        Map<String, Object> params = new HashMap<String, Object>(0);
-        try {
-            PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
-            PropertyDescriptor[] descriptors = propertyUtilsBean.getPropertyDescriptors(obj);
-            for (int i = 0; i < descriptors.length; i++) {
-                String name = descriptors[i].getName();
-                if (!StringUtils.equals(name, "class")) {
-                    params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return params;
-    }
-	
+		Map<String, Object> params = new HashMap<String, Object>(0);
+		try {
+			PropertyUtilsBean propertyUtilsBean = new PropertyUtilsBean();
+			PropertyDescriptor[] descriptors = propertyUtilsBean.getPropertyDescriptors(obj);
+			for (int i = 0; i < descriptors.length; i++) {
+				String name = descriptors[i].getName();
+				if (!StringUtils.equals(name, "class")) {
+					params.put(name, propertyUtilsBean.getNestedProperty(obj, name));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return params;
+	}
+
 	/**
 	 * 创建普通表头
 	 * @param list 表头名称列表
 	 * @return
 	 */
 	public static TableHeaderMetaData createTableHeader(List<String> list){
-		 TableHeaderMetaData headMeta = new TableHeaderMetaData();
-	        for(String title : list){
-	        	TableColumn tc = new TableColumn();
-		        tc.setDisplay(title);
-		        headMeta.addColumn(tc);
-	        }
-	        return headMeta;
+		TableHeaderMetaData headMeta = new TableHeaderMetaData();
+		for(String title : list){
+			TableColumn tc = new TableColumn();
+			tc.setDisplay(title);
+			headMeta.addColumn(tc);
+		}
+		return headMeta;
 	}
-	
+
 	/**
 	 * 创建普通表头
 	 * @param titls 表头名称数组
@@ -69,11 +75,34 @@ public class ExcelUtils {
 		for(String title : titls){
 			TableColumn tc = new TableColumn();
 			tc.setDisplay(title);
+			tc.setGrouped(true);
 			headMeta.addColumn(tc);
 		}
 		return headMeta;
 	}
-	
+
+	/**
+	 * 创建普通表头
+	 * @param titls 表头名称数组
+	 * @param spanCount 需要行合并的列数。
+	 * 		由第一列数据开始到指定列依次从左到右进行合并操作。
+	 * 		如该值大于表头名称数组，则为全列合并
+	 * @return
+	 */
+	public static TableHeaderMetaData createTableHeader(String[] titls,int spanCount){
+		if(spanCount>titls.length)
+			spanCount = titls.length;
+		TableHeaderMetaData headMeta = new TableHeaderMetaData();
+		for(int i=0;i<titls.length;i++){
+			TableColumn tc = new TableColumn();
+			tc.setDisplay(titls[i]);
+			if(i<spanCount)
+				tc.setGrouped(true);
+			headMeta.addColumn(tc);
+		}
+		return headMeta;
+	}
+
 	/**
 	 * 创建合并表头
 	 * @param parents 父表头数组
@@ -98,45 +127,69 @@ public class ExcelUtils {
 		}
 		return headMeta;
 	}
-	
-    /**
-     * 拼装数据
-     * 
-     * @param list 数据集
-     * @param headMeta 表头
-     * @param fields 对象或Map属性数组（注意：顺序要与表头标题顺序对应，如数据集为List<Object[]>，则该参数可以为null）
-     * @return TableData
-     */
+
+	/**
+	 * 拼装数据
+	 *
+	 * @param list 数据集
+	 * @param headMeta 表头
+	 * @param fields 对象或Map属性数组（注意：顺序要与表头标题顺序对应，如数据集为List<Object[]>，则该参数可以为null）
+	 * @return TableData
+	 */
 	@SuppressWarnings("unchecked")
 	public static TableData createTableData(List list,TableHeaderMetaData headMeta,String[] fields){
 
-        TableData td = new TableData(headMeta);
-        TableDataRow row = null;
-        if(list != null && list.size()>0){
-        	if(list.get(0).getClass().isArray()){//数组类型
-                for (Object obj : list){
-                	row = new TableDataRow(td);
-            		for(Object o : (Object[])obj){
-    					row.addCell(o);
-    				}
-                    td.addRow(row);
-                }
-        	}else{//JavaBean或Map类型
-                for (Object obj : list){
-                	row = new TableDataRow(td);
-                	Map<String, Object> map = (obj instanceof Map)?(Map<String, Object>)obj:beanToMap(obj);
-                    for(String key : fields){
-                        row.addCell(map.get(key));
-                    }
-                    td.addRow(row);
-                }
-        	}
-        }
-        return td;
-    }
-    
+		TableData td = new TableData(headMeta);
+		TableDataRow row = null;
+		if(list != null && list.size()>0){
+			if(list.get(0).getClass().isArray()){//数组类型
+				for (Object obj : list){
+					row = new TableDataRow(td);
+					for(Object o : (Object[])obj){
+						row.addCell(o);
+					}
+					td.addRow(row);
+				}
+			}else{//JavaBean或Map类型
+				for (Object obj : list){
+					row = new TableDataRow(td);
+					Map<String, Object> map = (obj instanceof Map)?(Map<String, Object>)obj:beanToMap(obj);
+					for(String key : fields){
+						row.addCell(map.get(key));
+					}
+					td.addRow(row);
+				}
+			}
+		}
+		return td;
+	}
+
+	/**
+	 * 创建压缩输出流
+	 * @param response
+	 * @param zipName 压缩包名次
+	 * @return
+	 */
+	public static ZipOutputStream createZipStream(HttpServletResponse response, String zipName) {
+		response.reset();
+		response.setContentType("application/vnd.ms-excel"); // 不同类型的文件对应不同的MIME类型
+		try {
+			response.setHeader("Content-Disposition", "attachment;filename="
+					.concat(String.valueOf(URLEncoder.encode(zipName + ".zip", "UTF-8"))));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		OutputStream os = null;
+		try {
+			os = response.getOutputStream();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return new ZipOutputStream(os);
+	}
+
 	public static void copySheetStyle(HSSFWorkbook destwb, HSSFSheet dest,
-			HSSFWorkbook srcwb, HSSFSheet src) {
+									  HSSFWorkbook srcwb, HSSFSheet src) {
 		if (src == null || dest == null)
 			return;
 
@@ -146,7 +199,7 @@ public class ExcelUtils {
 		dest.setDialog(src.getDialog());
 		if (src.getColumnBreaks() != null) {
 			for (int col : src.getColumnBreaks()) {
-				dest.setColumnBreak(col);
+				dest.setColumnBreak((short) col);
 			}
 		}
 		dest.setDefaultColumnWidth(src.getDefaultColumnWidth());
@@ -162,7 +215,7 @@ public class ExcelUtils {
 		dest.setPrintGridlines(src.isPrintGridlines());
 
 		for (int i = 0; i < src.getNumMergedRegions(); i++) {
-            CellRangeAddress r = src.getMergedRegion(i);
+			Region r = src.getMergedRegionAt(i);
 			dest.addMergedRegion(r);
 		}
 
@@ -174,7 +227,7 @@ public class ExcelUtils {
 		dest.setRowSumsBelow(src.getRowSumsBelow());
 		dest.setRowSumsRight(src.getRowSumsRight());
 
-        int maxcol = 0;
+		short maxcol = 0;
 		for (int i = 0; i <= src.getLastRowNum(); i++) {
 			HSSFRow row = src.getRow(i);
 			if (row != null) {
@@ -182,7 +235,7 @@ public class ExcelUtils {
 					maxcol = row.getLastCellNum();
 			}
 		}
-		for (int col = 0; col <= maxcol; col++) {
+		for (short col = 0; col <= maxcol; col++) {
 			if (src.getColumnWidth(col) != src.getDefaultColumnWidth())
 				dest.setColumnWidth(col, src.getColumnWidth(col));
 			dest.setColumnHidden(col, src.isColumnHidden(col));
@@ -218,16 +271,16 @@ public class ExcelUtils {
 		StringBuffer sb = new StringBuffer();
 		sb.append(font.getItalic()).append(",").append(font.getStrikeout())
 				.append(",").append(font.getBoldweight()).append(",").append(
-						font.getCharSet()).append(",").append(font.getColor())
+				font.getCharSet()).append(",").append(font.getColor())
 				.append(",").append(font.getFontHeight()).append(",").append(
-						font.getFontName()).append(",").append(
-						font.getTypeOffset()).append(",").append(
-						font.getUnderline());
+				font.getFontName()).append(",").append(
+				font.getTypeOffset()).append(",").append(
+				font.getUnderline());
 		return sb.toString();
 	}
 
 	public static void copyCellStyle(HSSFWorkbook destwb, HSSFCell dest,
-			HSSFWorkbook srcwb, HSSFCell src) {
+									 HSSFWorkbook srcwb, HSSFCell src) {
 		if (src == null || dest == null)
 			return;
 
@@ -239,8 +292,8 @@ public class ExcelUtils {
 		dest.setCellStyle(nstyle);
 	}
 
-	private static boolean isSameColor(int a, int b, HSSFPalette apalette,
-			HSSFPalette bpalette) {
+	private static boolean isSameColor(short a, short b, HSSFPalette apalette,
+									   HSSFPalette bpalette) {
 		if (a == b)
 			return true;
 		HSSFColor acolor = apalette.getColor(a);
@@ -253,7 +306,7 @@ public class ExcelUtils {
 	}
 
 	private static short findColor(short index, HSSFWorkbook srcwb,
-			HSSFWorkbook destwb) {
+								   HSSFWorkbook destwb) {
 		Integer id = new Integer(index);
 		if (HSSFColor.getIndexHash().containsKey(id))
 			return index;
@@ -276,7 +329,7 @@ public class ExcelUtils {
 	}
 
 	public static HSSFCellStyle findStyle(HSSFCellStyle style,
-			HSSFWorkbook srcwb, HSSFWorkbook destwb) {
+										  HSSFWorkbook srcwb, HSSFWorkbook destwb) {
 		HSSFPalette srcpalette = srcwb.getCustomPalette();
 		HSSFPalette destpalette = destwb.getCustomPalette();
 
@@ -291,25 +344,25 @@ public class ExcelUtils {
 					&& style.getBorderRight() == old.getBorderRight()
 					&& style.getBorderTop() == old.getBorderTop()
 					&& isSameColor(style.getBottomBorderColor(), old
-							.getBottomBorderColor(), srcpalette, destpalette)
+					.getBottomBorderColor(), srcpalette, destpalette)
 					&& style.getDataFormat() == old.getDataFormat()
 					&& isSameColor(style.getFillBackgroundColor(), old
-							.getFillBackgroundColor(), srcpalette, destpalette)
+					.getFillBackgroundColor(), srcpalette, destpalette)
 					&& isSameColor(style.getFillForegroundColor(), old
-							.getFillForegroundColor(), srcpalette, destpalette)
+					.getFillForegroundColor(), srcpalette, destpalette)
 					&& style.getFillPattern() == old.getFillPattern()
 					&& style.getHidden() == old.getHidden()
 					&& style.getIndention() == old.getIndention()
 					&& isSameColor(style.getLeftBorderColor(), old
-							.getLeftBorderColor(), srcpalette, destpalette)
+					.getLeftBorderColor(), srcpalette, destpalette)
 					&& style.getLocked() == old.getLocked()
 					&& isSameColor(style.getRightBorderColor(), old
-							.getRightBorderColor(), srcpalette, destpalette)
+					.getRightBorderColor(), srcpalette, destpalette)
 					&& style.getRotation() == old.getRotation()
 					&& isSameColor(style.getTopBorderColor(), old
-							.getTopBorderColor(), srcpalette, destpalette)
+					.getTopBorderColor(), srcpalette, destpalette)
 					&& style.getVerticalAlignment() == old
-							.getVerticalAlignment()
+					.getVerticalAlignment()
 					&& style.getWrapText() == old.getWrapText()) {
 
 				HSSFFont oldfont = destwb.getFontAt(old.getFontIndex());
@@ -319,7 +372,7 @@ public class ExcelUtils {
 						&& oldfont.getStrikeout() == font.getStrikeout()
 						&& oldfont.getCharSet() == font.getCharSet()
 						&& isSameColor(oldfont.getColor(), font.getColor(),
-								srcpalette, destpalette)
+						srcpalette, destpalette)
 						&& oldfont.getFontHeight() == font.getFontHeight()
 						&& oldfont.getFontName().equals(font.getFontName())
 						&& oldfont.getTypeOffset() == font.getTypeOffset()
@@ -332,7 +385,7 @@ public class ExcelUtils {
 	}
 
 	public static void copyCellStyle(HSSFWorkbook destwb, HSSFCellStyle dest,
-			HSSFWorkbook srcwb, HSSFCellStyle src) {
+									 HSSFWorkbook srcwb, HSSFCellStyle src) {
 		if (src == null || dest == null)
 			return;
 		dest.setAlignment(src.getAlignment());
@@ -382,7 +435,7 @@ public class ExcelUtils {
 	}
 
 	private static HSSFFont findFont(HSSFFont font, HSSFWorkbook src,
-			HSSFWorkbook dest) {
+									 HSSFWorkbook dest) {
 		for (short i = 0; i < dest.getNumberOfFonts(); i++) {
 			HSSFFont oldfont = dest.getFontAt(i);
 			if (font.getBoldweight() == oldfont.getBoldweight()
@@ -401,7 +454,7 @@ public class ExcelUtils {
 	}
 
 	public static void copySheet(HSSFWorkbook destwb, HSSFSheet dest,
-			HSSFWorkbook srcwb, HSSFSheet src) {
+								 HSSFWorkbook srcwb, HSSFSheet src) {
 		if (src == null || dest == null)
 			return;
 
@@ -414,10 +467,10 @@ public class ExcelUtils {
 	}
 
 	public static void copyRow(HSSFWorkbook destwb, HSSFRow dest,
-			HSSFWorkbook srcwb, HSSFRow src) {
+							   HSSFWorkbook srcwb, HSSFRow src) {
 		if (src == null || dest == null)
 			return;
-		for (int i = 0; i <= src.getLastCellNum(); i++) {
+		for (short i = 0; i <= src.getLastCellNum(); i++) {
 			if (src.getCell(i) != null) {
 				HSSFCell cell = dest.createCell(i);
 				copyCell(destwb, cell, srcwb, src.getCell(i));
@@ -427,7 +480,7 @@ public class ExcelUtils {
 	}
 
 	public static void copyCell(HSSFWorkbook destwb, HSSFCell dest,
-			HSSFWorkbook srcwb, HSSFCell src) {
+								HSSFWorkbook srcwb, HSSFCell src) {
 		if (src == null) {
 			dest.setCellType(HSSFCell.CELL_TYPE_BLANK);
 			return;
@@ -446,25 +499,25 @@ public class ExcelUtils {
 		dest.setCellType(src.getCellType());
 
 		switch (src.getCellType()) {
-		case HSSFCell.CELL_TYPE_BLANK:
+			case HSSFCell.CELL_TYPE_BLANK:
 
-			break;
-		case HSSFCell.CELL_TYPE_BOOLEAN:
-			dest.setCellValue(src.getBooleanCellValue());
-			break;
-		case HSSFCell.CELL_TYPE_FORMULA:
-			dest.setCellFormula(src.getCellFormula());
-			break;
-		case HSSFCell.CELL_TYPE_ERROR:
-			dest.setCellErrorValue(src.getErrorCellValue());
-			break;
-		case HSSFCell.CELL_TYPE_NUMERIC:
-			dest.setCellValue(src.getNumericCellValue());
-			break;
-		default:
-			dest.setCellValue(new HSSFRichTextString(src
-					.getRichStringCellValue().getString()));
-			break;
+				break;
+			case HSSFCell.CELL_TYPE_BOOLEAN:
+				dest.setCellValue(src.getBooleanCellValue());
+				break;
+			case HSSFCell.CELL_TYPE_FORMULA:
+				dest.setCellFormula(src.getCellFormula());
+				break;
+			case HSSFCell.CELL_TYPE_ERROR:
+				dest.setCellErrorValue(src.getErrorCellValue());
+				break;
+			case HSSFCell.CELL_TYPE_NUMERIC:
+				dest.setCellValue(src.getNumericCellValue());
+				break;
+			default:
+				dest.setCellValue(new HSSFRichTextString(src
+						.getRichStringCellValue().getString()));
+				break;
 		}
 	}
 }

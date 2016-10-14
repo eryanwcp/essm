@@ -43,7 +43,7 @@ public interface IUser {
      *
      * @return
      */
-    Integer getUserType();
+    String getUserType();
 
     /**
      * 是否是管理员
