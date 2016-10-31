@@ -7,8 +7,8 @@ package com.eryansky.modules.sys.web;
 
 import com.eryansky.common.model.Result;
 import com.eryansky.common.web.springmvc.SimpleController;
-import com.jfit.utils.ServerStatus;
-import com.jfit.utils.SigarUtil;
+import com.eryansky.utils.ServerStatus;
+import com.eryansky.utils.SigarUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
