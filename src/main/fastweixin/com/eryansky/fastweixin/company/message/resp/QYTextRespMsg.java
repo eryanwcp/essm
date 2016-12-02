@@ -53,6 +53,7 @@ public class QYTextRespMsg extends QYBaseRespMsg {
         MessageBuilder mb = new MessageBuilder(super.toXml());
         mb.addData("Content", contentBuilder.toString().trim());
         mb.addData("MsgType", RespType.TEXT);
+        mb.surroundWith("xml");
         return mb.toString();
     }
 

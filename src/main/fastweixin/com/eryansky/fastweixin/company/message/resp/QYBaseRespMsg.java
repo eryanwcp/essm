@@ -61,18 +61,6 @@ public class QYBaseRespMsg implements Serializable {
         return builder.toString();
     }
 
-    /**
-     * 包含根节点
-     * @return
-     */
-    public String toXmlWithROOT(){
-        MessageBuilder builder = new MessageBuilder(170);
-        builder.append("<xml>");
-        builder.append(toXml());
-        builder.append("</xml>");
-        return builder.toString();
-    }
-
     @Override
     public String toString() {
         return toXml();

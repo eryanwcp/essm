@@ -8,6 +8,10 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class Matchrule extends BaseModel {
 
+    @JSONField(name = "tag_id")
+    private String tagId;
+
+    @Deprecated
     @JSONField(name = "group_id")
     private String groupId;
 
@@ -22,57 +26,69 @@ public class Matchrule extends BaseModel {
     @JSONField(name = "client_platform_type")
     private String clientPlatformType;
 
+    /**
+     * @deprecated 微信官方不再建议使用群组,用标签代替
+     * @return 群组ID
+     */
+    @Deprecated
     public String getGroupId() {
         return groupId;
     }
 
-    public Matchrule setGroupId(String groupId) {
+    /**
+     * @deprecated 微信官方不再建议使用群组,用标签代替
+     * @param groupId 群组ID
+     */
+    @Deprecated
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
-        return this;
     }
 
     public String getSex() {
         return sex;
     }
 
-    public Matchrule setSex(String sex) {
+    public void setSex(String sex) {
         this.sex = sex;
-        return this;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public Matchrule setCountry(String country) {
+    public void setCountry(String country) {
         this.country = country;
-        return this;
     }
 
     public String getProvince() {
         return province;
     }
 
-    public Matchrule setProvince(String province) {
+    public void setProvince(String province) {
         this.province = province;
-        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public Matchrule setCity(String city) {
+    public void setCity(String city) {
         this.city = city;
-        return this;
     }
 
     public String getClientPlatformType() {
         return clientPlatformType;
     }
 
-    public Matchrule setClientPlatformType(String clientPlatformType) {
+    public void setClientPlatformType(String clientPlatformType) {
         this.clientPlatformType = clientPlatformType;
-        return this;
+    }
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
     }
 }
