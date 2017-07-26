@@ -1,16 +1,12 @@
 /**
- *  Copyright (c) 2012-2014 http://www.eryansky.com
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
+ * Copyright (c) 2014 http://www.jfit.com.cn
+ * <p/>
+ * 江西省锦峰软件科技有限公司
  */
 package com.eryansky.core.web.interceptor;
 
 import com.eryansky.common.spring.SpringContextHolder;
-import com.eryansky.common.utils.DateUtils;
-import com.eryansky.common.utils.Exceptions;
-import com.eryansky.common.utils.IpUtils;
-import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.UserAgentUtils;
+import com.eryansky.common.utils.*;
 import com.eryansky.common.utils.collections.Collections3;
 import com.google.common.collect.Lists;
 import com.eryansky.core.aop.annotation.Logging;
@@ -18,7 +14,6 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
-import com.eryansky.modules.sys.service.LogService;
 import com.eryansky.modules.sys.task.LogJobManager;
 import com.eryansky.utils.SpringUtils;
 import org.slf4j.Logger;
@@ -43,11 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -59,7 +50,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LogInterceptor implements HandlerInterceptor {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	private static LogService logService = SpringContextHolder.getBean(LogService.class);
 	private static LogJobManager logJobManager = SpringContextHolder.getBean(LogJobManager.class);
 	private static final ThreadLocal<Long> startTimeThreadLocal =
 			new NamedThreadLocal<Long>("ThreadLocal StartTime");
@@ -120,12 +110,14 @@ public class LogInterceptor implements HandlerInterceptor {
 		requestUrl = requestUrl.replaceAll("//", "/");
 
 		String newLogValue = null;
-		Integer logType = LogType.access.getValue();
+		String logType = LogType.access.getValue();
 		HandlerMethod handlerMethod = null;
 		boolean flag = false;
 		Boolean _flag = null;
+		String remark = null;
 		if (ex != null) {
 			flag = true;
+			newLogValue = LogType.exception.getDescription();
 			logType = LogType.exception.getValue();
 		}
 
@@ -148,8 +140,12 @@ public class LogInterceptor implements HandlerInterceptor {
 					ModelAndViewContainer mavContainer = new ModelAndViewContainer();
 					mavContainer.addAllAttributes(RequestContextUtils.getInputFlashMap(request));
 					WebDataBinderFactory webDataBinderFactory = getDataBinderFactory(handlerMethod);
-					Object value = resolver.resolveArgument(parameter, mavContainer, webRequest, webDataBinderFactory);
-					parameterValues[i] = value;
+					try {
+						Object value = resolver.resolveArgument(parameter, mavContainer, webRequest, webDataBinderFactory);
+						parameterValues[i] = value;
+					} catch (Exception e) {
+						logger.error(e.getMessage() + "\n" + requestUrl);
+					}
 				}
 
 				if (logging != null && Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), handlerMethod.getMethod(), parameterValues))) {
@@ -160,6 +156,9 @@ public class LogInterceptor implements HandlerInterceptor {
 					newLogValue = logValue;
 					if (StringUtils.isNotBlank(logValue)) {
 						newLogValue = SpringUtils.parseSpel(logValue, handlerMethod.getMethod(), parameterValues);
+					}
+					if (StringUtils.isNotBlank(logging.remark())) {
+						remark = SpringUtils.parseSpel(logging.remark(), handlerMethod.getMethod(), parameterValues);
 					}
 				} else if (logging != null && !Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), handlerMethod.getMethod(), parameterValues))) {
 					_flag = false;
@@ -189,10 +188,10 @@ public class LogInterceptor implements HandlerInterceptor {
 			}
 		}
 
-		if ((_flag == null || _flag) && sessionInfo != null && flag) {
+		if ((_flag == null || _flag) && flag) {
 			Log log = new Log();
 			log.setTitle(newLogValue);
-			log.setUserId(sessionInfo.getUserId());
+			log.setUserId(sessionInfo == null ? "1" : sessionInfo.getUserId());
 			log.setType(logType);
 			log.setIp(IpUtils.getIpAddr(request));
 			log.setUserAgent(UserAgentUtils.getHTTPUserAgent(request));
@@ -202,6 +201,7 @@ public class LogInterceptor implements HandlerInterceptor {
 			log.setActionTime((endTime - beginTime) + "");
 			log.setModule(requestUrl);
 			log.setAction(request.getMethod());
+			log.setRemark(remark);
 			log.setParams(request.getParameterMap());
 			// 如果有异常，设置异常信息
 			log.setException(Exceptions.getStackTraceAsString(ex));
@@ -212,9 +212,9 @@ public class LogInterceptor implements HandlerInterceptor {
 		// 打印JVM信息。
 		if (logger.isDebugEnabled()) {
 			logger.debug("计时结束：{}  耗时：{}  URI: {}  最大内存: {}m  已分配内存: {}m  已分配内存中的剩余空间: {}m  最大可用内存: {}m",
-					new SimpleDateFormat("hh:mm:ss.SSS").format(endTime), DateUtils.formatDateTime(endTime - beginTime),
-					request.getRequestURI(), Runtime.getRuntime().maxMemory() / 1024 / 1024, Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().freeMemory() / 1024 / 1024,
-					(Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory()) / 1024 / 1024);
+					new Object[]{new SimpleDateFormat("hh:mm:ss.SSS").format(endTime), DateUtils.formatDateTime(endTime - beginTime),
+							request.getRequestURI(), Runtime.getRuntime().maxMemory() / 1024 / 1024, Runtime.getRuntime().totalMemory() / 1024 / 1024, Runtime.getRuntime().freeMemory() / 1024 / 1024,
+							(Runtime.getRuntime().maxMemory() - Runtime.getRuntime().totalMemory() + Runtime.getRuntime().freeMemory()) / 1024 / 1024});
 		}
 
 	}

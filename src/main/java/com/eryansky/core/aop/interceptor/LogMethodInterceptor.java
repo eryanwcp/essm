@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * 日志拦截 切面
  * <p/>
- * web层拦截参考 @see com.jfit.core.web.interceptor.LogInterceptor
+ * web层拦截参考 @see com.eryansky.core.web.interceptor.LogInterceptor
  *
  * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date : 2016-04-13
@@ -71,6 +71,7 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
         // 执行方法名
         String methodName = method.getName();
         String className = methodInvocation.getThis().getClass().getSimpleName();
+        logger.info(methodInvocation.getThis().getClass().getName() + "."+ methodName);
         String userId = null;
 
         String ip = null;
@@ -84,7 +85,7 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
                 logger.error(e.getMessage());
             }
             if (sessionInfo != null) {
-                userId = sessionInfo.getUserId().toString();
+                userId = sessionInfo.getUserId();
                 ip = sessionInfo.getIp();
             } else {
                 userId = "1";
@@ -104,7 +105,7 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
         boolean loglog = false;
         String remark = null;
         String newLogValue = null;
-        Integer _LogType = LogType.operate.getValue();
+        String _LogType = LogType.operate.getValue();
         if (logging != null && Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), method, args))) {
             loglog = true;
             _LogType = logging.logType().getValue();
@@ -127,9 +128,10 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
             }
         }
 
-        if (loglog == true || (pattendefaultMethod && (logging == null || logging != null && !Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), method, args))))) {
+        if (loglog || (pattendefaultMethod && (logging == null || logging != null && !Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), method, args))))) {
             Long time = end - start;
             Log log = new Log();
+            log.setTitle(newLogValue);
             log.setType(_LogType);
             log.setUserId(userId);
             log.setModule(name);

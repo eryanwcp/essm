@@ -10,6 +10,7 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.annotation.Mobile;
+import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.entity.File;
 import com.eryansky.modules.disk.service.FileManager;
 import com.eryansky.modules.sys._enum.LogType;
@@ -61,7 +62,7 @@ public class MobileIndexController extends SimpleController {
      * 下载页面
      * @return
      */
-    @Mobile(able = false)
+    @Mobile(value = MobileValue.PC)
     @RequiresUser(required = false)
     @RequestMapping("download")
     public ModelAndView download(Integer versionLogType,String versionCode){
@@ -75,12 +76,18 @@ public class MobileIndexController extends SimpleController {
             }else{
                 versionLogType = VersionLogType.Android.getValue();
             }
+        }else{
+            if(VersionLogType.iPhoneAPP.getValue().equals(versionLogType)){
+                likeIOS = true;
+                likeAndroid = false;
+            }
         }
         if(StringUtils.isNotBlank(versionCode)){
             versionLog = versionLogService.getByVersionCode(versionLogType,versionCode);
         }else{
             versionLog = versionLogService.getLatestVersionLog(versionLogType);
         }
+        modelAndView.addObject("versionLogType",versionLogType);
         modelAndView.addObject("versionCode",versionCode);
         modelAndView.addObject("model",versionLog);
         modelAndView.addObject("likeAndroid",likeAndroid);
@@ -112,6 +119,7 @@ public class MobileIndexController extends SimpleController {
      * @param versionLogType {@link com.eryansky.modules.sys._enum.VersionLogType}
      *            文件ID
      */
+    @Mobile(value = MobileValue.PC)
     @Logging(logType = LogType.access,value = "APP[#versionCode]下载")
     @RequiresUser(required = false)
     @RequestMapping(value = { "downloadApp/{versionLogType}" })

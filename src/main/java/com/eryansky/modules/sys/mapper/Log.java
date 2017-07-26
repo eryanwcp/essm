@@ -30,7 +30,7 @@ public class Log extends DataEntity<Log> {
      *
      * @see com.eryansky.modules.sys._enum.LogType
      */
-    private Integer type;
+    private String type;
 
     /**
      * 用户IP地址
@@ -90,11 +90,11 @@ public class Log extends DataEntity<Log> {
         super(id);
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
@@ -258,7 +258,7 @@ public class Log extends DataEntity<Log> {
      * 日志类类型 View
      */
     public String getTypeView() {
-        LogType s = LogType.getLogType(type);
+        LogType s = LogType.getByValue(type);
         String str = "";
         if (s != null) {
             str = s.getDescription();

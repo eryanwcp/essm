@@ -13,13 +13,15 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.modules.sys._enum.DataScope;
+import com.eryansky.modules.sys.entity.Post;
+import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.modules.sys.entity.Role;
 import com.eryansky.modules.sys.entity.User;
 import com.eryansky.modules.sys.service.ResourceManager;
 import com.eryansky.modules.sys.service.UserManager;
-import com.eryansky.modules.sys.vo.UserInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,6 +157,55 @@ public class SecurityUtils {
     }
 
     /**
+     * 获取当前用户最大的数据权限范围
+     * @return
+     */
+    public static String getUserMaxRoleDataScope(){
+        return isCurrentUserAdmin() ? DataScope.ALL.getValue() : getUserMaxRoleDataScope(getCurrentUserId());
+    }
+
+    /**
+     * 判断当前用户是否授权所有数据
+     * @return
+     */
+    public static boolean isPermittedMaxRoleDataScope(){
+        return isPermittedMaxRoleDataScope(getCurrentUserId());
+    }
+
+    /**
+     * 判断用户是否授权所有数据
+     * @return
+     */
+    public static boolean isPermittedMaxRoleDataScope(String userId){
+        return isCurrentUserAdmin() || DataScope.ALL.getValue().equals(getUserMaxRoleDataScope(userId));
+    }
+
+    /**
+     * 获取用户最大的数据权限范围
+     * @param userId
+     * @return
+     */
+    public static String getUserMaxRoleDataScope(String userId){
+        User user = UserUtils.getUser(userId);
+        // 获取到最大的数据权限范围
+        int dataScopeInteger = Integer.valueOf(DataScope.SELF.getValue());
+        for (Role r : user.getRoles()) {
+            if(StringUtils.isBlank(r.getDataScope())){
+                continue;
+            }
+            int ds = Integer.valueOf(r.getDataScope());
+            if (ds == Integer.valueOf(DataScope.CUSTOM.getValue())) {
+                dataScopeInteger = ds;
+                break;
+            } else if (ds < dataScopeInteger) {
+                dataScopeInteger = ds;
+            }
+        }
+        String dataScopeString = String.valueOf(dataScopeInteger);
+        return dataScopeString;
+    }
+
+    /**
      * User转SessionInfo.
      *
      * @param user
@@ -176,21 +227,53 @@ public class SecurityUtils {
     }
 
     /**
+     * 判断当前用户是否有某个岗位
      *
-     * @param user
+     * @param postCode 角色编码
      * @return
      */
-    public static UserInfoVo userToUserInfoVo(User user){
-        UserInfoVo userInfoVo = new UserInfoVo();
-        userInfoVo.setUserId(user.getId());
-        userInfoVo.setLoginName(user.getLoginName());
-        userInfoVo.setName(user.getName());
-        userInfoVo.setRoleIds(user.getRoleIds());
-        userInfoVo.setRoleNames(user.getRoleNames());
-        userInfoVo.setLoginOrganName(user.getDefaultOrganName());
-        userInfoVo.setOrganNames(user.getOrganNames());
-        userInfoVo.setIp(SpringMVCHolder.getIp());
-        return userInfoVo;
+    public static Boolean hasPost(String postCode) {
+        return hasPost(null,postCode);
+    }
+
+    /**
+     * 判断某个用户是否有某个刚问
+     *
+     * @param userId   用户ID
+     * @param postCode 角色编码
+     * @return
+     */
+    public static Boolean hasPost(String userId, String postCode) {
+        boolean flag = false;
+        try {
+            SessionInfo sessionInfo = getCurrentSessionInfo();
+            if (userId == null) {
+                if (sessionInfo != null) {
+                    userId = sessionInfo.getUserId();
+                }
+            }
+            if (userId == null) {
+                throw new SystemException("用户[" + userId + "]不存在.");
+            }
+
+            if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                for(String pCode:sessionInfo.getPostCodes()){
+                    if (postCode.equalsIgnoreCase(pCode)) {
+                        return true;
+                    }
+                }
+            }
+
+            User user = UserUtils.getUser(userId);
+            for (Post post : user.getPosts()) {
+                if (postCode.equalsIgnoreCase(post.getCode())) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        return flag;
     }
 
     /**
@@ -222,6 +305,15 @@ public class SecurityUtils {
         if (Collections3.isNotEmpty(roles)) {
             for(Role role:roles){
                 sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
+            }
+        }
+
+        List<Post> posts = user.getPosts();
+        if (Collections3.isNotEmpty(posts)) {
+            for(Post post:posts){
+                if(StringUtils.isNotBlank(post.getCode())){
+                    sessionInfo.getPostCodes().add(post.getCode());
+                }
             }
         }
 
@@ -261,6 +353,17 @@ public class SecurityUtils {
         SessionInfo sessionInfo = getCurrentSessionInfo();
         if(sessionInfo != null){
             return sessionInfo.getUserId();
+        }
+        return null;
+    }
+
+    /**
+     * 获取当前登录用户账号信息.
+     */
+    public static String getCurrentUserLoginName() {
+        SessionInfo sessionInfo = getCurrentSessionInfo();
+        if(sessionInfo != null){
+            return sessionInfo.getLoginName();
         }
         return null;
     }
@@ -391,7 +494,10 @@ public class SecurityUtils {
         return applicationSessionContext.getSession(sessionId);
     }
 
-
+    public static boolean isMobileLogin(){
+        SessionInfo sessionInfo = getCurrentSessionInfo();
+        return sessionInfo != null && sessionInfo.isMobileLogin();
+    }
 
 }
 

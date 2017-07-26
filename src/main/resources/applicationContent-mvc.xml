@@ -93,11 +93,6 @@
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/static/**" /><!--静态资源-->
             <bean class="com.eryansky.core.web.interceptor.LogInterceptor" >
-                <property name="includeUrls"><!-- 包含的地址 -->
-                    <list>
-                        <value>${mobilePath}**</value><!-- 移动端 -->
-                    </list>
-                </property>
             </bean>
         </mvc:interceptor>
         <mvc:interceptor>
@@ -131,7 +126,6 @@
             <mvc:exclude-mapping path="/favicon**" /><!--静态资源-->
             <mvc:exclude-mapping path="/userfiles/**" /><!--网站内容资源-->
             <mvc:exclude-mapping path="/servlet/**" />
-            <mvc:exclude-mapping path="${mobilePath}/mobile/device/**" /> <!--设备注册-->
             <bean class="com.eryansky.core.security.interceptor.AuthorityInterceptor" >
                 <property name="redirectURL" value="${redirectURL}" />
                 <property name="excludeUrls"><!-- 不需要权限验证的地址 -->
@@ -145,14 +139,6 @@
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/static/**" /><!--静态资源-->
             <bean class="com.eryansky.core.web.interceptor.MobileInterceptor" >
-            </bean>
-        </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="${mobilePath}/mobile/device/**" />
-            <mvc:exclude-mapping path="${device.redirectURL}" /><!-- 跳转页面 -->
-            <mvc:exclude-mapping path="${mobilePath}/mobile/device/welcome" /><!--登录页面 -->
-            <bean class="com.eryansky.core.security.interceptor.AuthorityInterceptor" >
-                <property name="redirectURL" value="${device.redirectURL}" />
             </bean>
         </mvc:interceptor>
     </mvc:interceptors>

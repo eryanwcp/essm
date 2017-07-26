@@ -42,19 +42,19 @@ public class CacheUtils {
 		Element element = new Element(key, value);
 		Cache cache = getCache(cacheName);
 		cache.put(element);
-		cache.flush();
+//		cache.flush();
 	}
 
 	public static void remove(String cacheName, String key) {
 		Cache cache = getCache(cacheName);
 		cache.remove(key);
-		cache.flush();
+//		cache.flush();
 	}
 
 	public static void removeCache(String cacheName) {
 		Cache cache = getCache(cacheName);
 		cache.removeAll();
-		cache.flush();
+//		cache.flush();
 		cacheManager.removeCache(cacheName);
 	}
 	

@@ -8,13 +8,12 @@ package com.eryansky.core.aop.annotation;
 
 import com.eryansky.modules.sys._enum.LogType;
 
+import static com.eryansky.modules.sys._enum.LogType.*;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static com.eryansky.modules.sys._enum.LogType.*;
-import static com.eryansky.modules.sys._enum.LogType.operate;
 
 /**
  * 是否记录日志 用于切面记录日志
@@ -43,5 +42,11 @@ public @interface Logging {
      * @return
      */
     String value() default "";
+    /**
+     * 备注信息
+     * <br/>支持SpEL表达式
+     * @return
+     */
+    String remark() default "";
 
 }

@@ -18,6 +18,7 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -109,7 +110,6 @@ public class NoticeController extends SimpleController {
      * @param noticeId 通知ID
      * @return
      */
-    @Mobile
     @RequestMapping(value = { ""})
     public ModelAndView list(String noticeId) {
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice");
@@ -180,7 +180,7 @@ public class NoticeController extends SimpleController {
      * @return
      * @throws Exception
      */
-    @Mobile
+    @Mobile(value = MobileValue.ALL)
     @RequestMapping(value = { "view/{id}" })
     public ModelAndView view(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-view");

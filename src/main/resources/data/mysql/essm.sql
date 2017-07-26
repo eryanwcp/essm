@@ -406,7 +406,7 @@ CREATE TABLE `t_sys_log` (
   `oper_time` datetime DEFAULT NULL,
   `remark` text,
   `title` varchar(512) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
+  `type` varchar(36) DEFAULT NULL,
   `user_agent` varchar(255) DEFAULT NULL,
   `user_id` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`)

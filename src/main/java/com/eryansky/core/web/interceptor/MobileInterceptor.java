@@ -10,6 +10,7 @@ import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.google.common.collect.Lists;
 import com.eryansky.core.web.annotation.Mobile;
+import com.eryansky.core.web.annotation.MobileValue;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,59 +46,63 @@ public class MobileInterceptor implements HandlerInterceptor {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 						   ModelAndView modelAndView) throws Exception {
-		if (modelAndView != null){
-			if(UserAgentUtils.isMobileOrTablet(request) && !StringUtils.startsWithIgnoreCase(modelAndView.getViewName(), "redirect:")){
-				Boolean flag = null;
-				HandlerMethod handlerMethod = null;
-				try {
-					handlerMethod = (HandlerMethod) handler;
-				} catch (ClassCastException e) {
+		if (modelAndView != null && !StringUtils.startsWithIgnoreCase(modelAndView.getViewName(), "redirect:")){
+			Boolean flag = null;
+			MobileValue mobileValue = null;
+			HandlerMethod handlerMethod = null;
+			try {
+				handlerMethod = (HandlerMethod) handler;
+			} catch (ClassCastException e) {
 //                logger.error(e.getMessage(),e);
+			}
+
+			if (handlerMethod != null) {
+				Object bean = handlerMethod.getBean();
+				Mobile methodMobile = handlerMethod.getMethodAnnotation(Mobile.class);
+				if (methodMobile != null) {
+					flag = methodMobile.mobile();
+					mobileValue = methodMobile.value();
 				}
 
-				if (handlerMethod != null) {
-					Object bean = handlerMethod.getBean();
-					//需要登录
-					Mobile methodMobile = handlerMethod.getMethodAnnotation(Mobile.class);
-					if (methodMobile != null) {
-						flag = methodMobile.able();
-					}
-
-					if(methodMobile == null){//类注解处理
-						Mobile classMobile =  this.getAnnotation(bean.getClass(),Mobile.class);
-						if (classMobile != null) {
-							flag = classMobile.able();
-						}
-					}
-
-
-				}
-
-				String requestUrl = request.getRequestURI();
-				if(flag == null){
-					if (Collections3.isNotEmpty(excludeUrls)) {
-						for(String excludeUrl:excludeUrls){
-							flag = !StringUtils.simpleWildcardMatch(excludeUrl, requestUrl);
-							break;
-						}
+				if(methodMobile == null){//类注解处理
+					Mobile classMobile =  this.getAnnotation(bean.getClass(),Mobile.class);
+					if (classMobile != null) {
+						flag = classMobile.mobile();
+						mobileValue = classMobile.value();
 					}
 				}
 
-				if(flag == null){
-					if (Collections3.isNotEmpty(includeUrls)) {
-						for(String includeUrl:includeUrls){
-							flag = StringUtils.simpleWildcardMatch(includeUrl, requestUrl);
-							break;
-						}
-					}
-				}
 
-				// 如果是手机或平板访问的话，则跳转到手机视图页面。
-				if(flag != null && flag){
-					modelAndView.setViewName("mobile/" + modelAndView.getViewName());
+			}
+
+			String requestUrl = request.getRequestURI();
+			if(flag == null){
+				if (Collections3.isNotEmpty(excludeUrls)) {
+					for(String excludeUrl:excludeUrls){
+						flag = !StringUtils.simpleWildcardMatch(excludeUrl, requestUrl);
+						break;
+					}
 				}
 			}
 
+			if(flag == null){
+				if (Collections3.isNotEmpty(includeUrls)) {
+					for(String includeUrl:includeUrls){
+						flag = StringUtils.simpleWildcardMatch(includeUrl, requestUrl);
+						break;
+					}
+				}
+			}
+
+			if(flag != null && flag){
+				if(MobileValue.ALL.equals(mobileValue)){
+					if(UserAgentUtils.isMobileOrTablet(request)){
+						modelAndView.setViewName("mobile/" + modelAndView.getViewName());
+					}
+				}else if(MobileValue.MOBILE.equals(mobileValue)){
+					modelAndView.setViewName("mobile/" + modelAndView.getViewName());
+				}
+			}
 
 
 

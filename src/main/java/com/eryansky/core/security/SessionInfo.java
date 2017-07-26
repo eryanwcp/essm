@@ -6,8 +6,10 @@
 package com.eryansky.core.security;
 
 import com.eryansky.common.persistence.AbstractBaseEntity;
+import com.eryansky.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import eu.bitwalker.useragentutils.DeviceType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
@@ -89,11 +91,7 @@ public class SessionInfo implements Serializable {
     /**
      * 用户岗位
      */
-    private List<String> postIds;
-    /**
-     * 用户岗位名称
-     */
-    private String postNames;
+    private List<String> postCodes = new ArrayList<String>(0);
 
     /**
      * 登录时间
@@ -313,21 +311,14 @@ public class SessionInfo implements Serializable {
         this.organNames = organNames;
     }
 
-    public List<String> getPostIds() {
-        return postIds;
+    public List<String> getPostCodes() {
+        return postCodes;
     }
 
-    public void setPostIds(List<String> postIds) {
-        this.postIds = postIds;
+    public void setPostCodes(List<String> postCodes) {
+        this.postCodes = postCodes;
     }
 
-    public String getPostNames() {
-        return postNames;
-    }
-
-    public void setPostNames(String postNames) {
-        this.postNames = postNames;
-    }
     /**
      * 是否是超级管理员
      *
@@ -366,6 +357,15 @@ public class SessionInfo implements Serializable {
         this.permissons.add(permisson);
         return this;
     }
+
+    public boolean isMobileLogin(){
+        if(StringUtils.isBlank(deviceType)){
+            return false;
+        }
+        DeviceType _deviceType = DeviceType.valueOf(deviceType);
+        return DeviceType.MOBILE.equals(_deviceType) || DeviceType.TABLET.equals(_deviceType);
+    }
+
 
     @Override
     public String toString() {

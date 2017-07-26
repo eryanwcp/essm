@@ -20,6 +20,7 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.CookieUtils;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.web.annotation.MobileValue;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityConstants;
@@ -68,7 +69,7 @@ public class LoginController extends SimpleController {
      * @return
      * @throws Exception
      */
-    @Mobile
+    @Mobile(value = MobileValue.ALL)
     @RequiresUser(required = false)
     @RequestMapping(value = {"welcome", ""})
     public ModelAndView welcome() throws Exception {
