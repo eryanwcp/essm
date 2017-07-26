@@ -198,7 +198,7 @@ public class SecurityUtils {
      *
      * @param user
      */
-    public static synchronized void putUserToSession(HttpServletRequest request, User user) {
+    public static void putUserToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         String sessionId = session.getId();
         if(logger.isDebugEnabled()){
@@ -338,7 +338,7 @@ public class SecurityUtils {
      *
      * @param sessionId session ID
      */
-    public static synchronized void removeUserFromSession(String sessionId, SecurityType securityType) {
+    public static void removeUserFromSession(String sessionId, SecurityType securityType) {
         SessionInfo _sessionInfo = applicationSessionContext.getSession(sessionId);
         if(_sessionInfo != null){
             userManager.logout(_sessionInfo.getUserId(),securityType);

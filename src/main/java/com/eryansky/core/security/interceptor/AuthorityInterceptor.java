@@ -107,12 +107,16 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
                 }
             }
 
-            //角色要求注解
+            //角色注解
             RequiresRoles requiresRoles = handler.getMethodAnnotation(RequiresRoles.class);
+            if(requiresRoles == null){
+                requiresRoles = this.getAnnotation(bean.getClass(),RequiresRoles.class);
+            }
             if (requiresRoles != null) {//方法注解处理
                 String[] roles = requiresRoles.value();
+                boolean permittedRole = false;
                 for (String role : roles) {
-                    boolean permittedRole = SecurityUtils.isPermittedRole(role);
+                    permittedRole = SecurityUtils.isPermittedRole(role);
                     if (Logical.AND.equals(requiresRoles.logical())) {
                         if (!permittedRole) {
                             notPermittedRole(request,response,sessionInfo,requestUrl,role);
@@ -120,39 +124,26 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
                         }
                     } else {
                         if (permittedRole) {
-                            return true;
+                            break;
                         }
                     }
                 }
-            }else{//类注解处理
-                requiresRoles = this.getAnnotation(bean.getClass(),RequiresRoles.class);
-                if(requiresRoles != null){
-                    if (requiresRoles != null) {
-                        String[] roles = requiresRoles.value();
-                        for (String role : roles) {
-                            boolean permittedRole = SecurityUtils.isPermittedRole(role);
-                            if (Logical.AND.equals(requiresRoles.logical())) {
-                                if (!permittedRole) {
-                                    notPermittedRole(request,response,sessionInfo,requestUrl,role);
-                                    return false;
-                                }
-                            } else {
-                                if (permittedRole) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                if(!permittedRole){
+                    notPermittedPermission(request,response,sessionInfo,requestUrl,null);
+                    return false;
                 }
-
             }
 
-            //资源/权限 要求注解
+            //资源/权限注解
             RequiresPermissions requiresPermissions = handler.getMethodAnnotation(RequiresPermissions.class);
+            if(requiresPermissions == null){
+                requiresPermissions = this.getAnnotation(bean.getClass(),RequiresPermissions.class);
+            }
             if (requiresPermissions != null) {//方法注解处理
                 String[] permissions = requiresPermissions.value();
+                boolean permittedResource = false;
                 for (String permission : permissions) {
-                    boolean permittedResource = SecurityUtils.isPermitted(permission);
+                    permittedResource = SecurityUtils.isPermitted(permission);
                     if (Logical.AND.equals(requiresPermissions.logical())) {
                         if (!permittedResource) {
                             notPermittedPermission(request,response,sessionInfo,requestUrl,permission);
@@ -160,27 +151,13 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
                         }
                     } else {
                         if (permittedResource) {
-                            return true;
+                            break;
                         }
                     }
                 }
-            }else{//类注解处理
-                requiresPermissions = this.getAnnotation(bean.getClass(),RequiresPermissions.class);
-                if(requiresPermissions != null){
-                    String[] permissions = requiresPermissions.value();
-                    for (String permission : permissions) {
-                        boolean permittedResource = SecurityUtils.isPermitted(permission);
-                        if (Logical.AND.equals(requiresPermissions.logical())) {
-                            if (!permittedResource) {
-                                notPermittedPermission(request,response,sessionInfo,requestUrl,permission);
-                                return false;
-                            }
-                        } else {
-                            if (permittedResource) {
-                                return true;
-                            }
-                        }
-                    }
+                if(!permittedResource){
+                    notPermittedPermission(request,response,sessionInfo,requestUrl,null);
+                    return false;
                 }
             }
 
@@ -204,8 +181,8 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
         String loginName = null;
         if(sessionInfo != null){
             loginName = sessionInfo.getLoginName();
+            logger.warn("用户[{}]无权访问URL:{}，未被授权资源:{}", new Object[]{loginName, requestUrl,permission});
         }
-        logger.warn("用户[{}]无权访问URL:{}，未被授权资源:{}", new Object[]{loginName, requestUrl,permission});
         request.getRequestDispatcher(SecurityConstants.SESSION_UNAUTHORITY_PAGE).forward(request, response);
     }
 
@@ -224,8 +201,8 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
         String loginName = null;
         if(sessionInfo != null){
             loginName = sessionInfo.getLoginName();
+            logger.warn("用户{}未被授权URL:{}！", new Object[]{loginName, requestUrl});
         }
-        logger.warn("用户{}未被授权URL:{}！", new Object[]{loginName, requestUrl});
         request.getRequestDispatcher(SecurityConstants.SESSION_UNAUTHORITY_PAGE).forward(request, response);
     }
 
@@ -253,10 +230,10 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 
         if(sessionInfo != null){
             //清空session中清空未被授权的访问地址
-            Object unAuthorityUrl = request.getSession().getAttribute(SecurityConstants.SESSION_UNAUTHORITY_URL);
-            if(unAuthorityUrl != null){
-                request.getSession().setAttribute(SecurityConstants.SESSION_UNAUTHORITY_URL,null);
-            }
+//            Object unAuthorityUrl = request.getSession().getAttribute(SecurityConstants.SESSION_UNAUTHORITY_URL);
+//            if(unAuthorityUrl != null){
+//                request.getSession().setAttribute(SecurityConstants.SESSION_UNAUTHORITY_URL,null);
+//            }
 
             //检查用户是否授权该URL
             if (authorMarkUrl){
@@ -293,8 +270,8 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
         String loginName = null;
         if(sessionInfo != null){
             loginName = sessionInfo.getLoginName();
+            logger.warn("用户[{}]无权访问URL:{}，未被授权角色:{}", new Object[]{loginName, requestUrl,role});
         }
-        logger.warn("用户[{}]无权访问URL:{}，未被授权角色:{}", new Object[]{loginName, requestUrl,role});
         request.getRequestDispatcher(SecurityConstants.SESSION_UNAUTHORITY_PAGE).forward(request, response);
     }
 
