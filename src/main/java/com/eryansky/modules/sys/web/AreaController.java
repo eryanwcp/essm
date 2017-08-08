@@ -68,7 +68,7 @@ public class AreaController extends SimpleController {
 			List<Area> list = areaService.findAll();
 			for (int i=0; i<list.size(); i++){
 				Area e = list.get(i);
-				if (e.getParent()!=null && e.getParent().getId()!=null
+				if (e.getParent()!=null && area.getParent() != null && e.getParent().getId()!=null
 						&& e.getParent().getId().equals(area.getParent().getId())){
 					size++;
 				}

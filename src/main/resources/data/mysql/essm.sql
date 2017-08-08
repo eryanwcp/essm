@@ -10,7 +10,7 @@ Target Server Type    : MariaDB
 Target Server Version : 100019
 File Encoding         : 65001
 
-Date: 2016-03-28 21:48:48
+Date: 2017-08-08 16:58:14
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -312,6 +312,34 @@ CREATE TABLE `t_notice_send_info` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for t_sys_area
+-- ----------------------------
+DROP TABLE IF EXISTS `t_sys_area`;
+CREATE TABLE `t_sys_area` (
+  `ID` varchar(36) NOT NULL COMMENT '主键ID',
+  `STATUS` char(1) DEFAULT NULL COMMENT '状态 正常/删除/审核/锁定 0/1/2/3',
+  `VERSION` int(11) DEFAULT NULL COMMENT '版本号',
+  `CREATE_USER` varchar(36) DEFAULT NULL COMMENT '创建者',
+  `CREATE_TIME` datetime DEFAULT NULL COMMENT '创建时间',
+  `UPDATE_USER` varchar(36) DEFAULT NULL COMMENT '更新者',
+  `UPDATE_TIME` datetime DEFAULT NULL COMMENT '更新时间',
+  `NAME` varchar(255) DEFAULT NULL COMMENT '名称',
+  `SHORT_NAME` varchar(255) DEFAULT NULL COMMENT '简称',
+  `CODE` varchar(36) DEFAULT NULL COMMENT '编码',
+  `TYPE` varchar(36) DEFAULT NULL COMMENT '类型 区域类型（1：国家；2：省份、直辖市；3：地市；4：区县）',
+  `SORT` int(11) DEFAULT NULL COMMENT '排序',
+  `PARENT_ID` varchar(36) DEFAULT NULL COMMENT '父级ID',
+  `PARENT_IDS` varchar(1024) DEFAULT NULL COMMENT '上级ID集合',
+  `REMARK` varchar(255) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`ID`),
+  KEY `AK_Key_2` (`NAME`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='区域表';
+
+-- ----------------------------
+-- Records of t_sys_area
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for t_sys_config
 -- ----------------------------
 DROP TABLE IF EXISTS `t_sys_config`;
@@ -443,7 +471,7 @@ CREATE TABLE `t_sys_organ` (
   `parent_ids` varchar(2000) DEFAULT NULL,
   `mobile` varchar(36) DEFAULT NULL,
   `area_id` varchar(36) DEFAULT NULL,
-  `deputy_manager_user_id` varchar(128) DEFAULT NULL
+  `deputy_manager_user_id` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_sixv5h7puaswyuptn1f4mnq5b` (`parent_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -451,7 +479,7 @@ CREATE TABLE `t_sys_organ` (
 -- ----------------------------
 -- Records of t_sys_organ
 -- ----------------------------
-INSERT INTO `t_sys_organ` VALUES ('1', '2014-09-17 14:08:54', '1', '0', '2015-12-09 08:23:24', '1', '34', '', '', '', '1', 'XXX科技有限公司', '1', '', '01', '0', null, '', '', '0,', '');
+INSERT INTO `t_sys_organ` VALUES ('1', '2014-09-17 14:08:54', '1', '0', '2015-12-09 08:23:24', '1', '34', '', '', '', '1', '江西省锦峰软件科技有限公司', '1', '', '01', '0', null, '', '', '0,', '', null, null);
 
 -- ----------------------------
 -- Table structure for t_sys_post
@@ -559,6 +587,8 @@ CREATE TABLE `t_sys_role` (
 -- ----------------------------
 -- Records of t_sys_role
 -- ----------------------------
+INSERT INTO `t_sys_role` VALUES ('178491aff86b486395ac825cad70cf63', '2015-12-08 17:07:24', '1', '0', '2015-12-08 17:13:02', '1', '4', 'tzgg', '通知公告人员', '', '', '1', '1', '1', null);
+INSERT INTO `t_sys_role` VALUES ('a47a816aa7e84dc7a8fcc92e93589bcc', '2015-10-13 11:40:26', '1', '0', '2015-12-08 17:08:14', '1', '24', 'base', '员工', '', '', '1', '1', '1', null);
 
 -- ----------------------------
 -- Table structure for t_sys_role_organ
@@ -566,10 +596,8 @@ CREATE TABLE `t_sys_role` (
 DROP TABLE IF EXISTS `t_sys_role_organ`;
 CREATE TABLE `t_sys_role_organ` (
   `role_id` varchar(36) NOT NULL,
-  `organ_id` varchar(36) NOT NULL,
-  KEY `FK_5cpnrv79xvedd9dvowxbuf2mk` (`organ_id`) USING BTREE,
+  `organ_id` varchar(36) DEFAULT NULL,
   KEY `FK_oorf8snvueb85oo97r33eixmu` (`role_id`) USING BTREE,
-  CONSTRAINT `t_sys_role_organ_ibfk_1` FOREIGN KEY (`organ_id`) REFERENCES `t_sys_organ` (`id`),
   CONSTRAINT `t_sys_role_organ_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `t_sys_role` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -614,10 +642,9 @@ CREATE TABLE `t_sys_user` (
   `name` varchar(36) DEFAULT NULL,
   `order_no` int(11) DEFAULT NULL,
   `password` varchar(64) DEFAULT NULL,
+  `personal_email` varchar(64) DEFAULT NULL,
   `photo` varchar(1024) DEFAULT NULL,
-  `person_email` varchar(64) DEFAULT NULL,
   `qq` varchar(36) DEFAULT NULL,
-  `weixin` varchar(64) DEFAULT NULL,
   `remark` varchar(1024) DEFAULT NULL,
   `sex` int(11) DEFAULT NULL,
   `tel` varchar(36) DEFAULT NULL,
@@ -625,13 +652,15 @@ CREATE TABLE `t_sys_user` (
   `mobile` varchar(36) DEFAULT NULL,
   `original_password` varchar(128) DEFAULT NULL,
   `default_organ_id` varchar(36) DEFAULT NULL,
+  `person_email` varchar(64) DEFAULT NULL,
+  `weixin` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of t_sys_user
 -- ----------------------------
-INSERT INTO `t_sys_user` VALUES ('1', null, null, '0', '2015-12-11 13:03:37', '1', '7', '', null, null, '', 'admin', '管理员', '1', 'c4ca4238a0b923820dcc509a6f75849b', '', '', '', '', null, '', '0', '', '7e0cd7be3e66d4a8', '1');
+INSERT INTO `t_sys_user` VALUES ('1', null, null, '0', '2015-12-11 13:03:37', '1', '7', '', null, null, '', 'admin', '管理员', '1', 'c4ca4238a0b923820dcc509a6f75849b', '', '', '', '', null, '', '0', '', '7e0cd7be3e66d4a8', '1', null, null);
 
 -- ----------------------------
 -- Table structure for t_sys_user_organ

@@ -110,10 +110,6 @@ public class Organ extends DataEntity<Organ> {
      */
     private List<User> users = Lists.newArrayList();
     /**
-     * 部门副主管
-     */
-    private String deputyManagerUserId;
-    /**
      * 区域ID
      */
     private String areaId;
@@ -553,28 +549,6 @@ public class Organ extends DataEntity<Organ> {
             return organ.getId();
         }
         return this.id;
-    }
-
-    /**
-     * 部门副职 TODO 未实现
-     *
-     * @return
-     */
-    @Transient
-    public List<String> getDeputyIds() {
-        return null;
-    }
-
-    /**
-     * @return
-     */
-    @Column(length = 128)
-    public String getDeputyManagerUserId() {
-        return deputyManagerUserId;
-    }
-
-    public void setDeputyManagerUserId(String deputyManagerUserId) {
-        this.deputyManagerUserId = deputyManagerUserId;
     }
 
 

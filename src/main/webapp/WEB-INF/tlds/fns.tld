@@ -243,6 +243,13 @@
         <function-signature>java.lang.String replaceHtml(java.lang.String)</function-signature>
         <example>${fns:replaceHtml(html)}</example>
     </function>
+    <function>
+        <description>转换为JS获取对象值，生成三目运算返回结果。</description>
+        <name>jsGetVal</name>
+        <function-class>com.eryansky.common.utils.StringUtils</function-class>
+        <function-signature>java.lang.String jsGetVal(java.lang.String)</function-signature>
+        <example>${fns:jsGetVal(objectString)}</example>
+    </function>
 
     <!-- DateUtils -->
     <function>

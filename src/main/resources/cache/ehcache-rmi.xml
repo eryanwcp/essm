@@ -94,4 +94,9 @@
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
     </cache>
 
+    <!--区域缓存-->
+    <cache name="sys_area_list" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+        <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
+    </cache>
+
 </ehcache>
