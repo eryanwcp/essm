@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.AreaDao">
+    
+	<sql id="areaColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.parent_ids AS "parent_ids",
+		a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+		a.name AS "name",
+		a.short_name AS "shortName",
+		a.code AS "code",
+		a.type AS "type",
+		a.sort AS "sort",
+		a.remark AS "remark"
+	</sql>
+	
+	<sql id="areaJoins">
+		LEFT JOIN t_sys_area p ON p.id = a.parent_id
+    </sql>
+    
+	<select id="get" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM t_sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM t_sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		<!-- 数据范围过滤 -->
+		${sqlMap.dsf}
+		OR a.id = #{currentUser.office.area.id}
+		ORDER BY a.code
+	</select>
+	
+	<select id="findAllList" resultType="Area">
+		SELECT
+			<include refid="areaColumns"/>
+		FROM t_sys_area a
+		<include refid="areaJoins"/>
+		WHERE a.status = #{STATUS_NORMAL}
+		ORDER BY a.code
+	</select>
+	
+	<select id="findByParentIdsLike" resultType="Area">
+		SELECT
+			a.id,
+			a.parent_id AS "parent.id",
+			a.parent_ids
+		FROM t_sys_area a
+		WHERE a.status = #{STATUS_NORMAL} AND a.parent_ids LIKE #{parentIds}
+		ORDER BY a.code
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_sys_area(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			parent_id,
+			parent_ids,
+			name,
+			short_name,
+			code,
+			type,
+			sort,
+			remark
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{parent.id},
+			#{parentIds},
+			#{name},
+			#{shortName},
+			#{code},
+			#{type},
+			#{sort},
+			#{remark}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_area SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			name = #{name},
+			short_name = #{shortName},
+			code = #{code},
+			type = #{type},
+			sort = #{sort},
+			remark = #{remark}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateParentIds">
+		UPDATE t_sys_area SET
+			parent_id = #{parent.id}, 
+			parent_ids = #{parentIds}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_sys_area SET
+			status = #{STATUS_DELETE}
+		WHERE id = #{id} OR parent_ids LIKE 
+					<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</update>
+	
+</mapper>
