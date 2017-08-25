@@ -470,12 +470,8 @@ CREATE TABLE `t_sys_organ` (
   `short_name` varchar(255) DEFAULT NULL,
   `parent_ids` varchar(2000) DEFAULT NULL,
   `mobile` varchar(36) DEFAULT NULL,
-<<<<<<< HEAD
-  `area_id` varchar(36) DEFAULT NULL,
   `deputy_manager_user_id` varchar(128) DEFAULT NULL,
-=======
-  `area_id` varchar(36) DEFAULT NULL
->>>>>>> 51c83cb7c5256a79a418b6af669be46dad1cb8df
+  `area_id` varchar(36) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_sixv5h7puaswyuptn1f4mnq5b` (`parent_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
