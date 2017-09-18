@@ -12,26 +12,25 @@
 
     <properties>
         <!-- version setting -->
-        <spring.version>4.2.6.RELEASE</spring.version>
-        <!--<spring.version>4.1.9.RELEASE</spring.version>-->
+        <spring.version>4.3.10.RELEASE</spring.version>
         <hibernate.version>4.2.14.Final</hibernate.version>
         <hibernate-search.version>4.4.3.Final</hibernate-search.version>
         <hibernate-validator.version>4.3.1.Final</hibernate-validator.version>
         <lucene.version>3.6.2</lucene.version>
-        <mybatis.version>3.3.0</mybatis.version>
-        <mybatis-spring.version>1.2.2</mybatis-spring.version>
-        <ehcache.version>2.6.9</ehcache.version>
+        <mybatis.version>3.4.5</mybatis.version>
+        <mybatis-spring.version>1.3.1</mybatis-spring.version>
+        <ehcache.version>2.6.8</ehcache.version>
         <ehcache-web.version>2.0.4</ehcache-web.version>
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <commons-lang2.version>2.5</commons-lang2.version>
-        <commons-lang3.version>3.1</commons-lang3.version>
+        <commons-lang3.version>3.5</commons-lang3.version>
         <commons-io.version>2.4</commons-io.version>
         <commons-codec.version>1.9</commons-codec.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
-        <httpcomponents.version>4.3.2</httpcomponents.version>
-        <jackson.version>2.5.4</jackson.version>
+        <httpcomponents.version>4.5.3</httpcomponents.version>
+        <jackson.version>2.8.6</jackson.version>
         <xstream.version>1.4.3</xstream.version>
         <guava.version>17.0</guava.version>
         <dozer.version>5.4.0</dozer.version>
@@ -46,7 +45,8 @@
 
         <!-- jdbc driver setting -->
         <mysql.driver.version>5.1.31</mysql.driver.version>
-        <mariadb.driver.version>1.1.8</mariadb.driver.version>
+        <mariadb.driver.version>1.1.9</mariadb.driver.version>
+        <druid-version>1.1.2</druid-version>
 
         <!-- other setting -->
         <jdk.version>1.6</jdk.version>
@@ -67,13 +67,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8.21</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>p6spy</groupId>
-            <artifactId>p6spy</artifactId>
-            <version>1.3</version>
-            <!--<version>2.1.0</version>-->
             <scope>test</scope>
         </dependency>
 
@@ -97,11 +90,11 @@
 
 
         <!--用于JAX-WS jdk版本小于1.6.22添加-->
-        <dependency>
-            <groupId>com.sun.xml.ws</groupId>
-            <artifactId>jaxws-rt</artifactId>
-            <version>2.1.7</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.sun.xml.ws</groupId>-->
+            <!--<artifactId>jaxws-rt</artifactId>-->
+            <!--<version>2.1.7</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -201,9 +194,9 @@
             <version>3.2.1</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-dbutils</groupId>
@@ -311,7 +304,8 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>${httpcomponents.version}</version>
+            <version>4.4.6</version>
+            <!--<version>${httpcomponents.version}</version>-->
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -423,6 +417,12 @@
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>${mariadb.driver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-dbcp</groupId>
+                    <artifactId>commons-dbcp</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -568,18 +568,6 @@
         <!--<version>1.1.3.1</version>-->
         <!--</dependency>-->
 
-        <!-- 条形码、二维码生成  -->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>2.2</version>
-        </dependency>
-
         <!--fastweixin依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -590,7 +578,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
-            <version>4.3.2</version>
+            <version>${httpcomponents.version}</version>
         </dependency>
         <!--fastweixin依赖-->
     </dependencies>

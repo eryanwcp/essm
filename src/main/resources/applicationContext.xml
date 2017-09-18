@@ -29,7 +29,7 @@
     <!-- <jee:jndi-lookup id="dataSource" jndi-name="${jndi.name}" /> -->
 
     <!-- 2.DBCP数据源 数据源配置,使用应用内的DBCP数据库连接池 -->
-    <bean id="defaultDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="defaultDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}" />
         <property name="url" value="${jdbc.url}" />
         <property name="username" value="${jdbc.username}" />
@@ -37,16 +37,19 @@
 
         <property name="initialSize" value="20" />
         <property name="maxActive" value="500" />
-        <property name="maxIdle" value="500" />
-        <property name="maxWait" value="500" />
-        <property name="removeAbandoned" value="true"/>
-        <property name="testWhileIdle" value="false" />
-        <property name="testOnBorrow" value="true" />
+        <property name="maxWait" value="60000" />
+        <property name="minIdle" value="1" />
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
         <property name="testOnReturn" value="false" />
         <property name="validationQuery" value="${jdbc.validationQuery}" />
         <property name="defaultAutoCommit" value="false" />
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat" />
     </bean>
-
     <bean id="dataSource" class="com.eryansky.common.datasource.DynamicDataSource">
         <property name="defaultTargetDataSource" ref="defaultDataSource"/>
         <property name="targetDataSources">

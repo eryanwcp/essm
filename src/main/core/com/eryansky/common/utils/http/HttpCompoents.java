@@ -1,10 +1,10 @@
 package com.eryansky.common.utils.http;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.GzipDecompressingEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.fluent.Executor;
 import org.apache.http.client.fluent.Request;
@@ -17,11 +17,13 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.cookie.*;
 import org.apache.http.impl.client.*;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.impl.cookie.BestMatchSpecFactory;
 import org.apache.http.impl.cookie.BrowserCompatSpec;
@@ -48,6 +50,7 @@ import java.util.Map;
  * 基于HttpClient HTTP客户端组件
  * <br/>1、支持重试机制(3次).
  * 2、同一实例自动维护Cookie信息.
+ * 3、支持gzip压缩
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-12-14
@@ -56,6 +59,24 @@ public class HttpCompoents {
 
     private static Logger logger = LoggerFactory.getLogger(HttpCompoents.class);
 
+    /**
+     * 连接超时时间 可以配到配置文件 （单位毫秒）
+     */
+    private static int MAX_TIME_OUT = 30*1000;
+    /**
+     * 设置整个连接池最大连接数
+     */
+    private static int MAX_CONN = 2048;
+    /**
+     * 设置单个路由默认连接数
+     */
+    private static int SINGLE_ROUTE_MAX_CONN = 300;
+
+    /**
+     * 连接丢失后,重试次数
+     */
+    private static int MAX_EXECUT_COUNT = 3;
+
     private static HttpCompoents instance;
     private final String _DEFLAUT_CHARSET = "utf-8";
     private CloseableHttpClient httpClient;
@@ -63,6 +84,10 @@ public class HttpCompoents {
      * 设置超时，毫秒级别
      */
     private RequestConfig requestConfig = null;
+    /**
+     * 连接池
+     */
+    private PoolingHttpClientConnectionManager connectionManager;
     /**
      * Cookie存储
      */
@@ -87,7 +112,7 @@ public class HttpCompoents {
             HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
                 public boolean retryRequest(IOException exception,
                                             int executionCount, HttpContext context) {
-                    if (executionCount >= 3) {// 如果已经重试了3次，就放弃
+                    if (executionCount >= MAX_EXECUT_COUNT) {// 如果已经重试了3次，就放弃
                         return false;
                     }
                     if (exception instanceof InterruptedIOException) {// 超时
@@ -112,17 +137,6 @@ public class HttpCompoents {
                     return false;
                 }
             };
-            SSLContext sslContext;
-            sslContext = new SSLContextBuilder().loadTrustMaterial(null,
-                    new TrustStrategy() {
-                        // 信任所有
-                        public boolean isTrusted(X509Certificate[] chain,
-                                                 String authType) throws CertificateException {
-                            return true;
-                        }
-                    }).build();
-            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                    sslContext);
 
             CookieSpecProvider easySpecProvider = new CookieSpecProvider() {
                 public CookieSpec create(HttpContext context) {
@@ -131,7 +145,6 @@ public class HttpCompoents {
                         @Override
                         public void validate(Cookie cookie, CookieOrigin origin)
                                 throws MalformedCookieException {
-                            System.out.println(cookie);
                             // Oh, I am easy
                         }
                     };
@@ -147,15 +160,69 @@ public class HttpCompoents {
 
             requestConfig = RequestConfig.custom()
                     .setCookieSpec("easy")
-                    .setSocketTimeout(30*1000)
-                    .setConnectTimeout(30*1000)
+                    .setSocketTimeout(MAX_TIME_OUT)
+                    .setConnectTimeout(MAX_TIME_OUT)
+                    .setConnectionRequestTimeout(MAX_TIME_OUT)
                     .setRedirectsEnabled(true).build();
+
+            SSLContext sslContext;
+            sslContext = new SSLContextBuilder().loadTrustMaterial(null,
+                    new TrustStrategy() {
+                        // 信任所有
+                        public boolean isTrusted(X509Certificate[] chain,
+                                                 String authType) throws CertificateException {
+                            return true;
+                        }
+                    }).build();
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext);
+            // 创建SSLSocketFactory
+            // 定义socket工厂类 指定协议（Http、Https）
+            Registry registry = RegistryBuilder.create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslsf)//SSLConnectionSocketFactory.getSocketFactory()
+                    .build();
+
+            connectionManager = new PoolingHttpClientConnectionManager(registry);
+            connectionManager.setMaxTotal(MAX_CONN);// 连接池最大并发连接数
+            connectionManager.setDefaultMaxPerRoute(SINGLE_ROUTE_MAX_CONN);// 单路由最大并发数
+
+
             httpClient = HttpClients.custom()
                     .setKeepAliveStrategy(keepAliveStrat)
                     .setRetryHandler(retryHandler)
                     .setDefaultCookieSpecRegistry(r)
                     .setDefaultRequestConfig(requestConfig)
                     .setDefaultCookieStore(cookieStore)
+                    .setConnectionManager(connectionManager)
+                    .addInterceptorFirst(new HttpRequestInterceptor() {
+                        //增加gzip压缩请求
+                        public void process(
+                                final HttpRequest request,
+                                final HttpContext context) throws HttpException, IOException {
+                            if (!request.containsHeader("Accept-Encoding")) {
+                                request.addHeader("Accept-Encoding", "gzip");
+                            }
+                        }
+                    })
+                    .addInterceptorFirst(new HttpResponseInterceptor() {
+                        //拦截器：返回增加gzip解压
+                        public void process(final HttpResponse response,
+                                            final HttpContext context) throws HttpException, IOException {
+                            HttpEntity entity = response.getEntity();
+                            if (entity != null) {
+                                Header ceheader = entity.getContentEncoding();
+                                if (ceheader != null) {
+                                    HeaderElement[] codecs = ceheader.getElements();
+                                    for (int i = 0; i < codecs.length; i++) {
+                                        if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                                            response.setEntity(new GzipDecompressingEntity(response.getEntity()));
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
 //                    .setSslcontext(sslContext)
                     .build();
         } catch (Exception e) {
@@ -267,7 +334,9 @@ public class HttpCompoents {
                 HttpEntity entity = response.getEntity();
                 return EntityUtils.toString(entity, useCharset);
             } finally {
-                response.close();
+                if(response != null){
+                    response.close();
+                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -347,7 +416,9 @@ public class HttpCompoents {
                 HttpEntity entity = response.getEntity();
                 return EntityUtils.toString(entity, useCharset);
             } finally {
-                response.close();
+                if(response != null){
+                    response.close();
+                }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -462,6 +533,10 @@ public class HttpCompoents {
 
     public RequestConfig getRequestConfig() {
         return requestConfig;
+    }
+
+    public PoolingHttpClientConnectionManager getConnectionManager() {
+        return connectionManager;
     }
 
     public BasicCookieStore getCookieStore() {
