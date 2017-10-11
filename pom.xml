@@ -538,7 +538,6 @@
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>${xstream.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
