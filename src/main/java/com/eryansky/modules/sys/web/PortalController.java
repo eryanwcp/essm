@@ -11,6 +11,7 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.web.annotation.MobileValue;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
@@ -156,7 +157,7 @@ public class PortalController extends SimpleController {
      *
      * @return
      */
-    @Mobile
+    @Mobile(value = MobileValue.PC)
     @RequiresUser(required = false)
     @RequestMapping("notice")
     public ModelAndView notice(HttpServletRequest request,HttpServletResponse response) {
