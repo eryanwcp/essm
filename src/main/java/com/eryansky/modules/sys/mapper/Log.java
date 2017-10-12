@@ -7,6 +7,7 @@ package com.eryansky.modules.sys.mapper;
 
 import com.eryansky.common.persistence.AbstractBaseEntity;
 import com.eryansky.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys._enum.LogType;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date: 13-11-27 下午9:18
  */
+@JsonFilter(" ")
 public class Log extends DataEntity<Log> {
 
     /**
