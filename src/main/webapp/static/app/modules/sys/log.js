@@ -11,6 +11,7 @@ $(function () {
         fitColumns: false,//自适应列宽
         striped: true,//显示条纹
         pageSize: 20,//每页记录数
+        pageList:[10,20,50,100,1000],
         singleSelect: false,//单选模式
         checkbox: true,
         nowrap: true,
@@ -21,25 +22,28 @@ $(function () {
         idField: 'id',
         frozenColumns:[[
             {field: 'ck',checkbox: true,width: 60},
-            {field: 'typeView',title: '日志类型',width: 100}
+            {field: 'typeView',title: '日志类型',width: 80}
         ]],
         columns: [ [
-            {field: 'id',title: '主键',hidden: true,sortable: true,align: 'right', width: 80 } ,
-            {field: 'title',title: '标题',width: 200,hidden:false},
+            {field: 'id',title: '主键',hidden: true,sortable: true,align: 'right', width: 100} ,
+            {field: 'title',title: '标题',width: 200,hidden:false,formatter: function (value, rowData, rowIndex) {
+                return "<a target='_blank' href='"+ctxAdmin+"/sys/log/detail?id="+rowData['id']+"'>"+rowData['title']+"</a>";
+            } },
             {field: 'userCompanyName', title: '单位', width: 200, hidden: false},
             {field: 'userOfficeName', title: '部门', width: 150, hidden: false},
-            {field: 'userName',title: '姓名',width: 120},
+            {field: 'userName',title: '姓名',width: 80},
             {field: 'userId',title: '用户ID',width: 60,hidden:true},
             {field: 'ip', title: 'IP地址', width: 100} ,
-            {field: 'userAgent', title: '客户端', width: 100} ,
-            {field: 'browserType', title: '浏览器', width: 100} ,
-            {field: 'deviceType', title: '设备', width: 100} ,
+            {field: 'userAgent', title: '客户端', width: 100,hidden:true} ,
+            {field: 'browserType', title: '浏览器', width: 100,hidden:true} ,
+            {field: 'deviceType', title: '设备', width: 80,hidden:true} ,
             {field: 'module',title: '模块', width: 200},
-            {field: 'action',title: '操作',width: 160},
+            {field: 'action',title: '操作',width: 100,hidden:true},
             {field: 'operTime',title: '操作时间',width: 136,sortable: true} ,
             {field: 'actionTime',title: '操作耗时(ms)',width: 100},
-            {field: 'remark',title: '备注',width: 260 ,hidden:true},
-            {field: 'exception',title: '异常',width: 260 ,hidden:true}
+            {field: 'longitude',title: '经度',width: 100,hidden:true},
+            {field: 'latitude',title: '纬度',width: 100,hidden:true},
+            {field: 'remark',title: '备注',width: 260 ,hidden:true}
         ]],
         toolbar:[{
             text:'删除',

@@ -182,7 +182,6 @@ public class Log extends DataEntity<Log> {
         this.deviceType = deviceType;
     }
 
-    @JsonIgnore
     public String getRemark() {
         return remark;
     }
@@ -191,7 +190,7 @@ public class Log extends DataEntity<Log> {
         this.remark = remark;
     }
 
-    @JsonIgnore
+//    @JsonIgnore
     public String getException() {
         return exception;
     }

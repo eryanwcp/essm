@@ -15,7 +15,10 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.security.annotation.RequiresPermissions;
+import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
 import com.eryansky.modules.sys.service.LogService;
@@ -52,7 +55,7 @@ public class LogController extends SimpleController {
     }
 
 
-    @ModelAttribute
+    @ModelAttribute("model")
     public Log get(@RequestParam(required=false) String id) {
         if (StringUtils.isNotBlank(id)){
             return logService.get(id);
@@ -72,13 +75,28 @@ public class LogController extends SimpleController {
      */
     @RequestMapping(value = {"datagrid"})
     @ResponseBody
-    public Datagrid<Log> datagrid(Log log,String name,HttpServletRequest request,HttpServletResponse response,Model uiModel) {
+    public String datagrid(Log log,String name,HttpServletRequest request,HttpServletResponse response,Model uiModel) {
         Page<Log> page = new Page<Log>(request);
         log.setUserId(name);
         page = logService.findPage(page,log);
         Datagrid<Log> dg = new Datagrid<Log>(page.getTotalCount(),page.getResult());
-        return dg;
+        String json = JsonMapper.getInstance().toJsonWithExcludeProperties(dg,Log.class,new String[]{"exception"});
+        return json;
     }
+
+    /**
+     * 日志明细信息
+     * @param log
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = {"detail"})
+    @ResponseBody
+    public Result detail(@ModelAttribute("model") Log log) throws Exception {
+        Result result = Result.successResult().setObj(log);
+        return result;
+    }
+
 
     /**
      * 清除日志
@@ -100,6 +118,7 @@ public class LogController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresRoles("SYSTEM_MANAGER")
     @RequestMapping(value = {"removeAll"})
     @ResponseBody
     public Result removeAll() throws Exception {
@@ -142,6 +161,4 @@ public class LogController extends SimpleController {
         Result result = Result.successResult();
         return result;
     }
-
-
 }
