@@ -3,8 +3,8 @@ update from essh_v2.0
 
 EasyUI、SpringMVC、Spring、Mybatis/Hibernate、微信服务端API
 
-    数据库脚本：
-    src\main\resources\data\mysqlMySQL\essm.sql 
+    MySQL数据库脚本：
+    src\main\resources\data\mysql\essm.sql 
     管理员账号：
     admin/1
 
