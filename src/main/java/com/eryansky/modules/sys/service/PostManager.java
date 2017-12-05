@@ -81,6 +81,21 @@ public class PostManager extends
 
 
     /**
+     * 根据编码查找
+     * @param postCode
+     * @return
+     */
+    public Post getPostByCode(String postCode){
+        Validate.notNull(postCode, "参数[postCode]不能为null或空");
+        Parameter parameter = new Parameter(Post.STATUS_NORMAL,postCode);
+        List<Post> list = getEntityDao().find("from Post p where p.status = :p1 and p.code = :p2",parameter);
+        if(Collections3.isNotEmpty(list) && list.size() > 1){
+            logger.warn("岗位编码为["+postCode+"]包含"+list.size()+"条数据");
+        }
+        return list.isEmpty() ? null:list.get(0);
+    }
+
+    /**
      * 根据机构ID以及岗位编码查找
      * @param organId 机构ID
      * @param postCode 岗位编码
@@ -88,8 +103,8 @@ public class PostManager extends
     public Post getPostByOC(String organId,String postCode){
         Validate.notNull(organId, "参数[organId]不能为null");
         Validate.notNull(postCode, "参数[postCode]不能为null或空");
-        Parameter parameter = new Parameter(organId,postCode);
-        List<Post> list = getEntityDao().find("from Post p where p.organId = :p1 or :organId in elements(p.organIds) and p.code = :p2",parameter);
+        Parameter parameter = new Parameter(Post.STATUS_NORMAL,organId,postCode);
+        List<Post> list = getEntityDao().find("from Post p where p.status = :p1 and (p.organId = :p2 or :p2 in elements(p.organIds)) and p.code = :p3",parameter);
         return list.isEmpty() ? null:list.get(0);
     }
 

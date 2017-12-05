@@ -88,12 +88,12 @@ public class PostController
 
         Validate.notNull(organId, "参数[organId]不能为null");
         // 名称重复校验
-        Post nameCheckPost = postManager.getPostByON(organId,model.getName());
-        if (nameCheckPost != null && !nameCheckPost.getId().equals(model.getId())) {
-            result = new Result(Result.WARN, "名称为[" + model.getName() + "]已存在,请修正!", "name");
-            logger.debug(result.toString());
-            return result;
-        }
+//        Post nameCheckPost = postManager.getPostByON(organId,model.getName());
+//        if (nameCheckPost != null && !nameCheckPost.getId().equals(model.getId())) {
+//            result = new Result(Result.WARN, "名称为[" + model.getName() + "]已存在,请修正!", "name");
+//            logger.debug(result.toString());
+//            return result;
+//        }
 
         // 编码重复校验
         if (StringUtils.isNotBlank(model.getCode())) {
