@@ -325,7 +325,7 @@ public class SessionInfo implements Serializable {
      * @return
      */
     public boolean isSuperUser() {
-        return SecurityUtils.isCurrentUserAdmin();
+        return SecurityUtils.isUserAdmin(this.getUserId());
     }
 
     @JsonIgnore
