@@ -146,6 +146,20 @@
         </tx:attributes>
     </tx:advice>
 
+    <!--druid监控Spring-->
+    <bean id="druid-stat-interceptor" class="com.alibaba.druid.support.spring.stat.DruidStatInterceptor">
+    </bean>
+    <bean id="druid-stat-pointcut" class="org.springframework.aop.support.JdkRegexpMethodPointcut" scope="prototype">
+        <property name="patterns">
+            <list>
+                <value>com.eryansky.modules.sys..*.service.*</value>
+            </list>
+        </property>
+    </bean>
+    <aop:config>
+        <aop:advisor advice-ref="druid-stat-interceptor" pointcut-ref="druid-stat-pointcut" />
+    </aop:config>
+
     <!--Spring上下文获取工具-->
     <bean class="com.eryansky.common.spring.SpringContextHolder"></bean>
     <!--安全日志拦截切面-->
