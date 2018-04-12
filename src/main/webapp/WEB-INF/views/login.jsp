@@ -88,8 +88,8 @@
                     <%--<label for="loginName" class="control-label">用户名</label>--%>
                     <div class="controls">
                         <input type="text" id="loginName" name="loginName" class="required" style="width: 210px;height:36px;padding: 5px;"
-                               value="${fns:urlDecode(loginNameOrName)}" placeholder="用户名"/>
-                        <%--<i class="icon-user" title="用户名"></i>--%>
+                               value="admin" placeholder="用户名"/>
+                        <%--<i class="-user" title="用户名"></i>--%>
                         <i class="icon-search" title="选择" onclick="chooseUser()"></i>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                 <div class="control-group">
                     <%--<label for="password" class="control-label">密码</label>--%>
                     <div class="controls">
-                        <input type="password" id="password" name="password" value="${cookie.password.value}"
+                        <input type="password" id="password" name="password" value="1"
                                class="required" style="width: 210px;height:36px;padding: 5px;" placeholder="密码"
                                onkeydown="if(event.keyCode==13)login()" />
                         <i class="icon-lock" title="密码"></i>

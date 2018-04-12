@@ -8,19 +8,15 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 			var tpl = $("#treeTableTpl").html().replace(/(\/\/\<!\-\-)|(\/\/\-\->)/g,"");
-			var data = ${fns:toJson(list)}, rootId = "0";
+			var data = ${fns:toJson(list)}, rootId = "${rootId}";
 			addRow("#treeTableList", tpl, data, rootId, true);
-			$("#treeTable").treeTable({expandLevel : 5});
+			$("#treeTable").treeTable({expandLevel : 3});
 		});
 		function addRow(list, tpl, data, pid, root){
 			for (var i=0; i<data.length; i++){
 				var row = data[i];
-				if ((${fns:jsGetVal('row.parentId')}) == pid){
-					$(list).append(Mustache.render(tpl, {
-						dict: {
-							type: getDictLabel(${fns:toJson(fns:getDictList('sys_area_type'))}, row.type)
-						}, pid: (root?0:pid), row: row
-					}));
+				if (row['parentId'] == pid){
+					$(list).append(Mustache.render(tpl, {pid: (root?0:pid), row: row}));
 					addRow(list, tpl, data, row.id);
 				}
 			}
@@ -29,7 +25,7 @@
 </head>
 <body>
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="${ctxAdmin}/sys/area/">区域列表</a></li>
+		<li class="active"><a href="${ctxAdmin}/sys/area">区域列表</a></li>
 		<e:hasPermission name="sys:area:edit"><li><a href="${ctxAdmin}/sys/area/form">区域添加</a></li></e:hasPermission>
 	</ul>
 	<tags:message content="${message}"/>
@@ -39,10 +35,10 @@
 	</table>
 	<script type="text/template" id="treeTableTpl">
 		<tr id="{{row.id}}" pId="{{pid}}">
-			<td><a href="${ctxAdmin}/sys/area/form?id={{row.id}}">{{row.name}}</a></td>
+			<td><a href="${ctxAdmin}/sys/area?parent.id={{row.id}}">{{row.name}}</a></td>
 			<td>{{row.code}}</td>
-			<td>{{dict.type}}</td>
-			<td>{{row.remarks}}</td>
+			<td>{{row.typeView}}</td>
+			<td>{{row.remark}}</td>
 			<e:hasPermission name="sys:area:edit"><td>
 				<a href="${ctxAdmin}/sys/area/form?id={{row.id}}">修改</a>
 				<a href="${ctxAdmin}/sys/area/delete?id={{row.id}}" onclick="return confirmx('要删除该区域及所有子区域项吗？', this.href)">删除</a>

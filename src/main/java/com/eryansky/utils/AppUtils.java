@@ -5,12 +5,15 @@
  */
 package com.eryansky.utils;
 
+import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -222,5 +225,93 @@ public class AppUtils {
         } else {
             return false;
         }
+    }
+
+
+    /**
+     * 查找父级节点
+     * @param parentId
+     * @param treeNodes
+     * @return
+     */
+    public static TreeNode getParentTreeNode(String parentId, List<TreeNode> treeNodes){
+        TreeNode t = null;
+        for(TreeNode treeNode:treeNodes){
+            if(parentId.equals(treeNode.getId())){
+                t = treeNode;
+                break;
+            }
+        }
+        return t;
+    }
+
+    /**
+     * 按树形结构排列
+     * @param treeNodes
+     * @return
+     */
+    public static List<TreeNode> toTreeTreeNodes(List<TreeNode> treeNodes){
+        if(Collections3.isEmpty(treeNodes)){
+            return new ArrayList<TreeNode>(0);
+        }
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
+        Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
+
+        for(TreeNode treeNode:treeNodes){
+            tempMap.put(treeNode.getId(),treeNode);
+            tempTreeNodes.add(treeNode);
+        }
+
+
+        Set<String> keyIds = tempMap.keySet();
+        Set<String> removeKeyIds = Sets.newHashSet();
+        Iterator<String> iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode1:tempTreeNodes){
+                if(treeNode1.getId().equals(key)){
+                    treeNode = treeNode1;
+                    break;
+                }
+            }
+
+            if(StringUtils.isNotBlank(treeNode.getpId())){
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), tempTreeNodes);
+                if(pTreeNode != null){
+                    for(TreeNode treeNode2:tempTreeNodes){
+                        if(treeNode2.getId().equals(pTreeNode.getId())){
+                            treeNode2.addChild(treeNode);
+                            removeKeyIds.add(treeNode.getId());
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        //remove
+        if(Collections3.isNotEmpty(removeKeyIds)){
+            keyIds.removeAll(removeKeyIds);
+        }
+
+        List<TreeNode> result = Lists.newArrayList();
+        keyIds = tempMap.keySet();
+        iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String _key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode4:tempTreeNodes){
+                if(treeNode4.getId().equals(_key)){
+                    treeNode = treeNode4;
+                    result.add(treeNode);
+                    break;
+                }
+            }
+
+        }
+        return result;
     }
 }

@@ -14,12 +14,22 @@ $(function() {
         striped: true,
         pageSize: 20,
         frozenColumns: [[
-            {field: 'ck', checkbox: true},
+            {field: 'ck', checkbox: true}
         ]],
         columns : [ [{
             title : 'SessionID',
             field : 'id',
-            width : 260,
+            width : 360,
+            hidden:true
+        },{
+            title : 'SessionID',
+            field : 'sessionId',
+            width : 360,
+            hidden:false
+        },{
+            title : '员工类型',
+            field : 'bizUserType',
+            width : 120,
             hidden:true
         },{
             title : '姓名',
@@ -42,6 +52,21 @@ $(function() {
             formatter:function(value, rowData, rowIndex){
                 return value;
             }
+        },{
+            title : '设备类型',
+            field : 'sysTemDeviceType',
+            width : 120,
+            hidden:true
+        },{
+            title : '设备编码',
+            field : 'deviceCode',
+            width : 200,
+            hidden:true
+        },{
+            title : 'APP客户端版本',
+            field : 'appVersion',
+            width : 120,
+            hidden:true
         },{
             title : '登录时间',
             field : 'loginTime',

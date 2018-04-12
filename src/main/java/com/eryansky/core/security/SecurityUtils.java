@@ -13,20 +13,22 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
-import com.eryansky.modules.sys._enum.DataScope;
-import com.eryansky.modules.sys.entity.Post;
-import com.eryansky.modules.sys.utils.UserUtils;
-import com.google.common.collect.Lists;
-import com.eryansky.modules.sys.entity.Resource;
-import com.eryansky.modules.sys.entity.Role;
+import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.modules.sys.entity.User;
+import com.google.common.collect.Lists;
+import com.eryansky.core.security._enum.DeviceType;
+import com.eryansky.modules.sys._enum.DataScope;
+import com.eryansky.modules.sys.entity.*;
 import com.eryansky.modules.sys.service.ResourceManager;
 import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.utils.AppUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -55,6 +57,9 @@ public class SecurityUtils {
         boolean flag = false;
         try {
             SessionInfo sessionInfo = getCurrentSessionInfo();
+            if(sessionInfo == null){
+                return flag;
+            }
             if (sessionInfo.isSuperUser()) {// 超级用户
                 flag = true;
             } else {
@@ -66,11 +71,46 @@ public class SecurityUtils {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return flag;
     }
+
+
+    /**
+     * 是否授权某个资源
+     *
+     * @param resourceCode 资源编码
+     * @return
+     */
+    public static Boolean isPermitted(String resourceCode, String userId) {
+        boolean flag = false;
+        try {
+            if(StringUtils.isBlank(userId)){
+                return flag;
+            }
+            User user = UserUtils.getUser(userId);
+            if(user == null){
+                return flag;
+            }
+            if (user.isAdmin()) {// 超级用户
+                flag = true;
+            } else {
+                List<Resource> resources = resourceManager.findResourcesByUserId(userId);
+                if (Collections3.isNotEmpty(resources)) {
+                    for(Resource resource:resources){
+                        if(StringUtils.isNotBlank(resource.getCode()) && resourceCode.equalsIgnoreCase(resource.getCode())){
+                            return true;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+        return flag;
+    }
+
 
     /**
      * 授权某个URL地址
@@ -103,8 +143,7 @@ public class SecurityUtils {
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
         }
         return flag;
     }
@@ -156,6 +195,7 @@ public class SecurityUtils {
         return flag;
     }
 
+
     /**
      * 获取当前用户最大的数据权限范围
      * @return
@@ -203,27 +243,6 @@ public class SecurityUtils {
         }
         String dataScopeString = String.valueOf(dataScopeInteger);
         return dataScopeString;
-    }
-
-    /**
-     * User转SessionInfo.
-     *
-     * @param user
-     * @return
-     */
-    public static SessionInfo userToSessionInfo(User user) {
-        SessionInfo sessionInfo = new SessionInfo();
-        sessionInfo.setUserId(user.getId());
-        sessionInfo.setName(user.getName());
-        sessionInfo.setLoginName(user.getLoginName());
-        sessionInfo.setRoleIds(user.getRoleIds());
-        sessionInfo.setRoleNames(user.getRoleNames());
-        sessionInfo.setLoginOrganId(user.getDefaultOrganId());
-        sessionInfo.setLoginOrganSysCode(user.getDefaultOrganSysCode());
-        sessionInfo.setLoginOrganName(user.getDefaultOrganName());
-        sessionInfo.setOrganNames(user.getOrganNames());
-        sessionInfo.setName(user.getName());
-        return sessionInfo;
     }
 
     /**
@@ -277,11 +296,36 @@ public class SecurityUtils {
     }
 
     /**
+     * User转SessionInfo.
+     *
+     * @param user
+     * @return
+     */
+    public static SessionInfo userToSessionInfo(User user) {
+        SessionInfo sessionInfo = new SessionInfo();
+        sessionInfo.setUserId(user.getId());
+        sessionInfo.setName(user.getName());
+        sessionInfo.setLoginName(user.getLoginName());
+        sessionInfo.setRoleIds(user.getRoleIds());
+        sessionInfo.setRoleNames(user.getRoleNames());
+        sessionInfo.setLoginOrganId(user.getDefaultOrganId());
+        sessionInfo.setLoginOrganSysCode(user.getDefaultOrganSysCode());
+        sessionInfo.setLoginOrganName(user.getDefaultOrganName());
+        sessionInfo.setLoginCompanyId(user.getCompanyId());
+
+        sessionInfo.setOrganNames(user.getOrganNames());
+        sessionInfo.setName(user.getName());
+        return sessionInfo;
+    }
+
+
+
+    /**
      * 将用户放入session中.
      *
      * @param user
      */
-    public static void putUserToSession(HttpServletRequest request, User user) {
+    public static SessionInfo putUserToSession(HttpServletRequest request, User user) {
         HttpSession session = request.getSession();
         String sessionId = session.getId();
         if(logger.isDebugEnabled()){
@@ -292,7 +336,31 @@ public class SecurityUtils {
         sessionInfo.setUserAgent(UserAgentUtils.getHTTPUserAgent(request));
         sessionInfo.setDeviceType(UserAgentUtils.getDeviceType(request).toString());
         sessionInfo.setBrowserType(UserAgentUtils.getBrowser(request).getName());
-        sessionInfo.setId(sessionId);
+        String code = WebUtils.getParameter(request, "code");
+        sessionInfo.setDeviceCode(code);
+        String longitude_s = WebUtils.getParameter(request, "longitude");
+        String latitude_s = WebUtils.getParameter(request, "latitude");
+        String accuracy_s = WebUtils.getParameter(request, "accuracy");
+        sessionInfo.setLongitude(StringUtils.isBlank(longitude_s) ? null : BigDecimal.valueOf(Double.valueOf(longitude_s)));
+        sessionInfo.setLatitude(StringUtils.isBlank(latitude_s) ? null : BigDecimal.valueOf(Double.valueOf(latitude_s)));
+        sessionInfo.setAccuracy(StringUtils.isBlank(accuracy_s) ? null : BigDecimal.valueOf(Double.valueOf(accuracy_s)));
+        sessionInfo.setBrowserType(UserAgentUtils.getBrowser(request).getName());
+        String appVersion_s = WebUtils.getParameter(request, "appVersion");
+        sessionInfo.setAppVersion(appVersion_s);
+        sessionInfo.setSessionId(sessionId);
+        sessionInfo.setId(SecurityUtils.getNoSuffixSessionId(session));
+
+        String userAgent = UserAgentUtils.getHTTPUserAgent(request);
+        boolean likeIOS = AppUtils.likeIOS(userAgent);
+        boolean likeAndroid = AppUtils.likeAndroid(userAgent);
+        if(likeIOS){
+            sessionInfo.setSysTemDeviceType(DeviceType.iPhone.getDescription());
+        }else if(likeAndroid){
+            sessionInfo.setSysTemDeviceType(DeviceType.Android.getDescription());
+        }else{
+            sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
+        }
+
         List<Resource> resources = resourceManager.findResourcesByUserId(sessionInfo.getUserId());
         if (Collections3.isNotEmpty(resources)) {
             for(Resource resource:resources){
@@ -304,7 +372,9 @@ public class SecurityUtils {
         List<Role> roles = user.getRoles();
         if (Collections3.isNotEmpty(roles)) {
             for(Role role:roles){
-                sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
+                if(StringUtils.isNotBlank(role.getCode())){
+                    sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
+                }
             }
         }
 
@@ -318,6 +388,7 @@ public class SecurityUtils {
         }
 
         applicationSessionContext.addSession(sessionInfo);
+        return sessionInfo;
     }
 
     /**
@@ -326,8 +397,10 @@ public class SecurityUtils {
     public static SessionInfo getCurrentSessionInfo() {
         SessionInfo sessionInfo = null;
         try {
+            HttpSession session = SpringMVCHolder.getSession();
 //            System.out.println(UserAgentUtils.getUserAgent(SpringMVCHolder.getRequest())+" "+SpringMVCHolder.getRequest().getRequestURI()+" "+SpringMVCHolder.getSession().getId());
-            sessionInfo = applicationSessionContext.getSession(SpringMVCHolder.getSession().getId());
+//            sessionInfo = getSessionInfo(SpringMVCHolder.getSession().getId());
+            sessionInfo = getSessionInfo(SecurityUtils.getNoSuffixSessionId(session),session.getId());
         } catch (Exception e) {
 //            logger.error(e.getMessage(),e);
         }
@@ -447,10 +520,14 @@ public class SecurityUtils {
             userManager.logout(_sessionInfo.getUserId(),securityType);
         }
         applicationSessionContext.removeSession(sessionId);
-        HttpSession httpSession = SpringMVCHolder.getSession();
-        if(httpSession != null && httpSession.getId().equals(sessionId)){
-            httpSession.invalidate();
+        try {
+            HttpSession httpSession = SpringMVCHolder.getSession();
+            if(httpSession != null && httpSession.getId().equals(sessionId)){
+                httpSession.invalidate();
+            }
+        } catch (Exception e) {
         }
+
     }
 
     /**
@@ -490,16 +567,44 @@ public class SecurityUtils {
 
     /**
      * 根据SessionId查找对应的SessionInfo信息
+     * @param id
+     * @return
+     */
+    public static SessionInfo getSessionInfo(String id) {
+        return getSessionInfo(id,null);
+    }
+
+    /**
+     * 根据SessionId查找对应的SessionInfo信息
+     * @param id
      * @param sessionId
      * @return
      */
-    public static SessionInfo getSessionInfo(String sessionId) {
-        return applicationSessionContext.getSession(sessionId);
+    public static SessionInfo getSessionInfo(String id, String sessionId) {
+        SessionInfo sessionInfo = applicationSessionContext.getSession(id);
+        //更新真实的SessionID
+        if(sessionInfo != null && sessionId != null && !sessionInfo.getSessionId().equals(sessionId)){
+            sessionInfo.setSessionId(sessionId);
+            applicationSessionContext.addSession(sessionInfo);
+        }
+        return sessionInfo;
     }
 
     public static boolean isMobileLogin(){
         SessionInfo sessionInfo = getCurrentSessionInfo();
         return sessionInfo != null && sessionInfo.isMobileLogin();
+    }
+
+    /**
+     * 去除jvmRoute后缀
+     * @param session
+     * @return
+     */
+    public static String getNoSuffixSessionId(HttpSession session){
+        if(session == null){
+            return null;
+        }
+        return StringUtils.substringBefore(session.getId(),".");
     }
 
 }

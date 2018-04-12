@@ -11,6 +11,10 @@
         <!-- 用户版本控制字段 version -->
         <input type="hidden" id="version" name="version" value="${model.version}"/>
         <div>
+            <label>所属区域:</label>
+            <input id="areaId" name="areaId" value="${model.areaId}" style="width:260px;height: 28px;"/>
+        </div>
+        <div>
             <label>上级机构:</label>
             <input id="_parentId" name="_parentId" value="${not empty parentId ? parentId:model._parentId}" style="width:260px;height: 28px;"/>
         </div>

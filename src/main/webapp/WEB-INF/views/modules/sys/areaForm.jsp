@@ -46,7 +46,7 @@
 				<form:input path="name" htmlEscape="false" maxlength="128" class="input-xxlarge required"/>
 				<span class="help-inline"><font color="red">*</font> </span>
 				<form:select path="type" class="input-medium">
-					<form:options items="${fns:getDictList('sys_area_type')}" itemLabel="name" itemValue="value" htmlEscape="false"/>
+					<form:options items="${areas}" itemLabel="description" itemValue="value" htmlEscape="false"/>
 				</form:select>
 			</div>
 		</div>

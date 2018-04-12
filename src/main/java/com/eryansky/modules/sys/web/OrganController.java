@@ -19,8 +19,11 @@ import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys.entity.Organ;
 import com.eryansky.modules.sys.entity.User;
+import com.eryansky.modules.sys.mapper.Area;
+import com.eryansky.modules.sys.service.AreaService;
 import com.eryansky.modules.sys.service.OrganManager;
 import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
@@ -49,6 +52,8 @@ public class OrganController extends BaseController<Organ,String> {
     private OrganManager organManager;
     @Autowired
     private UserManager userManager;
+    @Autowired
+    private AreaService areaService;
 
     @Override
     public EntityManager<Organ, String> getEntityManager() {
@@ -352,5 +357,21 @@ public class OrganController extends BaseController<Organ,String> {
     public Result syncAllParentIds(){
         organManager.syncAllParentIds();
         return Result.successResult();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "provinceCityAreaData")
+    public List<TreeNode> provinceCityAreaData(HttpServletResponse response) {
+        List<TreeNode> treeNodes=Lists.newArrayList();
+        List<Area> list = areaService.findAreaUp();
+        for (int i=0; i<list.size(); i++){
+            Area e = list.get(i);
+            TreeNode treeNode = new TreeNode(e.getId(),e.getName());
+            treeNode.setpId(e.getParentId());
+            treeNodes.add(treeNode);
+        }
+
+        List<TreeNode> result = AppUtils.toTreeTreeNodes(treeNodes);
+        return result;
     }
 }

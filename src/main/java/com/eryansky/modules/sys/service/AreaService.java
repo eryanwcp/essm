@@ -5,6 +5,8 @@
  */
 package com.eryansky.modules.sys.service;
 
+import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys.dao.AreaDao;
 import com.eryansky.modules.sys.mapper.Area;
@@ -46,5 +48,64 @@ public class AreaService extends TreeService<AreaDao, Area> {
 	public void delete(Area area) {
 		super.delete(area);
 	}
-	
+
+	/**
+	 * 根据编码查找
+	 * @param code 编码
+	 * @return
+	 */
+	public Area getByCode(String code){
+        return areaDao.getByCode(code);
+    }
+
+	/**
+	 * 查找区县及以上
+	 * @return
+	 */
+	public List<Area> findAreaUp(){
+		Area entity = new Area();
+		List<Area> areaList = areaDao.findAreaUp(entity);
+		return areaList;
+	}
+	/**
+	 * 查找区县及以下
+	 * @return
+	 */
+	public List<Area> findAreaDown(String parentId){
+		Parameter parameter = Parameter.newParameter();
+		parameter.put("areaId",parentId);
+		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		List<Area> areaList = areaDao.findAreaDown(parameter);
+		return areaList;
+	}
+
+	/**
+	 * 查找本机以及以下
+	 * @param parentId
+	 * @return
+	 */
+	public List<Area> findOwnAndChild(String parentId){
+		Parameter parameter = Parameter.newParameter();
+		parameter.put("parentId",parentId);
+		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		List<Area> areaList = areaDao.findOwnAndChild(parameter);
+		return areaList;
+	}
+
+	/**
+	 * 查找所属下级
+	 * @param parentId
+	 * @return
+	 */
+	public List<Area> findByParentId(String parentId){
+		Parameter parameter = Parameter.newParameter();
+		parameter.put("parentId",parentId);
+		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		List<Area> areaList = areaDao.findByParentId(parameter);
+		return areaList;
+	}
+
+
+
+
 }

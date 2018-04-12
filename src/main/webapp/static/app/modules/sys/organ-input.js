@@ -3,9 +3,11 @@ var modelStatus = modelStatus;
 
 var organType_combobox;
 var $_parent_combotree;
+var $_area_combotree;
 var organTypeUrl = ctxAdmin + '/sys/organ/organTypeCombobox?1=1';
 $(function() {
     loadParent();
+    loadArea();
     if(modelId == ""){  //新增
         setSortValue();
         $("input[name=status]:eq(0)").prop("checked",'checked');//状态 初始化值
@@ -42,6 +44,17 @@ function loadParent(){
             var parentId = $_parent_combotree.combotree("getValue");
             loadType(parentId);
         }
+
+    });
+}
+
+//加载父级机构
+function loadArea(){
+    $_area_combotree = $('#areaId').combotree({
+        url:ctxAdmin + '/sys/organ/provinceCityAreaData?selectType=select',
+        multiple:false,//是否可多选
+        editable:false,//是否可编辑
+        valueField:'id'
 
     });
 }

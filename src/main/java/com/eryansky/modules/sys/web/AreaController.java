@@ -10,10 +10,14 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.google.common.collect.Lists;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.security.annotation.RequiresUser;
+import com.eryansky.modules.sys._enum.AreaType;
 import com.eryansky.modules.sys.mapper.Area;
 import com.eryansky.modules.sys.service.AreaService;
+import com.eryansky.modules.sys.utils.AreaUtils;
+import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -50,8 +55,18 @@ public class AreaController extends SimpleController {
 
 	@RequiresPermissions("sys:area:view")
 	@RequestMapping(value = {"list", ""})
-	public String list(Area area, Model model) {
-		model.addAttribute("list", areaService.findAll());
+	public String list(Area area, Model model, HttpServletRequest request, HttpServletResponse response) {
+		List<Area> list = null;
+		String parentId = area.getParentId();
+		if(StringUtils.isNotBlank(parentId) && !"0".equals(parentId)){
+//			list = areaService.findByParentId(parentId);//查找下级
+			list = areaService.findOwnAndChild(parentId);//查找（所有）下级
+		}else{
+			list = areaService.findAreaUp();
+		}
+		model.addAttribute("list", list);
+		model.addAttribute("parentId", parentId);
+		model.addAttribute("rootId", "0".equals(parentId) ? parentId:AreaUtils.get(parentId).getParentId());
 		return "modules/sys/areaList";
 	}
 
@@ -68,7 +83,7 @@ public class AreaController extends SimpleController {
 			List<Area> list = areaService.findAll();
 			for (int i=0; i<list.size(); i++){
 				Area e = list.get(i);
-				if (e.getParent()!=null && area.getParent() != null && e.getParent().getId()!=null
+				if (e.getParent()!=null && area.getParent() != null &&  e.getParent().getId()!=null
 						&& e.getParent().getId().equals(area.getParent().getId())){
 					size++;
 				}
@@ -78,6 +93,8 @@ public class AreaController extends SimpleController {
 			}
 		}
 		model.addAttribute("area", area);
+
+		model.addAttribute("areas", AreaType.values());
 		return "modules/sys/areaForm";
 	}
 	
@@ -115,8 +132,71 @@ public class AreaController extends SimpleController {
 			if (StringUtils.isBlank(extId) || (extId!=null && !extId.equals(e.getId()) && e.getParentIds().indexOf(","+extId+",")==-1)){
 				TreeNode treeNode = new TreeNode(e.getId(),e.getName());
 				treeNode.setpId(e.getParentId());
+                treeNodes.add(treeNode);
 			}
 		}
 		return treeNodes;
 	}
+
+	/**
+	 * 省、市、县数据
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "areaUpData")
+	public List<TreeNode> provinceCityAreaData(HttpServletResponse response) {
+		List<TreeNode> treeNodes= Lists.newArrayList();
+		List<Area> list = areaService.findAreaUp();
+		for (int i=0; i<list.size(); i++){
+			Area e = list.get(i);
+			TreeNode treeNode = new TreeNode(e.getId(),e.getName());
+			treeNode.setpId(e.getParentId());
+			treeNodes.add(treeNode);
+		}
+		return treeNodes;
+	}
+
+	/**
+	 * 区县及下级数据
+	 * @param response
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "areaDownData")
+	public List<TreeNode> areaData(HttpServletResponse response) {
+		List<TreeNode> treeNodes= Lists.newArrayList();
+		SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+		String areaId = OrganUtils.getAreaId(sessionInfo.getLoginCompanyId());
+		List<Area> list = areaService.findAreaDown(areaId);
+		for (int i=0; i<list.size(); i++){
+			Area e = list.get(i);
+			TreeNode treeNode = new TreeNode(e.getId(),e.getName());
+			treeNode.setpId(e.getParentId());
+			treeNodes.add(treeNode);
+		}
+		return treeNodes;
+	}
+
+
+    /**
+     * 查找自己和子区域
+     * @param response
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "ownAndChildData")
+    public List<TreeNode> ownAndChildData(HttpServletResponse response) {
+        List<TreeNode> treeNodes= Lists.newArrayList();
+		SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+		String areaId = OrganUtils.getAreaId(sessionInfo.getLoginCompanyId());
+		List<Area> list = areaService.findOwnAndChild(areaId);
+		for (int i=0; i<list.size(); i++){
+			Area e = list.get(i);
+			TreeNode treeNode = new TreeNode(e.getId(),e.getName());
+			treeNode.setpId(e.getParentId());
+			treeNodes.add(treeNode);
+		}
+        return treeNodes;
+    }
 }

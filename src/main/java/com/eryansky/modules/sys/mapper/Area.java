@@ -7,6 +7,7 @@ package com.eryansky.modules.sys.mapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.eryansky.core.orm.mybatis.entity.TreeEntity;
+import com.eryansky.modules.sys._enum.AreaType;
 import org.hibernate.validator.constraints.Length;
 
 /**
@@ -22,7 +23,10 @@ public class Area extends TreeEntity<Area> {
      */
     private String shortName;
     private String code;    // 区域编码
-    private String type;    // 区域类型（1：国家；2：省份、直辖市；3：地市；4：区县）
+    /**
+     * 区域类型 {@link com.jfit.modules.sys._enum.AreaType}
+     */
+    private String type;
     /**
      * 备注
      */
@@ -66,6 +70,15 @@ public class Area extends TreeEntity<Area> {
     @Length(min = 1, max = 1)
     public String getType() {
         return type;
+    }
+
+    public String getTypeView() {
+        AreaType s = AreaType.getByValue(type);
+        String str = "";
+        if (s != null) {
+            str = s.getDescription();
+        }
+        return str;
     }
 
     public void setType(String type) {

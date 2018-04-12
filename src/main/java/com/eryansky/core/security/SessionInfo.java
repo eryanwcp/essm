@@ -7,14 +7,15 @@ package com.eryansky.core.security;
 
 import com.eryansky.common.persistence.AbstractBaseEntity;
 import com.eryansky.common.utils.StringUtils;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.bitwalker.useragentutils.DeviceType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +25,18 @@ import java.util.List;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2013-3-24 下午2:53:59
  */
+@JsonFilter(" ")
 @SuppressWarnings("serial")
 public class SessionInfo implements Serializable {
 
     /**
-     * sessionID
+     * ID
      */
     private String id;
+    /**
+     * sessionID
+     */
+    private String sessionId;
     /**
      * 用户ID
      */
@@ -51,6 +57,10 @@ public class SessionInfo implements Serializable {
      * 客户端IP
      */
     private String ip;
+    /**
+     * 设备类型 {@link com.eryansky.core.security._enum.DeviceType}
+     */
+    private String sysTemDeviceType;
     /**
      * 设备类型 {@link eu.bitwalker.useragentutils.DeviceType}
      */
@@ -80,6 +90,14 @@ public class SessionInfo implements Serializable {
      */
     private String loginOrganSysCode;
     /**
+     * 机构ID
+     */
+    private String loginCompanyId;
+    /**
+     * 登录所在机构
+     */
+    private String loginCompanyCode;
+    /**
      * 系统登录部门名称
      */
     private String loginOrganName;
@@ -87,7 +105,6 @@ public class SessionInfo implements Serializable {
      * 用户属组织机构名称 以","分割
      */
     private String organNames;
-
     /**
      * 用户岗位
      */
@@ -96,7 +113,19 @@ public class SessionInfo implements Serializable {
     /**
      * 登录时间
      */
-    private Date loginTime = Calendar.getInstance().getTime();
+    private Date loginTime = new Date();
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
+    /**
+     * 精确度
+     */
+    private BigDecimal accuracy;
     /**
      * 授权角色
      */
@@ -106,22 +135,44 @@ public class SessionInfo implements Serializable {
      */
     private List<Permisson> permissons = new ArrayList<Permisson>(0);
 
+    /**
+     * APP客户端版本
+     */
+    private String appVersion;
+    /**
+     * 登录的设备编号
+     */
+    private String deviceCode;
 
     public SessionInfo() {
     }
 
     /**
-     * sessionID
+     * ID
      */
     public String getId() {
         return id;
     }
 
     /**
-     * 设置 sessionID
+     * 设置ID
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * sessionID
+     */
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    /**
+     * 设置 sessionID
+     */
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     /**
@@ -202,6 +253,14 @@ public class SessionInfo implements Serializable {
         this.browserType = browserType;
     }
 
+    public String getSysTemDeviceType() {
+        return sysTemDeviceType;
+    }
+
+    public void setSysTemDeviceType(String sysTemDeviceType) {
+        this.sysTemDeviceType = sysTemDeviceType;
+    }
+
     public String getDeviceType() {
         return deviceType;
     }
@@ -255,6 +314,31 @@ public class SessionInfo implements Serializable {
         return loginTime;
     }
 
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(BigDecimal accuracy) {
+        this.accuracy = accuracy;
+    }
+
     /**
      * 设置登录时间
      */
@@ -278,6 +362,23 @@ public class SessionInfo implements Serializable {
     public void setLoginOrganSysCode(String loginOrganSysCode) {
         this.loginOrganSysCode = loginOrganSysCode;
     }
+
+    public String getLoginCompanyId() {
+        return loginCompanyId;
+    }
+
+    public void setLoginCompanyId(String loginCompanyId) {
+        this.loginCompanyId = loginCompanyId;
+    }
+
+    public String getLoginCompanyCode() {
+        return loginCompanyCode;
+    }
+
+    public void setLoginCompanyCode(String loginCompanyCode) {
+        this.loginCompanyCode = loginCompanyCode;
+    }
+
 
     /**
      * 默认登录组织机构名称
@@ -366,6 +467,22 @@ public class SessionInfo implements Serializable {
         return DeviceType.MOBILE.equals(_deviceType) || DeviceType.TABLET.equals(_deviceType);
     }
 
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+
+    public String getDeviceCode() {
+        return deviceCode;
+    }
+
+    public void setDeviceCode(String deviceCode) {
+        this.deviceCode = deviceCode;
+    }
 
     @Override
     public String toString() {

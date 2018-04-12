@@ -29,4 +29,30 @@ public class AreaUtils {
         return null;
     }
 
+
+    /**
+     * @param code 区域编码
+     * @return
+     */
+    public static Area getByCode(String code){
+        if(StringUtils.isNotBlank(code)){
+            return areaService.getByCode(code);
+        }
+        return null;
+    }
+
+
+    /**
+     * 查找名称
+     * @param areaId 区域编码
+     * @return
+     */
+    public static String getAreaName(String areaId){
+        Area area = get(areaId);
+        if(area != null){
+            return area.getName();
+        }
+        return null;
+    }
+
 }

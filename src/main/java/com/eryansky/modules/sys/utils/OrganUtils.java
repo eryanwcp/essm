@@ -60,4 +60,12 @@ public class OrganUtils {
         }
         return null;
     }
+
+    public static String getAreaId(String organId){
+        Organ organ = getOrgan(organId);
+        if(organ != null){
+            return organ.getAreaId();
+        }
+        return null;
+    }
 }
