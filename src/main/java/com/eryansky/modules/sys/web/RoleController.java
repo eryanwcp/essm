@@ -143,7 +143,12 @@ public class RoleController extends BaseController<Role,String> {
      */
     @RequestMapping(value = {"resource"})
     public String resource(Model model) throws Exception {
-        List<TreeNode> treeNodes = resourceManager.findTreeNodeResources();
+        List<TreeNode> treeNodes = null;
+        if(SecurityUtils.isCurrentUserAdmin()){
+            treeNodes = resourceManager.findTreeNodeResources();
+        }else{
+            treeNodes = resourceManager.findTreeNodeResourcesWithPermissions(SecurityUtils.getCurrentUserId());
+        }
         String resourceComboboxData = JsonMapper.getInstance().toJson(treeNodes);
         logger.debug(resourceComboboxData);
         model.addAttribute("resourceComboboxData", resourceComboboxData);

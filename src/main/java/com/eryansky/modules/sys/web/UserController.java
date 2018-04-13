@@ -487,7 +487,12 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"resource"})
     public String resource(@ModelAttribute("model") User model,Model uiModel) throws Exception {
-        List<TreeNode> treeNodes = resourceManager.findTreeNodeResources();
+        List<TreeNode> treeNodes = null;
+        if(SecurityUtils.isCurrentUserAdmin()){
+            treeNodes = resourceManager.findTreeNodeResources();
+        }else{
+            treeNodes = resourceManager.findTreeNodeResourcesWithPermissions(SecurityUtils.getCurrentUserId());
+        }
         String resourceComboboxData = JsonMapper.getInstance().toJson(treeNodes);
         logger.debug(resourceComboboxData);
         uiModel.addAttribute("resourceComboboxData", resourceComboboxData);
