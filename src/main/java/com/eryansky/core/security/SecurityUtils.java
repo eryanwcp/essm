@@ -522,7 +522,7 @@ public class SecurityUtils {
         applicationSessionContext.removeSession(sessionId);
         try {
             HttpSession httpSession = SpringMVCHolder.getSession();
-            if(httpSession != null && httpSession.getId().equals(sessionId)){
+            if(httpSession != null && SecurityUtils.getNoSuffixSessionId(httpSession).equals(sessionId)){
                 httpSession.invalidate();
             }
         } catch (Exception e) {

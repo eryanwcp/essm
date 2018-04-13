@@ -213,7 +213,7 @@ public class LoginController extends SimpleController {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if (sessionInfo != null) {
             // 退出时清空session中的内容
-            String sessionId = request.getSession().getId();
+            String sessionId = SecurityUtils.getNoSuffixSessionId(request.getSession());
             //由监听器更新在线用户列表
             SecurityUtils.removeUserFromSession(sessionId, SecurityType.logout);
             logger.info("用户{}退出系统.", sessionInfo.getLoginName());
@@ -232,7 +232,7 @@ public class LoginController extends SimpleController {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if (sessionInfo != null) {
             // 退出时清空session中的内容
-            String sessionId = request.getSession().getId();
+            String sessionId = SecurityUtils.getNoSuffixSessionId(request.getSession());
             //由监听器更新在线用户列表
             SecurityUtils.removeUserFromSession(sessionId, SecurityType.logout);
             logger.info("用户{}退出系统.", sessionInfo.getLoginName());
