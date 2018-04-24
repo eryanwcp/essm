@@ -108,7 +108,6 @@
 			<if test="dbName == 'db2'">'%'||#{parentId}||'%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{parentId}, ',%')</if>)
 		</if>
-		AND a.type IN(3,4,5)
 		ORDER BY a.code
 	</select>
 
@@ -135,7 +134,7 @@
 				<if test="dbName == 'mysql'">CONCAT('%,', #{areaId}, ',%')</if>)
 			</if>
 
-			AND a.type IN (4,5)
+			AND a.type IN (4,5,6)
 		</where>
 
 	</select>
