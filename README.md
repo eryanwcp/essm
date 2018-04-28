@@ -8,5 +8,5 @@ EasyUI、SpringMVC、Spring、Mybatis/Hibernate、微信服务端API
     管理员账号：
     admin/1
 
-演示地址：https://cnhv.co/30q0x admin/1
+演示地址：https://cnhv.co/30q4s admin/1
 请做个正常人！
