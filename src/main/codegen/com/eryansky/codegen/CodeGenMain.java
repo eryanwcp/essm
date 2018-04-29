@@ -21,17 +21,11 @@ public class CodeGenMain {
     public static void main(String[] args) {
 //        DbConfig dbConfig = new DbConfig(DRIVER,URL,USERNAME,PASSWORD);
         DbConfig dbConfig = new DbConfig(DRIVER,AppConstants.getJdbcUrl(), AppConstants.getJdbcUserName(),AppConstants.getJdbcPassword());
-//        DbConfig dbConfig = new DbConfig("com.ibm.db2.jcc.DB2Driver",
-//                "jdbc:db2://10.36.12.10:50002/dbdw:progressiveStreaming=2;currentSchema=DW;",
-//                "db2instz","jxycjf2013");
-//        dbConfig.setSchema("DW");
-//        DbConfig dbConfig = new DbConfig("com.ibm.db2.jcc.DB2Driver",
-//                "jdbc:db2://10.36.12.10:50002/dbods:progressiveStreaming=2;currentSchema=WULIU;",
-//                "db2instz","jxycjf2013");
+
         List<Table> tables = null;
         Builder builder = null;
         DataSource db = null;
-        String t = "T_BIZ_CRM_CUST_INFO_DETAIL";//表 通配"%"
+        String t = "t_sys_config";//表 通配"%"
         Table table = null;
         try {
             db = DbFactory.create(dbConfig);
