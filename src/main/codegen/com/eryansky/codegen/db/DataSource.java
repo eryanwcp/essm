@@ -19,7 +19,7 @@ import com.eryansky.codegen.vo.Table;
  */
 public abstract class DataSource {
 
-	protected String[] DEFAULT_TYPES = new String[] { "TABLE" };
+	protected String[] DEFAULT_TYPES = new String[] { "TABLE","VIEW" };
 	protected Connection conn = null;
     protected DbConfig dbConfig;
 

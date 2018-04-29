@@ -27,7 +27,7 @@
 <body>
 <ul class="nav nav-tabs">
     <li><a href="${ctxAdmin}/${module}/${entityInstance}/">$tableComment列表</a></li>
-    <li class="active"><a href="${ctxAdmin}/${module}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><e:lacksPermission name="${module}:${entityInstance}:edit">查看</e:lacksPermission></a></li>
+    <li class="active"><a href="${ctxAdmin}/${module}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><shiro:lacksPermission name="${module}:${entityInstance}:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${module}/${entityInstance}/_save" method="post" class="form-horizontal">
     <form:hidden path="id"/>

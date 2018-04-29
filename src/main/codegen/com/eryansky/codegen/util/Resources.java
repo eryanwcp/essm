@@ -11,13 +11,14 @@ public class Resources {
     /**
      * 模块名称
      */
-    public static final String MODULE = "party";
+    public static final String MODULE = "mobile";
 	
 
 	/************ 模板配置 ************/
 	public static final String TEMPLATE_PATH = "src/main/codegen/template";
 	public static final String ENTITY_TEMPLATE = "java_entity.vm";
 	public static final String DAO_TEMPLATE = "java_dao.vm";
+	public static final String DAO_XML_TEMPLATE = "xml_dao.vm";
 	public static final String SERVICE_TEMPLATE = "java_service.vm";
 	public static final String CONTROLLER_TEMPLATE = "java_controller.vm";
 
@@ -46,9 +47,9 @@ public class Resources {
 	/************ controller访问地址 : request_mapping/moudle ****************/
 	public static final String REQUEST_MAPPING = "jsp/"+MODULE;
 
-	public static final String JSP_STORE_PATH =  "C:\\Users\\ChunPing\\Desktop\\code_genner\\views\\";
+	public static final String JSP_STORE_PATH =  "C:\\Users\\eryan\\Desktop\\code_genner\\views\\";
 	/************ 生成JAVA文件的根目录，系统根据package声明进行目录创建 **********/
-	public static final String JAVA_STROE_PATH = "C:\\Users\\ChunPing\\Desktop\\code_genner\\java\\";
+	public static final String JAVA_STROE_PATH = "C:\\Users\\eryan\\Desktop\\code_genner\\java\\";
 
 	public static String getClazzNameByTableName(String tableName) {
 		return null;

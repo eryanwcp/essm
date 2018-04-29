@@ -6,7 +6,7 @@
 package $entityPackage;
 
 
-import com.jfit.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 
 /**
  * $tableComment entity

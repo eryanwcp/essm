@@ -30,6 +30,7 @@ public class Builder {
 			init();
 			entityGenerate();
 			daoGenerate();
+			daoXMLGenerate();
 			serviceGenerate();
 			controllerGenerate();
 			jspListGenerate();
@@ -78,6 +79,13 @@ public class Builder {
 	public void daoGenerate() throws Exception {
 		for (Table table : tables) {
 			generate = new JavaGenerate(FileType.DAO);
+			generate.generate(table);
+		}
+	}
+
+	public void daoXMLGenerate() throws Exception {
+		for (Table table : tables) {
+			generate = new JavaGenerate(FileType.DAO_XML);
 			generate.generate(table);
 		}
 	}

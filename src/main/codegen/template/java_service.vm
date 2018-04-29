@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ${entityPackage}.${entityName};
 import ${daoPackage}.${entityName}Dao;
-import com.jfit.core.orm.mybatis.service.CrudService;
+import com.eryansky.core.orm.mybatis.service.CrudService;
 /**
  * $tableComment service
  * @author 尔演&Eryan eryanwcp@gmail.com

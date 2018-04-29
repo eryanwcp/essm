@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${daoPackage}.${entityName}Dao">
+
+    <sql id="${entityInstance}Columns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        #set ($i=0)#foreach ($column in $columns)
+            #set($i=$i+1)a.${column.columnName} AS "${column.fieldName}"#if($i != $columns.size()),#end
+
+        #end
+
+    </sql>
+
+    <select id="get" resultType="${entityName}">
+        SELECT
+        <include refid="${entityInstance}Columns"/>
+        FROM ${tableName} a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="${entityName}">
+        SELECT
+        <include refid="${entityInstance}Columns"/>
+        FROM ${tableName} a
+        <where>
+            a.status = #{status}
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="${entityName}">
+        SELECT
+        <include refid="${entityInstance}Columns"/>
+        FROM ${tableName} a
+        <where>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="insert">
+        INSERT INTO ${tableName}(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        #set ($i=0)#foreach ($column in $columns)
+            #set($i=$i+1)${column.columnName}#if($i != $columns.size()),#end
+
+        #end) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #set ($i=0)#foreach ($column in $columns)
+            #set($i=$i+1)#{${column.fieldName}}#if($i != $columns.size()),#end
+
+        #end)
+    </insert>
+
+    <update id="update">
+        UPDATE ${tableName} SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        #set ($i=0)#foreach ($column in $columns)
+            #set($i=$i+1)${column.columnName} = #{${column.fieldName}}#if($i != $columns.size()),#end
+
+        #end WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE ${tableName} SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

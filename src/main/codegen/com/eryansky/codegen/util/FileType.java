@@ -11,6 +11,7 @@ package com.eryansky.codegen.util;
 public enum FileType {
 	ENTITY("entity", Resources.ENTITY_PACKAGE,Resources.ENTITY_TEMPLATE,".java"), 
 	DAO("dao", Resources.DAO_PACKAGE,Resources.DAO_TEMPLATE,"Dao.java"),
+	DAO_XML("daoXML", Resources.DAO_PACKAGE,Resources.DAO_XML_TEMPLATE,"Dao.xml"),
 	SERVICE("service", Resources.SERVICE_PACKAGE,Resources.SERVICE_TEMPLATE,"Service.java"),
 	CONTROLLER("controller", Resources.CONTROLLER_PACKAGE,Resources.CONTROLLER_TEMPLATE,"Controller.java"),
 	JSP_LIST("jsp_list", null,Resources.JSP_LIST_TEMPLATE,".jsp"),

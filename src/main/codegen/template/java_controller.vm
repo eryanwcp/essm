@@ -28,7 +28,7 @@ public class ${entityName}Controller extends SimpleController {
     private ${entityName}Service ${entityInstance}Service;
 
 
-    @ModelAttribute
+    @ModelAttribute("model")
     public ${entityName} get(@RequestParam(required=false) String id) {
         if (StringUtils.isNotBlank(id)){
             return ${entityInstance}Service.get(id);
