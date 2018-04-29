@@ -2,6 +2,7 @@ package com.eryansky.codegen;
 
 import com.eryansky.codegen.db.DataSource;
 import com.eryansky.codegen.db.DbFactory;
+import com.eryansky.codegen.util.Resources;
 import com.eryansky.codegen.vo.DbConfig;
 import com.eryansky.codegen.vo.Table;
 import com.eryansky.common.utils.mapper.JsonMapper;
@@ -22,6 +23,9 @@ public class CodeGenMain {
 //        DbConfig dbConfig = new DbConfig(DRIVER,URL,USERNAME,PASSWORD);
         DbConfig dbConfig = new DbConfig(DRIVER,AppConstants.getJdbcUrl(), AppConstants.getJdbcUserName(),AppConstants.getJdbcPassword());
 
+        System.out.println(Resources.JAVA_STROE_PATH);
+        System.out.println(Resources.JSP_STORE_PATH);
+        System.out.println(Resources.MODULE);
         List<Table> tables = null;
         Builder builder = null;
         DataSource db = null;

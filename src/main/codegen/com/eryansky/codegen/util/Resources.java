@@ -6,7 +6,7 @@ package com.eryansky.codegen.util;
 public class Resources {
 	
 	public static final String CATALOG = "";
-	public static final String SCHEMA = "essh";
+	public static final String SCHEMA = "essm";
 
     /**
      * 模块名称
