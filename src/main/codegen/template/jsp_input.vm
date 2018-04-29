@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>$tableComment</title>
-    <meta name="decorator" content="default"/>
+    <meta name="decorator" content="default_sys"/>
     <script type="text/javascript">
         $(document).ready(function() {
             $("#inputForm").validate({
@@ -29,7 +29,7 @@
     <li><a href="${ctxAdmin}/${module}/${entityInstance}/">$tableComment列表</a></li>
     <li class="active"><a href="${ctxAdmin}/${module}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><shiro:lacksPermission name="${module}:${entityInstance}:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${module}/${entityInstance}/_save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${module}/${entityInstance}/save" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <tags:message content="${message}"/>
 

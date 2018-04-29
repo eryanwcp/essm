@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>$tableComment</title>
-    <meta name="decorator" content="default"/>
+    <meta name="decorator" content="default_sys"/>
     <script type="text/javascript">
         function page(n,s){
             $("#pageNo").val(n);
