@@ -35,12 +35,14 @@ public class JspGenerate implements Generate {
 		context.put("entityInstance", entityInstance);
 		context.put("columns", table.getColumns());
 		context.put("module", Resources.MODULE);
+		context.put("modulePath", Resources.MODULE.replace(".","/"));//路径
+		context.put("modulePermission", Resources.MODULE.replace(".",":"));//权限
 		context.put("requestMapping", Resources.REQUEST_MAPPING);
 		context.put("tableComment", table.getRemark());
 
 		StringWriter writer = new StringWriter();
 		t.merge(context, writer);
-		FileUtil.create(Resources.JSP_STORE_PATH +"/modules/"+Resources.MODULE,entityInstance + jspFileType.getFileNameExtension(), writer.toString());
+		FileUtil.create(Resources.JSP_STORE_PATH +"/modules/"+Resources.MODULE.replace(".","/"),entityInstance + jspFileType.getFileNameExtension(), writer.toString());
 	}
 	
 	@Override

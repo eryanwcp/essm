@@ -14,8 +14,8 @@ public enum FileType {
 	DAO_XML("daoXML", Resources.DAO_PACKAGE,Resources.DAO_XML_TEMPLATE,"Dao.xml"),
 	SERVICE("service", Resources.SERVICE_PACKAGE,Resources.SERVICE_TEMPLATE,"Service.java"),
 	CONTROLLER("controller", Resources.CONTROLLER_PACKAGE,Resources.CONTROLLER_TEMPLATE,"Controller.java"),
-	JSP_LIST("jsp_list", null,Resources.JSP_LIST_TEMPLATE,".jsp"),
-	JSP_INPUT("jsp_input", null,Resources.JSP_INPUT_TEMPLATE,"-input.jsp");
+	JSP_LIST("jsp_list", null,Resources.JSP_LIST_TEMPLATE,"List.jsp"),
+	JSP_INPUT("jsp_input", null,Resources.JSP_INPUT_TEMPLATE,"Form.jsp");
 	
 	
 	// 成员变量

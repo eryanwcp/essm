@@ -11,7 +11,7 @@ public class Resources {
     /**
      * 模块名称
      */
-    public static final String MODULE = "mobile";
+    public static final String MODULE = "sys";
 	
 
 	/************ 模板配置 ************/
@@ -45,7 +45,7 @@ public class Resources {
 	public static final String CONTROLLER_PACKAGE = BASE_PACKAGE+"."+MODULE+".web";
 
 	/************ controller访问地址 : request_mapping/moudle ****************/
-	public static final String REQUEST_MAPPING = "jsp/"+MODULE;
+	public static final String REQUEST_MAPPING = "jsp/"+MODULE.replace(".","/");
 
 	public static final String JSP_STORE_PATH =  "C:\\Users\\eryan\\Desktop\\code_genner\\views\\";
 	/************ 生成JAVA文件的根目录，系统根据package声明进行目录创建 **********/

@@ -26,10 +26,10 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctxAdmin}/${module}/${entityInstance}/">$tableComment列表</a></li>
-    <li class="active"><a href="${ctxAdmin}/${module}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><shiro:lacksPermission name="${module}:${entityInstance}:edit">查看</shiro:lacksPermission></a></li>
+    <li><a href="${ctxAdmin}/${modulePath}/${entityInstance}/">$tableComment列表</a></li>
+    <li class="active"><a href="${ctxAdmin}/${modulePath}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><shiro:lacksPermission name="${module}:${entityInstance}:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
-<form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${module}/${entityInstance}/save" method="post" class="form-horizontal">
+<form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${modulePath}/${entityInstance}/save" method="post" class="form-horizontal">
     <form:hidden path="id"/>
     <tags:message content="${message}"/>
 
@@ -43,7 +43,7 @@
     #end
 
     <div class="form-actions">
-        <e:hasPermission name="${module}:${entityInstance}:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</e:hasPermission>
+        <e:hasPermission name="${modulePermission}:${entityInstance}:edit"><input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存"/>&nbsp;</e:hasPermission>
         <input id="btnCancel" class="btn" type="button" value="返 回" onclick="history.go(-1)"/>
     </div>
 </form:form>

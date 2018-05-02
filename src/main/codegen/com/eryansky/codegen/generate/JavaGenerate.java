@@ -40,6 +40,8 @@ public class JavaGenerate implements Generate {
 		context.put("columns", table.getColumns());
 		context.put("requestMapping", Resources.REQUEST_MAPPING);
 		context.put("module", Resources.MODULE);//模块名
+		context.put("modulePath", Resources.MODULE.replace(".","/"));//路径
+		context.put("modulePermission", Resources.MODULE.replace(".",":"));//权限
 		context.put("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));//模块名
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();
