@@ -1,4 +1,5 @@
 var resourceComboboxData = resourceComboboxData;
+var resourceIds = resourceIds;
 
 var resource_combotree;
 $(function() {
@@ -27,6 +28,7 @@ function loadResource(){
     resource_combotree = $('#resourceIds').combotree({
         data : resourceComboboxData,
         cascadeCheck : false,
-        multiple : true
+        multiple : true,
+        value:resourceIds
     });
 }

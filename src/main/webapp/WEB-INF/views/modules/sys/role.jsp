@@ -7,7 +7,9 @@
 	<div onclick="showDialog();" data-options="iconCls:'easyui-icon-add'">新增</div>
 	<div onclick="edit();" data-options="iconCls:'easyui-icon-edit'">编辑</div>
 	<div onclick="del();" data-options="iconCls:'easyui-icon-remove'">删除</div>
-    <div onclick="editRoleResource();" data-options="iconCls:'eu-icon-folder'">设置资源</div>
+    <e:isAdmin>
+        <div onclick="editRoleResource();" data-options="iconCls:'eu-icon-folder'">设置资源</div>
+    </e:isAdmin>
     <div onclick="editRoleUser();" data-options="iconCls:'eu-icon-user'">设置用户</div>
 </div>
 

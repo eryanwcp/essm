@@ -16,6 +16,7 @@ import com.eryansky.core.orm.hibernate.entity.DataEntity;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.utils.OrganUtils;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.Lists;
@@ -43,6 +44,7 @@ import java.util.List;
 @Delete(propertyName = "status", type = PropertyType.S)
 //jackson标记不生成json对象的属性 
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer" , "handler","fieldHandler"})
+@JsonFilter(" ")
 public class Role extends DataEntity<Role> {
 
     /**

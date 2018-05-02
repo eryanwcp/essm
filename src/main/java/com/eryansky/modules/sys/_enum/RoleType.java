@@ -5,9 +5,9 @@ package com.eryansky.modules.sys._enum;
  */
 public enum RoleType {
 
-    ASSIGNMENT("assignment", "任务分配"),
+    USER("user", "普通角色"),
     SECURITY_ROLE("security-role", "管理角色"),
-    USER("user", "普通角色");
+    ASSIGNMENT("assignment", "任务分配");
 
     /**
      * 值 Integer型

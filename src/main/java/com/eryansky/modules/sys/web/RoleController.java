@@ -19,7 +19,10 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.BaseController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.DataScope;
+import com.eryansky.modules.sys._enum.RoleType;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.entity.Resource;
 import com.eryansky.modules.sys.entity.Role;
 import com.eryansky.modules.sys.entity.User;
@@ -70,15 +73,16 @@ public class RoleController extends BaseController<Role,String> {
         return "modules/sys/role";
     }
 
-    @Override
-    public Datagrid<Role> datagrid() {
+    @RequestMapping(value = {"_datagrid"})
+    @ResponseBody
+    public String _datagrid() {
         HttpServletRequest request = SpringMVCHolder.getRequest();
         // 自动构造属性过滤器
         List<PropertyFilter> filters = HibernateWebUtils.buildPropertyFilters(request);
         Page<Role> p = new Page<Role>(request);
 
-        User user = SecurityUtils.getCurrentUser();
-        String organId = user.getCompanyId();
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+        String organId = sessionInfo.getLoginCompanyId();
         PropertyFilter propertyFilter = new PropertyFilter("EQS_organId",organId);
         if (!SecurityUtils.isCurrentUserAdmin()) {
             filters.add(propertyFilter);
@@ -86,7 +90,9 @@ public class RoleController extends BaseController<Role,String> {
 
         p = getEntityManager().findPage(p, filters,true);
         Datagrid<Role> datagrid = new Datagrid<Role>(p.getTotalCount(), p.getResult());
-        return datagrid;
+        String json = JsonMapper.getInstance().toJson(datagrid,Role.class,
+                new String[]{"id","name","code","isSystemView","organName","dataScopeView","resourceNames","dataScope","remark"});
+        return json;
     }
 
     /**
@@ -95,7 +101,12 @@ public class RoleController extends BaseController<Role,String> {
      * @throws Exception
      */
     @RequestMapping(value = {"input"})
-    public String input(@ModelAttribute("model") Role role) throws Exception {
+    public String input(@ModelAttribute("model") Role role,Model uiModel) throws Exception {
+        if(StringUtils.isBlank(role.getId()) && !SecurityUtils.isCurrentUserAdmin()){
+            role.setIsSystem(YesOrNo.NO.getValue());
+        }
+        uiModel.addAttribute("model", role);
+        uiModel.addAttribute("roleTypes", RoleType.values());
         return "modules/sys/role-input";
     }
 
@@ -142,7 +153,7 @@ public class RoleController extends BaseController<Role,String> {
      * @throws Exception
      */
     @RequestMapping(value = {"resource"})
-    public String resource(Model model) throws Exception {
+    public String resource(@ModelAttribute("model") Role model,Model uiModel) throws Exception {
         List<TreeNode> treeNodes = null;
         if(SecurityUtils.isCurrentUserAdmin()){
             treeNodes = resourceManager.findTreeNodeResources();
@@ -151,7 +162,8 @@ public class RoleController extends BaseController<Role,String> {
         }
         String resourceComboboxData = JsonMapper.getInstance().toJson(treeNodes);
         logger.debug(resourceComboboxData);
-        model.addAttribute("resourceComboboxData", resourceComboboxData);
+        uiModel.addAttribute("resourceComboboxData", resourceComboboxData);
+        uiModel.addAttribute("model", model);
         return "modules/sys/role-resource";
     }
 

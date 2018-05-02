@@ -11,7 +11,7 @@ $(function () {
     role_search_form = $('#role_search_form').form();
     //数据列表
     role_datagrid = $('#role_datagrid').datagrid({
-        url: ctxAdmin + '/sys/role/datagrid',
+        url: ctxAdmin + '/sys/role/_datagrid',
         fit: true,
         pagination: true,//底部分页
         rownumbers: true,//显示行数
@@ -44,7 +44,7 @@ $(function () {
                 text: '新增',
                 iconCls: 'easyui-icon-add',
                 handler: function () {
-                    showDialog()
+                    showDialog();
                 }
             },
             '-',
@@ -52,7 +52,7 @@ $(function () {
                 text: '编辑',
                 iconCls: 'easyui-icon-edit',
                 handler: function () {
-                    edit()
+                    edit();
                 }
             },
             '-',
@@ -60,7 +60,7 @@ $(function () {
                 text: '删除',
                 iconCls: 'easyui-icon-remove',
                 handler: function () {
-                    del()
+                    del();
                 }
             },
             '-',
@@ -68,7 +68,7 @@ $(function () {
                 text: '设置资源',
                 iconCls: 'easyui-icon-edit',
                 handler: function () {
-                    editRoleResource()
+                    editRoleResource();
                 }
             },
             '-',
@@ -76,7 +76,7 @@ $(function () {
                 text: '设置用户',
                 iconCls: 'easyui-icon-edit',
                 handler: function () {
-                    editRoleUser()
+                    editRoleUser();
                 }
             }
         ],
@@ -169,9 +169,6 @@ function showDialog(row) {
         },
         onLoad: function () {
             formInit();
-            if (row) {
-                role_form.form('load', row);
-            }
 
         }
     });
@@ -247,7 +244,7 @@ function editRoleResource() {
             height: 200,
             modal: true,
             maximizable: true,
-            href: ctxAdmin + '/sys/role/resource',
+            href: ctxAdmin + '/sys/role/resource?id='+row['id'],
             buttons: [
                 {
                     text: '保存',
@@ -269,7 +266,6 @@ function editRoleResource() {
             },
             onLoad: function () {
                 initRoleResourceForm();
-                role_resource_form.form('load', row);
             }
         });
 
