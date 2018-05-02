@@ -8,6 +8,7 @@ package com.eryansky.core.orm.mybatis.service;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.persistence.CrudDao;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -99,6 +100,24 @@ public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>>
 	@Transactional(readOnly = false)
 	public void delete(String id) {
 		dao.delete(id);
+	}
+
+	/**
+	 * 删除或还原删除数据
+	 * @param entity
+	 * @param isRe 是否还原
+	 */
+	@Transactional(readOnly = false)
+	public void delete(T entity, Boolean isRe) {
+		if(isRe != null && isRe){
+			if(entity instanceof DataEntity){
+				DataEntity dataEntity = (DataEntity) entity;
+				dataEntity.setStatus(DataEntity.STATUS_NORMAL);
+			}
+			save(entity);
+		}else{
+			delete(entity);
+		}
 	}
 
 }
