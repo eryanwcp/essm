@@ -11,7 +11,7 @@
 
     <description>Spring3任务调度</description>
 
-    <context:component-scan base-package="com.eryansky.modules.*.task"/>
+    <context:component-scan base-package="com.eryansky.modules.**.task"/>
 
     <!-- Spring scheduled定时任务配置 -->
     <!-- 线程池（执行器） pool-size:线程池活跃的线程数为1，最大线程数为4； queue-capacity:任务队列的最大容量-->
