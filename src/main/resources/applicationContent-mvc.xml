@@ -14,7 +14,7 @@
     <context:property-placeholder ignore-unresolvable="true" location="classpath*:/appconfig.properties" />
 
     <!-- 使用Annotation自动注册Bean,只扫描@Controller -->
-    <context:component-scan base-package="com.eryansky.modules.*.web" use-default-filters="false"><!-- base-package 如果多个，用“,”分隔 -->
+    <context:component-scan base-package="com.eryansky.modules.**.web" use-default-filters="false"><!-- base-package 如果多个，用“,”分隔 -->
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
@@ -80,9 +80,9 @@
     </bean>
 
     <!-- 对静态资源文件的访问， 将无法mapping到Controller的path交给default servlet handler处理 -->
-    <!--<mvc:default-servlet-handler/>-->
+    <mvc:default-servlet-handler/>
 
-    <mvc:resources mapping="/static/**" location="/static/" cache-period="31556926"/>
+    <!--<mvc:resources mapping="/static/**" location="/static/" cache-period="31556926"/>-->
 
     <!-- 定义无Controller的path<->view直接映射 -->
     <mvc:view-controller path="/" view-name="redirect:${web.view.index}"/>

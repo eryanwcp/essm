@@ -322,10 +322,10 @@
     <!--</servlet-mapping>-->
 
     <!-- 配置静态资源不经过spring mvc -->
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>default</servlet-name>-->
-        <!--<url-pattern>/static/*</url-pattern>-->
-    <!--</servlet-mapping>-->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/static/*</url-pattern>
+    </servlet-mapping>
 
     <!-- session超时定义,单位为分钟 -->
     <session-config>
