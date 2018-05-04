@@ -24,7 +24,6 @@ import java.util.List;
 public class FileUtils {
 
     private static FileManager fileManager = SpringContextHolder.getBean(FileManager.class);
-    private static OrganManager organManager = SpringContextHolder.getBean(OrganManager.class);
 
 
     public static File getFile(String fileId){
@@ -45,7 +44,6 @@ public class FileUtils {
         StringBuffer location = new StringBuffer("");
         if (folder != null) {
             Integer type = folder.getType();// 文件夹类型
-            String organName = folder.getOrganName();// 文件夹所属部门
             String userName = folder.getUserName();// 文件夹创建人
             String folderName = folder.getName();// 文件夹名称
             Integer folderAuthorize = folder.getFolderAuthorize();// 文件夹授权类型
