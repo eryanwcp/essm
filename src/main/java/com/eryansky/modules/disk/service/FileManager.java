@@ -37,10 +37,6 @@ import java.util.List;
 @Service
 public class FileManager extends EntityManager<File, String> {
 
-    @Autowired
-    private FolderManager folderManager;
-    @Autowired
-    private UserManager userManager;
 	@Autowired
 	private IFileManager iFileManager;
 

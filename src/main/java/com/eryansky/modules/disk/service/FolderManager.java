@@ -44,11 +44,7 @@ import com.eryansky.modules.sys.service.UserManager;
 public class FolderManager extends EntityManager<Folder, String> {
 
     @Autowired
-    private UserManager userManager;
-    @Autowired
     private FileManager fileManager;
-    @Autowired
-    private OrganManager organManager;
 
     private HibernateDao<Folder, String> folderDao;
 
