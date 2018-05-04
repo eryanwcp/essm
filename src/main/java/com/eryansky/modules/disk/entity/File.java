@@ -84,10 +84,6 @@ public class File extends DataEntity<File> implements Serializable {
 	 */
 	private List<String> operate_all;
 
-	/**
-	 * 分享对象集合
-	 */
-	private List<FileShare> fileShareList = Lists.newArrayList();
 
 	/**
 	 * 构造方法
@@ -173,17 +169,6 @@ public class File extends DataEntity<File> implements Serializable {
 
 	public void setFolder(Folder folder) {
 		this.folder = folder;
-	}
-
-	@OneToMany(cascade = { CascadeType.REFRESH, CascadeType.MERGE,
-			CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "file")
-	// 出现mapby为被维护端|||默认为延迟加载
-	public List<FileShare> getFileShareList() {
-		return fileShareList;
-	}
-
-	public void setFileShareList(List<FileShare> fileShareList) {
-		this.fileShareList = fileShareList;
 	}
 
 	@Column(length = 36)

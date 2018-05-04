@@ -190,7 +190,6 @@ public class DiskManager {
 */
         java.io.File tempFile = null;
         try {
-			String relativeDir = DiskUtils.getRelativePath(folder, sessionInfo.getUserId());
 			String fullName = uploadFile.getOriginalFilename();
 			String code = FileUploadUtils.encodingFilenamePrefix(sessionInfo.getUserId().toString(),
 					fullName);

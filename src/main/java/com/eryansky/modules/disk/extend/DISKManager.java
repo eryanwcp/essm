@@ -63,8 +63,7 @@ public class DISKManager implements IFileManager {
     @Override
     public String getStorePath(Folder folder, String userId,String fileName) {
         String path = DiskUtils.getDISKStoreDir(folder, userId);
-        String code = FileUploadUtils.encodingFilenamePrefix(userId.toString(),
-                fileName);
+        String code = FileUploadUtils.encodingFilenamePrefix(userId,fileName);
         path += java.io.File.separator + code + "_" + fileName;
         return path;
     }

@@ -11,7 +11,6 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm.entity.StatusState;
 import com.eryansky.common.utils.Identities;
 import com.eryansky.common.utils.PrettyMemoryUtils;
 import com.eryansky.common.utils.StringUtils;
@@ -35,9 +34,7 @@ import com.eryansky.modules.disk.entity._enum.FolderType;
 import com.eryansky.modules.disk.service.*;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.disk.utils.FileUtils;
-import com.eryansky.modules.disk.utils.OrganExtendUtils;
 import com.eryansky.modules.sys._enum.LogType;
-import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys.service.OrganManager;
 import com.eryansky.utils.SelectType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,19 +68,7 @@ public class DiskController extends SimpleController {
     @Autowired
     private FileManager fileManager;
     @Autowired
-    private FileNoticeManager fileNoticeManager;
-    @Autowired
     private DiskManager diskManager;
-    @Autowired
-    private OrganManager organManager;
-    @Autowired
-    private UserStorageManager userStorageManager;
-    @Autowired
-    private FileShareManager fileShareManager;
-    @Autowired
-    private FileHistoryManager fileHistoryManager;
-    @Autowired
-    private OrganStorageManager organStorageManager;
 
     public static final String NODE_TYPE = "nType";
     public static final String NODE_OPERATE = "operate";
@@ -91,31 +76,20 @@ public class DiskController extends SimpleController {
 
     public static final String ICON_FOLDER = "easyui-icon-folder";
     public static final String ICON_DISK = "eu-icon-disk_yunpan";
-    public static final String ICON_FAVORITES = "eu-icon-disk_favorites";
-    public static final String ICON_DISK_UP = "eu-icon-disk_up";
-    public static final String ICON_DISK_DOWN = "eu-icon-disk_down";
-    public static final String ICON_DISK_ORGAN = "eu-icon-disk_organ";
-    public static final String ICON_DISK_PUBLIC = "eu-icon-disk_public";
+
 
     /**
-     * 文件分享类型
-     */
-    public enum FileShareType {
-        PERSON, ORGAN, PUBLIC;
-    }
-
-    /**
-     * 文件操作类型 分享,编辑,删除,收藏,收藏分享,取消分享,取消接收分享
+     * 文件操作类型 编辑,删除
      */
     public enum OperateHtml {
-        SHARE, EDIT, DELETE, COLLECT, REMOVE_SHARE, REMOVE_RECEIVE;
+         EDIT, DELETE;
     }
 
     /**
      * 磁盘树 节点类型
      */
     public enum NType {
-        FolderAuthorize, Folder, Organ;
+        FolderAuthorize, Folder;
     }
 
     public enum ModelType {
@@ -143,13 +117,6 @@ public class DiskController extends SimpleController {
         return modelAndView;
     }
 
-    /**
-     * 历史访问
-     */
-    @RequestMapping(value = { "history" })
-    public ModelAndView historyList() {
-        return new ModelAndView("modules/disk/disk-history");
-    }
 
     /**
      * 云盘动态
@@ -164,53 +131,12 @@ public class DiskController extends SimpleController {
      */
     @RequestMapping(value = { "search" })
     public ModelAndView searchList() {
-        boolean isAdmin = DiskUtils.isDiskAdmin(SecurityUtils
-                .getCurrentSessionInfo().getUserId());
+        boolean isAdmin = DiskUtils.isDiskAdmin(SecurityUtils.getCurrentUserId());
         ModelAndView modelAndView = new ModelAndView("modules/disk/disk-search");
         modelAndView.addObject("isAdmin", isAdmin);
         return modelAndView;
     }
 
-    /**
-     * 文件历史访问记录
-     *
-     * @param fileOperate
-     *            操作类型
-     * @param fileName
-     *            文件名称
-     * @return
-     */
-    @RequestMapping(value = { "fileHistoryDatagrid" })
-    @ResponseBody
-    public String fileHistoryDatagrid(Integer fileOperate, String fileName) {
-        String json = "";
-        String loginUserId = SecurityUtils.getCurrentSessionInfo().getUserId(); // 登录人Id
-        Page<FileHistory> page = new Page<FileHistory>(
-                SpringMVCHolder.getRequest());
-        page = fileHistoryManager.findHistoryPage(page, loginUserId,
-                fileOperate, fileName);
-        if (page != null) {
-            List<FileHistory> list = page.getResult();
-            if (Collections3.isNotEmpty(list)) {
-                for (FileHistory history : list) {
-                    File historyFile = FileUtils.getFile(history.getFileId());
-                    if (!StatusState.NORMAL.getValue().equals(
-                            historyFile.getStatus())) {
-                        history.setIsActive(false);
-                    }
-                }
-            } else {
-                list = Lists.newArrayList();
-            }
-
-            json = JsonMapper.getInstance().toJson(
-                    new Datagrid<FileHistory>(list.size(), list));
-        } else {
-            json = JsonMapper.getInstance().toJson(new Datagrid());
-        }
-        return json;
-
-    }
 
     /**
      * 文件检索
@@ -259,33 +185,6 @@ public class DiskController extends SimpleController {
 
     }
 
-    /**
-     * 云盘动态
-     *
-     * @return
-     */
-
-    @RequestMapping(value = { "diskNoticeDatagrid" })
-    @ResponseBody
-    public String diskNoticeDatagrid() {
-        String json = JsonMapper.getInstance().toJson(new Datagrid());
-        String loginUserId = SecurityUtils.getCurrentSessionInfo().getUserId(); // 登录人Id
-        Page<FileNotice> page = new Page<FileNotice>(
-                SpringMVCHolder.getRequest());
-        page = fileNoticeManager.diskNoticePage(page, loginUserId);
-        if (page != null) {
-            Datagrid<FileNotice> dg = new Datagrid<FileNotice>(
-                    page.getTotalCount(), page.getResult());
-            json = JsonMapper.getInstance().toJson(
-                    dg,
-                    FileNotice.class,
-                    new String[] { "id", "fileName", "createTime",
-                            "operateUserName", "locationDsc", "operateDesc",
-                            "isActive" });
-        }
-        return json;
-
-    }
 
     /**
      * 文件夹树
@@ -308,14 +207,9 @@ public class DiskController extends SimpleController {
         }
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         List<TreeNode> folderTreeNodes = null;
-        if (FolderAuthorize.Organ.getValue().equals(folderAuthorize)
-                && organId == null) {// 部门网盘 没有传递organId返回null
-            folderTreeNodes = Lists.newArrayList();
-        } else {
-            folderTreeNodes = folderManager.getFolders(folderAuthorize,
-                    sessionInfo.getUserId(), organId, excludeFolderId, null,
-                    true);
-        }
+        folderTreeNodes = folderManager.getFolders(folderAuthorize,
+                sessionInfo.getUserId(), organId, excludeFolderId, null,
+                true);
         treeNodes.addAll(folderTreeNodes);
         return treeNodes;
     }
@@ -336,21 +230,14 @@ public class DiskController extends SimpleController {
             cList.add(selectCombobox);
         }
 
-        Combobox combobox = new Combobox(FolderAuthorize.User.getValue()
-                .toString(), FolderAuthorize.User.getDescription());
+        Combobox combobox = new Combobox(FolderAuthorize.User.getValue().toString(), FolderAuthorize.User.getDescription());
         cList.add(combobox);
 
         if ("search".equals(requestType)) {
-            combobox = new Combobox(FolderAuthorize.Collect.getValue()
-                    .toString(), FolderAuthorize.Collect.getDescription());
+            combobox = new Combobox(FolderAuthorize.SysTem.getValue().toString(), FolderAuthorize.SysTem.getDescription());
             cList.add(combobox);
         }
-        combobox = new Combobox(FolderAuthorize.Organ.getValue().toString(),
-                FolderAuthorize.Organ.getDescription());
-        cList.add(combobox);
-        combobox = new Combobox(FolderAuthorize.Public.getValue().toString(),
-                FolderAuthorize.Public.getDescription());
-        cList.add(combobox);
+
 
         return cList;
     }
@@ -417,10 +304,8 @@ public class DiskController extends SimpleController {
      */
     public void recursiveUserFolderTreeNode(List<TreeNode> userTreeNodes,
                                             Folder folder, boolean isCascade) {
-        TreeNode treeNode = new TreeNode(folder.getId().toString(),
-                folder.getName());
-        treeNode.getAttributes().put(DiskController.NODE_TYPE,
-                DiskController.NType.Folder.toString());
+        TreeNode treeNode = new TreeNode(folder.getId(),folder.getName());
+        treeNode.getAttributes().put(DiskController.NODE_TYPE,DiskController.NType.Folder.toString());
         treeNode.getAttributes().put(DiskController.NODE_OPERATE, true);
         treeNode.setIconCls(ICON_FOLDER);
         userTreeNodes.add(treeNode);
@@ -429,8 +314,7 @@ public class DiskController extends SimpleController {
                     .getChildFoldersByByParentFolderId(folder.getId());
             List<TreeNode> childTreeNodes = Lists.newArrayList();
             for (Folder childFolder : childFolders) {
-                this.recursiveUserFolderTreeNode(childTreeNodes, childFolder,
-                        isCascade);
+                this.recursiveUserFolderTreeNode(childTreeNodes, childFolder,isCascade);
             }
             if (Collections3.isNotEmpty(childTreeNodes)) {
                 treeNode.setState(TreeNode.STATE_CLOASED);
@@ -442,62 +326,6 @@ public class DiskController extends SimpleController {
 
     }
 
-    /**
-     * 递归部门文件夹树
-     *
-     * @param organTreeNode
-     * @param isAdmin
-     */
-    private void recursiveOrganTreeNode(TreeNode organTreeNode, String userId,
-                                        boolean isAdmin) {
-        organTreeNode.getAttributes().put(NODE_TYPE, NType.Organ.toString());
-        String organId = organTreeNode.getId();
-        Long limitStorage = organStorageManager
-                .getOrganAvaiableStorage(organId);// 部门可用空间
-        long usedStorage = fileManager.getOrganUsedStorage(organId);// 部门已用空间
-
-        if (OrganType.department.getValue().equals(
-                organTreeNode.getAttributes().get("type"))) {
-            // 只有部门有容量
-            String organNodeName = organTreeNode.getText() + "("
-                    + PrettyMemoryUtils.prettyByteSize(usedStorage) + "/"
-                    + PrettyMemoryUtils.prettyByteSize(limitStorage) + ")";
-            organTreeNode.setText(organNodeName);
-        }
-
-        // 用户在部门下的文件夹
-        List<Folder> organUserFolders = folderManager.getOrganFolders(organId,
-                userId, false, null);
-        // 排除用户在部门以外的所有文件夹
-        List<Folder> excludeUserOrganFolders = folderManager.getOrganFolders(
-                organId, userId, true, null);
-        // 合并
-        List<Folder> organFolders = Collections3.aggregate(organUserFolders,
-                excludeUserOrganFolders);
-
-        List<TreeNode> treeNodes = Lists.newArrayList();
-        Iterator<Folder> iterator = organFolders.iterator();
-        while (iterator.hasNext()) {
-            Folder folder = iterator.next();
-            folderManager.recursiveFolderTreeNode(treeNodes, folder, null,
-                    isAdmin, true);
-        }
-        if (Collections3.isNotEmpty(treeNodes)) {
-            organTreeNode.setState(TreeNode.STATE_CLOASED);
-            for (int i = 0; i < treeNodes.size(); i++) {
-                TreeNode t = treeNodes.get(i);
-                t.setText(t.getText() + "（<span style='color:blue;'>"
-                        + organFolders.get(i).getUserName() + "</span>）");
-                organTreeNode.addChild(t);
-            }
-        }
-
-        for (TreeNode childTreeNode : organTreeNode.getChildren()) {
-            if (!NType.Folder.toString().equals(childTreeNode.getAttributes().get(NODE_TYPE))) {
-                recursiveOrganTreeNode(childTreeNode, userId, isAdmin);
-            }
-        }
-    }
 
 
     /**
@@ -511,21 +339,9 @@ public class DiskController extends SimpleController {
         List<TreeNode> treeNodes = Lists.newArrayList(); // 返回的树节点
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String loginUserId = sessionInfo.getUserId(); // 登录人Id
-        String loginOrganId = sessionInfo.getLoginOrganId(); // 登录人部门Id
 
-        /**
-         * 个人树构造----------begin
-         */
-        long limitStorage = userStorageManager
-                .getUserAvaiableStorage(loginUserId);// 用户可用个人空间
-        long usedStorage = fileManager.getUserUsedStorage(loginUserId);// 用户已用空间
-
-        TreeNode userOwnerTreeNode = new TreeNode(FolderAuthorize.User
-                .getValue().toString(), FolderAuthorize.User.getDescription()
-                + "(" + PrettyMemoryUtils.prettyByteSize(usedStorage) + "/"
-                + PrettyMemoryUtils.prettyByteSize(limitStorage) + ")");
-        userOwnerTreeNode.getAttributes().put(NODE_TYPE,
-                NType.FolderAuthorize.toString());
+        TreeNode userOwnerTreeNode = new TreeNode(FolderAuthorize.User.getValue().toString(), FolderAuthorize.User.getDescription());
+        userOwnerTreeNode.getAttributes().put(NODE_TYPE,NType.FolderAuthorize.toString());
         userOwnerTreeNode.setIconCls(ICON_DISK);
 
         List<Folder> userFolders = folderManager.getFoldersByFolderAuthorize(
@@ -538,77 +354,6 @@ public class DiskController extends SimpleController {
             userOwnerTreeNode.addChild(userFolderTreeNode);
         }
         treeNodes.add(userOwnerTreeNode);
-
-        /**
-         * 收藏树构造----------begin
-         */
-        TreeNode collectionTreeNode = new TreeNode(FolderAuthorize.Collect
-                .getValue().toString(),
-                FolderAuthorize.Collect.getDescription());
-        collectionTreeNode.getAttributes().put(NODE_TYPE,
-                NType.FolderAuthorize.toString());
-        collectionTreeNode.setIconCls(ICON_FAVORITES);
-        treeNodes.add(collectionTreeNode);
-
-        /**
-         * 我的分享树构造----------begin
-         */
-        TreeNode shareTreeNode = new TreeNode(FolderAuthorize.Share.getValue()
-                .toString(), FolderAuthorize.Share.getDescription());
-        shareTreeNode.getAttributes().put(NODE_TYPE,
-                NType.FolderAuthorize.toString());
-        shareTreeNode.setIconCls(ICON_DISK_UP);
-        treeNodes.add(shareTreeNode);
-
-        /**
-         * 分享给我树构造----------begin
-         */
-        TreeNode reveiveTreeNode = new TreeNode(FolderAuthorize.ReceivePerson
-                .getValue().toString(),
-                FolderAuthorize.ReceivePerson.getDescription());
-        reveiveTreeNode.getAttributes().put(NODE_TYPE,
-                NType.FolderAuthorize.toString());
-        reveiveTreeNode.setIconCls(ICON_DISK_DOWN);
-        treeNodes.add(reveiveTreeNode);
-        /**
-         * 部门树构造----------begin
-         */
-//        TreeNode organTreeNode = new TreeNode(FolderAuthorize.Organ.getValue()
-//                .toString(), FolderAuthorize.Organ.getDescription());
-//        organTreeNode.getAttributes().put(NODE_TYPE,
-//                NType.FolderAuthorize.toString());
-//        organTreeNode.setIconCls(ICON_DISK_ORGAN);
-//
-        Boolean isAdmin = new Boolean(DiskUtils.isDiskAdmin(loginUserId)); // 是否是云盘管理员
-//        if (isAdmin) {
-//            loginOrganId = null;// 云盘管理员有所有部门的管理权限
-//        }
-//        List<TreeNode> organTreeNodes = organManager.findOrganTree(loginOrganId,false);
-//        for (TreeNode organNode : organTreeNodes) {
-//            this.recursiveOrganTreeNode(organNode, loginUserId, isAdmin);
-//            organTreeNode.addChild(organNode);
-//        }
-//        treeNodes.add(organTreeNode);
-
-        /**
-         * 公共树构造----------begin
-         */
-        TreeNode publicTreeNode = new TreeNode(FolderAuthorize.Public
-                .getValue().toString(), FolderAuthorize.Public.getDescription());
-        publicTreeNode.getAttributes().put(NODE_TYPE,
-                NType.FolderAuthorize.toString());
-        publicTreeNode.setIconCls(ICON_DISK_PUBLIC);
-        List<TreeNode> publicTreeNodes = folderManager.getFolders(
-                FolderAuthorize.Public.getValue(), null, null, null, isAdmin,
-                true);
-
-        for (TreeNode treeNode : publicTreeNodes) {
-            treeNode.setText(treeNode.getText() + "（<span style='color:blue;'>"
-                    + treeNode.getAttributes().get(NODE_USERNAME) + "</span>）");
-            publicTreeNode.addChild(treeNode);
-        }
-        treeNodes.add(publicTreeNode);
-
         return treeNodes;
     }
 
@@ -626,69 +371,22 @@ public class DiskController extends SimpleController {
      */
     @RequestMapping(value = { "folderFileDatagrid" })
     @ResponseBody
-    public String folderFileDatagrid(String folderId, Integer folderAuthorize,
-                                     String folderOrgan, String fileName) {
+    public String folderFileDatagrid(String folderId, Integer folderAuthorize,String fileName) {
         String json = null;
         long totalSize = 0L; // 分页总大小
         List<Map<String, Object>> footer = Lists.newArrayList();
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String loginUserId = sessionInfo.getUserId(); // 登录人Id
 
-        Boolean shareDisk = FolderAuthorize.Share.getValue() == folderAuthorize; // 我的分享
-        Boolean receivePersonDisk = FolderAuthorize.ReceivePerson.getValue() == folderAuthorize; // 分享给我
-        if (folderId == null && folderAuthorize == null && folderOrgan == null) {
+        if (folderId == null && folderAuthorize == null ) {
             json = JsonMapper.getInstance().toJson(new Datagrid());
-        } else if (shareDisk || receivePersonDisk) {// 我的分享或者分享给我
-            Page<FileShare> page = new Page<FileShare>(
-                    SpringMVCHolder.getRequest());
-            if (shareDisk) {
-                page = fileShareManager.findSharePage(page, loginUserId,
-                        fileName);
-            } else {
-                page = fileShareManager.findReceivePage(page, loginUserId,
-                        fileName);
-            }
-            if (page != null) {
-                Datagrid<FileShare> dg = new Datagrid<FileShare>(
-                        page.getTotalCount(), page.getResult());
-                if (Collections3.isNotEmpty(page.getResult())) {
-                    for (FileShare fileShare : page.getResult()) {
-                        totalSize += fileShare.getFile().getFileSize();
-                        if (shareDisk) {
-                            fileShare.setOperate_all(Lists
-                                    .newArrayList(OperateHtml.REMOVE_SHARE
-                                            .toString()));
-                        } else {
-                            fileShare.setOperate_all(Lists.newArrayList(
-                                    OperateHtml.COLLECT.toString(),
-                                    OperateHtml.REMOVE_RECEIVE.toString()));
-                        }
-                    }
-                }
-                Map<String, Object> map = Maps.newHashMap();
-                map.put("name", "总大小");
-                map.put("prettyFileSize",
-                        PrettyMemoryUtils.prettyByteSize(totalSize));
-                footer.add(map);
-                dg.setFooter(footer);
-                json = JsonMapper.getInstance().toJson(
-                        dg,
-                        FileShare.class,
-                        new String[] { "id", "fileId", "name",
-                                "prettyFileSize", "shareTime", "userName",
-                                "shareUserName", "operate_all",
-                                "receiveLocation" });
-
-            }
-
         } else {
             Page<File> page = new Page<File>(SpringMVCHolder.getRequest());
             List<String> folderIds = Lists.newArrayList();
             if (folderId != null) { // 正常情况下是仅选中了文件夹树节点
                 folderIds.add(folderId);
             } else { // 正常情况下是仅选中了云盘类型树节点或者仅选中了部门树节点
-                List<Folder> userFolders = folderManager.getAuthorizeFolders(
-                        loginUserId, folderAuthorize, folderOrgan);// 获取用户授权使用的文件夹
+                List<Folder> userFolders = folderManager.getAuthorizeFolders(loginUserId, folderAuthorize);// 获取用户授权使用的文件夹
                 if (Collections3.isNotEmpty(userFolders)) {
                     for (Folder folder : userFolders) {
                         folderIds.add(folder.getId());
@@ -702,62 +400,16 @@ public class DiskController extends SimpleController {
             if (Collections3.isNotEmpty(page.getResult())) {
                 boolean isAdmin = DiskUtils.isDiskAdmin(sessionInfo.getUserId()); // 是否是云盘管理员
                 boolean isLeader = false;// 是否是部门管理者
-                if (folderOrgan != null) {
-                    isLeader = OrganExtendUtils.getLeaderUser(folderOrgan).contains(
-                            loginUserId);
-                }
-                Folder folder = folderId == null ? null : folderManager
-                        .getById(folderId);
-                boolean userDisk = FolderAuthorize.User.getValue() == folderAuthorize; // 我的云盘有分享编辑删除权限
-                boolean collectDisk = FolderAuthorize.Collect.getValue() == folderAuthorize;// 我的收藏有分享删除权限
-                boolean publicDisk = FolderAuthorize.Public.getValue() == folderAuthorize;
-                boolean organDisk = FolderAuthorize.Organ.getValue() == folderAuthorize;
+                Folder folder = folderId == null ? null : folderManager.getById(folderId);
+                boolean userDisk = FolderAuthorize.User.getValue().equals(folderAuthorize); // 我的云盘有分享编辑删除权限
                 for (File file : page.getResult()) {
                     List<String> operate = Lists.newArrayList();
                     Boolean isOwner = loginUserId.equals(file.getUserId());// 上传者
 
                     if (folder != null) {// 选中文件夹，上传者有分享编辑删除权限，除个人云盘外非上传者有分享收藏权限
                         if (isOwner) {
-                            operate.add(OperateHtml.SHARE.toString());
                             operate.add(OperateHtml.EDIT.toString());
                             operate.add(OperateHtml.DELETE.toString());
-                        } else if (FolderAuthorize.User.getValue() != folder
-                                .getFolderAuthorize()) {
-                            operate.add(OperateHtml.COLLECT.toString());
-                        }
-                    } else if (collectDisk || userDisk) {
-                        operate.add(OperateHtml.SHARE.toString());
-                        if (userDisk) {
-                            operate.add(OperateHtml.EDIT.toString());
-                        }
-                        operate.add(OperateHtml.DELETE.toString());
-                    } else if (publicDisk || organDisk || folderOrgan != null) { // 部门云盘或者公共云盘
-                        Folder fileFolder = file.getFolder();
-                        if (FolderType.SHARE.getValue().equals(
-                                fileFolder.getType())) {// 分享文件夹
-                            // file.setName("<font color=#D94600>[分享]</font>" +
-                            // file.getName());
-                            operate.add(OperateHtml.COLLECT.toString());
-                            if (isAdmin || isLeader) {
-                                operate.add(OperateHtml.REMOVE_RECEIVE
-                                        .toString());
-                            } else if (organDisk) {
-                                List<String> leaderId = OrganExtendUtils.getLeaderUser(fileFolder.getOrganId());
-                                if (leaderId.contains(loginUserId)) {
-                                    operate.add(OperateHtml.REMOVE_RECEIVE
-                                            .toString());
-                                }
-                            }
-
-                        } else if (isOwner || isAdmin) {
-                            operate.add(OperateHtml.SHARE.toString());
-                            if (isAdmin) {
-                                operate.add(OperateHtml.COLLECT.toString());
-                            }
-                            operate.add(OperateHtml.EDIT.toString());
-                            operate.add(OperateHtml.DELETE.toString());
-                        } else {
-                            operate.add(OperateHtml.COLLECT.toString());
                         }
                     }
 
@@ -767,8 +419,7 @@ public class DiskController extends SimpleController {
             }
             Map<String, Object> map = Maps.newHashMap();
             map.put("name", "总大小");
-            map.put("prettyFileSize",
-                    PrettyMemoryUtils.prettyByteSize(totalSize));
+            map.put("prettyFileSize",PrettyMemoryUtils.prettyByteSize(totalSize));
             footer.add(map);
             dg.setFooter(footer);
             json = JsonMapper.getInstance().toJson(
@@ -822,31 +473,25 @@ public class DiskController extends SimpleController {
      *            文件夹Id
      * @param folderAuthorize
      *            云盘类型Id
-     * @param organId
-     *            部门Id
      * @return
      * @throws Exception
      */
     @RequestMapping(value = { "fileInput" })
-    public ModelAndView fileInput(String folderId, Integer folderAuthorize,
-                                  String organId) throws Exception {
+    public ModelAndView fileInput(String folderId, Integer folderAuthorize) throws Exception {
         ModelAndView modelAndView = new ModelAndView(
                 "modules/disk/disk-fileInput");
-        Folder model = new Folder();
-        if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
+        Folder model = null;
+        if(FolderAuthorize.User.getValue().toString().equals(folderId)){
+            String loginUserId = SecurityUtils.getCurrentUserId();
+            model = folderManager.initHideFolder(FolderAuthorize.User.getValue(), loginUserId);
+        }else if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
             model = folderManager.loadById(folderId);
-        } else if (folderAuthorize != null || StringUtils.isNotBlank(organId)) { // 选中非部门云盘的默认文件夹或者部门下的默认文件夹
-            String loginUserId = SecurityUtils.getCurrentSessionInfo()
-                    .getUserId();
-            model = folderManager.initHideFolder(folderAuthorize, loginUserId,
-                    organId);
-            folderId = model.getId();
-        } else {
+        }else {
             Exception e = new ActionException("上传文件异常！请联系管理员。");
             throw e;
         }
 
-        modelAndView.addObject("folderId", folderId);
+        modelAndView.addObject("model", model);
         return modelAndView;
     }
 
@@ -893,67 +538,6 @@ public class DiskController extends SimpleController {
         return Result.successResult();
     }
 
-    /**
-     * 上传容量校验
-     *
-     * @param sessionInfo
-     * @param folder
-     * @param uploadFileSize
-     * @return
-     * @throws ActionException
-     */
-    private boolean checkStorage(SessionInfo sessionInfo, Folder folder,
-                                 long uploadFileSize) throws ActionException {
-        boolean flag = false;
-        if (FolderAuthorize.User.getValue().equals(folder.getFolderAuthorize())) {
-            long limitStorage = userStorageManager
-                    .getUserAvaiableStorage(sessionInfo.getUserId());// 用户可用个人空间
-            long usedStorage = fileManager.getUserUsedStorage(sessionInfo
-                    .getUserId());// 用户已用空间
-            long avaiableStorage = limitStorage - usedStorage;
-            if (avaiableStorage < uploadFileSize) {
-                throw new ActionException("用户个人云盘空间不够！可用大小："
-                        + PrettyMemoryUtils.prettyByteSize(avaiableStorage));
-            }
-        } else if (FolderAuthorize.Organ.getValue().equals(
-                folder.getFolderAuthorize())) {
-            long limitStorage = organStorageManager
-                    .getOrganAvaiableStorage(folder.getOrganId());// 部门可用空间
-            long usedStorage = fileManager.getOrganUsedStorage(folder
-                    .getOrganId());// 部门已用空间
-            long avaiableStorage = limitStorage - usedStorage;
-            if (avaiableStorage < uploadFileSize) {
-                throw new ActionException("部门云盘空间不够！可用大小："
-                        + PrettyMemoryUtils.prettyByteSize(avaiableStorage));
-            }
-        }
-        return flag;
-    }
-
-    /**
-     * 文件上传容量校验
-     *
-     * @param folderId
-     *            文件夹ID
-     * @param uploadFileSize
-     *            上传文件的大小 单位：字节
-     * @return
-     */
-    @RequestMapping(value = { "fileLimitCheck/{folderId}" })
-    @ResponseBody
-    public Result fileLimitCheck(@PathVariable String folderId,
-                                 Long uploadFileSize, String filename) {
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        Result result = Result.errorResult();
-        try {
-            Folder folder = folderManager.loadById(folderId);
-            checkStorage(sessionInfo, folder, uploadFileSize);
-            result = Result.successResult();
-        } catch (ActionException e) {
-            result.setMsg("文件【" + filename + "】上传失败，" + e.getMessage());
-        }
-        return result;
-    }
 
     /**
      * 文件上传
@@ -979,9 +563,7 @@ public class DiskController extends SimpleController {
             SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
             Folder folder = folderManager.loadById(folderId);
             if (folder != null) {
-                checkStorage(sessionInfo, folder, uploadFile.getSize()); // 判断上传容量是否超出
-                File file = diskManager.fileUpload(sessionInfo, folder,
-                        uploadFile);
+                File file = diskManager.fileUpload(sessionInfo, folder,uploadFile);
                 String obj = null;
                 if (file != null) {
                     obj = file.getId();
@@ -1064,8 +646,7 @@ public class DiskController extends SimpleController {
                 throw fileNotFoldException;
             }
             String displayName = file.getName();
-            DiskUtils.download(request, response, new FileInputStream(
-                    diskFile), displayName);
+            DiskUtils.download(request, response, new FileInputStream(diskFile), displayName);
         } catch (IOException e) {
             logger.error(e.getMessage());
             throw fileNotFoldException;
@@ -1131,173 +712,7 @@ public class DiskController extends SimpleController {
         return null;
     }
 
-    /**
-     * 文件分享选中用户页面
-     *
-     * @return
-     */
-    @RequestMapping(value = { "share-file/{fileId}" })
-    public ModelAndView shareFilePage(@PathVariable String fileId) {
-        ModelAndView modelAndView = new ModelAndView(
-                "modules/disk/disk-share-file");
-        if (StringUtils.isNotBlank(fileId)) {
-            modelAndView.addObject("fileId", fileId);
-            modelAndView.addObject("fileShareType", Lists.newArrayList(
-                    FileShareType.PERSON.toString(),
-                    FileShareType.ORGAN.toString(),
-                    FileShareType.PUBLIC.toString()));
-        }
-        return modelAndView;
-    }
 
-    /**
-     * 文件分享
-     *
-     * @param fileId
-     *            分享文件
-     * @param personIds
-     *            分享人Ids
-     * @param organIds
-     *            分享部门Ids
-     * @param shareType
-     *            分享方式
-     * @return
-     */
-    @RequestMapping(value = { "shareFile" })
-    @ResponseBody
-    public Result shareFile(
-            @RequestParam String fileId,
-            @RequestParam(value = "personIds", required = false) List<String> personIds,
-            @RequestParam(value = "organIds", required = false) List<String> organIds,
-            String shareType) {
-        Result result = Result.errorResult();
-        if (StringUtils.isNotBlank(fileId)) {
-            File file = fileManager.getById(fileId);
-            if (file != null) {
-                String loginUserId = SecurityUtils.getCurrentSessionInfo()
-                        .getUserId();
-                if (FileShareType.PERSON.toString().equals(shareType)) { // 分享给个人
-                    if (Collections3.isNotEmpty(personIds)) {
-                        if (personIds.contains(loginUserId)) {// 剔除自己
-                            personIds.remove(loginUserId);
-                        }
-                        if (Collections3.isNotEmpty(personIds)) {
-                            fileShareManager.shareFileToPerson(file,
-                                    loginUserId, personIds);
-                            result = Result.successResult().setObj(fileId);
-                        } else {
-                            result.setMsg("被分享人不能为自己!");
-                        }
-                    } else {
-                        result.setMsg("被分享人丢失!");
-                    }
-
-                } else if (FileShareType.ORGAN.toString().equals(shareType)) {// 分享给部门
-                    if (Collections3.isNotEmpty(organIds)) {
-                        fileShareManager.shareFileToOrgan(file, loginUserId,
-                                organIds);
-                        result = Result.successResult().setObj(fileId);
-                    } else {
-                        result.setMsg("被分享部门丢失!");
-                    }
-
-                } else if (FileShareType.PUBLIC.toString().equals(shareType)) {
-                    fileShareManager.shareFileToPublic(file, loginUserId);
-                    result = Result.successResult().setObj(fileId);
-
-                }
-            } else {
-                result.setMsg("文件不存在,已被删除或移除!");
-            }
-        } else {
-            result.setMsg("文件Id丢失!");
-        }
-        return result;
-
-    }
-
-    /**
-     * 取消分享
-     *
-     * @param shareId
-     *            文件
-     * @return
-     */
-    @RequestMapping(value = { "removeShare/{shareId}" })
-    @ResponseBody
-    public Result removeShare(@PathVariable String shareId) {
-        Result result = Result.errorResult();
-        if (shareId != null) {
-            fileShareManager.removeShare(shareId);
-            result = Result.successResult();
-        } else {
-            result.setMsg("分享Id丢失!");
-        }
-        return result;
-    }
-
-    /**
-     * 取消接收的分享
-     *
-     * @param pageId
-     *            记录Id
-     * @param nodeType
-     *            选中节点的类型
-     * @param nodeId
-     *            选中节点Id
-     * @return
-     */
-    @RequestMapping(value = { "removeReceive" })
-    @ResponseBody
-    public Result removeReceive(String pageId, String nodeType, Integer nodeId) {
-        Result result = Result.errorResult();
-        if (StringUtils.isNotBlank(pageId)) {
-            String loginUserId = SecurityUtils.getCurrentSessionInfo()
-                    .getUserId(); // 登录人Id
-            fileShareManager.removeReceive(pageId, loginUserId, nodeType,
-                    nodeId);
-            result = Result.successResult();
-        } else {
-            result.setMsg("分享Id丢失!");
-        }
-        return result;
-    }
-
-    /**
-     * 文件收藏
-     *
-     * @param pageId
-     *            入参Id
-     * @return
-     */
-    @RequestMapping(value = { "CollectFile" })
-    @ResponseBody
-    public Result CollectFile(String pageId, Integer folderAuthorize) {
-        Result result = Result.errorResult();
-        if (StringUtils.isNotBlank(pageId)) {
-            File file = null;
-            if (FolderAuthorize.ReceivePerson.getValue()
-                    .equals(folderAuthorize)) {
-                file = fileShareManager.getById(pageId).getFile();
-            } else {
-                file = fileManager.getById(pageId);
-            }
-            if (file != null) {
-                String loginUserId = SecurityUtils.getCurrentSessionInfo()
-                        .getUserId();
-                fileManager.collectFile(file, loginUserId);
-                result = Result.successResult()
-                        .setMsg("收藏[" + file.getName() + "]文件成功!")
-                        .setObj(file.getId());
-            } else {
-                result.setMsg("文件不存在,已被删除或移除!");
-            }
-        } else {
-            result.setMsg("文件Id丢失!");
-        }
-        return result;
-
-    }
 
     /**
      * 清空缓存目录 正在运行时 慎用

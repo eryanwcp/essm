@@ -1,6 +1,8 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="/common/taglibs.jsp"%>
 <script type="text/javascript">
+    var folderId = "${model.id}";
+    var sessionId = "${sessionInfo.sessionId}";
     var categorys_combotree;
     var fileSizeLimit = '<%=AppConstants.getPrettyDiskMaxUploadSize()%>';//附件上传大小限制
     $(function(){
@@ -25,8 +27,8 @@
             method: 'post',
             swf: '${ctxStatic}/js/uploadify/scripts/uploadify.swf',  //FLash文件路径
             buttonText: '上传文件',                                 //按钮文本
-            uploader: '${ctxAdmin}/disk/fileUpload;jsessionid=<%=session.getId()%>',
-            formData:{folderId:'${folderId}'},
+            uploader: '${ctxAdmin}/disk/fileUpload;jsessionid='+sessionId,
+            formData:{folderId:folderId},
             fileObjName: 'uploadFile',
             queueSizeLimit: 100,
             uploadLimit: 100,
@@ -47,28 +49,6 @@
                     this.queueData.uploadSize = file.size;
                 }
                 var uploadify = this;
-                $.ajax({
-                    type    : 'POST',
-                    async   : false,
-                    dataType: "json",
-                    url     : "${ctxAdmin}/disk/fileLimitCheck/${folderId}",
-                    data    : {uploadFileSize: file.size,filename: file.name},
-                    success : function(data) {
-                        if (data.code == 0) {
-                            $("#tip_msg").append(data.msg).append("<br>");
-                            uploadify.cancelUpload(file.id);
-                            $('#' + file.id).remove();
-                            if (uploadify.queueData.uploadQueue.length > 0 && uploadify.queueData.queueLength > 0) {
-                                if (uploadify.queueData.uploadQueue[0] == '*') {
-                                    uploadify.startUpload();
-                                } else {
-                                    uploadify.startUpload(uploadify.queueData.uploadQueue.shift());
-                                }
-                            }
-
-                        }
-                    }
-                });
             },
             //上传到服务器，服务器返回相应信息到data里
             onUploadSuccess: function (file, data, response) {

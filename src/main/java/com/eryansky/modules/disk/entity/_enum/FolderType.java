@@ -6,8 +6,7 @@ package com.eryansky.modules.disk.entity._enum;
 public enum FolderType {
 
 	NORMAL(0, "正常"),
-	HIDE(1, "隐藏"),
-	SHARE(2, "分享");
+	HIDE(1, "隐藏");
 
 	/**
 	 * 值 Integer型

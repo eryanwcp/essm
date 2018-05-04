@@ -16,11 +16,8 @@ import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.disk.entity.File;
-import com.eryansky.modules.disk.entity.FileShare;
-import com.eryansky.modules.disk.entity.Folder;
 import com.eryansky.modules.disk.entity._enum.FileSizeType;
 import com.eryansky.modules.disk.entity._enum.FolderAuthorize;
-import com.eryansky.modules.disk.entity._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.sys.service.UserManager;
 import org.apache.commons.lang3.Validate;
@@ -44,8 +41,6 @@ public class FileManager extends EntityManager<File, String> {
     private FolderManager folderManager;
     @Autowired
     private UserManager userManager;
-    @Autowired
-    private FileShareManager fileShareManager;
 	@Autowired
 	private IFileManager iFileManager;
 
@@ -138,14 +133,6 @@ public class FileManager extends EntityManager<File, String> {
 	public void removeFolderFile(List<String> fileIds) {
 		if (Collections3.isNotEmpty(fileIds)) {
 			for (String fileId : fileIds) {
-				List<FileShare> shareList = getEntityDao().get(fileId)
-						.getFileShareList();
-				if (Collections3.isNotEmpty(shareList)) {
-					for (FileShare share : shareList) {
-						List<String> sharedFileList = share.getSharedFileList();// 分享关联的文件;
-						removeFolderFile(sharedFileList);
-					}
-				}
 				deleteFile(fileId);
 			}
 		}
@@ -183,11 +170,6 @@ public class FileManager extends EntityManager<File, String> {
 				List<File> fileList = findBy("code", code);
 				if (Collections3.isNotEmpty(fileList)) {
 					for (File file : fileList) {
-						List<FileShare> share = fileShareManager.findBy("file",
-								file);
-						if (Collections3.isNotEmpty(share)) {
-							fileShareManager.deleteAll(share);
-						}
 						deleteFile(file.getId());
 					}
 				}
@@ -238,25 +220,6 @@ public class FileManager extends EntityManager<File, String> {
     }
 
 
-    /**
-     * 查找部门已用存储空间 单位：字节
-     * @param organId 部门ID
-     * @return
-     */
-    public long getOrganUsedStorage(String organId){
-        Validate.notNull(organId, "参数[organId]不能为null.");
-        StringBuffer hql = new StringBuffer();
-        hql.append("select sum(f.fileSize) from File f where f.status <> :p1 and f.folder.folderAuthorize = :p2 and f.folder.organId = :p3 and f.folder.type <> :p4 ");
-        Parameter parameter = new Parameter(StatusState.DELETE.getValue(), FolderAuthorize.Organ.getValue(),organId, FolderType.SHARE.getValue());
-        List<Object> list = getEntityDao().find(hql.toString(),parameter);
-
-        long count = 0L;
-        if (list.size() > 0) {
-            count = list.get(0) == null ? 0:(Long)list.get(0);
-        }
-        return count;
-    }
-
 
     /**
      * 根据ID查找
@@ -269,26 +232,7 @@ public class FileManager extends EntityManager<File, String> {
     }
     
     
-	/**
-	 * 
-	 * 收藏文件
-	 * 
-	 * @param file
-	 *            文件对象
-	 * @param userId
-	 *            收藏用户
-	 */
-	public void collectFile(File file, String userId) {
-		if (file != null) {
-			File newFile = file.copy();
-			Folder folder = folderManager.initHideForCollect(userId);
-			newFile.setFolder(folder);
-			newFile.setUserId(userId);
-			save(newFile);
-		}
 
-	}
-	
 
 	/**
 	 * 文件检索
@@ -314,25 +258,14 @@ public class FileManager extends EntityManager<File, String> {
 			String fileName, Integer folderAuthorize, Integer fileSizeType,
 			Date startTime, Date endTime, List<String> ownerIds) {
 		StringBuffer hql = new StringBuffer();
-		Parameter patameter = new Parameter(StatusState.NORMAL.getValue(),
-				FolderType.SHARE.getValue());
-		hql.append("  select fl from File fl , Folder fd  where fl.status = :p1 and fl.folder.id = fd.id  and fd.type <> :p2 and fd.status = :p1  ");
+		Parameter patameter = new Parameter(StatusState.NORMAL.getValue());
+		hql.append("  select fl from File fl , Folder fd  where fl.status = :p1 and fl.folder.id = fd.id  and fd.status = :p1  ");
 
 		if (folderAuthorize != null) {
 			if (userId != null) {
-				if (FolderAuthorize.User.getValue().equals(folderAuthorize)
-						|| FolderAuthorize.Collect.getValue().equals(
-								folderAuthorize)) {
+				if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
 					hql.append(" and fd.userId = :userId ");
 					patameter.put("userId", userId);
-				} else if (FolderAuthorize.Organ.getValue().equals(
-						folderAuthorize)) {
-					List<String> userOrganIds = userManager.getById(userId)
-							.getOrganIds();
-					if (Collections3.isNotEmpty(userOrganIds)) {
-						hql.append(" and ( fd.organId in ( :userOrganIds ))");
-						patameter.put("userOrganIds", userOrganIds);
-					}
 				}
 			}
 			hql.append("  and fd.folderAuthorize = :folderAuthorize  ");
@@ -340,32 +273,8 @@ public class FileManager extends EntityManager<File, String> {
 
 		} else {
 			if (userId != null) {
-				hql.append(" and  ( ( fd.userId = :userId and ( fd.folderAuthorize = :userAuthorize or fd.folderAuthorize = :collectAuthorize ) ) or fd.folderAuthorize = :publicAuthorize   ");
+				hql.append(" and  (fd.userId = :userId)  ");
 				patameter.put("userId", userId);
-				patameter.put("userAuthorize", FolderAuthorize.User.getValue());
-				patameter.put("collectAuthorize",
-						FolderAuthorize.Collect.getValue());
-				patameter.put("publicAuthorize",
-						FolderAuthorize.Public.getValue());
-				List<String> userOrganIds = userManager.getById(userId)
-						.getOrganIds();
-				if (Collections3.isNotEmpty(userOrganIds)) {
-					hql.append(" or ( fd.organId in ( :userOrganIds ) and fd.folderAuthorize = :organAuthorize )");
-					patameter.put("userOrganIds", userOrganIds);
-					patameter.put("organAuthorize",
-							FolderAuthorize.Organ.getValue());
-				}
-				hql.append(" ) ");
-			} else {
-				hql.append("  and ( fd.folderAuthorize  = :userAuthorize or fd.folderAuthorize  = :collectAuthorize or fd.folderAuthorize  = :publicAuthorize or fd.folderAuthorize  = :organAuthorize ) ");
-				patameter.put("userAuthorize", FolderAuthorize.User.getValue());
-				patameter.put("collectAuthorize",
-						FolderAuthorize.Collect.getValue());
-				patameter.put("publicAuthorize",
-						FolderAuthorize.Public.getValue());
-				patameter.put("organAuthorize",
-						FolderAuthorize.Organ.getValue());
-
 			}
 
 		}

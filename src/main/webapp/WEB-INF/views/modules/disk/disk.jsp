@@ -3,7 +3,7 @@
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/uploadify.jsp"%>
 <%@ include file="/common/kendoui.jsp"%>
-<script src="${ctxStatic}/js/easyui-${ev}/datagridview/datagrid-bufferview-min.js?_=${sysInitTime}"></script>
+<script src="${ctxStatic}/js/easyui-${ev}/datagridview/datagrid-bufferview.min.js?_=${sysInitTime}"></script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/disk/disk${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 
 
@@ -28,14 +28,6 @@
            <div style="padding: 5px;">
             <a onclick="javascript:eu.addTab(window.parent.layout_center_tabs, '文件检索','${ctxAdmin}/disk/search', true,'eu-icon-disk_search','',false);" class="easyui-linkbutton"
                data-options="iconCls:'eu-icon-disk_search'" style="width: 152px;">文件检索</a>
-           </div>
-           <div style="padding: 5px;">    
-            <a onclick="javascript:eu.addTab(window.parent.layout_center_tabs, '最近访问','${ctxAdmin}/disk/history', true,'eu-icon-disk_recent_visit','',false);" class="easyui-linkbutton"
-               data-options="iconCls:'eu-icon-disk_recent_visit'" style="width: 152px;">最近访问</a>
-           </div>
-           <div style="padding: 5px;">
-            <a onclick="javascript:eu.addTab(window.parent.layout_center_tabs, '云盘动态','${ctxAdmin}/disk/notice', true,'eu-icon-disk_notice','',false);" class="easyui-linkbutton"
-               data-options="iconCls:'eu-icon-disk_notice'" style="width: 152px;">云盘动态</a>
            </div>
       <hr>
       <div style="padding: 5px;">

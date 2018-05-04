@@ -136,18 +136,7 @@ public class DiskUtils {
                 .append(folderAuthorize).append(java.io.File.separator);
         if (FolderAuthorize.User.getValue().equals(folder.getFolderAuthorize())) {
             path.append(folder.getId());
-        } else if (FolderAuthorize.Organ.getValue().equals(
-                folder.getFolderAuthorize())) {
-            path.append(folder.getOrganId()).append(java.io.File.separator)
-                    .append(folder.getId());
-        } else if (FolderAuthorize.Role.getValue().equals(
-                folder.getFolderAuthorize())) {
-            path.append(folder.getRoleId()).append(java.io.File.separator)
-                    .append(folder.getId());
-        } else if (FolderAuthorize.Public.getValue().equals(
-                folder.getFolderAuthorize())) {
-            path.append(folder.getId());
-        } else if (FolderAuthorize.SysTem.getValue().equals(
+        } else if(FolderAuthorize.SysTem.getValue().equals(
                 folder.getFolderAuthorize())) {
             path.append(folder.getCode());
         }
@@ -184,17 +173,6 @@ public class DiskUtils {
         path.append(userId).append(_S)
                 .append(folderAuthorize).append(_S);
         if (FolderAuthorize.User.getValue().equals(folder.getFolderAuthorize())) {
-            path.append(folder.getId());
-        } else if (FolderAuthorize.Organ.getValue().equals(
-                folder.getFolderAuthorize())) {
-            path.append(folder.getOrganId()).append(_S)
-                    .append(folder.getId());
-        } else if (FolderAuthorize.Role.getValue().equals(
-                folder.getFolderAuthorize())) {
-            path.append(folder.getRoleId()).append(_S)
-                    .append(folder.getId());
-        } else if (FolderAuthorize.Public.getValue().equals(
-                folder.getFolderAuthorize())) {
             path.append(folder.getId());
         } else if (FolderAuthorize.SysTem.getValue().equals(
                 folder.getFolderAuthorize())) {

@@ -196,12 +196,10 @@ public class FolderManager extends EntityManager<Folder, String> {
 	 *            指定登录人
 	 * @param folderAuthorize
 	 *            指定云盘类型--> 不含我的分享和分享给我
-	 * @param folderOrgan
-	 *            指定隶属机构
 	 * @return
 	 */
 	public List<Folder> getAuthorizeFolders(String userId,
-			Integer folderAuthorize, String folderOrgan) {
+			Integer folderAuthorize) {
 		Validate.notNull(userId, "参数[userId]不能为null.");
 		Parameter parameter = new Parameter(StatusState.DELETE.getValue());
 		StringBuffer hql = new StringBuffer();
@@ -214,108 +212,16 @@ public class FolderManager extends EntityManager<Folder, String> {
 			hql.append(" and f.folderAuthorize = :folderAuthorize ");
 			parameter.put("folderAuthorize", folderAuthorize);
 
-			if (FolderAuthorize.User.getValue().equals(folderAuthorize)
-					|| FolderAuthorize.Collect.getValue().equals(
-							folderAuthorize)) { // 我的云盘和我的收藏 过滤当前登陆人
+			if (FolderAuthorize.User.getValue().equals(folderAuthorize)) { // 我的云盘和我的收藏 过滤当前登陆人
 				hql.append(" and f.userId = :userId ");
 				parameter.put("userId", userId);
-			} else if (FolderAuthorize.Organ.getValue().equals(folderAuthorize)) {// 部门云盘过滤当前登陆人部门
-				User user = userManager.loadById(userId);
-				if (user != null) {
-					List<String> userOrganIds = user.getOrganIds();
-					if (Collections3.isNotEmpty(userOrganIds)) {
-						hql.append(" and f.organId in ( :userOrganIds ) ");
-						parameter.put("userOrganIds", userOrganIds);
-					}
-				}
 			}
-		} else if (folderOrgan != null) { // 正常情况下是仅选中了部门树节点
-			hql.append("  and f.organId = :folderOrgan  ");
-			parameter.put("folderOrgan", folderOrgan);
 		}
-		/* 获取指定用户所有有权限的文件夹
-		  else {
-			hql.append(" and ( ( f.userId = :userId and f.folderAuthorize = :p3 ) or f.folderAuthorize = :p4 ");
-			parameter.put("userId", userId);
-			parameter.put("p3", FolderAuthorize.User.getValue());
-			parameter.put("p4", FolderAuthorize.Public.getValue());
-
-			User user = userManager.loadById(userId);
-			if (user != null) {
-				List<String> userRoleIds = user.getRoleIds();
-				if (Collections3.isNotEmpty(userRoleIds)) {
-					hql.append(" or f.roleId in ( :userRoleIds ) ");
-					parameter.put("userRoleIds", userRoleIds);
-				}
-				List<String> userOrganIds = user.getOrganIds();
-				if (Collections3.isNotEmpty(userRoleIds)) {
-					hql.append(" or f.organId in ( :userOrganIds ) ");
-					parameter.put("userOrganIds", userOrganIds);
-				}
-			}
-
-			hql.append(")");
-
-		}*/
 		hql.append(" order by f.folderAuthorize asc,f.createTime desc ");
 		logger.debug(hql.toString());
 		return getEntityDao().find(hql.toString(), parameter);
 	}
 
-    /**
-     * 获取部门下的文件夹
-     * @param organId 机构ID
-     * @param userId 用户ID
-     * @param excludeUserOrganFolder 是否排除用户在部门的文件夹
-     * @param parentFolderId
-     * @return
-     */
-    public List<Folder> getOrganFolders(String organId,String userId,boolean excludeUserOrganFolder,String parentFolderId){
-        Validate.notNull(organId,"参数[organId]不能为null.");
-        Parameter parameter = new Parameter(StatusState.DELETE.getValue(), FolderAuthorize.Organ.getValue(), organId, FolderType.NORMAL.getValue());
-        StringBuffer hql = new StringBuffer();
-        hql.append("from Folder f where f.status <> :p1 and f.folderAuthorize = :p2 and f.organId = :p3 and f.type = :p4 ");
-        if(userId != null){
-            hql.append(" and f.userId ");
-            if(excludeUserOrganFolder){
-                hql.append(" <> ");
-            }else{
-                hql.append(" = ");
-            }
-            hql.append(" :userId ");
-            parameter.put("userId",userId);
-        }
-        if(parentFolderId != null){
-            hql.append(" and f.parentId = :parentFolderId");
-            parameter.put("parentFolderId",parentFolderId);
-        }else{
-            hql.append(" and f.parentId is null");
-        }
-        hql.append(" order by f.createTime desc");
-        logger.debug(hql.toString());
-        return getEntityDao().find(hql.toString(),parameter);
-    }
-
-    /**
-     *
-     * @param folderAuthorize {@link com.eryansky.modules.disk.entity._enum.FolderAuthorize}
-     * @param userId 用户ID
-     * @param organId 机构ID
-     * @param excludeFolderId 排除的文件夹ID
-     * @param isCascade 是否级联
-     * @return
-     */
-    /*public List<TreeNode> getFolders(Integer folderAuthorize,String userId,String organId,String excludeFolderId,boolean isCascade){
-        Validate.notNull(folderAuthorize,"参数[folderAuthorize]不能为null.");
-        List<Folder> folders = this.getFoldersByFolderAuthorize(folderAuthorize,userId,organId,null,null);
-        List<TreeNode> treeNodes = Lists.newArrayList();
-        for(Folder folder:folders){
-            if(!folder.getId().equals(excludeFolderId)){
-                this.recursiveFolderTreeNode(treeNodes,folder,excludeFolderId,isCascade);
-            }
-        }
-        return treeNodes;
-    }*/
     
     /**
     *
@@ -386,38 +292,7 @@ public class FolderManager extends EntityManager<Folder, String> {
 		}
 
 	}
-    
-        /**
-	 * 
-	 * @param treeNodes
-	 *            传入的树节点
-	 * @param folder
-	 *            树节点隶属的文件夹
-	 * @param excludeFolderId
-	 *            父文件夹
-	 * @param isCascade
-	 *            是否递归
-	 */
-    /*public void recursiveFolderTreeNode(List<TreeNode> treeNodes,Folder folder,Long excludeFolderId, boolean isCascade){
-        TreeNode treeNode = new TreeNode(folder.getId().toString(),folder.getName());
-        treeNode.getAttributes().put(DiskController.NODE_TYPE, DiskController.NType.Folder.toString());
-        treeNode.getAttributes().put(DiskController.NODE_USERNAME, folder.getUserName());
-        treeNode.setIconCls("icon-folder");
-        treeNodes.add(treeNode);
-        if(isCascade){
-            List<Folder> childFolders = this.getChildFoldersByByParentFolderId(folder.getId());
-            List<TreeNode> childTreeNodes = Lists.newArrayList();
-            for(Folder childFolder:childFolders){
-                if(!folder.getId().equals(excludeFolderId)){
-                    this.recursiveFolderTreeNode(childTreeNodes,childFolder,excludeFolderId,isCascade);
-                }
-            }
-            for(TreeNode childTreeNode:childTreeNodes){
-                treeNode.addChild(childTreeNode);
-            }
-        }
 
-    }*/
 
     /**
      * 查询某个授权类型下的文件夹
@@ -436,30 +311,10 @@ public class FolderManager extends EntityManager<Folder, String> {
 				folderAuthorize, FolderType.NORMAL.getValue());
 		StringBuffer hql = new StringBuffer();
 		hql.append("from Folder f where f.status <> :p1 and f.folderAuthorize = :p2  and f.type = :p3 ");
-		if (FolderAuthorize.User.getValue().equals(folderAuthorize)
-				|| FolderAuthorize.Collect.getValue().equals(folderAuthorize)
-				|| FolderAuthorize.Share.getValue().equals(folderAuthorize) 
-				|| FolderAuthorize.ReceivePerson.getValue().equals(folderAuthorize)) {
+		if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
 			Validate.notNull(userId, "参数[userId]不能为null.");
 			hql.append(" and f.userId = :userId");
 			parameter.put("userId", userId);
-		} else if (FolderAuthorize.Organ.getValue().equals(folderAuthorize)) {
-			Validate.notNull(organId, "参数[organId]不能为null.");
-			if (userId != null) {
-				hql.append(" and f.userId = :userId");
-				parameter.put("userId", userId);
-			}
-			hql.append(" and f.organId = :organId");
-			parameter.put("organId", organId);
-		} else if (FolderAuthorize.Role.getValue().equals(folderAuthorize)) {
-			Validate.notNull(roleId, "参数[roleId]不能为null.");
-			hql.append(" and f.roleId = :roleId");
-			parameter.put("roleId", roleId);
-		} else if (FolderAuthorize.Public.getValue().equals(folderAuthorize)) {
-			if (userId != null) {
-				hql.append(" and f.userId = :userId");
-				parameter.put("userId", userId);
-			}
 		} else {
 			throw new ServiceException("无法识别参数[folderAuthorize]："
 					+ folderAuthorize);
@@ -515,77 +370,7 @@ public class FolderManager extends EntityManager<Folder, String> {
 		return folder;
 	}
 
-	/**
-	 * 判断和创建公共云盘的默认文件夹
-	 */
-	public Folder initHideForPublic() {
-		Parameter parameter = new Parameter(FolderType.HIDE.getValue(),
-				FolderAuthorize.Public.getValue());
-		StringBuffer hql = new StringBuffer();
-		hql.append("from Folder f where f.type = :p1  and f.folderAuthorize = :p2 ");
-		Folder folder = getEntityDao().findUnique(hql.toString(), parameter);
-		if (folder == null) {
-			folder = new Folder(); // 创建默认文件夹
-			folder.setUserId("1");
-			folder.setFolderAuthorize(FolderAuthorize.Public.getValue());
-			folder.setName(FolderType.HIDE.getDescription());
-			folder.setType(FolderType.HIDE.getValue());
-			save(folder);
-		}
-		return folder;
-	}
 
-	/**
-	 * 判断和创建部门云盘下各个部门的默认文件夹
-	 * 
-	 * @param organId
-	 *            返回默认文件夹隶属的部门Id
-	 * @param isAdmin
-	 *            是否管理员权限
-	 * @return
-	 */
-	public Folder initHideForOrgan(String organId) {
-		Folder folder = null;
-		if (organId != null) {
-			Parameter parameter = new Parameter(FolderType.HIDE.getValue(),
-					organId, FolderAuthorize.Organ.getValue());
-			StringBuffer hql = new StringBuffer();
-			hql.append("from Folder f where f.type = :p1  and  f.organId = :p2 and f.folderAuthorize = :p3 ");
-			folder = getEntityDao().findUnique(hql.toString(), parameter);
-			if (folder == null) {
-				folder = new Folder();
-				folder.setUserId("1");
-				folder.setType(FolderType.HIDE.getValue());
-				folder.setFolderAuthorize(FolderAuthorize.Organ.getValue());
-				folder.setName(FolderType.HIDE.getDescription());
-				folder.setOrganId(organId);
-				save(folder);
-			}
-		}
-		return folder;
-	}
-
-
-	/**
-	 * 
-	 *  判断和创建我的收藏默认文件夹
-	 */
-	public Folder initHideForCollect(String userId) {
-		Parameter parameter = new Parameter(FolderType.HIDE.getValue(),
-				FolderAuthorize.Collect.getValue(),userId);
-		StringBuffer hql = new StringBuffer();
-		hql.append("from Folder f where f.type = :p1  and f.folderAuthorize = :p2 and f.userId = :p3 ");
-		Folder folder = getEntityDao().findUnique(hql.toString(), parameter);
-		if (folder == null) {
-			folder = new Folder(); // 创建默认文件夹
-			folder.setUserId(userId);
-			folder.setFolderAuthorize(FolderAuthorize.Collect.getValue());
-			folder.setName(FolderType.HIDE.getDescription());
-			folder.setType(FolderType.HIDE.getValue());
-			save(folder);
-		}
-		return folder;
-	}
 
 	/**
 	 * 查找默认文件夹,无则初始化---> 针对 我的云盘、部门云盘 、公共云盘
@@ -594,72 +379,16 @@ public class FolderManager extends EntityManager<Folder, String> {
 	 *            云盘类型Id
 	 * @param userId
 	 *             用户Id
-	 * @param organId
-	 *            部门Id
 	 */
-	public Folder initHideFolder(Integer folderAuthorize, String userId, String organId) {
+	public Folder initHideFolder(Integer folderAuthorize, String userId) {
 		Folder folder = null;
 		if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
 			folder = initHideForUser(userId);
-		} else if (FolderAuthorize.Public.getValue().equals(folderAuthorize)) {
-			folder = initHideForPublic();
-		} else if (organId != null) {
-			folder = initHideForOrgan(organId);
-		}
-		return folder;
-
-	}
-	
-	/**
-	 * 给公共云盘创建分享文件夹
-	 * @return
-	 */
-	public Folder initShareForPublic() {
-		Parameter parameter = new Parameter(FolderType.SHARE.getValue(),
-				FolderAuthorize.Public.getValue());
-		StringBuffer hql = new StringBuffer();
-		hql.append("from Folder f where f.type = :p1  and f.folderAuthorize = :p2 ");
-		Folder folder = getEntityDao().findUnique(hql.toString(), parameter);
-		if (folder == null) {
-			folder = new Folder(); // 创建默认文件夹
-			folder.setUserId("1");
-			folder.setFolderAuthorize(FolderAuthorize.Public.getValue());
-			folder.setName(FolderType.SHARE.getDescription());
-			folder.setType(FolderType.SHARE.getValue());
-			save(folder);
 		}
 		return folder;
 
 	}
 
-	/**
-	 * 给部门创建分享文件夹
-	 * 
-	 * @param organId
-	 *            指定部门
-	 * @return
-	 */
-	public Folder initShareForOrgan(String organId) {
-		Folder folder = null;
-		if (organId != null) {
-			Parameter parameter = new Parameter(FolderType.SHARE.getValue(),
-					organId, FolderAuthorize.Organ.getValue());
-			StringBuffer hql = new StringBuffer();
-			hql.append("from Folder f where f.type = :p1  and  f.organId = :p2 and f.folderAuthorize = :p3 ");
-			folder = getEntityDao().findUnique(hql.toString(), parameter);
-			if (folder == null) {
-				folder = new Folder();
-				folder.setUserId("1");
-				folder.setType(FolderType.SHARE.getValue());
-				folder.setFolderAuthorize(FolderAuthorize.Organ.getValue());
-				folder.setName(FolderType.SHARE.getDescription());
-				folder.setOrganId(organId);
-				save(folder);
-			}
-		}
-		return folder;
-
-	}
 
 	/**
 	 * 保存文件。 若为编辑部门下文件时需要判断是否有子文件夹并更新子文件夹的部门信息
