@@ -41,8 +41,6 @@ import java.util.List;
 public class FolderService extends CrudService<FolderDao, Folder> {
 
     @Autowired
-    private IFileManager iFileManager;
-    @Autowired
     private FileService fileService;
 
 
