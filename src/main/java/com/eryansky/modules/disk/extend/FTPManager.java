@@ -10,7 +10,7 @@ import java.io.RandomAccessFile;
 
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.web.upload.FileUploadUtils;
-import com.eryansky.modules.disk.entity.Folder;
+import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;

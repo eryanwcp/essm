@@ -93,7 +93,6 @@ function loadFileDatagrid() {
             title: '操作',
             formatter: function(value, rowData, rowIndex) {
             	var operateHtml = "";
-            	console.log(rowData)
             	if (rowData.id) {
             	    if (rowData.editing) {
             	        operateHtml = "<a class='easyui-linkbutton' data-options='iconCls:\"easyui-icon-save\"' onclick='saveFileName(this," + rowIndex + ",\"" + rowData.id + "\")' >保存 </a>";

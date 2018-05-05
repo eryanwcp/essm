@@ -22,6 +22,7 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.BaseController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.modules.disk.mapper.File;
 import com.google.common.collect.Lists;
 import com.eryansky.core.excelTools.ExcelUtils;
 import com.eryansky.core.excelTools.JsGridReportBase;
@@ -531,7 +532,7 @@ public class UserController extends BaseController<User,String> {
         Result result = null;
         try {
             SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-            com.eryansky.modules.disk.entity.File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_USER_PHOTO, sessionInfo, multipartFile);
+            File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_USER_PHOTO, sessionInfo, multipartFile);
             String filename =  DiskUtils.getVirtualFilePath(file);
             result = Result.successResult().setObj(filename);
         } catch (InvalidExtensionException e) {

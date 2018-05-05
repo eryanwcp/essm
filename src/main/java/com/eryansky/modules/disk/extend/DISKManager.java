@@ -7,7 +7,7 @@ package com.eryansky.modules.disk.extend;
 
 import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.core.web.upload.FileUploadUtils;
-import com.eryansky.modules.disk.entity.Folder;
+import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.utils.AppConstants;
 

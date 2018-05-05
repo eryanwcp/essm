@@ -12,15 +12,15 @@ import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk.extend.IFileManager;
+import com.eryansky.modules.disk.service.DiskService;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.web.upload.FileUploadUtils;
 import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededException;
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
-import com.eryansky.modules.disk.entity.File;
-import com.eryansky.modules.disk.entity.Folder;
-import com.eryansky.modules.disk.entity._enum.FolderAuthorize;
-import com.eryansky.modules.disk.service.DiskManager;
+import com.eryansky.modules.disk.mapper.File;
+import com.eryansky.modules.disk.mapper.Folder;
+import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.sys.service.UserManager;
 import com.eryansky.utils.AppConstants;
 import org.apache.commons.fileupload.FileUploadBase;
@@ -54,7 +54,7 @@ public class DiskUtils {
     protected static Logger logger = LoggerFactory.getLogger(DiskUtils.class);
 
     private static UserManager userManager = SpringContextHolder.getBean(UserManager.class);
-    private static DiskManager diskManager = SpringContextHolder.getBean(DiskManager.class);
+    private static DiskService diskService = SpringContextHolder.getBean(DiskService.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
     /**
      * 文件夹标识 通知
@@ -129,8 +129,7 @@ public class DiskUtils {
         StringBuffer path = new StringBuffer();
         path.append(DateFormatUtils.format(now, "yyyy"))
                 .append(java.io.File.separator);
-        String folderAuthorize = FolderAuthorize
-                .getFolderAuthorize(folder.getFolderAuthorize()).toString()
+        String folderAuthorize = FolderAuthorize.getByValue(folder.getFolderAuthorize()).toString()
                 .toLowerCase();
         path.append(userId).append(java.io.File.separator)
                 .append(folderAuthorize).append(java.io.File.separator);
@@ -168,7 +167,7 @@ public class DiskUtils {
         path.append(DateFormatUtils.format(now, "yyyy"))
                 .append(_S);
         String folderAuthorize = FolderAuthorize
-                .getFolderAuthorize(folder.getFolderAuthorize()).toString()
+                .getByValue(folder.getFolderAuthorize()).toString()
                 .toLowerCase();
         path.append(userId).append(_S)
                 .append(folderAuthorize).append(_S);
@@ -191,11 +190,11 @@ public class DiskUtils {
      * @return
      */
     public static Folder getSystemFolderByCode(String code) {
-        return diskManager.checkSystemFolderByCode(code);
+        return diskService.checkSystemFolderByCode(code);
     }
 
     public static Folder getSystemFolderByCode(String code,String userId) {
-        return diskManager.checkSystemFolderByCode(code,userId);
+        return diskService.checkSystemFolderByCode(code,userId);
     }
 
     /**
@@ -204,7 +203,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserNoticeFolder(String userId) {
-        return diskManager.checkSystemFolderByCode(FOLDER_NOTICE,userId);
+        return diskService.checkSystemFolderByCode(FOLDER_NOTICE,userId);
     }
 
 
@@ -214,7 +213,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserPhotoFolder(String userId) {
-        return diskManager.checkSystemFolderByCode(FOLDER_USER_PHOTO,userId);
+        return diskService.checkSystemFolderByCode(FOLDER_USER_PHOTO,userId);
     }
 
     /**
@@ -223,7 +222,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserKindEditorFolder(String userId) {
-        return diskManager.checkSystemFolderByCode(FOLDER_KINDEDITOR,userId);
+        return diskService.checkSystemFolderByCode(FOLDER_KINDEDITOR,userId);
     }
 
 
@@ -255,7 +254,7 @@ public class DiskUtils {
         Folder folder = getSystemFolderByCode(folderCode, userId);
         String storeFilePath = iFileManager.getStorePath(folder,userId,multipartFile.getOriginalFilename());
         File file = new File();
-        file.setFolder(folder);
+        file.setFolderId(folder.getId());
         file.setCode(code);
         file.setUserId(userId);
         file.setName(multipartFile.getOriginalFilename());
@@ -263,7 +262,7 @@ public class DiskUtils {
         file.setFileSize(multipartFile.getSize());
         file.setFileSuffix(FilenameUtils.getExtension(multipartFile.getOriginalFilename()));
         iFileManager.saveFile(file.getFilePath(),multipartFile.getInputStream(), true);
-        diskManager.saveFile(file);
+        diskService.saveFile(file);
         return file;
     }
 
@@ -296,7 +295,7 @@ public class DiskUtils {
         Folder folder = getSystemFolderByCode(folderCode, userId);
         String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
         File file = new File();
-        file.setFolder(folder);
+        file.setFolderId(folder.getId());
         file.setCode(code);
         file.setUserId(userId);
         file.setName(fileName);
@@ -307,7 +306,7 @@ public class DiskUtils {
         workbook.write(fileOut);
         fileOut.close();
 //        iFileManager.saveFile(file.getFilePath(),multipartFile.getInputStream(), true);
-        diskManager.saveFile(file);
+        diskService.saveFile(file);
         return file;
     }
 
@@ -337,7 +336,7 @@ public class DiskUtils {
      * @return
      */
     public static void updateFile(File file){
-        diskManager.updateFile(file);
+        diskService.saveFile(file);
     }
 
 
@@ -348,7 +347,7 @@ public class DiskUtils {
      */
     public static void deleteFile(String fileId){
         Validate.notNull(fileId, "参数[fileId]不能为null.");
-        diskManager.deleteFile(fileId);
+        diskService.deleteFile(fileId);
     }
     /**
      * 删除文件
@@ -357,7 +356,7 @@ public class DiskUtils {
      */
     public static void deleteFile(File file){
         Validate.notNull(file, "参数[file]不能为null.");
-        diskManager.deleteFile( file);
+        diskService.deleteFile( file);
     }
 
 
@@ -376,7 +375,7 @@ public class DiskUtils {
         if(fileId == null){
             return null;
         }
-        File file = diskManager.getFileById(fileId);
+        File file = diskService.getFileById(fileId);
         return getDiskFile(file);
     }
 

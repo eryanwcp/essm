@@ -14,7 +14,8 @@
     <!-- MyBatis begin -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="defaultDataSource"/>
-        <property name="typeAliasesPackage" value="com.eryansky.modules.sys.mapper,com.eryansky.modules.notice.mapper"/>
+        <property name="typeAliasesPackage" value="com.eryansky.modules.sys.mapper,com.eryansky.modules.notice.mapper,
+        com.eryansky.modules.disk.mapper"/>
         <property name="typeAliasesSuperType" value="com.eryansky.common.persistence.AbstractBaseEntity"/>
         <property name="mapperLocations" value="classpath:/mappings/modules/**/*.xml"/>
         <property name="configLocation" value="classpath:/mybatis-config.xml"></property>
@@ -23,7 +24,8 @@
     <!-- 扫描basePackage下所有以@MyBatisDao注解的接口-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-        <property name="basePackage" value="com.eryansky.modules.sys.dao,com.eryansky.modules.notice.dao"/>
+        <property name="basePackage" value="com.eryansky.modules.sys.dao,com.eryansky.modules.notice.dao,
+        com.eryansky.modules.disk.dao"/>
         <property name="annotationClass" value="com.eryansky.common.orm.mybatis.MyBatisDao"/>
     </bean>
     <!-- MyBatis end -->

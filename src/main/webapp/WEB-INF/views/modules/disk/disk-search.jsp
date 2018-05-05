@@ -328,7 +328,7 @@ function selectUser() {
         onClose: function() {
             _dialog.dialog('destroy');
         }
-    }).dialog('open');
+    });
 }
 
 function setSelectUser() {

@@ -19,6 +19,9 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
+import com.eryansky.modules.disk.mapper.File;
+import com.eryansky.modules.disk.service.DiskService;
+import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -28,9 +31,6 @@ import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.web.annotation.Mobile;
 import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededException;
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
-import com.eryansky.modules.disk.entity.File;
-import com.eryansky.modules.disk.service.DiskManager;
-import com.eryansky.modules.disk.service.FileManager;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.notice._enum.IsTop;
 import com.eryansky.modules.notice._enum.NoticeMode;
@@ -75,9 +75,9 @@ public class NoticeController extends SimpleController {
     @Autowired
     private NoticeService noticeService;
     @Autowired
-    private DiskManager diskManager;
+    private DiskService diskService;
     @Autowired
-    private FileManager fileManager;
+    private FileService fileService;
     @Autowired
     private NoticeReceiveInfoService noticeReceiveInfoService;
     @Autowired
@@ -184,10 +184,10 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "view/{id}" })
     public ModelAndView view(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-view");
-        List<com.eryansky.modules.disk.entity.File> files = null;
+        List<File> files = null;
         Notice model = noticeService.get(id);
         if(Collections3.isNotEmpty(model.getFileIds())){
-            files = diskManager.findFilesByIds(model.getFileIds());
+            files = diskService.findFilesByIds(model.getFileIds());
         }
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
@@ -214,19 +214,19 @@ public class NoticeController extends SimpleController {
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-input");
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String loginUserId = sessionInfo.getUserId();
-        List<com.eryansky.modules.disk.entity.File> files = null;
+        List<File> files = null;
         if (OperateType.Repeat.equals(operateType) ) {// 转发
             List<String> newFileIds = Lists.newArrayList();
             if (Collections3.isNotEmpty(notice.getFileIds())) {// 文件拷贝
-                List<File> sourceFiles = diskManager.findFilesByIds(notice.getFileIds());
+                List<File> sourceFiles = diskService.findFilesByIds(notice.getFileIds());
                 List<File> newFiles = new ArrayList<File>(sourceFiles.size());
                 newFileIds = Lists.newArrayList();
                 for (File sourceFile : sourceFiles) {
                     File file = sourceFile.copy();
                     file.setStatus(StatusState.LOCK.getValue());
-                    file.setFolder(DiskUtils.getUserNoticeFolder(loginUserId));
+                    file.setFolderId(DiskUtils.getUserNoticeFolder(loginUserId).getId());
                     file.setUserId(loginUserId);
-                    diskManager.saveFile(file);
+                    diskService.saveFile(file);
                     newFileIds.add(file.getId());
                     newFiles.add(file);
                 }
@@ -237,7 +237,7 @@ public class NoticeController extends SimpleController {
             notice.setFileIds(newFileIds);
         }
         if (Collections3.isNotEmpty(notice.getFileIds())) {
-            files = diskManager.findFilesByIds(notice.getFileIds());
+            files = diskService.findFilesByIds(notice.getFileIds());
         }
 
 
@@ -299,10 +299,10 @@ public class NoticeController extends SimpleController {
 
         //更新文件为有效状态 上传的时候为lock状态
         if(Collections3.isNotEmpty(fileIds)){
-            List<File> noticeFiles = diskManager.findFilesByIds(fileIds);
+            List<File> noticeFiles = diskService.findFilesByIds(fileIds);
             for(File noticeFile:noticeFiles){
                 noticeFile.setStatus(StatusState.NORMAL.getValue());
-                diskManager.updateFile(noticeFile);
+                diskService.saveFile(noticeFile);
             }
         }
 
@@ -326,7 +326,7 @@ public class NoticeController extends SimpleController {
         }
         //组件上移除文件
         if(Collections3.isNotEmpty(removeFileIds)){
-            fileManager.deleteFolderFiles(removeFileIds);
+            fileService.deleteFolderFiles(removeFileIds);
         }
         notice.setFileIds(fileIds);
 

@@ -1,6 +1,6 @@
 package com.eryansky.modules.disk.extend;
 
-import com.eryansky.modules.disk.entity.Folder;
+import com.eryansky.modules.disk.mapper.Folder;
 
 import java.io.IOException;
 import java.io.InputStream;

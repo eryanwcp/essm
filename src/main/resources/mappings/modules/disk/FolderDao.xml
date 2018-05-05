@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.disk.dao.FolderDao">
+
+    <sql id="folderColumns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        a.code AS "code",
+        a.folder_authorize AS "folderAuthorize",
+        a.limit_size AS "limitSize",
+        a.name AS "name",
+        a.order_no AS "orderNo",
+        a.organ_id AS "organId",
+        a.parent_id AS "parentId",
+        a.path AS "path",
+        a.remark AS "remark",
+        a.role_id AS "roleId",
+        a.type AS "type",
+        a.user_id AS "userId"
+        
+    </sql>
+
+    <select id="get" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <where>
+            a.status = #{status}
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <where>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findChildsByParentId" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <where>
+            a.status = #{status}
+            AND a.type = #{type}
+            <choose>
+                <when test="parentId != null and parentId !=''">
+                    AND a.parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    AND a.parent_id IS null or a.parent_id == ''
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY a.update_time DESC
+    </select>
+
+    <select id="findFoldersByUserId" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <where>
+            a.status = #{status}
+            <if test="userId != null and userId !=''">
+                AND a.user_id = #{userId}
+            </if>
+            <if test="type != null and type !=''">
+              AND a.type = #{type}
+            </if>
+            <if test="folderAuthorize != null and folderAuthorize !=''">
+                AND a.folder_authorize = #{folderAuthorize}
+            </if>
+            <if test="code != null and code !=''">
+                AND a.code = #{code}
+            </if>
+        </where>
+        ORDER BY a.update_time DESC
+    </select>
+
+    <select id="getFoldersByFolderAuthorize" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <where>
+            a.status = #{status}
+            AND a.folder_authorize = #{folderAuthorize}
+            <if test="userId != null and userId !=''">
+                AND a.user_id = #{userId}
+            </if>
+            <if test="type != null and type !=''">
+                AND a.type = #{type}
+            </if>
+            <choose>
+                <when test="parentId != null and parentId !=''">
+                   AND  a.parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    AND a.parent_id IS NULL OR a.parent_id = ''
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY a.update_time DESC
+    </select>
+
+
+
+
+
+    <insert id="insert">
+        INSERT INTO t_disk_folder(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        code,
+        folder_authorize,
+        limit_size,
+        name,
+        order_no,
+        organ_id,
+        parent_id,
+        path,
+        remark,
+        role_id,
+        type,
+        user_id
+        ) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{code},
+        #{folderAuthorize},
+        #{limitSize},
+        #{name},
+        #{orderNo},
+        #{organId},
+        #{parentId},
+        #{path},
+        #{remark},
+        #{roleId},
+        #{type},
+        #{userId}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_disk_folder SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        code = #{code},
+        folder_authorize = #{folderAuthorize},
+        limit_size = #{limitSize},
+        name = #{name},
+        order_no = #{orderNo},
+        organ_id = #{organId},
+        parent_id = #{parentId},
+        path = #{path},
+        remark = #{remark},
+        role_id = #{roleId},
+        type = #{type},
+        user_id = #{userId}
+         WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE t_disk_folder SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

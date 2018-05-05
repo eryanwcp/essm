@@ -7,6 +7,7 @@ package com.eryansky.modules.disk.web;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.modules.disk.mapper.File;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.LogUtils;
@@ -15,7 +16,7 @@ import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.web.upload.FileUploadUtils;
 import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededException;
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
-import com.eryansky.modules.disk.entity.Folder;
+import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.disk.utils.FileUtils;
 import com.eryansky.utils.AppConstants;
@@ -32,7 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -87,7 +87,7 @@ public class FileKindEditorController extends SimpleController{
      * @param response
      * @param request
      * @param dir
-     * @param file
+     * @param multipartFile
      * @return
      */
     @RequestMapping(value = "upload", method = RequestMethod.POST)
@@ -107,7 +107,7 @@ public class FileKindEditorController extends SimpleController{
 //            basePath +=  File.separator + FileUploadUtils.datePath();//添加日期目录
 //            String url = FileUploadUtils.upload(request, AppConstants.getDiskBaseDir() + File.separator + basePath, multipartFile, allowedExtension, maxSize, false, null);
 
-            com.eryansky.modules.disk.entity.File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_KINDEDITOR, sessionInfo, multipartFile);
+            File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_KINDEDITOR, sessionInfo, multipartFile);
             String filename =  DiskUtils.getVirtualFilePath(file);
 
             return successResponse(request, file.getName(), filename);
@@ -183,11 +183,11 @@ public class FileKindEditorController extends SimpleController{
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Folder folder = DiskUtils.getUserKindEditorFolder(sessionInfo.getUserId());
-        List<com.eryansky.modules.disk.entity.File> files = FileUtils.getFolderFiles(folder.getId(),fileSuffixs);
-        for (com.eryansky.modules.disk.entity.File file : files) {
+        List<File> files = FileUtils.getFolderFiles(folder.getId(),fileSuffixs);
+        for (File file : files) {
 
             Map<String, Object> fileMetaInfo = Maps.newHashMap();
-            File diskFile = file.getDiskFile();
+            java.io.File diskFile = file.getDiskFile();
             String fileName = file.getName();
 
             String fileExt = FilenameUtils.getExtension(fileName);
