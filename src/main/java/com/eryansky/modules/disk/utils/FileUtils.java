@@ -67,7 +67,7 @@ public class FileUtils {
      * @return
      */
     public static List<File> getFolderFiles(String folderId) {
-        return fileService.getFolderFiles(folderId);
+        return getFolderFiles(folderId,null);
     }
 
 
