@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 受保护的资源菜案Resource.
+ * 受保护的资源（菜单）Resource.
  * Author 尔演&Eryan eryanwcp@gmail.com
  * Date 2013-3-21 上午12:27:49
  */
