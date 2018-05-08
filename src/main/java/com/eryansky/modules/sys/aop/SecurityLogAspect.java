@@ -92,7 +92,7 @@ public class SecurityLogAspect {
         try {
             Log log = new Log();
             log.setType(LogType.security.getValue());
-            log.setUserId(sessionInfo.getUserId().toString());
+            log.setUserId(sessionInfo.getUserId());
             log.setModule(className + "-" + methodName);
             log.setIp(sessionInfo.getIp());
             log.setTitle("[" + sessionInfo.getLoginName() + "]" + securityType.getDescription());
