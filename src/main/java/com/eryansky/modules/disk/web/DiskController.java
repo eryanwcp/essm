@@ -73,14 +73,6 @@ public class DiskController extends SimpleController {
     public static final String ICON_FOLDER = "easyui-icon-folder";
     public static final String ICON_DISK = "eu-icon-disk_yunpan";
 
-
-    /**
-     * 文件操作类型 编辑,删除
-     */
-    public enum OperateHtml {
-         EDIT, DELETE;
-    }
-
     /**
      * 磁盘树 节点类型
      */
@@ -113,14 +105,6 @@ public class DiskController extends SimpleController {
         return modelAndView;
     }
 
-
-    /**
-     * 云盘动态
-     */
-    @RequestMapping(value = { "notice" })
-    public ModelAndView noticeList() {
-        return new ModelAndView("modules/disk/disk-notice");
-    }
 
     /**
      * 文件检索
@@ -385,22 +369,7 @@ public class DiskController extends SimpleController {
             Datagrid<File> dg = new Datagrid<File>(page.getTotalCount(),
                     page.getResult());
             if (Collections3.isNotEmpty(page.getResult())) {
-                boolean isAdmin = DiskUtils.isDiskAdmin(sessionInfo.getUserId()); // 是否是云盘管理员
-                boolean isLeader = false;// 是否是部门管理者
-                Folder folder = folderId == null ? null : folderService.get(folderId);
-                boolean userDisk = FolderAuthorize.User.getValue().equals(folderAuthorize); // 我的云盘有分享编辑删除权限
                 for (File file : page.getResult()) {
-                    List<String> operate = Lists.newArrayList();
-                    Boolean isOwner = loginUserId.equals(file.getUserId());// 上传者
-
-                    if (folder != null) {// 选中文件夹，上传者有分享编辑删除权限，除个人云盘外非上传者有分享收藏权限
-                        if (isOwner) {
-                            operate.add(OperateHtml.EDIT.toString());
-                            operate.add(OperateHtml.DELETE.toString());
-                        }
-                    }
-
-                    file.setOperate_all(operate);
                     totalSize += file.getFileSize();
                 }
             }
@@ -464,7 +433,7 @@ public class DiskController extends SimpleController {
      * @throws Exception
      */
     @RequestMapping(value = { "fileInput" })
-    public ModelAndView fileInput(String folderId, Integer folderAuthorize) throws Exception {
+    public ModelAndView fileInput(String folderId, String folderAuthorize) throws Exception {
         ModelAndView modelAndView = new ModelAndView(
                 "modules/disk/disk-fileInput");
         Folder model = null;

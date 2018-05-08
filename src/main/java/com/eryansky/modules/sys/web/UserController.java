@@ -197,7 +197,7 @@ public class UserController extends BaseController<User,String> {
                            HttpServletRequest request, HttpServletResponse response,String query) {
         List<User> list = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        if((StringUtils.isBlank(dataScope) || SecurityUtils.isCurrentUserAdmin())){
+        if(StringUtils.isBlank(dataScope)){
             list = userManager.findWithInclude(includeUserIds, query);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.ALL.getValue()))){
             list = userManager.findAllNormalWithExclude(excludeUserIds);
@@ -223,7 +223,6 @@ public class UserController extends BaseController<User,String> {
 
         String json = JsonMapper.getInstance().toJson(list,User.class,
                 new String[]{"id","name","defaultOrganName"});
-//                new String[]{"id","name","sexView","defaultOrganName"});
         WebUtils.setExpiresHeader(response, 5 * 60 * 1000);
         return json;
     }

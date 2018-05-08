@@ -89,7 +89,7 @@ function loadFileDatagrid() {
             width: 200
         },
         {
-            field: 'operate_all',
+            field: 'operate',
             title: '操作',
             formatter: function(value, rowData, rowIndex) {
             	var operateHtml = "";
@@ -159,7 +159,6 @@ function loadDiskTree() {
         onSelect: function(node) {
         	if (true && $folder_file_datagrid) {
         	    var nType = node.attributes["nType"];
-        	    var organType = node.attributes['type'];
 
                 var _toolbar =  [{
                     text: '批量下载',
@@ -170,18 +169,8 @@ function loadDiskTree() {
                 }];
                 var _queryParams = {};
 
-                if ("FolderAuthorize" == nType &&'0' == node.id) { //我的云盘
+                if (("FolderAuthorize" == nType &&'0' == node.id) || ("Folder" == nType)) { //我的云盘
                     _toolbar.unshift(folder_file_toolbar);
-                } else {
-                    var operate_all = node.attributes["operate"];
-                    var parentNode = $folder_tree.tree("getParent", node.target);
-                    while ((operate_all == undefined || operate_all == null) && parentNode != null) { //查找父级权限控制
-                        operate_all = parentNode.attributes["operate"];
-                        parentNode = $folder_tree.tree("getParent", parentNode.target);
-                    }
-                    if (true == operate_all) {
-                        _toolbar.unshift(folder_file_toolbar);
-                    }
                 }
 
         	    if ("Folder" == nType) {
@@ -204,7 +193,6 @@ function loadDiskTree() {
             e.preventDefault();
             contextMenuNode = node;
             var nType = node.attributes["nType"];
-            var organType = node.attributes['type'];
             var treeName = 'folder_treeMenu_add';
             if ("Folder" == nType) {
                 if (true == node.attributes.operate) {
@@ -469,14 +457,7 @@ function addFolderFile() {
         if (text != undefined && text != null && text != "") {
             title += ":" + text;
         }
-        var url = ctxAdmin + '/disk/fileInput';
-        var folderAuthorize = null;
-        var organId = null;
-        var folderId = null;
-        var nType = selectedNode.attributes["nType"];
-        var organType = selectedNode.attributes['type'];
-        folderId = selectedNode.id;
-        url += "?folderId=" + folderId;
+        var url = ctxAdmin + '/disk/fileInput?folderId='+selectedNode.id;
         _dialog = $("<div/>").dialog({
             title: title,
             top: 10,
@@ -565,6 +546,6 @@ function search() {
     if (selectedNode) {
         folderId = selectedNode.id;
     }
-    var queryParam = $.extend($.serializeObject($folder_file_search_form),{folderId:folderId})
+    var queryParam = $.extend($.serializeObject($folder_file_search_form),{folderId:folderId});
     $folder_file_datagrid.datagrid("load",queryParam);
 }

@@ -68,10 +68,6 @@ public class File extends DataEntity<File> implements Serializable {
 	 */
 	private String shareUserId;
 
-	/**
-	 * 操作权限
-	 */
-	private List<String> operate_all;
 
 	private String query;
 
@@ -167,14 +163,6 @@ public class File extends DataEntity<File> implements Serializable {
 
 	public void setShareUserId(String shareUserId) {
 		this.shareUserId = shareUserId;
-	}
-
-	public void setOperate_all(List<String> operate_all) {
-		this.operate_all = operate_all;
-	}
-
-	public List<String> getOperate_all() {
-		return operate_all;
 	}
 
 	/**

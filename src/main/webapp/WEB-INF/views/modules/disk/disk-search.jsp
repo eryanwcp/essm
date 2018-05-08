@@ -273,7 +273,7 @@ function initSelectUser() {
         type: "post",
         dataType: 'json',
         contentType: "application/json",
-        url: "${ctxAdmin}/sys/user/userList",
+        url: "${ctxAdmin}/sys/user/userList?dataScope=2",
         success: function(data) {
             multiSelectUser = $("#personIds").kendoMultiSelect({
                 dataTextField: "name",
