@@ -26,7 +26,8 @@
         a.parent_id AS "parent.id",
 		p.name AS "parent.name",
         a.PARENT_IDS AS "parentIds",
-        a.AREA_ID AS "areaId"
+        a.AREA_ID AS "areaId",
+        a.remark AS "remark"
     </sql>
 
     <sql id="organJoins">
@@ -190,7 +191,7 @@
                     AND a.parent_id = #{parentId}
                 </when>
                 <otherwise>
-                    AND (a.parent_id IS NULL OR a.parent_id = '' )
+                    AND (a.parent_id IS NULL OR a.parent_id = '' OR a.parent_id = '0')
                 </otherwise>
             </choose>
         </where>
@@ -373,7 +374,8 @@
         sort,
         PARENT_ID,
         PARENT_IDS,
-        AREA_ID
+        AREA_ID,
+        remark
         ) VALUES (
         #{id},
         #{status},
@@ -397,7 +399,8 @@
         #{sort},
         #{parentId},
         #{parentIds},
-        #{areaId}
+        #{areaId},
+        #{remark}
         )
     </insert>
 
@@ -422,7 +425,8 @@
         sort = #{sort},
         PARENT_ID = #{parentId},
         PARENT_IDS = #{parentIds},
-        AREA_ID = #{areaId}
+        AREA_ID = #{areaId},
+        remark = #{remark}
          WHERE id = #{id}
     </update>
 

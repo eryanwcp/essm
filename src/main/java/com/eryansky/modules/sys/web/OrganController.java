@@ -87,11 +87,12 @@ public class OrganController extends SimpleController {
     @ResponseBody
     public String treegrid(String parentId) throws Exception {
         List<Organ> list = null;
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(StringUtils.isBlank(parentId)){
             if(SecurityUtils.isCurrentUserAdmin()){
                 list = organService.findDataByParent(null, null);
             }else{
-                String organId = UserUtils.getCompanyId(SecurityUtils.getCurrentUserId());
+                String organId = sessionInfo.getLoginCompanyId();
                 list = new ArrayList<Organ>(1);
                 list.add(organService.get(organId));
             }
@@ -100,9 +101,7 @@ public class OrganController extends SimpleController {
             list = organService.findDataByParent(parentId,null);
         }
 
-        String json = JsonMapper.getInstance().toJson(list,Organ.class,
-                new String[]{"id","name","shortName","sysCode","code","_parentId","managerUserName","superManagerUserName",
-                        "address","phone","mobile","fax","type","typeView","sort","statusView","state"});
+        String json = JsonMapper.getInstance().toJson(list);
         return json;
     }
 
@@ -128,7 +127,7 @@ public class OrganController extends SimpleController {
         Result result = null;
         organ.setParent(null);
         // 设置上级节点
-        if (StringUtils.isNotBlank(_parentId)) {
+        if (StringUtils.isNotBlank(_parentId) && !"0".equals(_parentId)) {
             Organ parentOrgan = organService.get(_parentId);
             if (parentOrgan == null) {
                 logger.error("父级机构[{}]已被删除.", _parentId);

@@ -73,6 +73,10 @@ public class Organ extends TreeEntity<Organ> {
      * 区域ID
      */
     private String areaId;
+    /**
+     * 备注
+     */
+    private String remark;
 
     public Organ() {
     }
@@ -196,6 +200,18 @@ public class Organ extends TreeEntity<Organ> {
         return this.areaId;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    @Override
+    public String getParentId() {
+        return super.getParentId();
+    }
 
     @JsonProperty(value = "_parentId")
     public String get_parentId() {
