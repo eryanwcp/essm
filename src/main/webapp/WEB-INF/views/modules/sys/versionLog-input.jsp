@@ -3,7 +3,7 @@
 <%@ include file="/common/uploadify.jsp"%>
 
 <script type="text/javascript">
-    var jsessionid = '<%=session.getId()%>';
+    var jsessionid = '${sessionInfo.sessionId}';
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/versionLog-input${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <div>

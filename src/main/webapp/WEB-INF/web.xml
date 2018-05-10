@@ -128,7 +128,7 @@
     <!-- ehcache Gzip过滤器 -->
     <filter>
         <filter-name>gzipFilter</filter-name>
-        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+        <filter-class>com.eryansky.common.web.filter.gzip.GZIPFilter</filter-class>
         <init-param>
             <param-name>whiteListURL</param-name> <!-- 配置白名单url 表示走过滤器的url order：2-->
             <param-value>

@@ -5,10 +5,11 @@
 <script type="text/javascript">
     var userJson = ${userJson};
     var userinfo_form;
+    var jsessionid = "${sessionInfo.sessionId}";
     $(function () {
         up();
         userinfo_form = $('#userinfo_form').form({
-            url: '${ctxAdmin}/sys/user/saveUserinfo',
+            url: ctxAdmin + '/sys/user/saveUserinfo',
             onSubmit: function (param) {
                 $.messager.progress({
                     title: '提示信息！',
@@ -39,7 +40,7 @@
         }).form('load', userJson);
         var path = userJson.photo;
         if (path) {
-            $('#photo_pre').attr("src", "${_ctx}" + path);
+            $('#photo_pre').attr("src", ctx + path);
         }
         $('#photo_pre').show();
         $(".uploadify").css({'display': 'inline-block', 'height': '24px', 'padding-right': '18px', 'outline': 'none'});
@@ -49,7 +50,7 @@
     //性别
     function loadSex(){
         $('#sex').combobox({
-            url: '${ctxAdmin}/sys/user/sexTypeCombobox',
+            url: ctxAdmin + '/sys/user/sexTypeCombobox',
             height:28,
             width: 120,
             editable:false
@@ -59,9 +60,9 @@
     function up() {
         $('#file').uploadify({
             method: 'post',
-            swf: '${ctxStatic}/js/uploadify/scripts/uploadify.swf',  //FLash文件路径
+            swf: ctxStatic + '/js/uploadify/scripts/uploadify.swf',  //FLash文件路径
             buttonText: '浏  览',                                 //按钮文本
-            uploader: '${ctxAdmin}/sys/user/upload;jsessionid=<%=session.getId()%>',
+            uploader: ctxAdmin + '/sys/user/upload;jsessionid='+jsessionid,
             fileObjName: 'uploadFile',
             removeCompleted: false,
             multi: false,

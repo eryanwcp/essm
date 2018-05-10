@@ -8,7 +8,7 @@
     var modelFileIds = ${fns:toJson(model.fileIds)};
     var noticeReceiveUserIds =  ${fns:toJson(model.noticeReceiveUserIds)};
     var noticeReceiveOrganIds = ${fns:toJson(model.noticeReceiveOrganIds)};
-    var jsessionid = '<%=session.getId()%>';
+    var jsessionid = '${sessionInfo.sessionId}';
     var fileSizeLimit = '<%=AppConstants.getPrettyNoticeMaxUploadSize()%>';//附件上传大小限制
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/notice/notice-input${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
