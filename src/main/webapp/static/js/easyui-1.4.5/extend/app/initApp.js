@@ -7,8 +7,8 @@ $(function () {
 //        taskBlankPos:'north',
 //        wallpaper:ctx+'/img/top_bg.png',
         loadUrl : { //远程数据加载路径
-            app : ctx+'/login/apps', //app数据
-            startMenu : ctx+'/login/startMenu'//, //开始菜单数据
+            app : ctxAdmin+'/login/apps', //app数据
+            startMenu : ctxAdmin+'/login/startMenu'//, //开始菜单数据
 //            widget : ctxStatic+'/js/jquery/easyui-1.4/extent/app/widget.json'
         },
         otherStartMenus:[{
@@ -19,7 +19,7 @@ $(function () {
                     $.cookie('themeType', themeType_index, {
                         expires : 7
                     });
-                    window.location.href = ctx+"/login/index?theme="+themeType_index;
+                    window.location.href = ctxAdmin+"/login/index?theme="+themeType_index;
                 }
             },'-',{
             id:'startMenu_logout',
@@ -31,7 +31,7 @@ $(function () {
                         $.cookie('autoLogin', "", {
                             expires : 7
                         });
-                        window.location.href = ctx+"/login/logout";
+                        window.location.href = ctxAdmin+"/login/logout";
                     }
                 });
             }
@@ -121,7 +121,7 @@ $(function () {
             "type":"refresh"
         },{
             "text":"关于",
-            "href":ctx+"/common/layout/about"
+            "href":ctxAdmin+"/common/layout/about"
         }
     ];
     var appMenuData = [{

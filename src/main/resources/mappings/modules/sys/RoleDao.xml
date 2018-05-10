@@ -73,7 +73,7 @@
         <include refid="roleColumns"/>
         FROM t_sys_role a
         <where>
-            a.id IN (#{ids})
+            a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
         ORDER BY a.sort asc
     </select>

@@ -1,6 +1,6 @@
 var eu = eu || {};
 
-eu.contextPath = ctx==undefined ?"":ctx;
+eu.contextPath = window.document.location.pathname.substring(0, window.document.location.pathname.indexOf('\/', 1));
 /**
  * 保持心跳
  */

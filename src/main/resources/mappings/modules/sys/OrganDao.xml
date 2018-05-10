@@ -270,7 +270,7 @@
         FROM t_sys_organ a
         <include refid="organJoins"/>
         <where>
-            a.id IN (#{ids})
+            a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
         ORDER BY a.sort asc
     </select>

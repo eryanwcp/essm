@@ -185,7 +185,7 @@
         <include refid="userColumns"/>
         FROM t_sys_user a
         <where>
-            a.id IN (#{ids})
+            a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
         ORDER BY a.sort asc
     </select>
@@ -232,7 +232,7 @@
         LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
         <where>
             a.status = #{status}
-            AND o.id IN (#{organIds})
+            AND o.id IN <foreach collection="organIds" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
         ORDER BY a.sort asc
     </select>
@@ -245,7 +245,7 @@
         LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
         <where>
             a.status = #{status}
-            AND o.id IN (#{organIds})
+            AND o.id IN <foreach collection="organIds" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
         ORDER BY a.sort asc
     </select>
