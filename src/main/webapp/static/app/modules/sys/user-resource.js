@@ -1,4 +1,5 @@
 var resourceComboboxData = resourceComboboxData;
+var resourceIds = resourceIds;
 
 var $resource_combotree;
 $(function() {
@@ -8,7 +9,7 @@ $(function() {
         $resource_combotree.combotree({
             cascadeCheck:$(this).is(':checked'),
             onShowPanel:function(){
-                var tree =  $(this).combotree("tree")
+                var tree =  $(this).combotree("tree");
                 var checkeNodes = tree.tree("getChecked", ['checked','indeterminate']);
                 var tempValues = new Array();
                 $.each(checkeNodes,function(index,nodeData){
@@ -31,4 +32,7 @@ function loadResource(){
         multiple : true,
         multiline:true
     });
+    if(resourceIds){
+        $resource_combotree.combotree('setValues',resourceIds);
+    }
 }

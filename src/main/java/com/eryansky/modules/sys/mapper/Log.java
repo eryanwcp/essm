@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys._enum.LogType;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.eryansky.modules.sys.entity.User;
 import com.eryansky.modules.sys.utils.UserUtils;
 
 import java.util.Date;
@@ -242,7 +241,7 @@ public class Log extends DataEntity<Log> {
     public String getUserOfficeName(){
         User user = UserUtils.getUser(this.getUserId());
         if(user != null){
-            return user.getOfficeName();
+            return UserUtils.getDefaultOrganName(userId);
         }
         return null;
     }
@@ -250,7 +249,7 @@ public class Log extends DataEntity<Log> {
     public String getUserCompanyName(){
         User user = UserUtils.getUser(this.getUserId());
         if(user != null){
-            return user.getCompanyName();
+            return UserUtils.getCompanyName(userId);
         }
         return null;
     }

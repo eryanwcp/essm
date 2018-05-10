@@ -12,6 +12,8 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
+import com.eryansky.modules.sys.service.UserPasswordService;
+import com.eryansky.modules.sys.service.UserService;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
@@ -20,9 +22,7 @@ import com.eryansky.core.web.annotation.Mobile;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
-import com.eryansky.modules.sys.entity.UserPassword;
-import com.eryansky.modules.sys.service.UserManager;
-import com.eryansky.modules.sys.service.UserPasswordManager;
+import com.eryansky.modules.sys.mapper.UserPassword;
 import com.eryansky.utils.AppConstants;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +50,13 @@ import java.util.Map;
 public class PortalController extends SimpleController {
 
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
     @Autowired
     private NoticeService noticeService;
     @Autowired
     private NoticeReceiveInfoService noticeReceiveInfoService;
     @Autowired
-    private UserPasswordManager userPasswordManager;
+    private UserPasswordService userPasswordService;
 
 
     @RequestMapping("")
@@ -134,7 +134,7 @@ public class PortalController extends SimpleController {
     }
 
     private Long checkPassword(String userId){
-        UserPassword userPassword = userPasswordManager.getLatestUserPasswordByUserId(userId);
+        UserPassword userPassword = userPasswordService.getLatestUserPasswordByUserId(userId);
 //            String tipPasswordMsg = "";
         Calendar calendar = Calendar.getInstance();
         int userPasswordUpdateCycle = AppConstants.getUserPasswordUpdateCycle();

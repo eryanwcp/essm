@@ -14,8 +14,6 @@ import com.eryansky.common.utils.SysConstants;
 import com.eryansky.common.utils.SysUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.modules.sys.service.LogService;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.StaleObjectStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -80,28 +78,6 @@ public class ExceptionInterceptor implements HandlerExceptionResolver {
             }
             if(SysConstants.isdevMode()){
                 sb.append(MSG_DETAIL).append(ex.getMessage());//将":"替换为","
-            }
-        }
-        //Hibernate 外键关联引用操作异常.
-        else if(Exceptions.isCausedBy(ex, org.hibernate.exception.ConstraintViolationException.class)){
-            isWarn = true;
-            sb.append("存在数据被引用,无法执行操作！");
-            if(SysConstants.isdevMode()){
-                sb.append(MSG_DETAIL).append(SysUtils.jsonStrConvert(emsg));//将":"替换为","
-            }
-        }
-        //Hibernate乐观锁 并发异常处理
-        else if(Exceptions.isCausedBy(ex, StaleObjectStateException.class)){
-            isWarn = true;
-            sb.append("当前记录已被其它用户修改或删除！");
-            if(SysConstants.isdevMode()){
-                sb.append(MSG_DETAIL).append(SysUtils.jsonStrConvert(emsg));//将":"替换为","
-            }
-        }
-        else if(Exceptions.isCausedBy(ex, ObjectNotFoundException.class)){
-            sb.append("当前记录不存在或已被其它用户删除！");
-            if(SysConstants.isdevMode()){
-                sb.append(MSG_DETAIL).append(SysUtils.jsonStrConvert(emsg));//将":"替换为","
             }
         }
         //参数类异常 Spring Assert、Apache Common Validate抛出该异常

@@ -14,7 +14,7 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
-import com.eryansky.modules.sys.task.LogJobManager;
+import com.eryansky.modules.sys.task.LogJob;
 import com.eryansky.utils.SpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LogInterceptor implements HandlerInterceptor {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	private static LogJobManager logJobManager = SpringContextHolder.getBean(LogJobManager.class);
+	private static LogJob logJobManager = SpringContextHolder.getBean(LogJob.class);
 	private static final ThreadLocal<Long> startTimeThreadLocal =
 			new NamedThreadLocal<Long>("ThreadLocal StartTime");
 	@Autowired

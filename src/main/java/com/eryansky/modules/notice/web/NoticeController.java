@@ -23,6 +23,10 @@ import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.service.DiskService;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
+import com.eryansky.modules.sys._enum.YesOrNo;
+import com.eryansky.modules.sys.service.OrganService;
+import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityUtils;
@@ -45,11 +49,8 @@ import com.eryansky.modules.notice.task.NoticeAsyncTaskService;
 import com.eryansky.modules.notice.utils.NoticeUtils;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
 import com.eryansky.modules.sys._enum.DataScope;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.service.OrganManager;
-import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.utils.SelectType;
-import com.eryansky.utils.YesOrNo;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -85,9 +86,9 @@ public class NoticeController extends SimpleController {
     @Autowired
     private NoticeAsyncTaskService noticeAsyncTaskService;
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
     @Autowired
-    private OrganManager organManager;
+    private OrganService organService;
 
     /**
      * 操作类型
@@ -263,12 +264,11 @@ public class NoticeController extends SimpleController {
         List<User> list = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY.getValue()))){
-            User user = userManager.loadById(sessionInfo.getUserId());
-            String organId = user.getCompanyId();
-            List<String> organIds = organManager.findOrganChildsDepartmentOrganIds(organId);
-            list = userManager.findUsersByOrganIds(organIds);
+            String organId = UserUtils.getCompanyId(sessionInfo.getUserId());
+            List<String> organIds = organService.findOrganChildsDepartmentOrganIds(organId);
+            list = userService.findUsersByOrganIds(organIds);
         }else{
-            list = userManager.findWithInclude(includeIds, query);
+            list = userService.findWithInclude(includeIds, query);
         }
         //系统用户
 

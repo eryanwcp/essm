@@ -11,7 +11,6 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.VersionLogType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Transient;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -134,7 +133,6 @@ public class VersionLog extends BaseEntity<VersionLog> {
     /**
      * 系统类型描述.
      */
-    @Transient
     public String getVersionLogTypeView() {
         VersionLogType ss = VersionLogType.getVersionLogType(versionLogType);
         String str = "";

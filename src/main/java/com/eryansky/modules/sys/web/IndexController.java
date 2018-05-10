@@ -9,7 +9,7 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.modules.sys.entity.User;
+import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.utils.AppConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -11,7 +11,7 @@ import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
 import com.eryansky.modules.sys.service.LogService;
-import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.modules.sys.service.UserService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
@@ -50,7 +50,7 @@ public class SecurityLogAspect {
      * 登出增强
      * @param joinPoint 切入点
      */
-    @Before("execution(* com.eryansky.modules.sys.service.UserManager.*logout(..))")
+    @Before("execution(* com.eryansky.modules.sys.service.UserService.*logout(..))")
     public void beforeLogoutLog(JoinPoint joinPoint) throws Throwable{
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
@@ -83,7 +83,7 @@ public class SecurityLogAspect {
             methodName = joinPoint.getSignature().getName();
             className = joinPoint.getTarget().getClass().getSimpleName();
         }else{
-            className = UserManager.class.getSimpleName();
+            className = UserService.class.getSimpleName();
             methodName = "logout";
         }
         String user = null;

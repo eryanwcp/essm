@@ -1,5 +1,6 @@
 var modelId = modelId;
 var modelStatus = modelStatus;
+var modelType = modelType;
 
 var $type_combobox;
 var $_parent_combotree;
@@ -56,14 +57,15 @@ function loadType(parentId){
     $type_combobox = $('#type').combobox({
         url:typeUrl+'?parentId='+parentId,
         multiple:false,
-        editable:false
+        editable:false,
+        value:modelType
     });
 }
 //设置排序默认值
 function setSortValue() {
     $.get(ctxAdmin + '/sys/resource/maxSort', function(data) {
         if (data.code == 1) {
-            $('#orderNo').numberspinner('setValue',data.obj+30);
+            $('#sort').numberspinner('setValue',data.obj+30);
         }
     }, 'json');
 }

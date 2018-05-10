@@ -1,5 +1,6 @@
 var organUserCombogridData = organUserCombogridData;
 var usersCombogridData = usersCombogridData;
+var managerUserId = managerUserId;
 
 var $managerUser_combogrid;
 $(function() {
@@ -26,17 +27,12 @@ function loadManagerUser(){
             {field: 'name', title: '姓名', width: 60, sortable: true},
             {field: 'sexView', title: '性别', width: 50},
             {field: 'defaultOrganName', title: '机构', width: 120, sortable: true}
-        ]],
-        keyHandler : {
-            enter: function() {
-                var name = $('#managerUserId').combogrid('getText');
-                var dg = $('#managerUserId').combogrid("grid");
-                dg.datagrid("reload", {'pageType':2,'filter_LIKES_loginName_OR_name':name});
-            },
-            query : function(q) {
-            }
-        }
+        ]]
     });
+    if(managerUserId){
+        $managerUser_combogrid.combogrid("setValue",managerUserId);
+    }
+
 }
 //加载分管用户
 function selectUser(){

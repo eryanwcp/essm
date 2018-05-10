@@ -204,7 +204,7 @@ public abstract class SimpleController{
      * @return
      */
     protected String renderString(HttpServletResponse response, Object object) {
-        return renderString(response, JsonMapper.getInstance().toJson(object), "application/json");
+        return renderString(response, JsonMapper.toJsonString(object), "application/json");
     }
 
 

@@ -9,17 +9,16 @@ import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
-import com.eryansky.common.web.springmvc.BaseController;
+import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
-import com.eryansky.modules.sys.entity.Post;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.service.OrganManager;
-import com.eryansky.modules.sys.service.PostManager;
-import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.core.security.SessionInfo;
+import com.eryansky.modules.sys.mapper.Post;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.service.*;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
@@ -31,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 岗位管理 Controller
@@ -39,19 +39,22 @@ import java.util.List;
  */
 @Controller
 @RequestMapping(value = "${adminPath}/sys/post")
-public class PostController
-        extends BaseController<Post,String> {
+public class PostController extends SimpleController{
 
     @Autowired
-    private PostManager postManager;
+    private PostService postService;
     @Autowired
-    private OrganManager organManager;
+    private OrganService organService;
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
 
-    @Override
-    public EntityManager<Post, String> getEntityManager() {
-        return postManager;
+    @ModelAttribute("model")
+    public Post get(@RequestParam(required=false) String id) {
+        if (StringUtils.isNotBlank(id)){
+            return postService.get(id);
+        }else{
+            return new Post();
+        }
     }
 
     @RequestMapping(value = {""})
@@ -59,45 +62,46 @@ public class PostController
         return "modules/sys/post";
     }
 
-    @RequestMapping(value = {"_datagrid"})
+    @RequestMapping(value = {"datagrid"})
     @ResponseBody
-    public String datagrid(HttpServletRequest request,String organId,String nameOrCode) {
-        Page<Post> page = new Page<Post>(SpringMVCHolder.getRequest());
-        page = postManager.findPage(page,organId,nameOrCode);
+    public String datagrid(String organId,String query,HttpServletRequest request) {
+        Page<Post> page = new Page<Post>(request);
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+        Post model = new Post();
+        model.setOrganId(organId);
+        model.setQuery(query);
+        if(StringUtils.isBlank(model.getOrganId())){
+            model.setOrganId(sessionInfo.getLoginOrganId());
+        }
+
+        page = postService.findPage(page,model);
         Datagrid<Post> dg = new Datagrid<Post>(page.getTotalCount(),page.getResult());
-        String json = JsonMapper.getInstance().toJsonWithExcludeProperties(dg,Post.class,
-                new String[]{"userNames","organIdsNames"});
+        String json = JsonMapper.getInstance().toJson(dg);
         return json;
     }
 
     /**
-     * @param post
+     * @param model
      * @return
      * @throws Exception
      */
     @RequestMapping(value = {"input"})
-    public ModelAndView input(@ModelAttribute("model") Post post) throws Exception {
+    public ModelAndView input(@ModelAttribute("model") Post model) throws Exception {
         ModelAndView modelAndView = new ModelAndView("modules/sys/post-input");
+        modelAndView.addObject("model",model);
+        List<String> organIds = organService.findAssociationOrganIdsByPostId(model.getId());
+        modelAndView.addObject("organIds",organIds);
         return modelAndView;
     }
 
-    @RequestMapping(value = {"_save"})
+    @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model")Post model,String organId) {
         Result result;
-
         Validate.notNull(organId, "参数[organId]不能为null");
-        // 名称重复校验
-//        Post nameCheckPost = postManager.getPostByON(organId,model.getName());
-//        if (nameCheckPost != null && !nameCheckPost.getId().equals(model.getId())) {
-//            result = new Result(Result.WARN, "名称为[" + model.getName() + "]已存在,请修正!", "name");
-//            logger.debug(result.toString());
-//            return result;
-//        }
-
         // 编码重复校验
         if (StringUtils.isNotBlank(model.getCode())) {
-            Post checkPost = postManager.getPostByOC(organId, model.getCode());
+            Post checkPost = postService.getPostByOC(organId, model.getCode());
             if (checkPost != null && !checkPost.getId().equals(model.getId())) {
                 result = new Result(Result.WARN, "编码为[" + model.getCode() + "]已存在,请修正!", "code");
                 logger.debug(result.toString());
@@ -105,10 +109,24 @@ public class PostController
             }
         }
 
-        getEntityManager().saveEntity(model);
+        postService.savePost(model);
         result = Result.successResult();
         return result;
     }
+
+    /**
+     * 根据ID集合批量删除.
+     *
+     * @param ids 主键ID集合
+     * @return
+     */
+    @RequestMapping(value = {"remove"})
+    @ResponseBody
+    public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
+        postService.deleteByIds(ids);
+        return Result.successResult();
+    }
+
 
 
 
@@ -116,8 +134,10 @@ public class PostController
      * 设置岗位用户页面.
      */
     @RequestMapping(value = {"user"})
-    public String user(@ModelAttribute("model")Post post,Model model) throws Exception {
-        model.addAttribute("organId", post.getOrganId());
+    public String user(@ModelAttribute("model")Post model, Model uiModel) throws Exception {
+        uiModel.addAttribute("organId", model.getOrganId());
+        List<String> userIds = userService.findUserIdsByPostIdAndOrganId(model.getId(),model.getOrganId());
+        uiModel.addAttribute("userIds", userIds);
         return "modules/sys/post-user";
     }
 
@@ -127,20 +147,9 @@ public class PostController
     @RequestMapping(value = {"updatePostUser"})
     @ResponseBody
     public Result updatePostUser(@ModelAttribute("model") Post model,
-                                 @RequestParam(value = "userIds", required = false)List<String> userIds) throws Exception {
-        Result result;
-        List<User> us = Lists.newArrayList();
-        if(Collections3.isNotEmpty(userIds)){
-            for (String id : userIds) {
-                User user = userManager.loadById(id);
-                us.add(user);
-            }
-        }
-
-        model.setUsers(us);
-        getEntityManager().saveEntity(model);
-        result = Result.successResult();
-        return result;
+                                 @RequestParam(value = "userIds", required = false)Set<String> userIds) throws Exception {
+        postService.savePostOrganUsers(model.getId(),model.getOrganId(),userIds);
+        return Result.successResult();
     }
 
 
@@ -152,7 +161,7 @@ public class PostController
     @RequestMapping(value = {"postOrganUsers/{postId}"})
     @ResponseBody
     public Datagrid<User> postOrganUsers(@PathVariable String postId) {
-        List<User> users = postManager.getPostOrganUsersByPostId(postId);
+        List<User> users = userService.findUsersByPostId(postId);
         Datagrid<User> dg;
         if(Collections3.isEmpty(users)){
            dg = new Datagrid(0, Lists.newArrayList());
@@ -163,15 +172,15 @@ public class PostController
     }
 
     /**
-     * 用户可选岗位列表
+     * 用户可选岗位列表 TODO
      * @param selectType {@link SelectType}
      * @param userId 用户ID
      * @return
      */
     @RequestMapping(value = {"combobox"})
     @ResponseBody
-    public List<Combobox> combobox(String selectType,String userId){
-        List<Post> list = postManager.getSelectablePostsByUserId(userId);
+    public List<Combobox> combobox(String selectType,String userId,String organId){
+        List<Post> list = postService.findPostsByOrganId(organId);
         List<Combobox> cList = Lists.newArrayList();
 
         Combobox titleCombobox = SelectType.combobox(selectType);

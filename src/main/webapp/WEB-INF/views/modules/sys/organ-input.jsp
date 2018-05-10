@@ -41,7 +41,7 @@
             <label>机构系统编码:</label>
             <input type="text" id="sysCode" name="sysCode" value="${model.sysCode}"
                    maxLength="36" class="easyui-validatebox textbox" placeholder="请输入机构系统编码..."
-                   data-options="required:true,missingMessage:'请输入机构系统编码.',validType:['minLength[1]']" />
+                   data-options="missingMessage:'请输入机构系统编码.',validType:['minLength[1]']" />
         </div>
         <div>
             <label>机构编码:</label>
@@ -74,7 +74,7 @@
         </div>
         <div>
             <label>排序:</label>
-            <input type="text" id="orderNo" name="orderNo" value="${model.orderNo}" class="easyui-numberspinner" STYLE="width: 120px;"
+            <input type="text" id="sort" name="sort" value="${model.sort}" class="easyui-numberspinner" STYLE="width: 120px;"
                    data-options="min:1,max:99999999,size:9,maxlength:9,height:28" />
         </div>
         <div>

@@ -115,6 +115,10 @@ public class HttpCompoents {
                     if (executionCount >= MAX_EXECUT_COUNT) {// 如果已经重试了3次，就放弃
                         return false;
                     }
+                    if (exception instanceof NoHttpResponseException) {
+                        // 如果服务器丢掉了连接，那么就重试
+                        return true;
+                    }
                     if (exception instanceof InterruptedIOException) {// 超时
                         return false;
                     }

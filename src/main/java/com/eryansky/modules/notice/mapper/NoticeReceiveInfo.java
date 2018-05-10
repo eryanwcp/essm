@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.modules.notice._enum.NoticeReadMode;
 import com.eryansky.modules.notice.utils.NoticeUtils;
-import com.eryansky.modules.sys.entity.User;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
 
@@ -30,7 +29,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
     /**
      * 是否已读 默认值：否 {@link NoticeReadMode}
      */
-    private Integer isRead = NoticeReadMode.unreaded.getValue();
+    private String isRead = NoticeReadMode.unreaded.getValue();
     /**
      * 读取时间
      */
@@ -61,11 +60,11 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
         this.userId = userId;
     }
 
-    public Integer getIsRead() {
+    public String getIsRead() {
         return isRead;
     }
 
-    public void setIsRead(Integer isRead) {
+    public void setIsRead(String isRead) {
         this.isRead = isRead;
     }
 
@@ -160,8 +159,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
      * @return
      */
     public String  getOrganName(){
-        User user = UserUtils.getUser(this.userId);
-        return OrganUtils.getOrganName(user.getDefaultOrganId());
+        return UserUtils.getDefaultOrganName(userId);
     }
 
     /**

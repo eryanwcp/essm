@@ -26,14 +26,14 @@ public @interface Excel {
 	 * 
 	 * @return
 	 */
-	public String exportName();
+	String exportName();
 
 	/**
 	 * 导出时在excel中每个列的宽 单位为字符，一个汉字=2个字符<br>
 	 * 如 以列名列内容中较合适的长度 例如姓名列6 【姓名一般三个字】 性别列4【男女占1，但是列标题两个汉字】<br>
 	 * 限制1-255
 	 */
-	public int exportFieldWidth();
+	int exportFieldWidth();
 
 	/**
 	 * 导出时是否进行字段转换 默认值：false <br>
@@ -42,12 +42,12 @@ public @interface Excel {
 	 * 例如，字段sex ，需要加入 public String getSexConvert() 返回值为string <br>
 	 * 若是sign为0,则不必管
 	 */
-	public boolean exportConvert() default false;
+	boolean exportConvert() default false;
 
 	/**
 	 * 导入数据是否需要转换 及 对已有的excel，是否需要将字段转为对应的数据 默认值：false <br>
 	 * 若是sign为1,则需要在pojo中加入 void<br>
 	 * set字段名Convert(String text)
 	 */
-	public boolean importConvert() default false;
+	boolean importConvert() default false;
 }

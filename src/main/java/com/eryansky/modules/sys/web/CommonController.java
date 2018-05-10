@@ -9,7 +9,7 @@ import com.eryansky.common.model.Result;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.utils.MediaTypes;
-import com.eryansky.modules.sys.service.CommonManager;
+import com.eryansky.modules.sys.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,10 +30,9 @@ import java.util.Map;
 public class CommonController extends SimpleController {
 
     @Autowired
-    private CommonManager commonManager;
-
+    private SystemService systemService;
     /**
-     * 字段校验
+     * 字段校验 TODO
      *
      * @param entityName 实体类名称 例如: "Resource"
      * @param fieldName  属性名称
@@ -43,9 +42,8 @@ public class CommonController extends SimpleController {
      */
     @RequestMapping("fieldCheck")
     @ResponseBody
-    public Result fieldCheck(String entityName, String fieldName, String fieldValue, Long rowId) {
-        String entityId = commonManager.getIdByProperty(entityName, fieldName,
-                fieldValue);
+    public Result fieldCheck(String entityName, String fieldName, String fieldValue, String rowId) {
+        String entityId =  null;
         boolean isCheck = true;// 是否通过检查
         if (entityId != null) {
             if (rowId != null) {

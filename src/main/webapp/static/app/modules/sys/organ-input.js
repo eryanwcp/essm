@@ -72,7 +72,7 @@ function loadType(parentId){
 function setSortValue() {
     $.get(ctxAdmin + '/sys/organ/maxSort', function(data) {
         if (data.code == 1) {
-            $('#orderNo').numberspinner('setValue',data.obj+30);
+            $('#sort').numberspinner('setValue',data.obj+30);
         }
     }, 'json');
 }

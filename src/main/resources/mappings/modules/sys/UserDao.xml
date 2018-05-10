@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.UserDao">
+
+    <sql id="userColumns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        a.LOGIN_NAME AS "loginName",
+        a.CODE AS "code",
+        a.ORIGINAL_PASSWORD AS "originalPassword",
+        a.PASSWORD AS "password",
+        a.NAME AS "name",
+        a.SEX AS "sex",
+        a.BIRTHDAY AS "birthday",
+        a.PHOTO AS "photo",
+        a.EMAIL AS "email",
+        a.PERSON_EMAIL AS "personEmail",
+        a.MOBILE AS "mobile",
+        a.TEL AS "tel",
+        a.QQ AS "qq",
+        a.ADDRESS AS "address",
+        a.DEFAULT_ORGAN_ID AS "defaultOrganId",
+        a.sort AS "sort",
+        a.USER_TYPE AS "userType",
+        a.REMARK AS "remark",
+        a.weixin AS "weixin"
+        
+    </sql>
+
+    <select id="get" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getUserByLoginName" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        WHERE a.status = '0' AND a.login_name = #{loginName}
+    </select>
+
+    <select id="findLoginUser" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        WHERE a.status = '0' AND (a.login_name = #{loginName} OR a.mobile = #{loginName}) AND a.password = #{password}
+    </select>
+
+
+    <select id="findList" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            a.status = #{status}
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.sort ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            <if test="status != null and status !=''">
+                AND a.status = #{status}
+            </if>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.sort ASC
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="findQuery" resultType="User">
+        SELECT DISTINCT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND (o.id = #{organId}  OR o.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
+            )
+            <if test="query != null and query !=''">
+                AND (
+                a.login_name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                OR a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                )
+            </if>
+            <if test="userType != null and userType !=''">
+                AND a.user_type = #{userType}
+            </if>
+
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.sort ASC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllNormalUserIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        <where>
+            AND a.status = '0'
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findWithInclude" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            AND a.status = '0'
+            <if test="query != null and query !=''">
+                AND (
+                a.login_name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                OR a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                )
+            </if>
+            <if test="userIds != null and userIds.size() !=0">
+                AND a.id IN
+                <foreach collection="userIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findAllNormalWithExclude" resultType="java.lang.String">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            AND a.status = '0'
+            <if test="userIds != null and userIds.size() !=0">
+                AND a.id NOT IN
+                <foreach collection="userIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findUsersByIds" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            a.id IN (#{ids})
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findUsersByOrgan" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND (o.id = #{organId}  OR o.parent_ids LIKE
+              <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+              <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
+            )
+            <if test="query != null and query !=''">
+                AND (
+                    a.login_name LIKE
+                    <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                    OR a.name LIKE
+                    <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                )
+            </if>
+            <if test="excludeUserIds != null and excludeUserIds.size() != 0">
+                AND o.id NOT IN
+                <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findUsersByOrganIds" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND o.id IN (#{organIds})
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUsersIdsByOrganIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND o.id IN (#{organIds})
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOwnerAndChildsUsers" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND (o.id = #{organId}  OR o.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
+            <if test="excludeUserIds != null and excludeUserIds.size() != 0">
+                AND o.id NOT IN
+                <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findOwnerAndChildsUsersIds" resultType="User">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND (o.id = #{organId}  OR a.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
+            <if test="excludeUserIds != null and excludeUserIds.size() != 0">
+                AND o.id NOT IN
+                <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findOrganUsers" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            AND a.status = '0'
+            AND o.id = #{organId}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findOrganDefaultUsers" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_organ o ON o.id = a.default_organ_id
+        <where>
+            AND a.status = '0'
+            AND o.id = #{organId}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+
+    <select id="findUsersByRoleId" resultType="java.lang.String">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_role ur ON ur.user_id = a.id
+        LEFT JOIN t_sys_role r ON r.id = ur.role_id
+        <where>
+            a.status = #{status}
+            AND r.id = #{roleId}}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUserIdsByRoleId" resultType="User">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_role ur ON ur.user_id = a.id
+        LEFT JOIN t_sys_role r ON r.id = ur.role_id
+        <where>
+            a.status = #{status}
+            AND r.id = #{roleId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUsersByRole" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_role ur ON ur.user_id = a.id
+        LEFT JOIN t_sys_role r ON r.id = ur.role_id
+        <where>
+            a.status = #{status}
+            AND r.id = #{roleId}
+            <if test="query != null and query !=''">
+                AND (
+                a.login_name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                OR a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                )
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findUsersByPostId" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_post up ON up.user_id = a.id
+        LEFT JOIN t_sys_post p ON p.id = up.post_id
+        <where>
+            a.status = #{status}
+            AND p.id = #{postId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUserIdsByPostId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_post up ON up.user_id = a.id
+        LEFT JOIN t_sys_post p ON p.id = up.post_id
+        <where>
+            a.status = #{status}
+            AND p.id = #{postId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUsersByPostIdAndOrganId" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_post up ON up.user_id = a.id
+        LEFT JOIN t_sys_post p ON p.id = up.post_id
+        <where>
+            a.status = #{status}
+            AND p.id = #{postId}
+            AND up.organ_id = #{organId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUserIdsByPostIdAndOrganId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_post up ON up.user_id = a.id
+        LEFT JOIN t_sys_post p ON p.id = up.post_id
+        <where>
+            a.status = #{status}
+            AND p.id = #{postId}
+            AND up.organ_id = #{organId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="getMaxSort" resultType="java.lang.Integer">
+        SELECT max(a.sort)
+        FROM t_sys_user a
+        WHERE a.status = '0'
+    </select>
+
+
+    <insert id="insert">
+        INSERT INTO t_sys_user(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        LOGIN_NAME,
+        CODE,
+        ORIGINAL_PASSWORD,
+        PASSWORD,
+        NAME,
+        SEX,
+        BIRTHDAY,
+        PHOTO,
+        EMAIL,
+        PERSON_EMAIL,
+        MOBILE,
+        TEL,
+        QQ,
+        ADDRESS,
+        DEFAULT_ORGAN_ID,
+        sort,
+        USER_TYPE,
+        REMARK,
+        weixin
+        ) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{loginName},
+        #{code},
+        #{originalPassword},
+        #{password},
+        #{name},
+        #{sex},
+        #{birthday},
+        #{photo},
+        #{email},
+        #{personEmail},
+        #{mobile},
+        #{tel},
+        #{qq},
+        #{address},
+        #{defaultOrganId},
+        #{sort},
+        #{userType},
+        #{remark},
+        #{weixin}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_sys_user SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        LOGIN_NAME = #{loginName},
+        CODE = #{code},
+        ORIGINAL_PASSWORD = #{originalPassword},
+        PASSWORD = #{password},
+        NAME = #{name},
+        SEX = #{sex},
+        BIRTHDAY = #{birthday},
+        PHOTO = #{photo},
+        EMAIL = #{email},
+        PERSON_EMAIL = #{personEmail},
+        MOBILE = #{mobile},
+        TEL = #{tel},
+        QQ = #{qq},
+        ADDRESS = #{address},
+        DEFAULT_ORGAN_ID = #{defaultOrganId},
+        sort = #{sort},
+        USER_TYPE = #{userType},
+        REMARK = #{remark},
+        weixin = #{weixin}
+         WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE t_sys_user SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+    <!--用户机构-->
+    <delete id="deleteUserOrgansByUserId">
+        DELETE FROM t_sys_user_organ WHERE user_id = #{id}
+    </delete>
+
+    <insert id="insertUserOrgans">
+        INSERT INTO t_sys_user_organ(user_id, organ_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--用户机构-->
+
+    <!--用户岗位-->
+    <delete id="deleteUserPostsByUserId">
+        DELETE FROM t_sys_user_post WHERE user_id = #{id}
+    </delete>
+
+    <delete id="deleteUserPostsByUserIdAndOrganId">
+        DELETE FROM t_sys_user_post WHERE user_id = #{id} AND organ_id = #{organId}
+    </delete>
+
+
+    <delete id="deleteNotInUserOrgansPostsByUserId">
+        DELETE FROM t_sys_user_post WHERE user_id = #{id} AND organ_id NOT IN
+        <foreach collection="ids" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+
+    <insert id="insertUserPosts">
+        INSERT INTO t_sys_user_post(user_id, post_id,organ_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item},#{organId} FROM dual
+        </foreach>
+    </insert>
+    <!--用户岗位-->
+
+
+    <!--用户角色-->
+    <delete id="deleteUserRolesByUserId">
+        DELETE FROM t_sys_user_role WHERE user_id = #{id}
+    </delete>
+
+    <insert id="insertUserRoles">
+        INSERT INTO t_sys_user_role(user_id, role_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--用户角色-->
+
+
+    <!--用户资源-->
+    <delete id="deleteUserResourcesByUserId">
+        DELETE FROM t_sys_user_resource WHERE user_id = #{id}
+    </delete>
+
+    <insert id="insertUserResources">
+        INSERT INTO t_sys_user_resource(user_id, resource_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--用户资源-->
+
+
+
+
+</mapper>

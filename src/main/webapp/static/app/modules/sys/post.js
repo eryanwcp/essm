@@ -42,7 +42,7 @@ $(function() {
 
     //数据列表
     $post_datagrid = $('#post_datagrid').datagrid({
-        url:ctxAdmin+'/sys/post/_datagrid',
+        url:ctxAdmin+'/sys/post/datagrid',
         fit:true,
         pagination:true,//底部分页
         rownumbers:true,//显示行数
@@ -50,7 +50,7 @@ $(function() {
         striped:true,//显示条纹
         pageSize:20,//每页记录数
         remoteSort:false,//是否通过远程服务器对数据排序
-        sortName:'id',//默认排序字段
+        sortName:'sort',//默认排序字段
         sortOrder:'asc',//默认排序方式 'desc' 'asc'
         idField : 'id',
         frozen:true,
@@ -63,6 +63,7 @@ $(function() {
             {field:'id',title:'主键',hidden:true,sortable:true,align:'right',width:80} ,
             {field:'organName',title:'部门',width:120,hidden:false},
             {field:'code',title:'岗位编码',width:120,sortable:true},
+            {field:'sort',title:'排序号',width:100,sortable:true},
             {field:'remark',title:'备注',width:200}
         ]],
         toolbar:[{
@@ -103,7 +104,7 @@ $(function() {
 
 function formInit(){
     $post_form = $('#post_form').form({
-        url: ctxAdmin+'/sys/post/_save',
+        url: ctxAdmin+'/sys/post/save',
         onSubmit: function(param){
             $.messager.progress({
                 title : '提示信息！',
@@ -175,7 +176,6 @@ function showDialog(row){
         },
         onLoad:function(){
             formInit();
-
         }
     });
 
@@ -244,10 +244,12 @@ function editPostUser(){
         if(rows.length>1){
             eu.showMsg("您选择了多个操作对象，默认操作最后一次被选中的记录！");
         }
-        var userUrl = ctxAdmin+"/sys/post/user";
-        if(row != undefined && row.id){
-            userUrl = userUrl+"?id="+row.id;
+        var userUrl = ctxAdmin+"/sys/post/user?id="+row['id'];
+        var node = $organ_tree.tree('getSelected');//
+        if(node != null){
+            userUrl += "&organId="+node['id'];
         }
+
         //弹出对话窗口
         $post_user_dialog = $('<div/>').dialog({
             title:'岗位用户信息',
@@ -275,7 +277,6 @@ function editPostUser(){
             },
             onLoad:function(){
                 initPostUserForm();
-                $post_user_form.form('load', row);
             }
         });
 

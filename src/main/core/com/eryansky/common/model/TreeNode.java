@@ -6,7 +6,6 @@
 package com.eryansky.common.model;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
@@ -157,6 +156,21 @@ public class TreeNode implements Serializable {
         return this;
 	}
 
+
+	/**
+	 * 添加子节点.
+	 *
+	 * @param childNode
+	 *            子节点
+	 */
+	public TreeNode addChildIfNotExist(TreeNode childNode) {
+		if(!this.children.contains(childNode)){
+			this.children.add(childNode);
+		}
+		return this;
+	}
+
+
 	/**
 	 * 添加自定义属性
 	 * @param key key
@@ -267,6 +281,14 @@ public class TreeNode implements Serializable {
 	}
 
 	/**
+	 * 是否展开 兼容ztree
+	 */
+	public Boolean isOpen() {
+		return STATE_OPEN.equals(state);
+	}
+
+
+	/**
 	 * 图标样式
 	 */
 	public String getIconCls() {
@@ -277,7 +299,23 @@ public class TreeNode implements Serializable {
 		this.iconCls = iconCls;
         return this;
 	}
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (null == obj) {
+			return false;
+		}
+		if (this == obj) {
+			return true;
+		}
+		if (!getClass().equals(obj.getClass())) {
+			return false;
+		}
+		TreeNode that = (TreeNode) obj;
+		return null == this.getId() ? false : this.getId().equals(that.getId());
+	}
+
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

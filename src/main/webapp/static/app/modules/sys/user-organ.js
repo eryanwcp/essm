@@ -1,4 +1,6 @@
 var defaultOrganComboboxData = defaultOrganComboboxData;
+var organIds = organIds;
+var defaultOrganId = defaultOrganId;
 
 var $organs_combotree;
 var $defaultOrgan_combobox;
@@ -11,7 +13,8 @@ $(function() {
 function initdDefaultOrgan(){
     $defaultOrgan_combobox =  $("#defaultOrganId").combobox({
         editable:false,
-        data:defaultOrganComboboxData
+        data:defaultOrganComboboxData,
+        value:defaultOrganId
     });
 }
 
@@ -23,6 +26,7 @@ function loadOrgan(){
         multiple:true,//是否可多选
         editable:false,
         cascadeCheck:false,
+        value:organIds,
         onHidePanel:function(){
             if(isChange){
                 var selectionsNodes = $(this).combotree("tree").tree("getChecked");

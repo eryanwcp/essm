@@ -15,7 +15,7 @@ $(function() {
         border : false,
         singleSelect:true,
         remoteSort:false,//是否通过远程服务器对数据排序
-        sortName:'orderNo',//默认排序字段
+        sortName:'sort',//默认排序字段
         sortOrder:'asc',//默认排序方式 'desc' 'asc'
         idField : 'id',
         treeField:"name",
@@ -27,7 +27,7 @@ $(function() {
             {field:'id',title:'主键',hidden:true,sortable:true,align:'right',width:80},
             {field:'url',title:'链接地址',width:260},
             {field:'markUrl',title:'标识地址',width:260},
-            {field:'orderNo',title:'排序',align:'right',width:60,sortable:true},
+            {field:'sort',title:'排序',align:'right',width:60,sortable:true},
             {field:'typeView',title:'资源类型',align:'center',width:100},
             {field:'statusView',title:'状态',align:'center',width:60}
         ]],
@@ -62,7 +62,7 @@ $(function() {
 
 function formInit(){
     $resource_form = $('#resource_form').form({
-        url: ctxAdmin+'/sys/resource/_save',
+        url: ctxAdmin+'/sys/resource/save',
         onSubmit: function(param){
             $.messager.progress({
                 title : '提示信息！',
@@ -165,7 +165,7 @@ function del(rowIndex){
     if (row != undefined) {
         $.messager.confirm('确认提示！','您确定要删除(如果存在子节点，子节点也一起会被删除)？',function(r){
             if (r){
-                $.post(ctxAdmin+'/sys/resource/_delete/'+row.id,{},function(data){
+                $.post(ctxAdmin+'/sys/resource/delete/'+row.id,{},function(data){
                     if (data.code==1){
                         $resource_treegrid.treegrid('unselectAll');//取消选择 1.3.6bug
                         $resource_treegrid.treegrid('load');	// reload the user data

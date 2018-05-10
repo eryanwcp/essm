@@ -24,7 +24,7 @@ public class Area extends TreeEntity<Area> {
     private String shortName;
     private String code;    // 区域编码
     /**
-     * 区域类型 {@link com.jfit.modules.sys._enum.AreaType}
+     * 区域类型 {@link com.eryansky.modules.sys._enum.AreaType}
      */
     private String type;
     /**

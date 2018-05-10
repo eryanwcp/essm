@@ -2,7 +2,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <script type="text/javascript">
     var resourceComboboxData = ${resourceComboboxData};
-    var resourceIds = ${fns:toJson(model.resourceIds)};
+    var resourceIds = ${fns:toJson(resourceIds)};
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/role-resource${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <div>

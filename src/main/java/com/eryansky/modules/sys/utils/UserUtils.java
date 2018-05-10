@@ -9,10 +9,11 @@ import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.entity.UserPassword;
-import com.eryansky.modules.sys.service.UserManager;
-import com.eryansky.modules.sys.service.UserPasswordManager;
+import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.mapper.UserPassword;
+import com.eryansky.modules.sys.service.UserPasswordService;
+import com.eryansky.modules.sys.service.UserService;
 
 import java.util.List;
 
@@ -22,8 +23,8 @@ import java.util.List;
  */
 public class UserUtils {
 
-    private static UserManager userManager = SpringContextHolder.getBean(UserManager.class);
-    private static UserPasswordManager userPasswordManager = SpringContextHolder.getBean(UserPasswordManager.class);
+    private static UserService userService = SpringContextHolder.getBean(UserService.class);
+    private static UserPasswordService userPasswordService = SpringContextHolder.getBean(UserPasswordService.class);
 
     /**
      * 根据userId查找用户姓名
@@ -32,7 +33,7 @@ public class UserUtils {
      */
     public static User getUser(String userId){
         if(StringUtils.isNotBlank(userId)) {
-            User user = userManager.loadById(userId);
+            User user = userService.get(userId);
             return user;
         }
         return null;
@@ -45,7 +46,7 @@ public class UserUtils {
      */
     public static User getUserByLoginName(String loginName){
         if(StringUtils.isNotBlank(loginName)) {
-            User user = userManager.getUserByLoginName(loginName);
+            User user = userService.getUserByLoginName(loginName);
             return user;
         }
         return null;
@@ -77,6 +78,48 @@ public class UserUtils {
         return null;
     }
 
+
+    public static String getCompanyId(String userId){
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getCompanyId();
+        }
+        return null;
+    }
+
+    public static String getCompanyCode(String userId){
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getCompanyCode();
+        }
+        return null;
+    }
+
+    public static String getCompanyName(String userId){
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getCompanyName();
+        }
+        return null;
+    }
+
+
+    public static String getDefaultOrganId(String userId){
+        User user = getUser(userId);
+        if(user != null){
+            return user.getDefaultOrganId();
+        }
+        return null;
+    }
+
+    public static String getDefaultOrganName(String userId){
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getName();
+        }
+        return null;
+    }
+
     /**
      * 根据userId查找用户姓名
      * @param userIds 用户ID集合
@@ -84,7 +127,7 @@ public class UserUtils {
      */
     public static String getUserNames(List<String> userIds){
         if(Collections3.isNotEmpty(userIds)){
-            List<User> list = userManager.findUsersByIds(userIds);
+            List<User> list = userService.findUsersByIds(userIds);
             return ConvertUtils.convertElementPropertyToString(list, "name", ",");
         }
         return null;
@@ -93,14 +136,14 @@ public class UserUtils {
     public static UserPassword addUserPasswordUpdate(User user){
         UserPassword userPassword = new UserPassword(user.getId(),user.getPassword());
         userPassword.setOriginalPassword(user.getOriginalPassword());
-        userPasswordManager.save(userPassword);
+        userPasswordService.save(userPassword);
         return userPassword;
     }
 
     public static UserPassword addUserPasswordUpdate(String userId,String password,String originalPassword){
         UserPassword userPassword = new UserPassword(userId,password);
         userPassword.setOriginalPassword(originalPassword);
-        userPasswordManager.save(userPassword);
+        userPasswordService.save(userPassword);
         return userPassword;
     }
 
@@ -111,7 +154,7 @@ public class UserUtils {
      * @param password 密码(未加密)
      */
     public static void updateUserPassword(List<String> userIds,String password){
-        userManager.updateUserPassword(userIds,password);
+        userService.updateUserPassword(userIds,password);
     }
 
 }

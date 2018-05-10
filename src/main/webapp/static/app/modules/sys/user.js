@@ -104,8 +104,8 @@ $(function () {
         pageSize: 20,//每页记录数
         pageList:[10,20,50,100,1000,99999],
         remoteSort: false,//是否通过远程服务器对数据排序
-        sortName: 'defaultOrganId,orderNo',//默认排序字段
-        sortOrder: 'asc,asc',//默认排序方式 'desc' 'asc'
+        sortName: 'sort',//默认排序字段
+        sortOrder: 'asc',//默认排序方式 'desc' 'asc'
         idField: 'id',
         frozen: true,
         collapsible: true,
@@ -131,27 +131,18 @@ $(function () {
             [
                 {field:'id',title:'主键',hidden:true,sortable:true,align:'right',width:80} ,
                 {field:'tel',title:'办公电话',width:100},
-                {field:'mobilephone',title:'手机号',width:82},
+                {field:'mobile',title:'手机号',width:82},
                 {field:'qq',title:'QQ',width:80},
                 {field:'email',title:'公司邮箱',width:160},
-                {field:'personalEmail',title:'个人邮箱',width:160},
+                {field:'personEmail',title:'个人邮箱',width:160},
                 {field: 'defaultOrganId', title: '默认机构ID', width: 80,hidden: true},
-                {field:'companyName',title:'单位',width:200,sortable:true, hidden: true},
                 {field:'defaultOrganName',title:'部门',width:160,sortable:true},
-                {field:'organNames',title:'所属组织机构',width:200,hidden: true},
+                {field:'companyName',title:'单位',width:200,sortable:true, hidden: true},
                 {field:'sexView',title:'性别',width:60,align:'center',sortable:true},
                 {field:'birthday',title:'出生日期',width:80,sortable:true,sortable:true},
                 {field:'address',title:'地址',width:200},
                 {field:'remark',title:'备注',width:200},
-                {field:'orderNo',title:'排序',width:60,sortable:true},
-                {field:'roleNames',title:'关联角色',width:200,
-                    formatter:function(value,rowData,rowIndex){
-                        if(isSuperOwner(rowData.id)){
-                            return $.formatString('<span  style="color:red">{0}</span>','超级管理员(无需设置角色)');
-                        }
-                        return value;
-                    }
-                },
+                {field:'sort',title:'排序',width:60,sortable:true},
                 {field:'statusView',title:'状态',align:'center',width:60,formatter: function (value, rowData, rowIndex) {
                     if (rowData['status'] != 0) {
                         return $.formatString('<span  style="color:red">{0}</span>', value);
@@ -608,9 +599,6 @@ function editUserRole() {
             },
             onLoad: function () {
                 initUserRoleForm();
-                if(rows.length ==1) {//选中1个
-                    $user_role_form.form('load', row);
-                }
             }
         });
 
@@ -681,7 +669,7 @@ function editUserResource() {
             height: 360,
             modal: true,
             maximizable: true,
-            href: ctxAdmin + '/sys/user/resource',
+            href: ctxAdmin + '/sys/user/resource?id='+row['id'],
             buttons: [
                 {
                     text: '保存',
@@ -703,9 +691,6 @@ function editUserResource() {
             },
             onLoad: function () {
                 initUserResourceForm();
-                if(rows.length ==1) {//选中1个
-                    $user_resource_form.form('load', row);
-                }
             }
         });
 
@@ -798,9 +783,6 @@ function editUserOrgan() {
             },
             onLoad: function () {
                 initUserOrganForm();
-                if(rows.length ==1){//选中1个
-                    $user_organ_form.form('load', row);
-                }
             }
         });
 

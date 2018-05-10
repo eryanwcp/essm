@@ -11,7 +11,6 @@ import com.eryansky.common.model.Menu;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.DefaultEntityManager;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.encode.Encrypt;
@@ -21,6 +20,8 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.CookieUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
+import com.eryansky.modules.sys.service.ResourceService;
+import com.eryansky.modules.sys.service.UserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityConstants;
@@ -30,10 +31,8 @@ import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.annotation.Mobile;
 import com.eryansky.utils.CacheUtils;
-import com.eryansky.modules.sys.entity.Resource;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.service.ResourceManager;
-import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.modules.sys.mapper.Resource;
+import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,9 +59,9 @@ import java.util.Map;
 public class LoginController extends SimpleController {
 
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
     @Autowired
-    private ResourceManager resourceManager;
+    private ResourceService resourceService;
 
     /**
      * 欢迎页面
@@ -158,7 +157,7 @@ public class LoginController extends SimpleController {
         }
 
         // 获取用户信息
-        User user = userManager.getUserByLNP(loginName, Encrypt.e(password));
+        User user = userService.getUserByLP(loginName, Encrypt.e(password));
         if (user == null) {
             msg = "用户名或密码不正确!";
         } else if (user.getStatus().equals(StatusState.LOCK.getValue())) {
@@ -261,7 +260,7 @@ public class LoginController extends SimpleController {
         List<TreeNode> treeNodes = Lists.newArrayList();
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if (sessionInfo != null) {
-            treeNodes = resourceManager.findNavTreeNodeWithPermissions(sessionInfo.getUserId());
+            treeNodes = resourceService.findNavTreeNodeWithPermissions(sessionInfo.getUserId());
         }
         return treeNodes;
     }
@@ -287,7 +286,7 @@ public class LoginController extends SimpleController {
     public List<Menu> startMenu() {
         List<Menu> menus = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        menus = resourceManager.findNavMenuWithPermissions(sessionInfo.getUserId());
+        menus = resourceService.findNavMenuWithPermissions(sessionInfo.getUserId());
         return menus;
     }
 
@@ -305,9 +304,9 @@ public class LoginController extends SimpleController {
         if (sessionInfo != null) {
             List<Resource> resources = null;
             if (SecurityUtils.isCurrentUserAdmin()) {// 超级用户
-                resources = resourceManager.findMenuResources();
+                resources = resourceService.findMenuResources();
             } else {
-                resources = resourceManager.findMenuResourcesByUserId(sessionInfo.getUserId());
+                resources = resourceService.findAuthorityMenuResourcesByUserId(sessionInfo.getUserId());
             }
             for (Resource resource : resources) {
                 if (resource != null && StringUtils.isNotBlank(resource.getUrl())) {

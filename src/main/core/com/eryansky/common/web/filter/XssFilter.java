@@ -16,7 +16,7 @@ import java.io.IOException;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-4-18
  */
-public class XssFilter extends BaseFilter {
+public class XssFilter extends BaseFilter{
 
 
     @Override

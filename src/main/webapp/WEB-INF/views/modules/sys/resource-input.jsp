@@ -3,6 +3,7 @@
 <script type="text/javascript">
     var modelId = '${model.id}';
     var modelStatus = '${model.status}';
+    var modelType = '${model.type}';
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/resource-input${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <div>
@@ -63,7 +64,7 @@
         </div>
         <div>
             <label>排序:</label>
-            <input type="text" id="orderNo" name="orderNo"  value="${model.orderNo}"  class="easyui-numberspinner" style="width:120px;"
+            <input type="text" id="sort" name="sort"  value="${model.sort}"  class="easyui-numberspinner" style="width:120px;"
                    data-options="min:1,max:99999999,size:9,maxlength:9,height:28" />
         </div>
         <div>

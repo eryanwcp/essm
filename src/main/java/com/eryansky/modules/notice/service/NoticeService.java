@@ -16,6 +16,10 @@ import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.modules.notice._enum.NoticeReadMode;
+import com.eryansky.modules.sys.service.OrganService;
+import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.notice._enum.IsTop;
@@ -25,10 +29,7 @@ import com.eryansky.modules.notice.dao.NoticeDao;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.service.OrganManager;
-import com.eryansky.modules.sys.service.UserManager;
-import com.eryansky.utils.YesOrNo;
+import com.eryansky.modules.sys.mapper.User;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,9 +49,9 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     @Autowired
 	private NoticeReceiveInfoService noticeReceiveInfoService;
     @Autowired
-	private OrganManager organManager;
+	private OrganService organService;
     @Autowired
-	private UserManager userManager;
+	private UserService userService;
 
     public void save(Notice entity,boolean updateFile) {
         super.save(entity);
@@ -159,7 +160,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
         if(NoticeReceiveScope.CUSTOM.getValue().equals(notice.getReceiveScope())){
             List<String> _receiveUserIds = notice.getNoticeReceiveUserIds();
             List<String> receiveOrganIds = notice.getNoticeReceiveOrganIds();
-            List<String> userIds = userManager.findUserIdsByOrganIds(receiveOrganIds);
+            List<String> userIds = userService.findUserIdsByOrganIds(receiveOrganIds);
             if(Collections3.isNotEmpty(_receiveUserIds)){
                 receiveUserIds.addAll(_receiveUserIds);
             }
@@ -167,30 +168,30 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
                 receiveUserIds.addAll(userIds);
             }
         }else if(NoticeReceiveScope.ALL.getValue().equals(notice.getReceiveScope())){
-            receiveUserIds = userManager.findAllNormalUserIds();
+            receiveUserIds = userService.findAllNormalUserIds();
 
         }else if(NoticeReceiveScope.COMPANY_AND_CHILD.getValue().equals(notice.getReceiveScope())){
-            User user = userManager.loadById(notice.getUserId());
-            receiveUserIds = userManager.findOwnerAndChildsUserIds(user.getCompanyId());
+            User user = userService.get(notice.getUserId());
+            receiveUserIds = userService.findOwnerAndChildsUserIds(UserUtils.getCompanyId(user.getId()));
 
         }else if(NoticeReceiveScope.COMPANY.getValue().equals(notice.getReceiveScope())){
-            List<String> organIds = organManager.findOrganChildsDepartmentOrganIds(notice.getOrganId());
-            receiveUserIds = userManager.findUserIdsByOrganIds(organIds);
+            List<String> organIds = organService.findOrganChildsDepartmentOrganIds(notice.getOrganId());
+            receiveUserIds = userService.findUserIdsByOrganIds(organIds);
         }else if(NoticeReceiveScope.OFFICE_AND_CHILD.getValue().equals(notice.getReceiveScope())){
-            User user = userManager.loadById(notice.getUserId());
+            User user = userService.get(notice.getUserId());
             List<String> organIds = Lists.newArrayList();
-            organIds.add(user.getOfficeId());
-            List<String> officeIds = organManager.findOrganChildsOfficeOrganIds(user.getDefaultOrganId());
+            organIds.add(user.getDefaultOrganId());
+            List<String> officeIds = organService.findOwnerAndChildsOrganIds(user.getDefaultOrganId());
             if(Collections3.isNotEmpty(officeIds)){
                 organIds.addAll(officeIds);
             }
-            receiveUserIds = userManager.findUserIdsByOrganIds(organIds);
+            receiveUserIds = userService.findUserIdsByOrganIds(organIds);
 
         }else if(NoticeReceiveScope.OFFICE.getValue().equals(notice.getReceiveScope())){
-            User user = userManager.loadById(notice.getUserId());
+            User user = userService.get(notice.getUserId());
             List<String> organIds = new ArrayList<String>(1);
-            organIds.add(user.getOfficeId());
-            receiveUserIds = userManager.findUserIdsByOrganIds(organIds);
+            organIds.add(user.getDefaultOrganId());
+            receiveUserIds = userService.findUserIdsByOrganIds(organIds);
 
         }
         if(Collections3.isNotEmpty(receiveUserIds)){
@@ -248,7 +249,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
         if (Collections3.isNotEmpty(noticeIds)) {
             for (String id : noticeIds) {
                 NoticeReceiveInfo noticeReceiveInfo = noticeReceiveInfoService.getUserNotice(userId, id);
-                noticeReceiveInfo.setIsRead(YesOrNo.YES.getValue());
+                noticeReceiveInfo.setIsRead(NoticeReadMode.readed.getValue());
                 noticeReceiveInfoService.save(noticeReceiveInfo);
             }
         } else {

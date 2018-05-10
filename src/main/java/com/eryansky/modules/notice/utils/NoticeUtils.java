@@ -17,7 +17,7 @@ import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeSendInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
-import com.eryansky.modules.sys.service.UserManager;
+import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.utils.AppConstants;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class NoticeUtils {
 
     }
 
-    private static UserManager userManager = SpringContextHolder.getBean(UserManager.class);
+    private static UserService userService = SpringContextHolder.getBean(UserService.class);
     private static NoticeService noticeService = SpringContextHolder.getBean(NoticeService.class);
     private static NoticeSendInfoService noticeSendInfoService = SpringContextHolder.getBean(NoticeSendInfoService.class);
     private static NoticeReceiveInfoService noticeReceiveInfoService = SpringContextHolder.getBean(NoticeReceiveInfoService.class);
@@ -109,7 +109,7 @@ public class NoticeUtils {
         }
 
         boolean isAdmin = false;
-        if (userManager.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER)
+        if (userService.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER)
                 || SecurityUtils.isPermittedRole(AppConstants.ROLE_NOTICE_MANAGER)) {//系统管理员 + 通知管理员
             isAdmin = true;
         }

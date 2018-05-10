@@ -7,27 +7,27 @@ public enum NoticeReadMode {
     /**
      * 未读(0)
      */
-    unreaded(0, "未读"),
+    unreaded("0", "未读"),
     /**
      * 已读(1)
      */
-    readed(1, "已读"),
+    readed("1", "已读"),
     /**
      * 未知(2)
      */
-    unknow(2, "未知");
+    unknow("2", "未知");
 
 
     /**
-     * 值 Integer型
+     * 值 String型
      */
-    private final Integer value;
+    private final String value;
     /**
      * 描述 String型
      */
     private final String description;
 
-    NoticeReadMode(Integer value, String description) {
+    NoticeReadMode(String value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -37,7 +37,7 @@ public enum NoticeReadMode {
      *
      * @return value
      */
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 

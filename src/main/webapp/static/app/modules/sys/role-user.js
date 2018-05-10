@@ -18,7 +18,7 @@ function initRoleUserDatagrid(){
         striped: true,
         pageSize: 20,
         remoteSort: false,
-        sortName: 'orderNo',
+        sortName: 'sort',
         sortOrder: 'asc',
         idField: 'id',
         frozenColumns: [
@@ -31,7 +31,7 @@ function initRoleUserDatagrid(){
             [
                 {field: 'id', title: '主键', hidden: true, sortable: true, align: 'right', width: 80},
                 {field: 'sexView', title: '性别', width: 60},
-                {field: 'orderNo', title: '排序', width: 60},
+                {field: 'sort', title: '排序', width: 60},
                 {field: 'defaultOrganName', title: '部门', width: 260}
             ]
         ],
@@ -97,7 +97,7 @@ function addRoleUser() {
     });
     if(selectUserIds.length >0){
         $.ajax({
-            url: ctxAdmin + '/sys/role/addRoleUser?roleId='+roleId,
+            url: ctxAdmin + '/sys/role/addRoleUser?id='+roleId,
             type: 'post',
             data: {userIds: selectUserIds},
             traditional: true,
@@ -125,7 +125,7 @@ function delRoleUser(){
                     ids[i] = row.id;
                 });
                 $.ajax({
-                    url: ctxAdmin + '/sys/role/removeRoleUser?roleId='+roleId,
+                    url: ctxAdmin + '/sys/role/removeRoleUser?id='+roleId,
                     type: 'post',
                     data: {userIds: ids},
                     traditional: true,

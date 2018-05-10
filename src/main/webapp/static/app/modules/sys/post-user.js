@@ -1,13 +1,14 @@
 var organId = organId;
+var userIds = userIds;
 
-var user_combogrid;
+var $user_combogrid;
 $(function() {
     loadUser();
 });
 
 //加载用户
 function loadUser(){
-    user_combogrid = $('#userIds').combogrid({
+    $user_combogrid = $('#userIds').combogrid({
         url:ctxAdmin + '/sys/user/combogridOrganUser',
         width:360,
         height:96,
@@ -34,5 +35,6 @@ function loadUser(){
             param.organId = organId;
         }
     });
+    $user_combogrid.combogrid("setValues",userIds);
 
 }

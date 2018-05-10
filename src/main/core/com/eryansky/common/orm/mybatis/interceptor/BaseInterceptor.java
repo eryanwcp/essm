@@ -59,7 +59,7 @@ public abstract class BaseInterceptor implements Interceptor, Serializable {
             }else if (parameterObject instanceof Map) {
                 return (Page<Object>) ((Map)parameterObject).get(PAGE);
             }else {
-                return ReflectionUtils.getFieldValue(parameterObject, PAGE);
+                return ReflectionUtils.invokeGetter(parameterObject, PAGE);
             }
     	}catch (Exception e) {
 			return null;
@@ -78,7 +78,7 @@ public abstract class BaseInterceptor implements Interceptor, Serializable {
             if(parameterObject instanceof Map) {
                 return (String) ((Map)parameterObject).get(DB_NAME);
             }else {
-                return ReflectionUtils.getFieldValue(parameterObject, DB_NAME);
+                return ReflectionUtils.invokeGetter(parameterObject, DB_NAME);
             }
         }catch (Exception e) {
             return null;

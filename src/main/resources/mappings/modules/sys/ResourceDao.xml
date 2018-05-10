@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.ResourceDao">
+
+    <sql id="resourceColumns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        a.NAME AS "name",
+        a.CODE AS "code",
+        a.URL AS "url",
+        a.sort AS "sort",
+        a.ICON_CLS AS "iconCls",
+        a.ICON AS "icon",
+        a.MARK_URL AS "markUrl",
+        a.TYPE AS "type",
+        a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+        a.PARENT_IDS AS "parentIds"
+    </sql>
+
+    <sql id="resourceJoins">
+        LEFT JOIN t_sys_resource p ON p.id = a.parent_id
+    </sql>
+
+    <select id="get" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getByCode" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        WHERE
+        a.status = '0'
+        AND a.code = #{code}
+    </select>
+
+    <select id="findList" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        <where>
+            a.status <![CDATA[ <> ]]> '1'
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        <where>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findByParentIdsLike" resultType="Resource">
+        SELECT
+        a.id,
+        a.parent_id AS "parent.id",
+        a.parent_ids
+        FROM t_sys_resource a
+        WHERE a.status = #{STATUS_NORMAL}
+        AND a.parent_ids LIKE #{parentIds}
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findOwnAndChilds" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.id = #{id} OR a.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findChilds" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.parent_id = #{id})
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findChild" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        <where>
+            a.status = '0'
+            <choose>
+                <when test="parentId != null and parentId !=''">
+                    AND a.parnet_id = #{parentId}
+                </when>
+                <otherwise>
+                    AND (a.parnet_id IS NULL OR a.parnet_id = '' )
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findWithExculdeId" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        WHERE
+        a.status = '0'
+        <if test="excludeReourceId != null and excludeReourceId !=''">
+            AND <![CDATA[ <> ]]> #{excludeReourceId}
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findCustomQuery" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        <include refid="resourceJoins"/>
+        <where>
+            <if test="status != null and status !=''">
+                a.status = #{status}
+            </if>
+            <if test="code != null and code !=''">
+                a.code = #{code}
+            </if>
+            <if test="type != null and type !=''">
+                a.type = #{type}
+            </if>
+        </where>
+
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="getMaxSort" resultType="java.lang.Integer">
+        SELECT max(a.sort)
+        FROM t_sys_resource a
+    </select>
+
+
+
+    <select id="findResourcesByUserId" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        LEFT JOIN t_sys_user_resource ur0 ON ur0.resource_id = a.id
+        LEFT JOIN t_sys_user u0 ON ur0.user_id = u0.id
+        <include refid="resourceJoins"/>
+        <where>
+            a.status = '0'
+            AND u0.id = #{userId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findResourceIdsByUserId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_resource a
+        LEFT JOIN t_sys_user_resource ur0 ON ur0.resource_id = a.id
+        LEFT JOIN t_sys_user u0 ON ur0.user_id = u0.id
+        <where>
+            a.status = '0'
+            AND u0.id = #{userId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findResourcesByRoleId" resultType="Resource">
+        SELECT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        LEFT JOIN t_sys_role_resource rr ON rr.resource_id = a.id
+        LEFT JOIN t_sys_role r ON  r.id = rr.role_id
+        <include refid="resourceJoins"/>
+        <where>
+            a.status = '0'
+            AND r.id = #{roleId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findResourceIdsByRoleId" resultType="Resource">
+        SELECT
+        a.id
+        FROM t_sys_resource a
+        LEFT JOIN t_sys_role_resource rr ON rr.resource_id = a.id
+        LEFT JOIN t_sys_role r ON  r.id = rr.role_id
+        <where>
+            a.status = '0'
+            AND r.id = #{roleId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findAuthorityResourcesByUserId" resultType="Resource">
+        SELECT
+        DISTINCT
+        <include refid="resourceColumns"/>
+        FROM t_sys_resource a
+        LEFT JOIN t_sys_user_resource ur0 ON ur0.resource_id = a.id
+        LEFT JOIN t_sys_user u0 ON ur0.user_id = u0.id
+        <include refid="resourceJoins"/>
+        <where>
+            a.status = '0'
+            AND u0.id = #{userId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            OR a.id IN (
+              SELECT u.id
+                FROM t_sys_user u
+                LEFT JOIN t_sys_user_role ur ON ur.user_id = u.id
+                LEFT JOIN t_sys_role role ON  role.id = ur.role_id
+                LEFT JOIN t_sys_role_resource rr ON rr.role_id = role.id
+                LEFT JOIN t_sys_resource r ON r.id = rr.resource_id
+                <where>
+                    r.status = '0' AND role.status = '0'
+                    AND u.id = #{userId}
+                    <if test="types != null and types.size() !=0">
+                        AND r.type IN
+                        <foreach collection="types" open="(" separator="," close=")" item="item">
+                            #{item}
+                        </foreach>
+                    </if>
+                </where>
+            )
+
+        </where>
+    </select>
+
+
+
+    <insert id="insert">
+        INSERT INTO t_sys_resource(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        NAME,
+        CODE,
+        URL,
+        sort,
+        ICON_CLS,
+        ICON,
+        MARK_URL,
+        TYPE,
+        PARENT_ID,
+        PARENT_IDS
+        ) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{name},
+        #{code},
+        #{url},
+        #{sort},
+        #{iconCls},
+        #{icon},
+        #{markUrl},
+        #{type},
+        #{parentId},
+        #{parentIds}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_sys_resource SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        NAME = #{name},
+        CODE = #{code},
+        URL = #{url},
+        sort = #{sort},
+        ICON_CLS = #{iconCls},
+        ICON = #{icon},
+        MARK_URL = #{markUrl},
+        TYPE = #{type},
+        PARENT_ID = #{parentId},
+        PARENT_IDS = #{parentIds}
+         WHERE id = #{id}
+    </update>
+
+    <update id="updateParentIds">
+        UPDATE t_sys_area SET
+        parent_id = #{parent.id},
+        parent_ids = #{parentIds}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE t_sys_resource SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

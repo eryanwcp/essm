@@ -95,16 +95,6 @@
             <bean class="com.eryansky.core.web.interceptor.LogInterceptor" >
             </bean>
         </mvc:interceptor>
-        <mvc:interceptor>
-            <mvc:mapping path="/**" />
-            <mvc:exclude-mapping path="/static/**" /><!--静态资源-->
-            <mvc:exclude-mapping path="/userfiles/**" /><!--网站内容资源-->
-            <mvc:exclude-mapping path="/servlet/**" />
-            <!--OpenSessionInViewInterceptor-->
-            <bean class="com.eryansky.common.datasource.OpenSession4InViewInterceptor">
-                <property name="sessionFactory" ref="sessionFactory" />
-            </bean>
-        </mvc:interceptor>
         <!--微信Oauth2认证-->
         <mvc:interceptor>
             <mvc:mapping path="/**" />

@@ -12,6 +12,14 @@
         <!-- 用户版本控制字段 version -->
         <input type="hidden" id="version" name="version" value="${model.version}"/>
         <div>
+            <label>用户类型:</label>
+            <select id="userType" name="userType" class="easyui-combobox" style="width: 120px;height: 28px;" >
+                <c:forEach items="${userTypes}" var="userType">
+                    <option value="${userType.value}" <c:if test="${model.userType eq userType.value}">selected</c:if>>${userType.description}</option>
+                </c:forEach>
+            </select>
+        </div>
+        <div>
             <label>所属组织机构:</label>
             <input type="select" id="defaultOrganId" name="defaultOrganId" value="${model.defaultOrganId}"
                    style="width: 260px;height: 28px;"/>
@@ -85,7 +93,7 @@
         </div>
         <div>
             <label>排序:</label>
-            <input type="text" id="orderNo" name="orderNo" value="${model.orderNo}"  class="easyui-numberspinner"
+            <input type="text" id="sort" name="sort" value="${model.sort}"  class="easyui-numberspinner"
                    data-options="min:1,max:99999999,size:9,maxlength:9,height:28" />
         </div>
         <div>

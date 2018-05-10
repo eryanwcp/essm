@@ -124,7 +124,7 @@
         </div>
         <div>
             <label>个人邮箱:</label>
-            <input name="personalEmail" type="text" class="easyui-validatebox textbox" validType="email" maxLength="64" />
+            <input name="personEmail" type="text" class="easyui-validatebox textbox" validType="email" maxLength="64" />
         </div>
         <div>
             <label>地址:</label>

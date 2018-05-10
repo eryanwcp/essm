@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,17 +99,6 @@ public class JsonMapper  extends ObjectMapper{
         return this;
     }
 
-    /**
-     * 解决hibernate延时加载设置
-     * @return
-     */
-    public JsonMapper registerHibernate4Module(){
-        Hibernate4Module mod = new Hibernate4Module();
-        mod.configure(Hibernate4Module.Feature.FORCE_LAZY_LOADING, true);
-        this.registerModule(mod);
-        return this;
-    }
-    
 	/**
 	 * Object可以是POJO，也可以是Collection或数组。
 	 * 如果对象为Null, 返回"null".

@@ -15,7 +15,7 @@ $(function() {
         border : false,
         singleSelect:true,
         remoteSort:false,//是否通过远程服务器对数据排序
-        sortName:'orderNo',//默认排序字段
+        sortName:'sort',//默认排序字段
         sortOrder:'asc',//默认排序方式 'desc' 'asc'
         idField : 'id',
         treeField:"name",
@@ -32,8 +32,8 @@ $(function() {
             {field:'mobile',title:'手机号',width:120,sortable:true},
             {field:'phone',title:'电话号码',width:120,sortable:true},
             {field:'fax',title:'传真',width:120,sortable:true},
-            {field:'typeView',title:'机构类型',align:'center',width:100},
-            {field:'orderNo',title:'排序',align:'right',width:60,sortable:true},
+            {field:'typeView',title:'机构类型',width:100},
+            {field:'sort',title:'排序',align:'right',width:60,sortable:true},
             {field:'statusView',title:'状态',align:'center',width:60}
         ]],
         toolbar:[{
@@ -83,7 +83,7 @@ $(function() {
 
 function formInit(){
     $organ_form = $('#organ_form').form({
-        url: ctxAdmin+'/sys/organ/_save',
+        url: ctxAdmin+'/sys/organ/save',
         onSubmit: function(param){
             $.messager.progress({
                 title : '提示信息！',
@@ -235,7 +235,6 @@ function editOrganUser(){
             },
             onLoad:function(){
                 initOrganUserForm();
-                $organ_user_form.form('load', row);
             }
         });
 

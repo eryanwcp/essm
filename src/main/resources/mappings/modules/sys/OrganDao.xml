@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.OrganDao">
+
+    <sql id="organColumns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        a.NAME AS "name",
+        a.SHORT_NAME AS "shortName",
+        a.TYPE AS "type",
+        a.CODE AS "code",
+        a.SYS_CODE AS "sysCode",
+        a.ADDRESS AS "address",
+        a.MOBILE AS "mobile",
+        a.PHONE AS "phone",
+        a.FAX AS "fax",
+        a.MANAGER_USER_ID AS "managerUserId",
+        a.DEPUTY_MANAGER_USER_ID AS "deputyManagerUserId",
+        a.SUPER_MANAGER_USER_ID AS "superManagerUserId",
+        a.sort AS "sort",
+        a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+        a.PARENT_IDS AS "parentIds",
+        a.AREA_ID AS "areaId"
+    </sql>
+
+    <sql id="organJoins">
+        LEFT JOIN t_sys_organ p ON p.id = a.parent_id
+    </sql>
+
+    <select id="get" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+
+    <select id="getByCode" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        WHERE a.status = '0' AND a.code = #{code}
+    </select>
+
+    <select id="getBySysCode" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        WHERE a.status = '0' AND a.sys_code = #{code}
+    </select>
+
+    <select id="findList" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            a.status = #{status}
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+
+    <select id="findOwnAndChild" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.id = #{id} OR a.parent_id = #{id})
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOwnAndChildIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.id = #{id} OR OR a.parent_id = #{id})
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findOwnAndChilds" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.id = #{id} OR a.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOwnAndChildsIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        WHERE
+        a.status = '0'
+        <if test="id != null and id !=''">
+            AND (a.id = #{id} OR a.parent_ids LIKE
+            <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+        </if>
+        <if test="types != null and types.size() !=0">
+            AND a.type IN
+            <foreach collection="types" open="(" separator="," close=")" item="item">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findChild" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            <if test="status != null and status.size() !=0">
+                AND a.status IN
+                <foreach collection="status" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <choose>
+                <when test="parentId != null and parentId !=''">
+                    AND a.parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    AND (a.parent_id IS NULL OR a.parent_id = '' )
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findChilds" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            a.status = '0'
+            <if test="id != null and id !=''">
+                AND a.parent_ids LIKE
+                <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findChildsIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        <where>
+            a.status = '0'
+            <if test="id != null and id !=''">
+                AND a.parent_ids LIKE
+                <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            </if>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="getMaxSort" resultType="java.lang.Integer">
+        SELECT max(a.sort)
+        FROM t_sys_organ a
+    </select>
+
+    <select id="findCustomQuery" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            <if test="status != null and status !=''">
+                a.status = #{status}
+            </if>
+            <if test="code != null and code !=''">
+                a.code = #{code}
+            </if>
+            <if test="type != null and type !=''">
+                a.type = #{type}
+            </if>
+        </where>
+
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findByParentIdsLike" resultType="Organ">
+        SELECT
+        a.id,
+        a.parent_id AS "parent.id",
+        a.parent_ids
+        FROM t_sys_organ a
+        WHERE a.status = #{STATUS_NORMAL}
+        AND a.parent_ids LIKE #{parentIds}
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOrgansByIds" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            a.id IN (#{ids})
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOrganUserIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ ur ON ur.user_id = a.id
+        LEFT JOin t_sys_organ o ON o.id = ur.organ_id
+        <where>
+            a.status = '0'
+            AND o.id = #{organId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findOrgansByUserId" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        LEFT JOIN t_sys_user_organ uo ON uo.organ_id = a.id
+        LEFT JOIN t_sys_user u ON u.id = uo.user_id
+        <where>
+            a.status = '0'
+            AND u.id = #{userId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findOrganIdsByUserId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        LEFT JOIN t_sys_user_organ uo ON uo.organ_id = a.id
+        LEFT JOIN t_sys_user u ON u.id = uo.user_id
+        <where>
+            a.status = '0'
+            AND u.id = #{userId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findAssociationOrgansByPostId" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        LEFT JOIN t_sys_post_organ po ON po.organ_id = a.id
+        LEFT JOIN t_sys_post post ON post.id = po.post_id
+        <where>
+            a.status = '0'
+            AND post.id = #{postId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+    <select id="findAssociationOrganIdsByPostId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        LEFT JOIN t_sys_post_organ po ON po.organ_id = a.id
+        LEFT JOIN t_sys_post post ON post.id = po.post_id
+        <where>
+            a.status = '0'
+            AND post.id = #{postId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+
+
+
+
+    <insert id="insert">
+        INSERT INTO t_sys_organ(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        NAME,
+        SHORT_NAME,
+        TYPE,
+        CODE,
+        SYS_CODE,
+        ADDRESS,
+        MOBILE,
+        PHONE,
+        FAX,
+        MANAGER_USER_ID,
+        DEPUTY_MANAGER_USER_ID,
+        SUPER_MANAGER_USER_ID,
+        sort,
+        PARENT_ID,
+        PARENT_IDS,
+        AREA_ID
+        ) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{name},
+        #{shortName},
+        #{type},
+        #{code},
+        #{sysCode},
+        #{address},
+        #{mobile},
+        #{phone},
+        #{fax},
+        #{managerUserId},
+        #{deputyManagerUserId},
+        #{superManagerUserId},
+        #{sort},
+        #{parentId},
+        #{parentIds},
+        #{areaId}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_sys_organ SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        NAME = #{name},
+        SHORT_NAME = #{shortName},
+        TYPE = #{type},
+        CODE = #{code},
+        SYS_CODE = #{sysCode},
+        ADDRESS = #{address},
+        MOBILE = #{mobile},
+        PHONE = #{phone},
+        FAX = #{fax},
+        MANAGER_USER_ID = #{managerUserId},
+        DEPUTY_MANAGER_USER_ID = #{deputyManagerUserId},
+        SUPER_MANAGER_USER_ID = #{superManagerUserId},
+        sort = #{sort},
+        PARENT_ID = #{parentId},
+        PARENT_IDS = #{parentIds},
+        AREA_ID = #{areaId}
+         WHERE id = #{id}
+    </update>
+
+    <update id="updateParentIds">
+        UPDATE t_sys_organ SET
+        parent_id = #{parent.id},
+        parent_ids = #{parentIds}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE t_sys_organ SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -13,6 +13,7 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.service.DiskService;
+import com.eryansky.modules.sys.service.UserService;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.web.upload.FileUploadUtils;
@@ -21,7 +22,6 @@ import com.eryansky.core.web.upload.exception.InvalidExtensionException;
 import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
-import com.eryansky.modules.sys.service.UserManager;
 import com.eryansky.utils.AppConstants;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FilenameUtils;
@@ -53,7 +53,7 @@ public class DiskUtils {
 
     protected static Logger logger = LoggerFactory.getLogger(DiskUtils.class);
 
-    private static UserManager userManager = SpringContextHolder.getBean(UserManager.class);
+    private static UserService userService = SpringContextHolder.getBean(UserService.class);
     private static DiskService diskService = SpringContextHolder.getBean(DiskService.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
     /**
@@ -493,7 +493,7 @@ public class DiskUtils {
         }
 
         boolean isAdmin = false;
-        if (userManager.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER) || SecurityUtils.isPermittedRole(AppConstants.ROLE_DISK_MANAGER)) {//系统管理员 + 网盘管理员
+        if (userService.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER) || SecurityUtils.isPermittedRole(AppConstants.ROLE_DISK_MANAGER)) {//系统管理员 + 网盘管理员
             isAdmin = true;
         }
         return isAdmin;

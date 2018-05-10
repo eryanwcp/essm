@@ -10,8 +10,6 @@ import com.eryansky.modules.sys.mapper.Dictionary;
 import com.eryansky.modules.sys.mapper.DictionaryItem;
 import com.eryansky.modules.sys.service.DictionaryItemService;
 import com.eryansky.modules.sys.service.DictionaryService;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,23 +46,6 @@ public class BootstrapIconTest {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @Resource(name = "sessionFactory")
-    private SessionFactory sessionFactory;
-
-    @After
-    public void close() {
-        SessionHolder holder = (SessionHolder) TransactionSynchronizationManager
-                .getResource(sessionFactory);
-        SessionFactoryUtils.closeSession(holder.getSession());
-        TransactionSynchronizationManager.unbindResource(sessionFactory);
-    }
-
-    @Before
-    public void init() {
-        Session s = sessionFactory.openSession();
-        TransactionSynchronizationManager.bindResource(sessionFactory,
-                new SessionHolder(s));
-    }
 
     @Test
     public void importIcon() throws Exception{

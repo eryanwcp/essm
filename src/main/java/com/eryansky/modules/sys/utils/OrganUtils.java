@@ -9,8 +9,11 @@ import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
-import com.eryansky.modules.sys.entity.Organ;
-import com.eryansky.modules.sys.service.OrganManager;
+import com.eryansky.modules.sys.mapper.Organ;
+import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.service.OrganService;
+import com.eryansky.modules.sys.service.SystemService;
 
 import java.util.List;
 
@@ -20,7 +23,8 @@ import java.util.List;
  */
 public class OrganUtils {
 
-    private static OrganManager organManager = SpringContextHolder.getBean(OrganManager.class);
+    private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
+    private static SystemService systemService = SpringContextHolder.getBean(SystemService.class);
 
     /**
      * 根据机构ID查找机构名称
@@ -31,7 +35,63 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return organManager.getById(organId);
+        return organService.get(organId);
+    }
+
+
+    /**
+     * 根据机构ID查找
+     * @param organId 机构ID
+     * @return
+     */
+    public static OrganExtend getOrganExtend(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        return systemService.getOrganExtend(organId);
+    }
+
+
+    /**
+     * 根据机构ID查找
+     * @param organId 机构ID
+     * @return
+     */
+    public static OrganExtend getOrganExtendCompany(String organId){
+        OrganExtend organExtend = getOrganExtend(organId);
+        return getOrganExtend(organExtend.getCompanyId());
+    }
+
+
+    /**
+     * 根据用户ID查找
+     * @param userId 用户ID
+     * @return
+     */
+    public static OrganExtend getOrganExtendByUserId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        return systemService.getOrganExtendByUserId(userId);
+    }
+
+    public static OrganExtend getOrganExtendCompanyByUserId(String userId){
+        OrganExtend organExtend = getOrganExtendByUserId(userId);
+        return getOrganExtend(organExtend.getCompanyId());
+    }
+
+
+    /**
+     * 根据机构ID查找机构名称
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getOrganCompanyId(String organId){
+        OrganExtend organExtend = getOrganExtend(organId);
+        if(organExtend != null){
+            return organExtend.getCompanyId();
+        }
+        return null;
     }
 
 
@@ -55,11 +115,21 @@ public class OrganUtils {
      */
     public static String getOrganNames(List<String> organIds){
         if(Collections3.isNotEmpty(organIds)){
-            List<Organ> list = organManager.findOrgansByIds(organIds);
+            List<Organ> list = organService.findOrgansByIds(organIds);
             return ConvertUtils.convertElementPropertyToString(list, "name", ", ");
         }
         return null;
     }
+
+    public static boolean hasChild(String organId){
+        List<Organ> list = organService.findByParent(organId);
+        return  Collections3.isEmpty(list) ? false:true;
+    }
+
+    public static List<String> findChildsOrganIds(String organId){
+        return organService.findChildsOrganIds(organId);
+    }
+
 
     public static String getAreaId(String organId){
         Organ organ = getOrgan(organId);

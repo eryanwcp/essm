@@ -9,8 +9,8 @@ import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
-import com.eryansky.modules.sys.entity.Role;
-import com.eryansky.modules.sys.service.RoleManager;
+import com.eryansky.modules.sys.mapper.Role;
+import com.eryansky.modules.sys.service.RoleService;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class RoleUtils {
 
-    private static RoleManager roleManager = SpringContextHolder.getBean(RoleManager.class);
+    private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
 
     /**
      * 根据角色ID查找角色名称
@@ -29,7 +29,7 @@ public class RoleUtils {
      */
     public static String getRoleName(String roleId){
         if(StringUtils.isNotBlank(roleId)){
-            Role Role = roleManager.loadById(roleId);
+            Role Role = roleService.get(roleId);
             if(Role != null){
                 return Role.getName();
             }
@@ -38,13 +38,22 @@ public class RoleUtils {
     }
 
     /**
+     * @param userId 用户ID
+     * @return
+     */
+    public static List<Role> findRolesByUserId(String userId){
+        return roleService.findRolesByUserId(userId);
+    }
+
+
+    /**
      * 根据角色ID查找角色名称集合
      * @param roleIds 角色ID集合
      * @return
      */
     public static String getRoleNames(List<String> roleIds){
         if(Collections3.isNotEmpty(roleIds)){
-            List<Role> list = roleManager.findRolesByIds(roleIds);
+            List<Role> list = roleService.findRolesByIds(roleIds);
             return ConvertUtils.convertElementPropertyToString(list, "name", ", ");
         }
         return null;

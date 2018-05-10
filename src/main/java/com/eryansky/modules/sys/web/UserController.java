@@ -13,13 +13,12 @@ import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.PropertyFilter;
 import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.encode.Encrypt;
 import com.eryansky.common.utils.encode.Encryption;
 import com.eryansky.common.utils.mapper.JsonMapper;
-import com.eryansky.common.web.springmvc.BaseController;
+import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.modules.disk.mapper.File;
@@ -34,16 +33,14 @@ import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededExcepti
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys._enum.*;
-import com.eryansky.modules.sys.entity.Organ;
-import com.eryansky.modules.sys.entity.User;
-import com.eryansky.modules.sys.entity.UserPassword;
+import com.eryansky.modules.sys.mapper.Organ;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.mapper.UserPassword;
 import com.eryansky.modules.sys.service.*;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.SelectType;
 import org.apache.commons.fileupload.FileUploadBase;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,27 +65,30 @@ import java.util.*;
 @SuppressWarnings("serial")
 @Controller
 @RequestMapping(value = "${adminPath}/sys/user")
-public class UserController extends BaseController<User,String> {
+public class UserController extends SimpleController {
 
 
     @Autowired
-    private UserManager userManager;
+    private UserService userService;
     @Autowired
-    private OrganManager organManager;
+    private OrganService organService;
     @Autowired
-    private RoleManager roleManager;
+    private RoleService roleService;
     @Autowired
-    private ResourceManager resourceManager;
+    private ResourceService resourceService;
     @Autowired
-    private PostManager postManager;
+    private PostService postService;
     @Autowired
-    private UserPasswordManager userPasswordManager;
+    private UserPasswordService userPasswordService;
 
-    @Override
-    public EntityManager<User, String> getEntityManager() {
-        return userManager;
+    @ModelAttribute("model")
+    public User get(@RequestParam(required=false) String id) {
+        if (StringUtils.isNotBlank(id)){
+            return userService.get(id);
+        }else{
+            return new User();
+        }
     }
-
 
     @RequestMapping(value = {""})
     public String list() {
@@ -110,8 +110,7 @@ public class UserController extends BaseController<User,String> {
         ModelAndView modelAndView = new ModelAndView("modules/sys/user-select");
         List<User> users = Lists.newArrayList();
         if (Collections3.isNotEmpty(userIds)) {
-            Criterion inUserCriterion = Restrictions.in("id",userIds);
-            users = userManager.findByCriteria(inUserCriterion);
+            users = userService.findUsersByIds(userIds);
 
         }
         modelAndView.addObject("users", users);
@@ -135,7 +134,7 @@ public class UserController extends BaseController<User,String> {
     public String datagridSelectUser(String organId, String loginNameOrName,
                                       @RequestParam(value = "excludeUserIds", required = false)List<String> excludeUserIds) {
         Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
-        page = userManager.findUsersByOrgan(page,organId, loginNameOrName,excludeUserIds);
+        page = userService.findUsersByOrgan(page,organId, loginNameOrName,excludeUserIds);
         Datagrid<User> dg = new Datagrid<User>(page.getTotalCount(), page.getResult());
         return JsonMapper.getInstance().toJson(dg,User.class,new String[]{"id","name","sexView","defaultOrganName"});
     }
@@ -148,16 +147,16 @@ public class UserController extends BaseController<User,String> {
     @RequestMapping(value = {"input"})
     public ModelAndView input(@ModelAttribute("model") User model) throws Exception {
         ModelAndView modelAndView = new ModelAndView("modules/sys/user-input");
+        modelAndView.addObject("userTypes",UserType.values());
         return modelAndView;
     }
 
 
     @RequestMapping(value = {"_remove"})
     @ResponseBody
-    @Override
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
         Result result;
-        userManager.deleteByIds(ids);
+        userService.deleteByIds(ids);
         result = Result.successResult();
         logger.debug(result.toString());
         return result;
@@ -171,14 +170,14 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"userDatagrid"})
     @ResponseBody
-    public Datagrid<User> userDatagrid(String organId,String loginNameOrName,Integer userType) {
+    public Datagrid<User> userDatagrid(String organId,String loginNameOrName,String userType) {
         Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(StringUtils.isBlank(organId)){
             organId = sessionInfo.getLoginOrganId();
         }
 
-        page = userManager.findPage(page,organId, loginNameOrName, userType);
+        page = userService.findPage(page,organId, loginNameOrName, userType);
         Datagrid<User> dg = new Datagrid<User>(page.getTotalCount(), page.getResult());
         return dg;
     }
@@ -198,26 +197,26 @@ public class UserController extends BaseController<User,String> {
         List<User> list = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(StringUtils.isBlank(dataScope)){
-            list = userManager.findWithInclude(includeUserIds, query);
+            list = userService.findWithInclude(includeUserIds, query);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.ALL.getValue()))){
-            list = userManager.findAllNormalWithExclude(excludeUserIds);
+            list = userService.findAllNormalWithExclude(excludeUserIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY_AND_CHILD.getValue()))){
-            User user = userManager.loadById(sessionInfo.getUserId());
-            String organId = user.getCompanyId();
-            list = userManager.findOwnerAndChildsUsers(organId, excludeUserIds);
+            User user = userService.get(sessionInfo.getUserId());
+            String organId = UserUtils.getCompanyId(user.getId());
+            list = userService.findOwnerAndChildsUsers(organId, excludeUserIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY.getValue()))){
-            User user = userManager.loadById(sessionInfo.getUserId());
-            String organId = user.getCompanyId();
-            List<String> organIds = organManager.findOrganChildsDepartmentOrganIds(organId);
-            list = userManager.findUsersByOrganIds(organIds);
+            User user = userService.get(sessionInfo.getUserId());
+            String organId = UserUtils.getCompanyId(user.getId());
+            List<String> organIds = organService.findOrganChildsDepartmentOrganIds(organId);
+            list = userService.findUsersByOrganIds(organIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.OFFICE_AND_CHILD.getValue()))){
-            User user = userManager.loadById(sessionInfo.getUserId());
-            String organId = user.getOfficeId();
-            list = userManager.findOwnerAndChildsUsers(organId, excludeUserIds);
+            User user = userService.get(sessionInfo.getUserId());
+            String organId = user.getDefaultOrganId();
+            list = userService.findOwnerAndChildsUsers(organId, excludeUserIds);
         }else{
-            User user = userManager.loadById(sessionInfo.getUserId());
-            String organId = user.getCompanyId();
-            list = userManager.findOwnerAndChildsUsers(organId,excludeUserIds);
+            User user = userService.get(sessionInfo.getUserId());
+            String organId = UserUtils.getCompanyId(user.getId());
+            list = userService.findOwnerAndChildsUsers(organId,excludeUserIds);
         }
 
 
@@ -241,10 +240,9 @@ public class UserController extends BaseController<User,String> {
                            HttpServletRequest request, HttpServletResponse response,
                            @RequestParam(value = "includeUserIds", required = false)List<String> includeUserIds,
                            String query) {
-        List<User> list = userManager.findWithInclude(includeUserIds,query);
+        List<User> list = userService.findWithInclude(includeUserIds,query);
         String json = JsonMapper.getInstance().toJson(list,User.class,
                 new String[]{"id","name","defaultOrganName"});
-//                new String[]{"id","name","sexView","defaultOrganName"});
         WebUtils.setExpiresHeader(response, 5 * 60 * 1000);
         return json;
     }
@@ -257,7 +255,7 @@ public class UserController extends BaseController<User,String> {
     @RequestMapping(value = {"combogridOrganUser"})
     @ResponseBody
     public String combogridOrganUser(@RequestParam(value = "organId", required = true)String organId) {
-        List<User> users = userManager.findOrganUsers(organId);
+        List<User> users = userService.findOrganUsers(organId);
         Datagrid dg = new Datagrid(users.size(),users);
         return JsonMapper.getInstance().toJson(dg,User.class,
                 new String[]{"id","loginName","name","sexView","defaultOrganName","organNames"});
@@ -270,10 +268,9 @@ public class UserController extends BaseController<User,String> {
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") User user) {
-        getEntityManager().evict(user);//如过本方法中有对model.setXX操作 则需执行evict方法 防止Hibernate session自动同步
         Result result = null;
         // 名称重复校验
-        User nameCheckUser = userManager.getUserByLoginName(user.getLoginName());
+        User nameCheckUser = userService.getUserByLoginName(user.getLoginName());
         if (nameCheckUser != null && !nameCheckUser.getId().equals(user.getId())) {
             result = new Result(Result.WARN, "登录名为[" + user.getLoginName() + "]已存在,请修正!", "loginName");
             logger.debug(result.toString());
@@ -288,7 +285,7 @@ public class UserController extends BaseController<User,String> {
             }
             user.setPassword(Encrypt.e(user.getPassword()));
         } else {// 修改
-            User superUser = userManager.getSuperUser();
+            User superUser = userService.getSuperUser();
             User sessionUser = SecurityUtils.getCurrentUser();
             if (superUser.getId().equals(user.getId()) && !sessionUser.getId().equals(superUser.getId())) {
                 result = new Result(Result.ERROR, "超级用户信息仅允许自己修改!",null);
@@ -297,7 +294,7 @@ public class UserController extends BaseController<User,String> {
             }
         }
 
-        userManager.saveEntity(user);
+        userService.saveUser(user);
         result = Result.successResult();
         logger.debug(result.toString());
         return result;
@@ -328,7 +325,7 @@ public class UserController extends BaseController<User,String> {
                                      String password,
                                      @RequestParam(value = "newPassword", required = true)String newPassword) throws Exception {
         Result result;
-        User u = userManager.loadById(id);
+        User u = userService.get(id);
         if (u != null) {
             boolean isCheck = true;
             //需要输入原始密码
@@ -348,7 +345,7 @@ public class UserController extends BaseController<User,String> {
             if (isCheck) {
                 u.setOriginalPassword(Encryption.encrypt(newPassword));
                 u.setPassword(Encrypt.e(newPassword));
-                userManager.saveEntity(u);
+                userService.save(u);
                 UserUtils.addUserPasswordUpdate(u);
 
                 result = Result.successResult();
@@ -366,7 +363,7 @@ public class UserController extends BaseController<User,String> {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(AppConstants.getIsSecurityOn()){
             int max = AppConstants.getUserPasswordRepeatCount();
-            List<UserPassword> userPasswords = userPasswordManager.getUserPasswordsByUserId(sessionInfo.getUserId(),max);
+            List<UserPassword> userPasswords = userPasswordService.getUserPasswordsByUserId(sessionInfo.getUserId(),max);
             if(Collections3.isNotEmpty(userPasswords)){
                 for(UserPassword userPassword:userPasswords){
                     if (userPassword.getPassword().equals(Encrypt.e(pagePassword))) {
@@ -388,7 +385,7 @@ public class UserController extends BaseController<User,String> {
     @ResponseBody
     public Result updateUserPassword(@RequestParam(value = "userIds", required = false) List<String> userIds,
                                      @RequestParam(value = "newPassword", required = true)String newPassword) throws Exception {
-        userManager.updateUserPassword(userIds,newPassword);
+        userService.updateUserPassword(userIds,newPassword);
         return Result.successResult();
     }
 
@@ -399,6 +396,9 @@ public class UserController extends BaseController<User,String> {
     @RequestMapping(value = {"role"})
     public ModelAndView role(@ModelAttribute("model") User model) throws Exception {
         ModelAndView modelAndView = new ModelAndView("modules/sys/user-role");
+        modelAndView.addObject("model",model);
+        List<String> roleIds = roleService.findRoleIdsByUserId(model.getId());
+        modelAndView.addObject("roleIds",roleIds);
         return modelAndView;
     }
 
@@ -407,11 +407,11 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"updateUserRole"})
     @ResponseBody
-    public Result updateUserRole(@RequestParam(value = "userIds", required = false) List<String> userIds,
-                                 @RequestParam(value = "roleIds", required = false) List<String> roleIds) throws Exception {
+    public Result updateUserRole(@RequestParam(value = "userIds", required = false) Set<String> userIds,
+                                 @RequestParam(value = "roleIds", required = false) Set<String> roleIds) throws Exception {
         Result result = null;
-        userManager.updateUserRole(userIds,roleIds);
-        userManager.clearCache();
+        userService.updateUserRole(userIds,roleIds);
+        userService.clearCache();
         result = Result.successResult();
         return result;
     }
@@ -420,22 +420,25 @@ public class UserController extends BaseController<User,String> {
      * 设置组织机构页面.
      */
     @RequestMapping(value = {"organ"})
-    public String organ(@ModelAttribute("model") User user, Model model) throws Exception {
+    public String organ(@ModelAttribute("model") User model, Model uiModel) throws Exception {
         //设置默认组织机构初始值
         List<Combobox> defaultOrganCombobox = Lists.newArrayList();
-        if (user.getId() != null) {
-            List<Organ> organs = user.getOrgans();
+        if (model.getId() != null) {
+            List<Organ> organs = organService.findOrgansByUserId(model.getId());
             Combobox combobox;
             if (!Collections3.isEmpty(organs)) {
                 for (Organ organ : organs) {
-                    combobox = new Combobox(organ.getId().toString(), organ.getName());
+                    combobox = new Combobox(organ.getId(), organ.getName());
                     defaultOrganCombobox.add(combobox);
                 }
             }
         }
         String defaultOrganComboboxData = JsonMapper.nonDefaultMapper().toJson(defaultOrganCombobox);
         logger.debug(defaultOrganComboboxData);
-        model.addAttribute("defaultOrganComboboxData", defaultOrganComboboxData);
+        uiModel.addAttribute("defaultOrganComboboxData", defaultOrganComboboxData);
+//        uiModel.addAttribute("organIds", Collections3.extractToList(defaultOrganCombobox,"value"));
+        uiModel.addAttribute("organIds", Collections3.extractToString(defaultOrganCombobox,"value",","));
+        uiModel.addAttribute("model", model);
         return "modules/sys/user-organ";
     }
 
@@ -449,10 +452,10 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"updateUserOrgan"})
     @ResponseBody
-    public Result updateUserOrgan(@RequestParam(value = "userIds", required = false) List<String> userIds,
-                                  @RequestParam(value = "organIds", required = false) List<String> organIds, String defaultOrganId) throws Exception {
+    public Result updateUserOrgan(@RequestParam(value = "userIds", required = false) Set<String> userIds,
+                                  @RequestParam(value = "organIds", required = false) Set<String> organIds, String defaultOrganId) throws Exception {
         Result result = null;
-        userManager.updateUserOrgan(userIds, organIds, defaultOrganId);
+        userService.updateUserOrgan(userIds, organIds, defaultOrganId);
         result = Result.successResult();
         return result;
 
@@ -474,10 +477,10 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"updateUserPost"})
     @ResponseBody
-    public Result updateUserPost(@RequestParam(value = "userIds", required = false)List<String> userIds,
-                                 @RequestParam(value = "postIds", required = false) List<String> postIds) {
+    public Result updateUserPost(@RequestParam(value = "userIds", required = false)Set<String> userIds,
+                                 @RequestParam(value = "postIds", required = false) Set<String> postIds) {
         Result result = null;
-        userManager.updateUserPost(userIds,postIds);
+        userService.updateUserPost(userIds,postIds);
         result = Result.successResult();
         return result;
     }
@@ -487,15 +490,16 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"resource"})
     public String resource(@ModelAttribute("model") User model,Model uiModel) throws Exception {
-        List<TreeNode> treeNodes = null;
-        if(SecurityUtils.isCurrentUserAdmin()){
-            treeNodes = resourceManager.findTreeNodeResources();
-        }else{
-            treeNodes = resourceManager.findTreeNodeResourcesWithPermissions(SecurityUtils.getCurrentUserId());
-        }
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+        List<TreeNode> treeNodes = resourceService.findTreeNodeResourcesWithPermissions(sessionInfo.getUserId());
         String resourceComboboxData = JsonMapper.getInstance().toJson(treeNodes);
-        logger.debug(resourceComboboxData);
         uiModel.addAttribute("resourceComboboxData", resourceComboboxData);
+
+        List<String> resourceIds = resourceService.findResourceIdsByUserId(model.getId());
+        uiModel.addAttribute("model", model);
+        uiModel.addAttribute("resourceIds", resourceIds);
+
+
         return "modules/sys/user-resource";
     }
 
@@ -508,11 +512,11 @@ public class UserController extends BaseController<User,String> {
      */
     @RequestMapping(value = {"updateUserResource"})
     @ResponseBody
-    public Result updateUserResource(@RequestParam(value = "userIds", required = false) List<String> userIds,
-                                     @RequestParam(value = "resourceIds", required = false)List<String> resourceIds) throws Exception {
+    public Result updateUserResource(@RequestParam(value = "userIds", required = false) Set<String> userIds,
+                                     @RequestParam(value = "resourceIds", required = false)Set<String> resourceIds) throws Exception {
         Result result = null;
-        userManager.updateUserResource(userIds,resourceIds);
-        userManager.clearCache();
+        userService.updateUserResource(userIds,resourceIds);
+        userService.clearCache();
         result = Result.successResult();
         return result;
 
@@ -589,7 +593,7 @@ public class UserController extends BaseController<User,String> {
         filters.add(propertyFilter);
         filters.add(statusFilter);
         Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
-        page = userManager.findPage(page,filters);
+        page = userService.findPage(page,null);
         for (User user:page.getResult()) {
             cList.add(user.getName());
         }
@@ -603,7 +607,7 @@ public class UserController extends BaseController<User,String> {
     @ResponseBody
     public Result maxSort(){
         Result result;
-        Integer maxSort = userManager.getMaxSort();
+        Integer maxSort = userService.getMaxSort();
         result = new Result(Result.SUCCESS, null, maxSort);
         return result;
     }
@@ -617,10 +621,8 @@ public class UserController extends BaseController<User,String> {
     public ModelAndView userInfoInput() {
         ModelAndView modelAndView = new ModelAndView("layout/north-userInfoInput");
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        User user = userManager.loadById(sessionInfo.getUserId());
+        User user = userService.get(sessionInfo.getUserId());
         JsonMapper jsonMapper = JsonMapper.getInstance();
-//        解决hibernate延时加载设置
-        jsonMapper.registerHibernate4Module();
         modelAndView.addObject("userJson",jsonMapper.toJson(user));
         return modelAndView;
     }
@@ -632,7 +634,7 @@ public class UserController extends BaseController<User,String> {
     @ResponseBody
     public Result saveUserinfo(@ModelAttribute("model")User model) throws Exception {
         Result result = null;
-        userManager.saveEntity(model);
+        userService.save(model);
         result = Result.successResult();
         return result;
     }
@@ -665,7 +667,7 @@ public class UserController extends BaseController<User,String> {
                                           @RequestParam(value = "checkedUserIds", required = false)List<String> checkedUserIds,
                                           @RequestParam(value = "checkbox",defaultValue = "true")Boolean checkbox,
                                         @RequestParam(value = "cascade",defaultValue = "true")Boolean cascade) {
-        List<TreeNode> treeNodes = organManager.findOrganUserTree(parentId, checkedUserIds,cascade);
+        List<TreeNode> treeNodes = organService.findOrganUserTree(parentId, checkedUserIds,cascade);
         return treeNodes;
     }
 
@@ -681,7 +683,7 @@ public class UserController extends BaseController<User,String> {
     public Result changeOrderNo(@RequestParam(required = true) String upUserId,
                                 @RequestParam(required = true)String downUserId,
                                 boolean moveUp){
-        userManager.changeOrderNo(upUserId,downUserId,moveUp);
+        userService.changeOrderNo(upUserId,downUserId,moveUp);
         return Result.successResult();
     }
 
@@ -695,7 +697,7 @@ public class UserController extends BaseController<User,String> {
     @ResponseBody
     public Result lock(@RequestParam(value = "userIds", required = false) List<String> userIds,
                        @RequestParam(required = false,defaultValue = User.STATUS_DELETE)String status){
-        userManager.lockUsers(userIds,status);
+        userService.lockUsers(userIds,status);
         return Result.successResult();
     }
 
@@ -709,7 +711,7 @@ public class UserController extends BaseController<User,String> {
     @ResponseBody
     public Result viewUserPassword(String loginName) throws Exception{
         Result result = Result.successResult();
-        User user = userManager.getUserByLoginName(loginName);
+        User user = userService.getUserByLoginName(loginName);
         if(user != null && user.getOriginalPassword() != null){
             result.setObj(Encryption.decrypt(user.getOriginalPassword().trim()));
         }
@@ -724,13 +726,13 @@ public class UserController extends BaseController<User,String> {
     @RequestMapping("export")
     public void export(HttpServletRequest request, HttpServletResponse response) throws Exception{
         response.setContentType("application/msexcel;charset=UTF-8");
-        List<User> users = userManager.findAllNormal();
+        List<User> users = userService.findAllNormal();
 
         List<Object[]> list = new ArrayList<Object[]>();
         Iterator<User> iterator = users.iterator();
         while (iterator.hasNext()){
             User user = iterator.next();
-            list.add(new Object[]{user.getCompanyName(),user.getOfficeName(),user.getLoginName(),user.getName(),user.getSexView(),
+            list.add(new Object[]{UserUtils.getCompanyName(user.getId()),UserUtils.getDefaultOrganName(user.getId()),user.getLoginName(),user.getName(),user.getSexView(),
                     user.getTel(),user.getMobile(),user.getEmail()});
         }
 

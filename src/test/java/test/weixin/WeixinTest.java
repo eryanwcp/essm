@@ -19,8 +19,6 @@ import com.eryansky.fastweixin.company.message.QYTextMsg;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.google.common.collect.Lists;
 import com.eryansky.modules.weixin.utils.WeixinUtils;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,24 +50,6 @@ public class WeixinTest {
 
     @Autowired
     private QYAPIConfig qyapiConfig;
-
-    @Resource(name = "defaultSessionFactory")
-    private SessionFactory sessionFactory;
-
-    @After
-    public void close() {
-        SessionHolder holder = (SessionHolder) TransactionSynchronizationManager
-                .getResource(sessionFactory);
-        SessionFactoryUtils.closeSession(holder.getSession());
-        TransactionSynchronizationManager.unbindResource(sessionFactory);
-    }
-
-    @Before
-    public void init() {
-        Session s = sessionFactory.openSession();
-        TransactionSynchronizationManager.bindResource(sessionFactory,
-                new SessionHolder(s));
-    }
 
     public static void main(String[] args) {
         WeixinTest weixinTest = new WeixinTest();

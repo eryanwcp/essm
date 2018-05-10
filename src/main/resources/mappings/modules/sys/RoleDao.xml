@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.RoleDao">
+
+    <sql id="roleColumns">
+        a.id AS "id",
+        a.create_user AS "createUser",
+        a.create_time AS "createTime",
+        a.status AS "status",
+        a.update_user AS "updateUser",
+        a.update_time AS "updateTime",
+        a.version AS "version",
+        a.NAME AS "name",
+        a.CODE AS "code",
+        a.ORGAN_ID AS "organId",
+        a.IS_SYSTEM AS "isSystem",
+        a.IS_ACTIVITY AS "isActivity",
+        a.ROLE_TYPE AS "roleType",
+        a.DATA_SCOPE AS "dataScope",
+        a.REMARK AS "remark"
+        
+    </sql>
+
+    <select id="get" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getByCode" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        WHERE a.status = '0' AND a.code = #{code}
+    </select>
+
+    <select id="findList" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        <where>
+            a.status = #{status}
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllList" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        <where>
+        </where>
+        <choose>
+            <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+                ORDER BY ${entityPage.orderBy} ${entityPage.order}
+            </when>
+            <otherwise>
+                ORDER BY a.update_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findRolesByIds" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        <where>
+            a.id IN (#{ids})
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findRolesByOrganId" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        <where>
+            a.status = '0'
+            AND a.organ_id = #{organId}
+        </where>
+    </select>
+
+
+    <select id="findRolesByUserId" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        LEFT JOIN t_sys_user_role ur ON ur.role_id = a.id
+        LEFT JOIN t_sys_user u On u.id = ur.user_id
+        <where>
+            a.status = '0'
+            AND u.id = #{userId}
+        </where>
+    </select>
+
+    <select id="findRoleIdsByUserId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_role a
+        LEFT JOIN t_sys_user_role ur ON ur.role_id = a.id
+        LEFT JOIN t_sys_user u On u.id = ur.user_id
+        <where>
+            a.status = '0'
+            AND u.id = #{userId}
+        </where>
+    </select>
+
+
+    <select id="findOrganRolesAndSystemRoles" resultType="Role">
+        SELECT
+        <include refid="roleColumns"/>
+        FROM t_sys_role a
+        <where>
+            a.status = '0'
+            AND a.organ_id = #{organId}
+            AND a.is_system = #{isSystem}
+        </where>
+    </select>
+
+
+
+
+
+    <insert id="insert">
+        INSERT INTO t_sys_role(
+        id,
+        status,
+        version,
+        create_user,
+        create_time,
+        update_user,
+        update_time,
+        NAME,
+        CODE,
+        ORGAN_ID,
+        IS_SYSTEM,
+        IS_ACTIVITY,
+        ROLE_TYPE,
+        DATA_SCOPE,
+        REMARK
+        ) VALUES (
+        #{id},
+        #{status},
+        1,
+        #{createUser},
+        #{createTime},
+        #{updateUser},
+        #{updateTime},
+        #{name},
+        #{code},
+        #{organId},
+        #{isSystem},
+        #{isActivity},
+        #{roleType},
+        #{dataScope},
+        #{remark}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE t_sys_role SET
+        status = #{status},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime},
+        NAME = #{name},
+        CODE = #{code},
+        ORGAN_ID = #{organId},
+        IS_SYSTEM = #{isSystem},
+        IS_ACTIVITY = #{isActivity},
+        ROLE_TYPE = #{roleType},
+        DATA_SCOPE = #{dataScope},
+        REMARK = #{remark}
+         WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        UPDATE t_sys_role SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
+    </delete>
+
+
+    <!--角色机构-->
+    <delete id="deleteRoleOrgansByRoleId">
+        DELETE FROM t_sys_role_organ WHERE role_id = #{id}
+    </delete>
+
+    <insert id="insertRoleOrgans">
+        INSERT INTO t_sys_role_organ(role_id, organ_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--角色机构-->
+
+
+    <!--角色用户-->
+    <delete id="deleteRoleUsersByRoleId">
+        DELETE FROM t_sys_user_role WHERE role_id = #{id}
+    </delete>
+
+    <delete id="deleteRoleUsersByRoleIdANDUserIds">
+        DELETE FROM t_sys_user_role WHERE role_id = #{id} AND user_id IN
+        <foreach item="item" collection="ids" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertRoleUsers">
+        INSERT INTO t_sys_user_role(role_id, user_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--角色用户-->
+
+
+    <!--角色资源-->
+    <delete id="deleteRoleResourcesByRoleId">
+        DELETE FROM t_sys_role_resource WHERE role_id = #{id}
+    </delete>
+
+    <insert id="insertRoleResources">
+        INSERT INTO t_sys_role_resource(role_id, resource_id)
+        <foreach collection="ids" item="item" separator=" union all ">
+            SELECT #{id}, #{item} FROM dual
+        </foreach>
+    </insert>
+    <!--角色资源-->
+
+</mapper>

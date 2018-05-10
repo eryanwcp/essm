@@ -48,7 +48,7 @@ public @interface Delete {
 	 * 
 	 * @return String
 	 */
-	public String propertyName();
+	String propertyName();
 
 	/**
 	 * 要改变的值
@@ -56,12 +56,12 @@ public @interface Delete {
 	 * 
 	 * @return String
 	 */
-	public String value() default "1";
+	String value() default "1";
 
 	/**
 	 * 改变值的类型
 	 * <br>默认值:Integer
 	 * @return {@link PropertyType}
 	 */
-	public PropertyType type() default I;
+	PropertyType type() default I;
 }

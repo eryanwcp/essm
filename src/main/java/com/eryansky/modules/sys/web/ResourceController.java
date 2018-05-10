@@ -10,15 +10,12 @@ import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
-import com.eryansky.common.orm.PropertyFilter;
-import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.EntityManager;
 import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.collections.Collections3;
-import com.eryansky.common.web.springmvc.BaseController;
+import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.modules.sys._enum.ResourceType;
-import com.eryansky.modules.sys.entity.Resource;
-import com.eryansky.modules.sys.service.ResourceManager;
+import com.eryansky.modules.sys.mapper.Area;
+import com.eryansky.modules.sys.mapper.Resource;
+import com.eryansky.modules.sys.service.ResourceService;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
@@ -38,14 +35,18 @@ import java.util.List;
 @SuppressWarnings("serial")
 @Controller
 @RequestMapping(value = "${adminPath}/sys/resource")
-public class ResourceController extends BaseController<Resource,String> {
+public class ResourceController extends SimpleController {
 
     @Autowired
-    private ResourceManager resourceManager;
+    private ResourceService resourceService;
 
-    @Override
-    public EntityManager<Resource, String> getEntityManager() {
-        return resourceManager;
+    @ModelAttribute("model")
+    public Resource get(@RequestParam(required=false) String id) {
+        if (StringUtils.isNotBlank(id)){
+            return resourceService.get(id);
+        }else{
+            return new Resource();
+        }
     }
 
     @RequestMapping(value = {""})
@@ -57,14 +58,14 @@ public class ResourceController extends BaseController<Resource,String> {
     /**
      * 删除.
      */
-    @RequestMapping(value = {"_delete/{id}"})
+    @RequestMapping(value = {"delete/{id}"})
     @ResponseBody
     public Result _delete(@PathVariable String id) {
         Result result;
         if(StringUtils.isNotBlank(id)){
             List<String> ids = Lists.newArrayList();
             ids.add(id);
-            resourceManager.deleteByIds(ids);
+            resourceService.deleteByIds(ids);
             result = Result.successResult();
         }else{
             result = new Result().setCode(Result.WARN).setMsg("参数[id]为空.");
@@ -77,22 +78,23 @@ public class ResourceController extends BaseController<Resource,String> {
     }
 
     /**
-     * @param resource
+     * @param model
      * @param parentId 上级ID
      * @return
      * @throws Exception
      */
     @RequestMapping(value = {"input"})
-    public String input(@ModelAttribute("model") Resource resource, String parentId, Model model) throws Exception {
-        model.addAttribute("parentId", parentId);
+    public String input(@ModelAttribute("model") Resource model, String parentId, Model uiModel) throws Exception {
+        uiModel.addAttribute("parentId", parentId);
+        uiModel.addAttribute("model", model);
         return "modules/sys/resource-input";
     }
 
     @RequestMapping(value = {"treegrid"})
     @ResponseBody
     public Datagrid<Resource> treegrid(String sort, String order) throws Exception {
-        List<PropertyFilter> filters = Lists.newArrayList();
-        List<Resource> list = getEntityManager().find(filters, sort, order);
+        Resource entity = new Resource();
+        List<Resource> list = resourceService.findList(entity);
         Datagrid<Resource> dg = new Datagrid<Resource>(list.size(), list);
         return dg;
     }
@@ -101,16 +103,15 @@ public class ResourceController extends BaseController<Resource,String> {
     /**
      * 保存.
      */
-    @RequestMapping(value = {"_save"})
+    @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") Resource resource,String _parentId)  {
-        getEntityManager().evict(resource);
         Result result = null;
         resource.setParent(null);
 
         // 设置上级节点
         if (StringUtils.isNotBlank(_parentId)) {
-            Resource parentResource = resourceManager.loadById(_parentId);
+            Resource parentResource = resourceService.get(_parentId);
             if (parentResource == null) {
                 logger.error("父级资源[{}]已被删除.", _parentId);
                 throw new ActionException("父级资源已被删除.");
@@ -119,14 +120,14 @@ public class ResourceController extends BaseController<Resource,String> {
         }
 
         if (StringUtils.isNotBlank(resource.getId())) {
-            if (resource.getId().equals(resource.get_parentId())) {
+            if (resource.getId().equals(resource.getParentId())) {
                 result = new Result(Result.ERROR, "[上级资源]不能与[资源名称]相同.",
                         null);
                 logger.debug(result.toString());
                 return result;
             }
         }
-        resourceManager.saveEntity(resource);
+        resourceService.saveResource(resource);
         result = Result.successResult();
         return result;
     }
@@ -143,7 +144,7 @@ public class ResourceController extends BaseController<Resource,String> {
         if(selectTreeNode != null){
             titleList.add(selectTreeNode);
         }
-        treeNodes = resourceManager.findTreeNodeResources();
+        treeNodes = resourceService.findTreeNodeResources();
         List<TreeNode> unionList = ListUtils.union(titleList, treeNodes);
         return unionList;
     }
@@ -162,7 +163,7 @@ public class ResourceController extends BaseController<Resource,String> {
 
         String parentType = null;
         if(StringUtils.isNotBlank(parentId)){
-            Resource resource = resourceManager.loadById(parentId);
+            Resource resource = resourceService.get(parentId);
             parentType = resource.getType();
         }
 
@@ -209,7 +210,7 @@ public class ResourceController extends BaseController<Resource,String> {
         if(selectTreeNode != null){
             titleList.add(selectTreeNode);
         }
-        treeNodes = resourceManager.findTreeNodeResourcesWithExclude(resource.getId());
+        treeNodes = resourceService.findTreeNodeResourcesWithExclude(resource.getId());
         List<TreeNode> unionList = ListUtils.union(titleList, treeNodes);
         return unionList;
     }
@@ -221,7 +222,7 @@ public class ResourceController extends BaseController<Resource,String> {
     @ResponseBody
     public Result maxSort() throws Exception {
         Result result;
-        Integer maxSort = resourceManager.getMaxSort();
+        Integer maxSort = resourceService.getMaxSort();
         result = new Result(Result.SUCCESS, null, maxSort);
         logger.debug(result.toString());
         return result;

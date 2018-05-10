@@ -6,6 +6,7 @@
 package com.eryansky.modules.notice.mapper;
 
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -17,7 +18,6 @@ import com.eryansky.modules.notice.utils.NoticeUtils;
 import com.eryansky.modules.sys.utils.DictionaryUtils;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
-import com.eryansky.utils.YesOrNo;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -90,7 +90,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 是否记录 查看情况
      */
-    private Integer isRecordRead = YesOrNo.YES.getValue();
+    private String isRecordRead = YesOrNo.YES.getValue();
 
     /**
      * 接收范围 {@link NoticeReceiveScope}
@@ -202,11 +202,11 @@ public class Notice extends DataEntity<Notice> {
         return this.invalidTime;
     }
 
-    public Integer getIsRecordRead() {
+    public String getIsRecordRead() {
         return isRecordRead;
     }
 
-    public void setIsRecordRead(Integer isRecordRead) {
+    public void setIsRecordRead(String isRecordRead) {
         this.isRecordRead = isRecordRead;
     }
 

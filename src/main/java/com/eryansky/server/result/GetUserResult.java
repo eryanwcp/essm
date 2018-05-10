@@ -6,6 +6,7 @@
 package com.eryansky.server.result;
 
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.server.WsConstants;
 
 import javax.xml.bind.annotation.XmlType;
@@ -20,16 +21,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "GetUserResult", namespace = WsConstants.NS)
 public class GetUserResult extends WSResult {
 
-	private SessionInfo user;
+	private User user;
 
 	public GetUserResult() {
 	}
 
-	public SessionInfo getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(SessionInfo user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 }

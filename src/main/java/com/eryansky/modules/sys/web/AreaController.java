@@ -74,7 +74,7 @@ public class AreaController extends SimpleController {
 	@RequestMapping(value = "form")
 	public String form(Area area, Model model) {
 		if (area.getParent()==null||area.getParent().getId()==null){
-			area.setParent(SecurityUtils.getCurrentUser().getOffice().getArea());
+			area.setParent(new Area(OrganUtils.getOrganExtendByUserId(SecurityUtils.getCurrentUserId()).getId()));
 		}
 		area.setParent(areaService.get(area.getParentId()));
 //		// 自动获取排序号

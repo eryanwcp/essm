@@ -9,8 +9,13 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.DataScope;
-import com.eryansky.modules.sys.entity.Role;
-import com.eryansky.modules.sys.entity.User;
+import com.eryansky.modules.sys.mapper.Organ;
+import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.mapper.Role;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.utils.OrganUtils;
+import com.eryansky.modules.sys.utils.RoleUtils;
+import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +50,9 @@ public abstract class BaseService {
         List<String> dataScope = Lists.newArrayList();
 
         // 超级管理员，跳过权限过滤
-        if (user != null && !user.isAdmin()) {
+        if (user != null && !user.getId().equals(User.SUPERUSER_ID)) {
             boolean isDataScopeAll = false;
-            for (Role r : user.getRoles()) {
+            for (Role r : RoleUtils.findRolesByUserId(user.getId())) {
                 if(StringUtils.isBlank(r.getDataScope())){
                     continue;
                 }
@@ -57,26 +62,24 @@ public abstract class BaseService {
                         if (DataScope.ALL.getValue().equals(r.getDataScope())) {
                             isDataScopeAll = true;
                         } else if (DataScope.COMPANY_AND_CHILD.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + user.getCompanyId() + "'");
-                            sqlString.append(" OR " + oa + ".parent_ids LIKE '" + user.getCompany().getParentIds() + user.getCompany().getId() + ",%'");
+                            sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
+                            Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                            sqlString.append(" OR " + oa + ".parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%'");
                         } else if (DataScope.COMPANY.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + user.getCompany().getId() + "'");
+                            sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
                             // 包括本公司下的部门 （type=0:公司；type=1：部门）
-                            sqlString.append(" OR (" + oa + ".parent_id = '" + user.getCompany().getId() + "' AND " + oa + ".type = '1')");
+                            sqlString.append(" OR (" + oa + ".parent_id = '" + UserUtils.getCompanyId(user.getId()) + "' AND " + oa + ".type = '1')");
                         } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + user.getOffice().getId() + "'");
-                            sqlString.append(" OR " + oa + ".parent_ids LIKE '" + user.getOffice().getParentIds() + user.getOffice().getId() + ",%'");
+                            OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
+                            sqlString.append(" OR " + oa + ".id = '" + organExtend.getId() + "'");
+                            sqlString.append(" OR " + oa + ".parent_ids LIKE '" + organExtend.getParentIds() + organExtend.getId() + ",%'");
                         } else if (DataScope.OFFICE.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + user.getOffice().getId() + "'");
+                            OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
+                            sqlString.append(" OR " + oa + ".id = '" + organExtend.getId() + "'");
                         } else if (DataScope.CUSTOM.getValue().equals(r.getDataScope())) {
-//							String officeIds =  StringUtils.join(r.getOfficeIdList(), "','");
-//							if (StringUtils.isNotEmpty(officeIds)){
-//								sqlString.append(" OR " + oa + ".id IN ('" + officeIds + "')");
-//							}
                             sqlString.append(" OR EXISTS (SELECT 1 FROM t_sys_role_organ WHERE role_id = '" + r.getId() + "'");
                             sqlString.append(" AND organ_id = " + oa + ".id)");
                         }
-                        //else if (Role.DATA_SCOPE_SELF.equals(r.getDataScope())){
                         dataScope.add(r.getDataScope());
                     }
                 }
@@ -117,7 +120,7 @@ public abstract class BaseService {
     public static void dataScopeFilter(BaseEntity<?> entity, String sqlMapKey, String officeWheres, String userWheres) {
         User user = SecurityUtils.getCurrentUser();
         // 如果是超级管理员，则不过滤数据
-        if (user.isAdmin()) {
+        if (user.getId().equals(User.SUPERUSER_ID)) {
             return;
         }
 
@@ -126,7 +129,7 @@ public abstract class BaseService {
         // 获取到最大的数据权限范围
         String roleId = "";
         int dataScopeInteger = Integer.valueOf(DataScope.SELF.getValue());
-        for (Role r : user.getRoles()) {
+        for (Role r : RoleUtils.findRolesByUserId(user.getId())) {
             if(StringUtils.isBlank(r.getDataScope())){
                 continue;
             }
@@ -148,22 +151,26 @@ public abstract class BaseService {
                 // 包括本公司下的部门 （type=0:公司；type=1：部门）
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
                 sqlString.append(" WHERE type='1'");
-                sqlString.append(" AND (id = '" + user.getCompany().getId() + "'");
-                sqlString.append(" OR parent_ids LIKE '" + user.getCompany().getParentIds() + user.getCompany().getId() + ",%')");
+                sqlString.append(" AND (id = '" + UserUtils.getCompanyId(user.getId()) + "'");
+                Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                sqlString.append(" OR parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%')");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.COMPANY.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
                 sqlString.append(" WHERE type='0'");
-                sqlString.append(" AND id = '" + user.getCompany().getId() + "'");
+                Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                sqlString.append(" AND id = '" + company.getId() + "'");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
-                sqlString.append(" WHERE (id = '" + user.getOffice().getId() + "'");
-                sqlString.append(" OR parent_ids LIKE '" + user.getOffice().getParentIds() + user.getOffice().getId() + ",%')");
+                OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
+                sqlString.append(" WHERE (id = '" + organExtend.getId() + "'");
+                sqlString.append(" OR parent_ids LIKE '" + organExtend.getParentIds() + organExtend.getId() + ",%')");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.OFFICE.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
-                sqlString.append(" WHERE id = '" + user.getOffice().getId() + "'");
+                OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
+                sqlString.append(" WHERE id = '" + organExtend.getId() + "'");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.CUSTOM.getValue().equals(dataScopeString)) {//TODO
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_role_organ ro123456, t_sys_organ o123456");
@@ -181,7 +188,6 @@ public abstract class BaseService {
             }
         }
 
-//		System.out.println("dataScopeFilter: " + sqlString.toString());
 
         // 设置到自定义SQL对象
         entity.getSqlMap().put(sqlMapKey, sqlString.toString());

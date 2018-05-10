@@ -60,48 +60,6 @@
         </property>
     </bean>
 
-    <!-- Hibernate配置 -->
-    <bean id="defaultSessionFactory"
-          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-        <property name="dataSource" ref="defaultDataSource" />
-        <property name="namingStrategy">
-            <bean class="org.hibernate.cfg.ImprovedNamingStrategy" />
-        </property>
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
-                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
-                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
-                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
-                <prop key="hibernate.generate_statistics">${hibernate.generate_statistics}</prop>
-
-                <prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
-                <prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
-                <prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
-                <prop key="net.sf.ehcache.configurationResourceName">${net.sf.ehcache.configurationResourceName}</prop>
-
-                <prop key="hibernate.jdbc.batch_size">0</prop>
-
-                <!--<prop key="hibernate.use_nationalized_character_data">false</prop>-->
-            </props>
-        </property>
-        <property name="packagesToScan">
-            <list>
-                <value>com.eryansky.modules.*.entity</value>
-            </list>
-        </property>
-    </bean>
-
-    <!-- 动态SessionFactory -->
-    <bean id="sessionFactory" class="com.eryansky.common.datasource.DynamicSessionFactoryImpl">
-        <property name="defaultTargetSessionFactory" ref="defaultSessionFactory"/>
-        <property name="targetSessionFactorys">
-            <map>
-                <entry value-ref="defaultSessionFactory" key="defaultSessionFactory"/>
-            </map>
-        </property>
-    </bean>
-
     <!-- JDBC配置 -->
     <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"> -->
     <!--<property name="dataSource">-->
@@ -109,15 +67,10 @@
     <!--</property> -->
     <!--</bean>-->
 
-    <!-- 事务管理器配置, Hibernate单数据源事务 -->
-    <bean id="transactionManager" class="com.eryansky.common.datasource.DynamicTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="defaultDataSource" />
     </bean>
-
-    <!--<bean id="transactionManager"-->
-          <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
-        <!--<property name="dataSource" ref="dataSource" />-->
-    <!--</bean>-->
 
     <!-- 1.使用annotation定义事务 -->
     <!-- proxy-target-class ture:动态代理(需cglib类库的支持)  false:接口(Spring默认方式) -->
@@ -129,7 +82,7 @@
 
     <!-- 2.声明式事务配置 -->
     <aop:config proxy-target-class="true">
-        <aop:advisor pointcut="execution(* com.eryansky.modules..*.service..*Manager.*(..))" advice-ref="txAdvice" />
+        <aop:advisor pointcut="execution(* com.eryansky.modules..*.service..*Service.*(..))" advice-ref="txAdvice" />
     </aop:config>
 
     <!-- 通知  默认事务管理器：transaction-manager="transactionManager" -->
@@ -189,58 +142,8 @@
 
     <!--本地磁盘存储 非集群环境使用-->
     <bean id="iFileManager" class="com.eryansky.modules.disk.extend.DISKManager"></bean>
-    <!--FTP存储服务器 集群环境使用-->
-    <!--<bean id="iFileManager" class="com.eryansky.modules.disk.extend.FTPManager" init-method="init"  destroy-method="destroy">-->
-        <!--<property name="url" value="127.0.0.1"></property>-->
-        <!--<property name="port" value="2121"></property>-->
-        <!--<property name="username" value="admin"></property>-->
-        <!--<property name="password" value="admin"></property>-->
-    <!--</bean>-->
 
-    <!--Spring的事务管理是与数据源绑定的，一旦程序执行到事务管理的那一层（如service）的话，由于在进入该层之前事务已经通过拦截器开启，
-        所以请在Controller层设置注解（数据源/SessionFactory）切换、或编码方式-->
-    <!--动态数据源切换AOP拦截器-->
-    <!--<bean name="dataSourceMethodInterceptor" class="com.eryansky.common.datasource.DataSourceMethodInterceptor"></bean>-->
-    <!--动态SessionFactory切换AOP拦截器-->
-    <!--<bean name="sessionFactoryMethodInterceptor" class="com.eryansky.common.datasource.SessionFactoryMethodInterceptor"></bean>-->
 
-    <!-- 参与动态切换数据源的切入点对象 (切入点对象，确定何时何地调用拦截器) -->
-    <!--<bean id="methodDataSourcePointCut" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">-->
-        <!--&lt;!&ndash; 配置缓存aop切面 &ndash;&gt;-->
-        <!--<property name="advice" ref="dataSourceMethodInterceptor" />-->
-        <!--&lt;!&ndash;<property name="advice" ref="sessionFactoryMethodInterceptor" />&ndash;&gt;-->
-        <!--&lt;!&ndash; 配置哪些方法参与缓存策略 &ndash;&gt;-->
-        <!--&lt;!&ndash;-->
-            <!--.表示符合任何单一字元-->
-            <!--###  +表示符合前一个字元一次或多次-->
-            <!--###  *表示符合前一个字元零次或多次-->
-            <!--###  \Escape任何Regular expression使用到的符号-->
-        <!--&ndash;&gt;-->
-        <!--&lt;!&ndash; .*表示前面的前缀(包括包名) 表示print方法&ndash;&gt;-->
-        <!--<property name="patterns">-->
-            <!--<list>-->
-                <!--<value>com.eryansky.modules.sys.web.*Controller.*(..)</value>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
-
-    <!--安全审计日志-->
-    <bean id="logMethodInterceptor" class="com.eryansky.core.aop.interceptor.LogMethodInterceptor">
-        <property name="defaultMethods">
-            <list>
-                <value>ok</value>
-            </list>
-        </property>
-    </bean>
-    <bean id="logMethodPointCut" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
-        <property name="advice" ref="logMethodInterceptor"/>
-        <property name="patterns">
-            <list>
-                <value>com.jfit.modules.*.service.*Manager.*(..)</value>
-                <value>com.jfit.modules.*.service.*Service.*(..)</value>
-            </list>
-        </property>
-    </bean>
     <!--企业微信号配置-->
     <bean id="qyapiConfig" class="com.eryansky.fastweixin.company.api.config.QYAPIConfig">
         <constructor-arg name="corpid" value="${weixin.cropId}"></constructor-arg>

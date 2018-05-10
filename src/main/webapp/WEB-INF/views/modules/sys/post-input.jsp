@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="/common/taglibs.jsp"%>
 <script type="text/javascript">
-    var organIds = ${fns:toJson(model.organIds)};
+    var organIds = ${fns:toJson(organIds)};
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/post-input${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <div>
@@ -31,6 +31,11 @@
             <input name="code" type="text" value="${model.code}"
                    class="easyui-validatebox textbox"
                    maxLength="36" >
+        </div>
+        <div>
+            <label>排序:</label>
+            <input type="text" id="sort" name="sort" value="${model.sort}" class="easyui-numberspinner" STYLE="width: 120px;"
+                   data-options="min:1,max:99999999,size:9,maxlength:9,height:28" />
         </div>
         <div>
             <label style="vertical-align: top;">描述:</label>

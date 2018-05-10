@@ -2,6 +2,8 @@
 <%@ include file="/common/taglibs.jsp"%>
 <script type="text/javascript">
     var defaultOrganComboboxData = ${defaultOrganComboboxData};
+    var organIds = "${organIds}";
+    var defaultOrganId = "${model.defaultOrganId}";
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/user-organ${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <div>

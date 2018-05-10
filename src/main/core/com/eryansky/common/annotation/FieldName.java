@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * bean中文名注解
  */
-@Target(ElementType.METHOD)  
+@Target({ElementType.METHOD,ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)  
 public @interface FieldName {
 
