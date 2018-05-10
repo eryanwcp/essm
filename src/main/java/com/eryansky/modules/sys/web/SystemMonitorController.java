@@ -7,6 +7,8 @@ package com.eryansky.modules.sys.web;
 
 import com.eryansky.common.model.Result;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.utils.ServerStatus;
 import com.eryansky.utils.SigarUtil;
 import org.springframework.stereotype.Controller;
@@ -28,6 +30,7 @@ public class SystemMonitorController extends SimpleController {
      * 系统信息
      * @return
      */
+    @Logging(value = "系统监控",logType = LogType.access)
     @RequestMapping("")
     public ModelAndView list(){
         ModelAndView modelAndView = new ModelAndView("modules/sys/systemMonitorList");

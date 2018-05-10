@@ -10,6 +10,7 @@ import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.RoleType;
 import com.eryansky.modules.sys._enum.YesOrNo;
+import com.eryansky.modules.sys.utils.OrganUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -138,6 +139,10 @@ public class Role extends DataEntity<Role> {
         return this.remark;
     }
 
+
+    public String getOrganName() {
+        return OrganUtils.getOrganName(organId);
+    }
 
     public String getDataScopeView() {
         DataScope s = DataScope.getDataScopeByValue(dataScope);

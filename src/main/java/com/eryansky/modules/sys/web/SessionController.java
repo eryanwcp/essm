@@ -9,8 +9,10 @@ import com.eryansky.common.exception.ActionException;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.modules.sys._enum.LogType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +30,7 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/sys/session")
 public class SessionController extends SimpleController {
 
+    @Logging(value = "在线用户",logType = LogType.access)
     @RequestMapping(value = {""})
     public ModelAndView list(){
         return new ModelAndView("modules/sys/session");

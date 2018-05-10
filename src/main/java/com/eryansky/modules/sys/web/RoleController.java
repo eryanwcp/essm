@@ -15,9 +15,11 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.DataScope;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.RoleType;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.mapper.Role;
@@ -65,14 +67,15 @@ public class RoleController extends SimpleController {
         }
     }
 
+    @Logging(value = "角色管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/role";
     }
 
-    @RequestMapping(value = {"_datagrid"})
+    @RequestMapping(value = {"datagrid"})
     @ResponseBody
-    public String _datagrid() {
+    public String datagrid() {
         HttpServletRequest request = SpringMVCHolder.getRequest();
         // 自动构造属性过滤器
         Page<Role> p = new Page<Role>(request);
@@ -106,21 +109,9 @@ public class RoleController extends SimpleController {
     }
 
     /**
-     * 删除.
-     */
-    @RequestMapping(value = {"_remove"})
-    @ResponseBody
-    public Result _remove(@RequestParam(value = "ids", required = false) List<String> ids) {
-        Result result;
-        roleService.deleteByIds(ids);
-        result = Result.successResult();
-        logger.debug(result.toString());
-        return result;
-    }
-
-    /**
      * 保存.
      */
+    @Logging(value = "角色管理-保存角色",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") Role role) {
@@ -139,6 +130,22 @@ public class RoleController extends SimpleController {
         result = Result.successResult();
         return result;
     }
+
+    /**
+     * 删除.
+     */
+    @Logging(value = "角色管理-删除角色",logType = LogType.access)
+    @RequestMapping(value = {"remove"})
+    @ResponseBody
+    public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
+        Result result;
+        roleService.deleteByIds(ids);
+        result = Result.successResult();
+        logger.debug(result.toString());
+        return result;
+    }
+
+
 
     /**
      * 设置资源 页面
@@ -163,6 +170,7 @@ public class RoleController extends SimpleController {
      *
      * @return
      */
+    @Logging(value = "角色管理-角色资源",logType = LogType.access)
     @RequestMapping(value = {"updateRoleResource"})
     @ResponseBody
     public Result updateRoleResource(@RequestParam(value = "resourceIds", required = false) Set<String> resourceIds,
@@ -231,6 +239,7 @@ public class RoleController extends SimpleController {
      * @param userIds 用户ID
      * @return
      */
+    @Logging(value = "角色管理-添加关联用户",logType = LogType.access)
     @RequestMapping(value = {"addRoleUser"})
     @ResponseBody
     public Result addRoleUser(@ModelAttribute("model") Role model,
@@ -246,6 +255,7 @@ public class RoleController extends SimpleController {
      * @param userIds 用户IDS
      * @return
      */
+    @Logging(value = "角色管理-移除关联用户",logType = LogType.access)
     @RequestMapping(value = {"removeRoleUser"})
     @ResponseBody
     public Result removeRoleUser(@ModelAttribute("model") Role model,
@@ -256,11 +266,12 @@ public class RoleController extends SimpleController {
 
 
     /**
-     * 设置机构用户
+     * 设置角色用户
      *
      * @return
      * @throws Exception
      */
+    @Logging(value = "角色管理-保存角色用户",logType = LogType.access)
     @RequestMapping(value = {"updateRoleUser"})
     @ResponseBody
     public Result updateRoleUser(@ModelAttribute("model") Role model,

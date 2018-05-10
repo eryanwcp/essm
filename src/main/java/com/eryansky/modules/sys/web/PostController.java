@@ -14,8 +14,10 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Post;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.service.*;
@@ -57,6 +59,7 @@ public class PostController extends SimpleController{
         }
     }
 
+    @Logging(value = "岗位管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/post";
@@ -94,6 +97,7 @@ public class PostController extends SimpleController{
         return modelAndView;
     }
 
+    @Logging(value = "岗位管理-保存岗位",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model")Post model,String organId) {
@@ -120,6 +124,7 @@ public class PostController extends SimpleController{
      * @param ids 主键ID集合
      * @return
      */
+    @Logging(value = "岗位管理-删除岗位",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
@@ -144,6 +149,7 @@ public class PostController extends SimpleController{
     /**
      * 修改岗位用户.
      */
+    @Logging(value = "岗位管理-岗位用户",logType = LogType.access)
     @RequestMapping(value = {"updatePostUser"})
     @ResponseBody
     public Result updatePostUser(@ModelAttribute("model") Post model,

@@ -904,7 +904,7 @@ function del() {
                     ids[i] = row.id;
                 });
                 $.ajax({
-                    url: ctxAdmin + '/sys/user/_remove',
+                    url: ctxAdmin + '/sys/user/remove',
                     type: 'post',
                     data: {ids: ids},
                     traditional: true,

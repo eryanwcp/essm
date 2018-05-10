@@ -50,17 +50,30 @@
 				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
 			</if>
-			<if test="type != null">
+			<if test="type != null and type !=''">
 				AND a.type = #{type}
 			</if>
-			<if test="userId != null and userId != ''">
-				AND ( u.name LIKE
-				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+			<if test="query != null and query != ''">
+				AND (
+				a.title LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.ip LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.remark LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR u.name LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				OR u.login_name LIKE
-				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				)
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type = #{type}
 			</if>
 		</where>
 		<choose>

@@ -8,6 +8,8 @@ package com.eryansky.modules.sys.web;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.modules.sys._enum.LogType;
 import com.google.common.collect.Lists;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
@@ -53,6 +55,7 @@ public class AreaController extends SimpleController {
 		}
 	}
 
+	@Logging(value = "区域管理",logType = LogType.access)
 	@RequiresPermissions("sys:area:view")
 	@RequestMapping(value = {"list", ""})
 	public String list(Area area, Model model, HttpServletRequest request, HttpServletResponse response) {
@@ -97,7 +100,8 @@ public class AreaController extends SimpleController {
 		model.addAttribute("areas", AreaType.values());
 		return "modules/sys/areaForm";
 	}
-	
+
+	@Logging(value = "区域管理-保存区域",logType = LogType.access)
 	@RequiresPermissions("sys:area:edit")
 	@RequestMapping(value = "save")
 	public String save(Area area, Model model, RedirectAttributes redirectAttributes) {
@@ -108,7 +112,8 @@ public class AreaController extends SimpleController {
 		addMessage(redirectAttributes, "保存区域'" + area.getName() + "'成功");
 		return "redirect:" + AppConstants.getAdminPath() + "/sys/area/";
 	}
-	
+
+	@Logging(value = "区域管理-删除区域",logType = LogType.access)
 	@RequiresPermissions("sys:area:edit")
 	@RequestMapping(value = "delete")
 	public String delete(Area area, RedirectAttributes redirectAttributes) {

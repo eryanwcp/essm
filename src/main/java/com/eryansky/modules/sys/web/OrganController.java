@@ -12,9 +12,11 @@ import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.DataScope;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
@@ -64,22 +66,10 @@ public class OrganController extends SimpleController {
         }
     }
 
+    @Logging(value = "机构管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/organ";
-    }
-
-    /**
-     * @param model
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = {"input"})
-    public ModelAndView input(@ModelAttribute("model") Organ model, String parentId, Model uiModel) throws Exception {
-        ModelAndView modelAndView = new ModelAndView("modules/sys/organ-input");
-        modelAndView.addObject("parentId",parentId);
-        modelAndView.addObject("model", model);
-        return  modelAndView;
     }
 
 
@@ -106,21 +96,72 @@ public class OrganController extends SimpleController {
     }
 
     /**
-     * 根据ID删除
-     *
-     * @param id 主键ID
+     * @param model
      * @return
+     * @throws Exception
      */
-    @RequestMapping(value = {"delete/{id}"})
+    @RequestMapping(value = {"input"})
+    public ModelAndView input(@ModelAttribute("model") Organ model, String parentId, Model uiModel) throws Exception {
+        ModelAndView modelAndView = new ModelAndView("modules/sys/organ-input");
+        modelAndView.addObject("parentId",parentId);
+        modelAndView.addObject("model", model);
+        return  modelAndView;
+    }
+
+
+    /**
+     * 排序最大值.
+     */
+    @RequestMapping(value = {"maxSort"})
     @ResponseBody
-    public Result delete(@PathVariable String id) {
-        organService.deleteById(id);
-        return Result.successResult();
+    public Result maxSort() throws Exception {
+        Result result;
+        Integer maxSort = organService.getMaxSort();
+        result = new Result(Result.SUCCESS, null, maxSort);
+        logger.debug(result.toString());
+        return result;
+    }
+
+
+    /**
+     * 父级机构下拉列表.
+     */
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = {"parentOrgan"})
+    @ResponseBody
+    public List<TreeNode> parentOrgan(String selectType, @ModelAttribute("model") Organ organ) throws Exception {
+        List<TreeNode> treeNodes = null;
+        List<TreeNode> titleList = Lists.newArrayList();
+        TreeNode selectTreeNode = SelectType.treeNode(selectType);
+        if(selectTreeNode != null){
+            titleList.add(selectTreeNode);
+        }
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+        String excludeOrganId = organ.getId();
+        String organId = null;
+        TreeNode parentTreeNode = null;
+        if(SecurityUtils.isCurrentUserAdmin()){
+            organId = null;
+        }else{
+            OrganExtend o = OrganUtils.getOrganExtendByUserId(sessionInfo.getUserId());
+            OrganExtend organExtend = OrganUtils.getOrganExtend(organ.getId());
+            if(o.getLevel() >= organExtend.getLevel()){
+                parentTreeNode = organService.organToTreeNode(organ.getParent());
+                excludeOrganId = null;
+            }
+        }
+        treeNodes = organService.findOrganTree(organId,excludeOrganId);
+        if(parentTreeNode != null){
+            treeNodes.add(parentTreeNode.setState(TreeNode.STATE_OPEN));
+        }
+        List<TreeNode> unionList = ListUtils.union(titleList, treeNodes);
+        return unionList;
     }
 
     /**
      * 保存.
      */
+    @Logging(value = "机构管理-保存机构",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") Organ organ,String _parentId) {
@@ -143,6 +184,22 @@ public class OrganController extends SimpleController {
         result = Result.successResult();
         return result;
     }
+
+    /**
+     * 根据ID删除
+     *
+     * @param id 主键ID
+     * @return
+     */
+    @Logging(value = "机构管理-删除机构",logType = LogType.access)
+    @RequestMapping(value = {"delete/{id}"})
+    @ResponseBody
+    public Result delete(@PathVariable String id) {
+        organService.deleteById(id);
+        return Result.successResult();
+    }
+
+
 
     /**
      * 设置机构用户 页面
@@ -168,6 +225,7 @@ public class OrganController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @Logging(value = "机构管理-机构用户",logType = LogType.access)
     @RequestMapping(value = {"updateOrganUser"})
     @ResponseBody
     public Result updateOrganUser(@ModelAttribute("model") Organ organ) throws Exception {
@@ -263,53 +321,7 @@ public class OrganController extends SimpleController {
         return cList;
     }
 
-    /**
-     * 父级机构下拉列表.
-     */
-    @SuppressWarnings("unchecked")
-    @RequestMapping(value = {"parentOrgan"})
-    @ResponseBody
-    public List<TreeNode> parentOrgan(String selectType, @ModelAttribute("model") Organ organ) throws Exception {
-        List<TreeNode> treeNodes = null;
-        List<TreeNode> titleList = Lists.newArrayList();
-        TreeNode selectTreeNode = SelectType.treeNode(selectType);
-        if(selectTreeNode != null){
-            titleList.add(selectTreeNode);
-        }
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        String excludeOrganId = organ.getId();
-        String organId = null;
-        TreeNode parentTreeNode = null;
-        if(SecurityUtils.isCurrentUserAdmin()){
-            organId = null;
-        }else{
-            OrganExtend o = OrganUtils.getOrganExtendByUserId(sessionInfo.getUserId());
-            OrganExtend organExtend = OrganUtils.getOrganExtend(organ.getId());
-            if(o.getLevel() >= organExtend.getLevel()){
-                parentTreeNode = organService.organToTreeNode(organ.getParent());
-                excludeOrganId = null;
-            }
-        }
-        treeNodes = organService.findOrganTree(organId,excludeOrganId);
-        if(parentTreeNode != null){
-            treeNodes.add(parentTreeNode.setState(TreeNode.STATE_OPEN));
-        }
-        List<TreeNode> unionList = ListUtils.union(titleList, treeNodes);
-        return unionList;
-    }
 
-    /**
-     * 排序最大值.
-     */
-    @RequestMapping(value = {"maxSort"})
-    @ResponseBody
-    public Result maxSort() throws Exception {
-        Result result;
-        Integer maxSort = organService.getMaxSort();
-        result = new Result(Result.SUCCESS, null, maxSort);
-        logger.debug(result.toString());
-        return result;
-    }
 
     /**
      * 栏目编辑，展示的栏目树
@@ -331,17 +343,12 @@ public class OrganController extends SimpleController {
         return mapList;
     }
 
+
     /**
-     * 同步机构所有父级ID
+     * 省市县区域数据
+     * @param response
      * @return
      */
-    @ResponseBody
-    @RequestMapping(value = "syncAllParentIds")
-    public Result syncAllParentIds(){
-        organService.syncAllParentIds();
-        return Result.successResult();
-    }
-
     @ResponseBody
     @RequestMapping(value = "provinceCityAreaData")
     public List<TreeNode> provinceCityAreaData(HttpServletResponse response) {
@@ -357,4 +364,18 @@ public class OrganController extends SimpleController {
         List<TreeNode> result = AppUtils.toTreeTreeNodes(treeNodes);
         return result;
     }
+
+    /**
+     * 同步机构所有父级ID
+     * @return
+     */
+    @Logging(value = "机构管理-同步机构所有父级ID",logType = LogType.access)
+    @ResponseBody
+    @RequestMapping(value = "syncAllParentIds")
+    public Result syncAllParentIds(){
+        organService.syncAllParentIds();
+        return Result.successResult();
+    }
+
+
 }

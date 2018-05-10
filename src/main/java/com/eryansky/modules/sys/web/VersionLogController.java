@@ -17,6 +17,7 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.security.annotation.RequiresUser;
@@ -26,6 +27,7 @@ import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.service.DiskService;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.utils.DiskUtils;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.VersionLogType;
 import com.eryansky.modules.sys.mapper.VersionLog;
 import com.eryansky.modules.sys.service.VersionLogService;
@@ -66,7 +68,7 @@ public class VersionLogController extends SimpleController {
     private FileService fileService;
 
 
-
+    @Logging(value = "版本管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {return "modules/sys/versionLog";}
 
@@ -200,6 +202,7 @@ public class VersionLogController extends SimpleController {
      * @param versionLog
      * @return
      */
+    @Logging(value = "版本管理-保存版本",logType = LogType.access)
     @RequestMapping(value = { "save" })
     @ResponseBody
     public Result save(@ModelAttribute("model") VersionLog versionLog) {
@@ -225,6 +228,7 @@ public class VersionLogController extends SimpleController {
      * 清空数据
      * @return
      */
+    @Logging(value = "版本管理-删除版本",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
@@ -242,6 +246,7 @@ public class VersionLogController extends SimpleController {
      * 清空所有数据
      * @return
      */
+    @Logging(value = "版本管理-清空所有数据",logType = LogType.access)
     @RequestMapping(value = {"removeAll"})
     @ResponseBody
     public Result removeAll(){

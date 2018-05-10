@@ -12,6 +12,8 @@ import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Dictionary;
 import com.eryansky.modules.sys.service.DictionaryItemService;
 import com.eryansky.modules.sys.service.DictionaryService;
@@ -47,7 +49,7 @@ public class DictionaryController extends SimpleController {
     @Autowired
     private DictionaryItemService dictionaryItemService;
 
-
+    @Logging(value = "字典管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/dictionary";
@@ -69,6 +71,7 @@ public class DictionaryController extends SimpleController {
     }
 
 
+    @Logging(value = "字典管理-保存字典",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") Dictionary dictionary) {
@@ -204,6 +207,7 @@ public class DictionaryController extends SimpleController {
      * @param ids
      * @return
      */
+    @Logging(value = "字典管理-删除字典",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false)List<String> ids){

@@ -60,6 +60,16 @@
         FROM t_sys_user a
         <where>
             a.status = #{status}
+            <if test="query != null and query !=''">
+                AND (
+                a.login_name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                OR a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                )
+            </if>
         </where>
         <choose>
             <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">

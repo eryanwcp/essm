@@ -11,7 +11,7 @@ $(function () {
         fitColumns: false,//自适应列宽
         striped: true,//显示条纹
         pageSize: 20,//每页记录数
-        pageList:[10,20,50,100,1000],
+        pageList:[10,20,50,100,1000,99999],
         singleSelect: false,//单选模式
         checkbox: true,
         nowrap: true,
@@ -46,14 +46,22 @@ $(function () {
             {field: 'remark',title: '备注',width: 260 ,hidden:true}
         ]],
         toolbar:[{
-            text:'删除',
-            iconCls:'easyui-icon-remove',
-            handler:function(){del()}
-        },'-',{
-            text:'清空所有',
-            iconCls:'easyui-icon-no',
-            handler:function(){delAll()}
-        }]
+            text:'导出Excel',
+            iconCls:'easyui-icon-search',
+            handler:function(){
+                exportQuery();
+            }
+        }
+        // ,{
+        //     text:'删除',
+        //     iconCls:'easyui-icon-remove',
+        //     handler:function(){del()}
+        // },'-',{
+        //     text:'清空所有',
+        //     iconCls:'easyui-icon-no',
+        //     handler:function(){delAll()}
+        // }
+        ]
     }).datagrid("showTooltip");
 
     //日志类型 搜索选项
@@ -64,6 +72,10 @@ $(function () {
         width:120
     });
 });
+
+function exportQuery(){
+    $('#annexFrame').attr('src', ctxAdmin + '/sys/log/export?'+$.param($.serializeObject($("#log_search_form"))));
+}
 
 //删除
 function del() {

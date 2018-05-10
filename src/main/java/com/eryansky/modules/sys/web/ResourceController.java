@@ -12,6 +12,8 @@ import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.ResourceType;
 import com.eryansky.modules.sys.mapper.Area;
 import com.eryansky.modules.sys.mapper.Resource;
@@ -49,33 +51,21 @@ public class ResourceController extends SimpleController {
         }
     }
 
+    @Logging(value = "资源管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/resource";
     }
 
-
-    /**
-     * 删除.
-     */
-    @RequestMapping(value = {"delete/{id}"})
+    @RequestMapping(value = {"treegrid"})
     @ResponseBody
-    public Result _delete(@PathVariable String id) {
-        Result result;
-        if(StringUtils.isNotBlank(id)){
-            List<String> ids = Lists.newArrayList();
-            ids.add(id);
-            resourceService.deleteByIds(ids);
-            result = Result.successResult();
-        }else{
-            result = new Result().setCode(Result.WARN).setMsg("参数[id]为空.");
-        }
-
-        if(logger.isDebugEnabled()){
-            logger.debug(result.toString());
-        }
-        return result;
+    public Datagrid<Resource> treegrid(String sort, String order) throws Exception {
+        Resource entity = new Resource();
+        List<Resource> list = resourceService.findList(entity);
+        Datagrid<Resource> dg = new Datagrid<Resource>(list.size(), list);
+        return dg;
     }
+
 
     /**
      * @param model
@@ -90,19 +80,13 @@ public class ResourceController extends SimpleController {
         return "modules/sys/resource-input";
     }
 
-    @RequestMapping(value = {"treegrid"})
-    @ResponseBody
-    public Datagrid<Resource> treegrid(String sort, String order) throws Exception {
-        Resource entity = new Resource();
-        List<Resource> list = resourceService.findList(entity);
-        Datagrid<Resource> dg = new Datagrid<Resource>(list.size(), list);
-        return dg;
-    }
+
 
 
     /**
      * 保存.
      */
+    @Logging(value = "资源管理-保存资源",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute("model") Resource resource,String _parentId)  {
@@ -131,6 +115,31 @@ public class ResourceController extends SimpleController {
         result = Result.successResult();
         return result;
     }
+
+
+    /**
+     * 删除.
+     */
+    @Logging(value = "资源管理-删除资源",logType = LogType.access)
+    @RequestMapping(value = {"delete/{id}"})
+    @ResponseBody
+    public Result delete(@PathVariable String id) {
+        Result result;
+        if(StringUtils.isNotBlank(id)){
+            List<String> ids = Lists.newArrayList();
+            ids.add(id);
+            resourceService.deleteByIds(ids);
+            result = Result.successResult();
+        }else{
+            result = new Result().setCode(Result.WARN).setMsg("参数[id]为空.");
+        }
+
+        if(logger.isDebugEnabled()){
+            logger.debug(result.toString());
+        }
+        return result;
+    }
+
 
     /**
      * 资源树.

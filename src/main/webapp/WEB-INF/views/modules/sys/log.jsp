@@ -11,9 +11,9 @@
          style="padding: 0px; height: 70px;width:100%; overflow-y: hidden;">
         <form id="log_search_form" style="padding: 5px;">
             &nbsp;日志类型：<input id="_type" name="type" />
-            &nbsp;账号或姓名：<input type="text" name="name"
-                       class="easyui-validatebox textbox eu-input" placeholder="账号或姓名..."  onkeydown="if(event.keyCode==13)search()"
-                       maxLength="25" style="width: 160px" />
+            &nbsp;关键字：<input type="text" name="query"
+                             class="easyui-validatebox textbox eu-input" placeholder="关键字..."  onkeydown="if(event.keyCode==13)search()"
+                             maxLength="30" style="width: 160px" />
             &nbsp;<a class="easyui-linkbutton" href="#" data-options="iconCls:'easyui-icon-search',width:100,height:28,onClick:search">查询</a>
             <a class="easyui-linkbutton" href="#" data-options="iconCls:'easyui-icon-no',width:100,height:28" onclick="javascript:$log_search_form.form('reset');">重置查询</a>
         </form>

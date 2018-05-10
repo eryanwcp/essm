@@ -83,6 +83,9 @@ public class Log extends DataEntity<Log> {
      */
     private String exception;
 
+
+    private String query;
+
     public Log() {
         super();
     }
@@ -200,6 +203,13 @@ public class Log extends DataEntity<Log> {
         this.exception = exception;
     }
 
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
     /**
      * 设置请求参数
@@ -220,21 +230,13 @@ public class Log extends DataEntity<Log> {
         this.remark = params.toString();
     }
 
-    private String userName;
     /**
      * 用户姓名
      *
      * @return
      */
     public String getUserName() {
-//        if(StringUtils.isNotBlank(userId)){
-//            return UserUtils.getUserName(this.userId);
-//        }
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+        return UserUtils.getUserName(userId);
     }
 
 

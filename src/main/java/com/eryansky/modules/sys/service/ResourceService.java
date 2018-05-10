@@ -116,8 +116,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
                 +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE);
         if(!Collections3.isEmpty(ids)){
             for(String id :ids){
-                Resource resource = dao.get(id);
-                this.delete(resource);
+                this.delete(new Resource(id));
             }
         }else{
             logger.warn("参数[ids]为空.");

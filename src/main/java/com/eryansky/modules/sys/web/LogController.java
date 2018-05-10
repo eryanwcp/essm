@@ -14,14 +14,21 @@ import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
+import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.excelTools.ExcelUtils;
+import com.eryansky.core.excelTools.JsGridReportBase;
+import com.eryansky.core.excelTools.TableData;
+import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
 import com.eryansky.modules.sys.service.LogService;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +41,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,6 +58,7 @@ public class LogController extends SimpleController {
     @Autowired
     private LogService logService;
 
+    @Logging(value = "日志管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/log";
@@ -84,6 +94,50 @@ public class LogController extends SimpleController {
         return json;
     }
 
+
+    /**
+     *
+     * @param log
+     * @param name 姓名或登录名
+     * @param request
+     * @param response
+     * @param uiModel
+     * @return
+     */
+    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
+    @RequestMapping(value = {"export"})
+    public void export(Log log,HttpServletRequest request,HttpServletResponse response,Model uiModel) {
+        response.setContentType("application/msexcel;charset=UTF-8");
+        Page<Log> page = new Page<Log>(request);
+//        page.setPageSize(Page.PAGESIZE_ALL);
+        page = logService.findPage(page,log);
+
+        List<Object[]> list = new ArrayList<Object[]>();
+        Iterator<Log> iterator = page.getResult().iterator();
+        while (iterator.hasNext()){
+            Log _log = iterator.next();
+            list.add(new Object[]{_log.getTypeView(),_log.getTitle(),_log.getUserCompanyName(),_log.getUserOfficeName(),_log.getUserName(),_log.getIp(),_log.getModule(), DateUtils.formatDateTime(_log.getOperTime()),_log.getActionTime()});
+        }
+
+        List<TableData> tds = new ArrayList<TableData>();
+
+        String title = "审计日志-"+DateUtils.getCurrentDate();
+        //Sheet2
+        String[] hearders = new String[] {"日志类型","标题","单位","部门", "姓名", "IP地址", "模块","操作时间","操作耗时(ms)"};//表头数组
+        TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders),null);
+        td.setSheetTitle(title);
+        tds.add(td);
+
+        try {
+            JsGridReportBase report = new JsGridReportBase(request, response);
+            report.exportToExcel(title, SecurityUtils.getCurrentSessionInfo().getName(), tds);
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        }
+
+    }
+
+
     /**
      * 日志明细信息
      * @param log
@@ -104,6 +158,8 @@ public class LogController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @Logging(value = "日志管理-删除日志",logType = LogType.access)
+    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids",required = false)List<String> ids) throws Exception {
@@ -118,7 +174,8 @@ public class LogController extends SimpleController {
      * @return
      * @throws Exception
      */
-    @RequiresRoles("SYSTEM_MANAGER")
+    @Logging(value = "日志管理-清除日志",logType = LogType.access)
+    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
     @RequestMapping(value = {"removeAll"})
     @ResponseBody
     public Result removeAll() throws Exception {

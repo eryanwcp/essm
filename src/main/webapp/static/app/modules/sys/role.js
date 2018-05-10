@@ -11,7 +11,7 @@ $(function () {
     role_search_form = $('#role_search_form').form();
     //数据列表
     role_datagrid = $('#role_datagrid').datagrid({
-        url: ctxAdmin + '/sys/role/_datagrid',
+        url: ctxAdmin + '/sys/role/datagrid',
         fit: true,
         pagination: true,//底部分页
         rownumbers: true,//显示行数
@@ -35,7 +35,6 @@ $(function () {
                 {field: 'isSystemView', title: '系统角色', width: 60},
                 {field: 'organName', title: '所属机构', width: 200},
                 {field: 'dataScopeView', title: '数据范围', width: 200},
-                {field: 'resourceNames', title: '关联资源', width: 420},
                 {field: 'remark', title: '备注', width: 200}
             ]
         ],
@@ -169,7 +168,6 @@ function showDialog(row) {
         },
         onLoad: function () {
             formInit();
-
         }
     });
 
@@ -329,7 +327,7 @@ function del() {
                     ids[i] = row.id;
                 });
                 $.ajax({
-                    url: ctxAdmin + '/sys/role/_remove',
+                    url: ctxAdmin + '/sys/role/remove',
                     type: 'post',
                     data: {ids: ids},
                     traditional: true,

@@ -10,6 +10,8 @@ import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Config;
 import com.eryansky.modules.sys.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ public class ConfigController extends SimpleController {
     private ConfigService configService;
 
 
+    @Logging(value = "属性配置",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
         return "modules/sys/config";
@@ -63,6 +66,7 @@ public class ConfigController extends SimpleController {
     }
 
 
+    @Logging(value = "属性配置-保存配置",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
     public Result save(@ModelAttribute Config model) {
@@ -85,6 +89,7 @@ public class ConfigController extends SimpleController {
      * @param overrideFromProperties
      * @return
      */
+    @Logging(value = "属性配置-配置文件同步",logType = LogType.access)
     @RequestMapping(value = {"syncFromProperties"})
     @ResponseBody
     public Result syncFromProperties(Boolean overrideFromProperties){
@@ -99,6 +104,7 @@ public class ConfigController extends SimpleController {
      * @param ids
      * @return
      */
+    @Logging(value = "属性配置-删除配置",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false)List<String> ids){

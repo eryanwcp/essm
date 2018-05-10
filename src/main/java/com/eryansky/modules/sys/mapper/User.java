@@ -106,6 +106,8 @@ public class User extends DataEntity<User> implements IUser {
      */
     private String remark;
 
+    private String query;
+
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;
@@ -259,6 +261,14 @@ public class User extends DataEntity<User> implements IUser {
 
     public String getWeixin() {
         return this.weixin;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     public String getCompanyId() {
