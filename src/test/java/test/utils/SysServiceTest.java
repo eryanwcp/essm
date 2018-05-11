@@ -6,7 +6,6 @@
 package test.utils;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
-import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.service.*;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import java.util.List;
 
 /**
  * @author : 尔演&Eryan eryanwcp@gmail.com
- * @date : 2014-07-07 20:30
+ * @date : 2018-05-11 20:30
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml",
@@ -46,7 +45,6 @@ public class SysServiceTest {
 
     @Test
     public void security() throws Exception{
-        System.out.println(JsonMapper.toJsonString(resourceService.findResourcesWithPermissions("1")));;
 
     }
 
