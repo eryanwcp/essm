@@ -9,7 +9,9 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +53,10 @@ public class UserPasswordService extends CrudService<UserPasswordDao, UserPasswo
             page.setPageSize(maxSize);
         }
         Parameter parameter = new Parameter();
-        parameter.put(UserPassword.FIELD_STATUS,UserPassword.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         parameter.put(BaseInterceptor.PAGE,page);
-        parameter.put(BaseInterceptor.DB_NAME,new UserPassword().getDbName());
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         return page.setResult(dao.findByUserId(parameter)).getResult();
     }
 

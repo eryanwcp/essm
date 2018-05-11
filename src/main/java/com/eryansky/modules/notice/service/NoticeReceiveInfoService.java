@@ -57,7 +57,7 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
             ServiceException, DaoException {
         Assert.notNull(userId, "参数[userId]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(DataEntity.FIELD_STATUS, StatusState.NORMAL.getValue());
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put("mode", NoticeMode.Effective.getValue());
         if(noticeQueryVo != null && Collections3.isNotEmpty(noticeQueryVo.getPublishUserIds())){
             parameter.put("publishUserId",noticeQueryVo.getPublishUserIds().get(0));
@@ -112,7 +112,7 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
 
     public Page<NoticeReceiveInfo> findNoticeReceiveInfos(Page<NoticeReceiveInfo> page,NoticeReceiveInfo entity) {
         Parameter parameter = new Parameter();
-        parameter.put(DataEntity.FIELD_STATUS, StatusState.NORMAL.getValue());
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put("noticeId",entity.getNoticeId());
         parameter.put(BaseInterceptor.PAGE,page);
         List<NoticeReceiveInfo> list = dao.findQueryList(parameter);

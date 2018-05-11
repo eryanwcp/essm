@@ -18,6 +18,7 @@ import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityType;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.Validate;
@@ -165,7 +166,7 @@ public class UserService extends CrudService<UserDao, User> {
         Assert.notNull(loginName, "参数[loginName]为空!");
         Assert.notNull(password, "参数[password]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("loginName",loginName);
         parameter.put("password",password);
         List<User> list = dao.findLoginUser(parameter);
@@ -182,7 +183,7 @@ public class UserService extends CrudService<UserDao, User> {
         Assert.notNull(mobile, "参数[mobile]为空!");
         Assert.notNull(password, "参数[password]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("loginName",mobile);
         parameter.put("password",password);
         List<User> list = dao.findLoginUser(parameter);
@@ -199,7 +200,7 @@ public class UserService extends CrudService<UserDao, User> {
     public User getUserByLoginName(String loginName){
         Assert.notNull(loginName, "参数[loginName]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("loginName",loginName);
         return dao.getUserByLoginName(parameter);
     }
@@ -215,14 +216,14 @@ public class UserService extends CrudService<UserDao, User> {
 
     public List<String> findAllNormalUserIds(){
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         return dao.findAllNormalUserIds(parameter);
     }
 
 
     public List<User> findAllNormalWithExclude(List<String> userIds){
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userIds",userIds);
         return dao.findAllNormalWithExclude(parameter);
     }
@@ -235,8 +236,8 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findWithInclude(List<String> userIds, String query){
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new User().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("userIds",userIds);
         parameter.put("query",query);
         return dao.findWithInclude(parameter);
@@ -253,8 +254,8 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public Page<User> findPage(Page<User> page, String organId, String query, String userType) {
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new User().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put(BaseInterceptor.PAGE,page);
         parameter.put("organId",organId);
         parameter.put("query", query);
@@ -276,9 +277,8 @@ public class UserService extends CrudService<UserDao, User> {
         }
 
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new User().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put("organId",organId);
         parameter.put("query",query);
         parameter.put("excludeUserIds",excludeUserIds);
@@ -301,7 +301,7 @@ public class UserService extends CrudService<UserDao, User> {
     public List<User> findOrganUsers(String organId) {
         Assert.notNull(organId, "参数[organId]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findOrganUsers(parameter);
     }
@@ -315,7 +315,7 @@ public class UserService extends CrudService<UserDao, User> {
     public List<User> findOrganDefaultUsers(String organId) {
         Assert.notNull(organId, "参数[organId]为空!");
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findOrganDefaultUsers(parameter);
     }
@@ -494,7 +494,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findUsersByIds(List<String> userIds) {
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("ids",userIds);
         return dao.findUsersByIds(parameter);
     }
@@ -506,7 +506,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findUsersByOrganIds(List<String> organIds) {
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organIds",organIds);
         return dao.findUsersByOrganIds(parameter);
     }
@@ -532,7 +532,7 @@ public class UserService extends CrudService<UserDao, User> {
             return null;
         }
         Parameter parameter = new Parameter();
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organIds",organIds);
         return dao.findUsersIdsByOrganIds(parameter);
     }
@@ -548,7 +548,7 @@ public class UserService extends CrudService<UserDao, User> {
     public List<User> findOwnerAndChildsUsers(String organId, List<String> excludeUserIds){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new User().getDbName());
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put("organId",organId);
         parameter.put("excludeUserIds",excludeUserIds);
         return dao.findOwnerAndChildsUsers(parameter);
@@ -565,7 +565,7 @@ public class UserService extends CrudService<UserDao, User> {
 
     public List<String> findOwnerAndChildsUserIds(String organId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findOwnerAndChildsUsersIds(parameter);
     }
@@ -580,8 +580,8 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public Page<User> findPageRoleUsers(Page<User> page, String roleId, String query) {
         Parameter parameter = new Parameter();
-        parameter.put(BaseInterceptor.DB_NAME,new User().getDbName());
-        parameter.put(User.FIELD_STATUS,User.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.PAGE,page);
         parameter.put("roleId",roleId);
         parameter.put("query",query);
@@ -595,7 +595,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findUsersByRoleId(String roleId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
         return dao.findUsersByRoleId(parameter);
     }
@@ -607,7 +607,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<String> findUserIdsByRoleId(String roleId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
         return dao.findUserIdsByRoleId(parameter);
     }
@@ -620,7 +620,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findUsersByPostId(String postId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("postId",postId);
         return dao.findUsersByPostId(parameter);
     }
@@ -632,7 +632,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<String> findUserIdsByPostId(String postId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("postId",postId);
         return dao.findUserIdsByPostId(parameter);
     }
@@ -645,7 +645,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<User> findUsersByPostIdAndOrganId(String postId,String organId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("postId",postId);
         parameter.put("organId",organId);
         return dao.findUsersByPostIdAndOrganId(parameter);
@@ -659,7 +659,7 @@ public class UserService extends CrudService<UserDao, User> {
      */
     public List<String> findUserIdsByPostIdAndOrganId(String postId,String organId){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("postId",postId);
         parameter.put("organId",organId);
         return dao.findUserIdsByPostIdAndOrganId(parameter);

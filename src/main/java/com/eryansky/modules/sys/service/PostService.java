@@ -9,6 +9,8 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.utils.AppConstants;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,8 +66,8 @@ public class PostService extends CrudService<PostDao, Post> {
 
     public Page<Post> findPage(Page<Post> p, Post entity) {
         Parameter parameter = new Parameter();
-        parameter.put(Post.FIELD_STATUS,Post.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new Post().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put(BaseInterceptor.PAGE,p);
         parameter.put("organId",entity.getOrganId());
         parameter.put("query", entity.getQuery());
@@ -98,7 +100,7 @@ public class PostService extends CrudService<PostDao, Post> {
         Validate.notNull(organId, "参数[organId]不能为null");
         Validate.notNull(postCode, "参数[postCode]不能为null或空");
         Parameter parameter = new Parameter();
-        parameter.put(Post.FIELD_STATUS,Post.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("code",postCode);
         parameter.put("organId",organId);
         List<Post> list = dao.findPost(parameter);
@@ -116,7 +118,7 @@ public class PostService extends CrudService<PostDao, Post> {
     public List<Post> findPostsByOrganId(String organId){
         Validate.notNull(organId, "参数[organId]不能为null");
         Parameter parameter = new Parameter();
-        parameter.put(Post.FIELD_STATUS,Post.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findPostsByOrganId(parameter);
     }
@@ -129,7 +131,7 @@ public class PostService extends CrudService<PostDao, Post> {
     public List<Post> findPostsByUserId(String userId){
         Validate.notNull(userId, "参数[userId]不能为null");
         Parameter parameter = new Parameter();
-        parameter.put(Post.FIELD_STATUS,Post.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.findPostsByUserId(parameter);
     }

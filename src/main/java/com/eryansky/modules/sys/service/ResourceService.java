@@ -14,9 +14,11 @@ import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.ResourceType;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,7 +128,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public Resource getByCode(String resourceCode) {
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("code",resourceCode);
         return dao.getByCode(parameter);
     }
@@ -148,8 +150,8 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findOwnerAndChilds(String id, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new Resource().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("id",id);
         parameter.put("types",resourceTypes);
         return dao.findOwnAndChilds(parameter);
@@ -164,7 +166,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findChilds(String id, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS, Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put("id",id);
         parameter.put("types",resourceTypes);
         return dao.findChilds(parameter);
@@ -187,7 +189,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findChild(String id, String status){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,StringUtils.isBlank(status) ? Resource.STATUS_NORMAL:status);
+        parameter.put(DataEntity.FIELD_STATUS,StringUtils.isBlank(status) ? DataEntity.STATUS_NORMAL:status);
         parameter.put("parentId",id);
         return dao.findChild(parameter);
     }
@@ -212,7 +214,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findResourcesByUserId(String userId, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         parameter.put("types",resourceTypes);
         return dao.findResourcesByUserId(parameter);
@@ -235,7 +237,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<String> findResourceIdsByUserId(String userId, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         parameter.put("types",resourceTypes);
         return dao.findResourceIdsByUserId(parameter);
@@ -259,7 +261,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findResourcesByRoleId(String roleId, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
         parameter.put("types",resourceTypes);
         return dao.findResourcesByRoleId(parameter);
@@ -284,7 +286,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<String> findResourceIdsByRoleId(String roleId, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
         parameter.put("types",resourceTypes);
         return dao.findResourceIdsByRoleId(parameter);
@@ -344,7 +346,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findAuthorityResourcesByUserId(String userId, List<String> resourceTypes){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         parameter.put("types",resourceTypes);
         return dao.findAuthorityResourcesByUserId(parameter);
@@ -504,7 +506,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      */
     public List<Resource> findResources(List<String> resourceTypes, String excludeResourceId){
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("excludeResourceId",excludeResourceId);
         parameter.put("types",resourceTypes);
         return  dao.findQuery(parameter);
@@ -936,7 +938,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     public Resource iGetReource(String resourceType, String code, String status) {
         Validate.notNull(code, "参数[code]不能为null");
         Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,status);
+        parameter.put(DataEntity.FIELD_STATUS,status);
         parameter.put("code",code);
         parameter.put("type",resourceType);
         List<Resource> list = dao.findCustomQuery(parameter);

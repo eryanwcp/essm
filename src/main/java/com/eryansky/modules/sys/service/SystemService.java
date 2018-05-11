@@ -7,6 +7,7 @@ package com.eryansky.modules.sys.service;
 
 import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.orm.mybatis.service.BaseService;
 import com.eryansky.modules.sys.dao.SystemDao;
 import com.eryansky.modules.sys.mapper.OrganExtend;
@@ -94,7 +95,7 @@ public class SystemService extends BaseService {
             return null;
         }
         Parameter parameter = Parameter.newParameter();
-        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("id",organId);
         return dao.getOrganExtend(parameter);
     }
@@ -108,7 +109,7 @@ public class SystemService extends BaseService {
             return null;
         }
         Parameter parameter = Parameter.newParameter();
-        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("id",organId);
         return dao.getOrganCompany(parameter);
     }
@@ -120,7 +121,7 @@ public class SystemService extends BaseService {
      */
     public OrganExtend getOrganExtendByUserId(String userId){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.getOrganExtendByUserId(parameter);
     }
@@ -132,7 +133,7 @@ public class SystemService extends BaseService {
      */
     public OrganExtend getCompanyByUserId(String userId){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.getCompanyByUserId(parameter);
     }

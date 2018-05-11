@@ -10,8 +10,10 @@ import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.disk._enum.FileSizeType;
 import com.eryansky.modules.disk.extend.IFileManager;
+import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,7 +124,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     public List<File> getFolderFiles(String folderId,List<String> fileSuffixs) {
         Parameter parameter = Parameter.newParameter();
-        parameter.put(File.FIELD_STATUS,File.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put("folderId",folderId);
         parameter.put("fileSuffixs",fileSuffixs);
         return dao.findFolderFiles(parameter);
@@ -138,7 +140,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     public long countFileSize(List<String> fileIds){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(File.FIELD_STATUS,File.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("fileIds",fileIds);
         return dao.countFileSize(parameter);
     }
@@ -152,7 +154,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     private List<File> getFileByCode(String code,String excludeFileId){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(File.FIELD_STATUS,File.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("code",code);
         parameter.put("excludeFileId",excludeFileId);
         return dao.findByCode(parameter);
@@ -165,7 +167,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     public List<File> findFilesByIds(List<String> fileIds){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(File.FIELD_STATUS,File.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("fileIds",fileIds);
         return dao.findFilesByIds(parameter);
     }
@@ -200,8 +202,8 @@ public class FileService extends CrudService<FileDao, File> {
                                      Date startTime, Date endTime) {
         Parameter patameter = new Parameter();
         patameter.put(BaseInterceptor.PAGE,page);
-        patameter.put(File.FIELD_STATUS,File.STATUS_NORMAL);
-        patameter.put(BaseInterceptor.DB_NAME,new File().getDbName());
+        patameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        patameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
 
         patameter.put("folderAuthorize", folderAuthorize);
         patameter.put("userId", userId);

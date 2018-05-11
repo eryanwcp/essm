@@ -7,6 +7,7 @@ package com.eryansky.modules.sys.service;
 
 import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +78,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public Role getByCode(String code) {
         Parameter parameter = Parameter.newParameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("code",code);
         return dao.getByCode(parameter);
     }
@@ -100,7 +101,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public List<Role> findRolesByOrganId(String organId) {
         Parameter parameter = Parameter.newParameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findRolesByOrganId(parameter);
     }
@@ -112,7 +113,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public List<Role> findRolesByUserId(String userId) {
         Parameter parameter = Parameter.newParameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.findRolesByUserId(parameter);
     }
@@ -125,7 +126,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public List<String> findRoleIdsByUserId(String userId) {
         Parameter parameter = Parameter.newParameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.findRoleIdsByUserId(parameter);
     }
@@ -138,7 +139,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public List<Role> findOrganRolesAndSystemRoles(String organId) {
         Parameter parameter = new Parameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         parameter.put("isSystem", YesOrNo.YES.getValue());
         return dao.findOrganRolesAndSystemRoles(parameter);
@@ -151,7 +152,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
      */
     public List<Role> findRolesByIds(List<String> roleIds) {
         Parameter parameter = new Parameter();
-        parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("ids",roleIds);
         return dao.findRolesByIds(parameter);
     }

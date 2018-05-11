@@ -11,12 +11,14 @@ import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.utils.OrganUtils;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -103,7 +105,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<Organ> findCompanyOrgans(){
         Parameter parameter = Parameter.newParameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("type",OrganType.organ.getValue());
         return dao.findCustomQuery(parameter);
     }
@@ -464,7 +466,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             return null;
         }
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("sysCode",sysCode);
         return  dao.getBySysCode(parameter);
     }
@@ -482,7 +484,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             return null;
         }
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("code",code);
         return  dao.getByCode(parameter);
     }
@@ -544,7 +546,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             status.add(StatusState.AUDIT.getValue());
         }
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,status);
+        parameter.put(DataEntity.FIELD_STATUS,status);
         parameter.put("parentId",parentId);
         return dao.findChild(parameter);
     }
@@ -579,7 +581,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<String> findOrganUserIds(String organId) {
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organId",organId);
         return dao.findOrganUserIds(parameter);
     }
@@ -641,8 +643,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<Organ> findChilds(String id){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new Organ().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("id",id);
         return dao.findChilds(parameter);
     }
@@ -654,8 +656,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<String> findChildsOrganIds(String id){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new Organ().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put("id",id);
         return dao.findChildsIds(parameter);
     }
@@ -667,8 +669,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<Organ> findOwnerAndChildsOrgans(String id){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,new Organ().getDbName());
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put("id",id);
         return dao.findOwnAndChilds(parameter);
     }
@@ -681,7 +683,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      */
     public List<String> findOwnerAndChildsOrganIds(String id){
         Parameter parameter = new Parameter();
-        parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("id",id);
         return dao.findOwnAndChildsIds(parameter);
     }

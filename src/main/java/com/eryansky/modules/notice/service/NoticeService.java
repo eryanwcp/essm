@@ -15,6 +15,7 @@ import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.notice._enum.NoticeReadMode;
 import com.eryansky.modules.sys.service.OrganService;
@@ -81,7 +82,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      */
 	public Page<Notice> findPage(Page<Notice> page,Notice notice, String userId, NoticeQueryVo noticeQueryVo){
         Parameter parameter = new Parameter();
-        parameter.put(Notice.FIELD_STATUS, StatusState.NORMAL.getValue());
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
 
         if(noticeQueryVo != null && Collections3.isNotEmpty(noticeQueryVo.getPublishUserIds())){
             parameter.put("userId",noticeQueryVo.getPublishUserIds().get(0));

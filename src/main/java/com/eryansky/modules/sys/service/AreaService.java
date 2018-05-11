@@ -10,6 +10,7 @@ import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys.dao.AreaDao;
 import com.eryansky.modules.sys.mapper.Area;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -74,7 +75,7 @@ public class AreaService extends TreeService<AreaDao, Area> {
 	public List<Area> findAreaDown(String parentId){
 		Parameter parameter = Parameter.newParameter();
 		parameter.put("areaId",parentId);
-		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
 		List<Area> areaList = areaDao.findAreaDown(parameter);
 		return areaList;
 	}
@@ -87,7 +88,7 @@ public class AreaService extends TreeService<AreaDao, Area> {
 	public List<Area> findOwnAndChild(String parentId){
 		Parameter parameter = Parameter.newParameter();
 		parameter.put("parentId",parentId);
-		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
 		List<Area> areaList = areaDao.findOwnAndChild(parameter);
 		return areaList;
 	}
@@ -100,7 +101,7 @@ public class AreaService extends TreeService<AreaDao, Area> {
 	public List<Area> findByParentId(String parentId){
 		Parameter parameter = Parameter.newParameter();
 		parameter.put("parentId",parentId);
-		parameter.put(BaseInterceptor.DB_NAME,new Area().getDbName());
+		parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
 		List<Area> areaList = areaDao.findByParentId(parameter);
 		return areaList;
 	}

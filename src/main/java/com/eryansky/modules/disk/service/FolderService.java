@@ -10,6 +10,7 @@ import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
@@ -258,7 +259,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
                                                     String userId, String parentId) {
         Validate.notNull(folderAuthorize, "参数[folderAuthorize]不能为null.");
         Parameter parameter = new Parameter();
-        parameter.put(Folder.FIELD_STATUS,Folder.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("folderAuthorize",folderAuthorize);
         parameter.put("parentId",parentId);
         parameter.put("type",FolderType.NORMAL.getValue());
@@ -286,7 +287,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
 
     public List<Folder> findFoldersByUserId(String userId,String type,String folderAuthorize,String code){
         Parameter parameter = new Parameter();
-        parameter.put(Folder.FIELD_STATUS,Folder.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("type",type);
         parameter.put("userId",userId);
         parameter.put("folderAuthorize",folderAuthorize);
@@ -349,7 +350,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
      */
     public List<Folder> findChildsByParentId(String parentId){
         Parameter parameter = new Parameter();
-        parameter.put(Folder.FIELD_STATUS,Folder.STATUS_NORMAL);
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("type",FolderType.NORMAL.getValue());
         parameter.put("parentId",parentId);
 
