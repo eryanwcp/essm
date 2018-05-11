@@ -1,3 +1,4 @@
+java -jar yuicompressor-2.4.7.jar --type css --charset utf-8 ../src/main/webapp/static/css/default.css -o ../src/main/webapp/static/css/default.min.css
 java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4.5/extend/js/easyui-extend.js -o ../src/main/webapp/static/js/easyui-1.4.5/extend/js/easyui-extend.min.js
 java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4.5/extend/js/validatebox-extend.js -o ../src/main/webapp/static/js/easyui-1.4.5/extend/js/validatebox-extend.min.js
 java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.4.5/extend/js/validatebox-ajax.js -o ../src/main/webapp/static/js/easyui-1.4.5/extend/js/validatebox-ajax.min.js

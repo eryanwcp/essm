@@ -11,7 +11,7 @@
     var ctxFront = "${ctxFront}";
     var ctxStatic = "${ctxStatic}";
 </script>
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/css/default.css?_=${sysInitTime}" />
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/css/default${yuicompressor}.css?_=${sysInitTime}" />
 <%-- 引入jQuery --%>
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-1.10.2.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-migrate-1.2.1.min.js" charset="utf-8"></script>
