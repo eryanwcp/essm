@@ -160,6 +160,15 @@
 		WHERE a.id = #{id}
 	</select>
 
+	<select id="getOrganCompany" resultType="OrganExtend">
+		SELECT
+		<include refid="organExtendColumns"/>
+		FROM t_sys_organ_extend e
+		LEFT JOIN t_sys_organ_extend a ON a.id = e.company_id
+		WHERE e.id = #{id}
+	</select>
+
+
 	<select id="getOrganExtendByUserId" resultType="OrganExtend">
 		SELECT
 		<include refid="organExtendColumns"/>

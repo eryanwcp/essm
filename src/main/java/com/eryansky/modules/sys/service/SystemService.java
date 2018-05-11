@@ -99,6 +99,21 @@ public class SystemService extends BaseService {
         return dao.getOrganExtend(parameter);
     }
     /**
+     * 根据机构ID查找
+     * @param organId
+     * @return
+     */
+    public OrganExtend getOrganCompany(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put("id",organId);
+        return dao.getOrganCompany(parameter);
+    }
+
+    /**
      * 根据用户ID查找
      * @param userId
      * @return

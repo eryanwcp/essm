@@ -6,12 +6,10 @@
 package com.eryansky.modules.sys.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
-import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
-import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.SystemService;
 
@@ -53,17 +51,6 @@ public class OrganUtils {
 
 
     /**
-     * 根据机构ID查找
-     * @param organId 机构ID
-     * @return
-     */
-    public static OrganExtend getOrganExtendCompany(String organId){
-        OrganExtend organExtend = getOrganExtend(organId);
-        return getOrganExtend(organExtend.getCompanyId());
-    }
-
-
-    /**
      * 根据用户ID查找
      * @param userId 用户ID
      * @return
@@ -74,6 +61,20 @@ public class OrganUtils {
         }
         return systemService.getOrganExtendByUserId(userId);
     }
+
+    /**
+     * 根据机构ID查找
+     * @param organId 机构ID
+     * @return
+     */
+    public static OrganExtend getOrganCompany(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        return systemService.getOrganCompany(organId);
+    }
+
+
 
     /**
      * 根据用户ID查找
@@ -114,19 +115,6 @@ public class OrganUtils {
         Organ organ = getOrgan(organId);
         if(organ != null){
             return organ.getName();
-        }
-        return null;
-    }
-
-    /**
-     * 根据机构ID集合转换成机构名称
-     * @param organIds 机构ID集合
-     * @return
-     */
-    public static String getOrganNames(List<String> organIds){
-        if(Collections3.isNotEmpty(organIds)){
-            List<Organ> list = organService.findOrgansByIds(organIds);
-            return ConvertUtils.convertElementPropertyToString(list, "name", ", ");
         }
         return null;
     }
