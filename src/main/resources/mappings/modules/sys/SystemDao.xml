@@ -145,6 +145,7 @@
 		a.PARENT_ID AS "parentId",
 		a.PARENT_IDS AS "parentIds",
 		a.AREA_ID AS "areaId",
+		a.REMARK AS "remark",
 		a.COMPANY_ID AS "companyId",
 		a.COMPANY_CODE AS "companyCode",
 		a.HOME_COMPANY_ID AS "homeCompanyId",
