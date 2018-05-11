@@ -379,7 +379,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
 
 
     /**
-     * 用户导航菜单(应用、菜单) （权限控制）
+     * 查找用户资源(应用、菜单) （权限控制）
      * @param userId 用户ID
      * @return
      */
@@ -390,7 +390,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 查找用户菜单(应用、菜单)（权限控制）
+     * 查找用户资源(应用、菜单)（权限控制）
      * @param userId 用户ID
      * @return
      */
@@ -400,7 +400,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
 
 
     /**
-     * 查找用户菜单
+     * 查找用户资源(应用、菜单)（权限控制）
      * @param userId 用户ID
      * @return
      */
@@ -416,7 +416,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 查找授权应用 （权限控制）
+     * 查找用户资源（应用） （权限控制）
      * @param userId 用户ID
      * @return
      */
@@ -432,7 +432,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
 
 
     /**
-     * 查找用户菜单
+     * 查找用户资源（菜单） （权限控制）
      * @param userId 用户ID
      * @return
      */
@@ -449,7 +449,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
 
 
     /**
-     * 查找菜单资源
+     * 查找菜单资源（应用、菜单）
      * @return
      */
     public List<Resource> findAppAndMenuResources(){
@@ -460,7 +460,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 查找菜单资源 应用
+     * 查找菜单资源(应用)
      * @return
      */
     public List<Resource> findAppResources(){
@@ -470,7 +470,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 查找菜单资源
+     * 查找菜单资源(菜单)
      * @return
      */
     public List<Resource> findMenuResources(){
@@ -480,7 +480,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 查找所有资源
+     * 查找资源
      * @return
      */
     public List<Resource> findResources(){
