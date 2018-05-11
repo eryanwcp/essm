@@ -8,7 +8,7 @@
 <link rel="shortcut icon" href="${appURL}/static/img/favicon.ico" />
 
 <%-- 引入jQuery --%>
-<script type="text/javascript" src="${appURL}/static/js/jquery/jquery-2.1.4.js" charset="utf-8"></script>
+<script type="text/javascript" src="${appURL}/static/js/jquery/jquery-2.1.4.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="${appURL}/static/js/jquery/jquery-extend${yuicompressor}.js" charset="utf-8"></script>
 
 <%-- jQuery Cookie插件 --%>
