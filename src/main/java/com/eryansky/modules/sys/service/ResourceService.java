@@ -10,7 +10,7 @@ import com.eryansky.common.model.Menu;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;

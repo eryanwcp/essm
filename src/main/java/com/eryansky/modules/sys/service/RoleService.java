@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.utils.CacheConstants;
@@ -22,7 +22,6 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 角色表 service

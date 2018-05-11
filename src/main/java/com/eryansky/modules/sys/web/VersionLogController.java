@@ -11,7 +11,7 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;

@@ -7,15 +7,13 @@ package com.eryansky.modules.disk.service;
 
 import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.model.TreeNode;
-import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk._enum.FolderType;
-import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.disk.web.DiskController;

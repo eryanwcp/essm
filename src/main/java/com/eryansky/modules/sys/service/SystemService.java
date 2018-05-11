@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.orm.hibernate.Parameter;
+import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.service.BaseService;
 import com.eryansky.modules.sys.dao.SystemDao;

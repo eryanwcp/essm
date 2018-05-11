@@ -6,8 +6,6 @@
 package com.eryansky.modules.disk.service;
 
 import com.eryansky.common.exception.ServiceException;
-import com.eryansky.common.orm.entity.StatusState;
-import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.core.orm.mybatis.service.BaseService;
