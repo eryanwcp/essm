@@ -85,13 +85,16 @@ public class SecurityUtils {
 
 //            flag = resourceService.isUserPermittedResourceCode(sessionInfo.getUserId(), resourceCode);
             if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                if (sessionInfo.isSuperUser()) {// 超级用户
+                    return true;
+                }
                 for(Permisson permisson:sessionInfo.getPermissons()){
                     if (resourceCode.equalsIgnoreCase(permisson.getCode())) {
                         return true;
                     }
                 }
             }else{
-                return resourceService.isUserPermittedResourceCode(userId,resourceCode);
+                return resourceService.isPermittedResourceCodeWithPermission(userId,resourceCode);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -138,6 +141,9 @@ public class SecurityUtils {
 
             if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
                 for(Permisson permisson:sessionInfo.getPermissons()){
+                    if (sessionInfo.isSuperUser()) {// 超级用户
+                        return true;
+                    }
                     if(!flag && StringUtils.isNotBlank(permisson.getMarkUrl())){
                         String[] markUrls = permisson.getMarkUrl().split(";");
                         for(int i=0;i<markUrls.length;i++){
@@ -150,7 +156,7 @@ public class SecurityUtils {
                 }
                 return flag;
             }else{
-                return resourceService.isUserPermittedResourceMarkUrl(userId,url);
+                return resourceService.isPermittedResourceMarkUrlWithPermissions(userId,url);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -191,6 +197,9 @@ public class SecurityUtils {
             }
 
             if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                if (sessionInfo.isSuperUser()) {// 超级用户
+                    return true;
+                }
                 for(PermissonRole permissonRole:sessionInfo.getPermissonRoles()){
                     if (roleCode.equalsIgnoreCase(permissonRole.getCode())) {
                         return true;
