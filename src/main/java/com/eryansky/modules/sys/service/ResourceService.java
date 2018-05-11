@@ -736,6 +736,22 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceCode 资源编码
      * @return
      */
+    public boolean isPermittedResourceCodeWithPermission(String userId, String resourceCode) {
+        Assert.notNull(userId, "参数[userId]为空!");
+        Assert.notNull(resourceCode, "参数[resourceCode]为空!");
+        //如果是超级管理员 直接允许被授权
+        if(SecurityUtils.isUserAdmin(userId)) {
+            return true;
+        }
+        return isUserPermittedResourceCode(userId,resourceCode);
+    }
+
+    /**
+     * 检查用户是否具有某个资源编码的权限
+     * @param userId 用户ID
+     * @param resourceCode 资源编码
+     * @return
+     */
     public boolean isUserPermittedResourceCode(String userId, String resourceCode) {
         Assert.notNull(userId, "参数[userId]为空!");
         Assert.notNull(resourceCode, "参数[resourceCode]为空!");
@@ -756,7 +772,20 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param requestUrl 请求URL地址
      * @return
      */
-    @Cacheable(value = {CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE})
+    public boolean isPermittedResourceMarkUrlWithPermissions(String userId,String requestUrl){
+        //如果是超级管理员 直接允许被授权
+        if(SecurityUtils.isUserAdmin(userId)) {
+            return true;
+        }
+        return isPermittedResourceMarkUrlWithPermissions(userId,requestUrl);
+    }
+
+    /**
+     * 根据请求地址判断用户是否有权访问该url
+     * @param userId 用户ID
+     * @param requestUrl 请求URL地址
+     * @return
+     */
     public boolean isUserPermittedResourceMarkUrl(String userId,String requestUrl){
         //如果是超级管理员 直接允许被授权
         if(SecurityUtils.isUserAdmin(userId)) {

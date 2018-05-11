@@ -7,8 +7,7 @@ package test.utils;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.modules.sys.mapper.Dictionary;
-import com.eryansky.modules.sys.mapper.DictionaryItem;
+import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.service.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : 尔演&Eryan eryanwcp@gmail.com
@@ -32,9 +28,9 @@ import java.util.ArrayList;
         "classpath:applicationContext-mybatis.xml",
         "classpath:applicationContext-task.xml",
         "classpath:applicationContext-ehcache.xml" })
-public class ServiceTest {
+public class SysServiceTest {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceTest.class);
+    private static Logger logger = LoggerFactory.getLogger(SysServiceTest.class);
 
     @Autowired
     private ResourceService resourceService;
@@ -50,7 +46,30 @@ public class ServiceTest {
 
     @Test
     public void security() throws Exception{
-        System.out.println(SecurityUtils.isCurrentUserAdmin());;
+        System.out.println(JsonMapper.toJsonString(resourceService.findResourcesWithPermissions("1")));;
+
+    }
+
+    @Test
+    public void resource() throws Exception{
+        List<Resource> resources = resourceService.findResourcesWithPermissions("1");
+        System.out.println(resources.size());
+        System.out.println(JsonMapper.toJsonString(resources));
+
+        resources = resourceService.findAppResourcesWithPermissions("1");
+        System.out.println(resources.size());
+        System.out.println(JsonMapper.toJsonString(resources));
+
+        resources = resourceService.findAppAndMenuWithPermissions("1");
+        System.out.println(resources.size());
+        System.out.println(JsonMapper.toJsonString(resources));
+
+        resources = resourceService.findAuthorityResourcesByUserId("1");
+        System.out.println(resources.size());
+        System.out.println(JsonMapper.toJsonString(resources));
+
+
+        System.out.println(resourceService.isUserPermittedResourceCode("1",""));
 
     }
 
