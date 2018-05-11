@@ -145,7 +145,7 @@
                     AND a.parnet_id = #{parentId}
                 </when>
                 <otherwise>
-                    AND (a.parnet_id IS NULL OR a.parnet_id = '' )
+                    AND (a.parnet_id IS NULL OR a.parnet_id = '' OR a.parent_id = '0')
                 </otherwise>
             </choose>
         </where>
