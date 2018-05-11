@@ -17,7 +17,7 @@ public enum LogType {
 	access("2", "访问"),
 	/** 异常(3) */
 	exception("3", "异常"),
-	API("API", "API调用");
+	API("A", "API调用");
 
 	/**
 	 * 值 String型
