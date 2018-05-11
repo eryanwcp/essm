@@ -95,7 +95,7 @@ public class SecurityLogAspect {
             log.setUserId(sessionInfo.getUserId());
             log.setModule(className + "-" + methodName);
             log.setIp(sessionInfo.getIp());
-            log.setTitle("[" + sessionInfo.getLoginName() + "]" + securityType.getDescription());
+            log.setTitle(securityType.getDescription());
             log.setAction("[" + sessionInfo.getLoginName() + "]" + securityType.getDescription());
             log.setUserAgent(sessionInfo.getUserAgent());
             log.setDeviceType(sessionInfo.getDeviceType());
