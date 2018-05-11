@@ -61,9 +61,9 @@ public class ResourceController extends SimpleController {
 
     @RequestMapping(value = {"treegrid"})
     @ResponseBody
-    public Datagrid<Resource> treegrid(Resource model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Resource entity = new Resource();
-        List<Resource> list = resourceService.findList(entity);
+    public Datagrid<Resource> treegrid(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Resource model = new Resource();
+        List<Resource> list = resourceService.findList(model);
         Datagrid<Resource> dg = new Datagrid<Resource>(list.size(), list);
         return dg;
     }

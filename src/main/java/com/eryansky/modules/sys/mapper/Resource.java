@@ -125,7 +125,7 @@ public class Resource extends TreeEntity<Resource> {
     public String get_parentId() {
         String id = null;
         if (parent != null){
-            id = parent.getId();
+            id = parent.getId().equals("0") ? null:parent.getId();
         }
         return id;
     }
