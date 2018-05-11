@@ -49,19 +49,6 @@ public class OrganUtils {
         return systemService.getOrganExtend(organId);
     }
 
-
-    /**
-     * 根据用户ID查找
-     * @param userId 用户ID
-     * @return
-     */
-    public static OrganExtend getOrganExtendByUserId(String userId){
-        if(StringUtils.isBlank(userId)){
-            return null;
-        }
-        return systemService.getOrganExtendByUserId(userId);
-    }
-
     /**
      * 根据机构ID查找
      * @param organId 机构ID
@@ -74,7 +61,17 @@ public class OrganUtils {
         return systemService.getOrganCompany(organId);
     }
 
-
+    /**
+     * 根据用户ID查找
+     * @param userId 用户ID
+     * @return
+     */
+    public static OrganExtend getOrganExtendByUserId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        return systemService.getOrganExtendByUserId(userId);
+    }
 
     /**
      * 根据用户ID查找
@@ -90,7 +87,7 @@ public class OrganUtils {
 
 
     /**
-     * 根据机构ID查找机构名称
+     * 根据机构ID查找单位ID
      * @param organId 机构ID
      * @return
      */
@@ -98,9 +95,25 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        OrganExtend organExtend = getOrganExtend(organId);
+        OrganExtend organExtend = getOrganCompany(organId);
         if(organExtend != null){
-            return organExtend.getCompanyId();
+            return organExtend.getId();
+        }
+        return null;
+    }
+
+    /**
+     * 根据机构ID查找单位名称
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getOrganCompanyName(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        OrganExtend organExtend = getOrganCompany(organId);
+        if(organExtend != null){
+            return organExtend.getName();
         }
         return null;
     }
