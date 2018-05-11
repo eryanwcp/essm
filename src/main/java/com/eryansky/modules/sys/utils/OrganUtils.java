@@ -137,10 +137,6 @@ public class OrganUtils {
         return  Collections3.isEmpty(list) ? false:true;
     }
 
-    public static List<String> findChildsOrganIds(String organId){
-        return organService.findChildsOrganIds(organId);
-    }
-
 
     public static String getAreaId(String organId){
         Organ organ = getOrgan(organId);
