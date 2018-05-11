@@ -9,7 +9,6 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.DataScope;
-import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.Role;
 import com.eryansky.modules.sys.mapper.User;
@@ -63,7 +62,7 @@ public abstract class BaseService {
                             isDataScopeAll = true;
                         } else if (DataScope.COMPANY_AND_CHILD.getValue().equals(r.getDataScope())) {
                             sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
-                            Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                            OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
                             sqlString.append(" OR " + oa + ".parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%'");
                         } else if (DataScope.COMPANY.getValue().equals(r.getDataScope())) {
                             sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
@@ -152,13 +151,13 @@ public abstract class BaseService {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
                 sqlString.append(" WHERE type='1'");
                 sqlString.append(" AND (id = '" + UserUtils.getCompanyId(user.getId()) + "'");
-                Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                OrganExtend company = OrganUtils.getOrganCompany(user.getId());
                 sqlString.append(" OR parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%')");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.COMPANY.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
                 sqlString.append(" WHERE type='0'");
-                Organ company = OrganUtils.getOrganExtendCompanyByUserId(user.getId());
+                OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
                 sqlString.append(" AND id = '" + company.getId() + "'");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(dataScopeString)) {
