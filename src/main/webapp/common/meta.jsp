@@ -26,18 +26,18 @@
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery.cookie${yuicompressor}.js" charset="utf-8"></script>
 <link id="easyuiTheme" rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/themes/<c:out value="${cookie.easyuiThemeName.value}" default="bootstrap"/>/easyui.css" />
 <%--<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/themes/icon.css" />--%>
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/easyui-icon.css" />
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/easyui-icon${yuicompressor}.css" />
 <script type="text/javascript" src="${ctxStatic}/js/My97DatePicker/WdatePicker.js" charset="utf-8"></script>
 <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/jquery.easyui.mine.js" charset="utf-8"></script>
 <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
 
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/my97/my97.css" />
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/my97/jquery.easyui.my97.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/my97/my97${yuicompressor}.css" />
+<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/my97/jquery.easyui.my97${yuicompressor}.js" charset="utf-8"></script>
 
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/portal/portal${yuicompressor}.css">
 <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/portal/jquery.portal${yuicompressor}.js" charset="utf-8"></script>
 
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/eu-icon.css?_=${sysInitTime}" />
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/eu-icon${yuicompressor}.css?_=${sysInitTime}" />
 <%-- jQuery方法扩展 --%>
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <%-- easyui扩展 --%>
