@@ -24,6 +24,8 @@ public interface ResourceDao extends TreeDao<Resource> {
 
     Resource getByCode(Parameter parameter);
 
+    Integer getMaxSort();
+
     List<Resource> findOwnAndChilds(Parameter parameter);
 
     List<Resource> findChilds(Parameter parameter);
@@ -40,13 +42,10 @@ public interface ResourceDao extends TreeDao<Resource> {
 
     List<String> findResourceIdsByUserId(Parameter parameter);
 
+
     List<Resource> findResourcesByRoleId(Parameter parameter);
 
     List<String> findResourceIdsByRoleId(Parameter parameter);
 
     List<Resource> findAuthorityResourcesByUserId(Parameter parameter);
-
-    Integer getMaxSort();
-
-
 }

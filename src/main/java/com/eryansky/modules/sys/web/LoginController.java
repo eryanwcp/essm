@@ -302,12 +302,7 @@ public class LoginController extends SimpleController {
         String head = this.getHeadFromUrl(request.getRequestURL().toString());
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if (sessionInfo != null) {
-            List<Resource> resources = null;
-            if (SecurityUtils.isCurrentUserAdmin()) {// 超级用户
-                resources = resourceService.findMenuResources();
-            } else {
-                resources = resourceService.findAuthorityMenuResourcesByUserId(sessionInfo.getUserId());
-            }
+            List<Resource> resources = resourceService.findMenuResourcesWithPermissions(sessionInfo.getUserId());
             for (Resource resource : resources) {
                 if (resource != null && StringUtils.isNotBlank(resource.getUrl())) {
                     Menu menu = resourceToMenu(resource);

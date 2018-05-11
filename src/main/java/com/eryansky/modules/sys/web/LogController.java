@@ -98,7 +98,6 @@ public class LogController extends SimpleController {
     /**
      *
      * @param log
-     * @param name 姓名或登录名
      * @param request
      * @param response
      * @param uiModel

@@ -351,37 +351,14 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
     /**
-     * 用户导航菜单 （权限控制）
+     * 根据用户ID得到导航栏资源（权限控制）
      * @param userId 用户ID
      * @return
      */
-    @Cacheable(value = { CacheConstants.RESOURCE_USER_MENU_TREE_CACHE})
-    public List<TreeNode> findNavTreeNodeWithPermissions(String userId){
-        List<Resource> list = null;
-        if (SecurityUtils.isUserAdmin(userId)) {// 超级用户
-            list = this.findAppAndMenuResources();
-        } else {
-            list = this.findAuthorityAppAndMenuResourcesByUserId(userId);
-        }
-
-        logger.debug("缓存:{}", CacheConstants.RESOURCE_USER_MENU_TREE_CACHE + " 参数：userId=" + userId);
-        return resourcesToTreeNode(list);
-    }
-
-    /**
-     * 查找用户菜单
-     * @param userId 用户ID
-     * @return
-     */
-    public List<Menu> findNavMenuWithPermissions(String userId){
-        List<Resource> list = null;
-        if (SecurityUtils.isUserAdmin(userId)) {// 超级用户
-            list = this.findAppAndMenuResources();
-        } else {
-            list = this.findAuthorityAppAndMenuResourcesByUserId(userId);
-        }
-
-        return resourcesToMenu(list);
+    @Cacheable(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE})
+    public List<TreeNode> findTreeNodeResourcesWithPermissions(String userId) {
+        logger.debug("缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE + " 参数：userId=" + userId);
+        return resourcesToTreeNode(findResourcesWithPermissions(userId));
     }
 
     /**
@@ -389,17 +366,53 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param userId 用户ID
      * @return
      */
-    @Cacheable(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE})
-    public List<TreeNode> findTreeNodeResourcesWithPermissions(String userId) {
+    public List<Resource> findResourcesWithPermissions(String userId) {
         List<Resource> list = null;
         if (SecurityUtils.isUserAdmin(userId)) {// 超级用户
             list = this.findResources(null);
         } else {
             list = this.findAuthorityResourcesByUserId(userId, null);
         }
+        return list;
+    }
 
-        logger.debug("缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE + " 参数：userId=" + userId);
-        return resourcesToTreeNode(list);
+
+
+    /**
+     * 用户导航菜单(应用、菜单) （权限控制）
+     * @param userId 用户ID
+     * @return
+     */
+    @Cacheable(value = { CacheConstants.RESOURCE_USER_MENU_TREE_CACHE})
+    public List<TreeNode> findNavTreeNodeWithPermissions(String userId){
+        logger.debug("缓存:{}", CacheConstants.RESOURCE_USER_MENU_TREE_CACHE + " 参数：userId=" + userId);
+        return resourcesToTreeNode(findAppAndMenuWithPermissions(userId));
+    }
+
+    /**
+     * 查找用户菜单(应用、菜单)（权限控制）
+     * @param userId 用户ID
+     * @return
+     */
+    public List<Menu> findNavMenuWithPermissions(String userId){
+        return resourcesToMenu(findAppAndMenuWithPermissions(userId));
+    }
+
+
+    /**
+     * 查找用户菜单
+     * @param userId 用户ID
+     * @return
+     */
+    public List<Resource> findAppAndMenuWithPermissions(String userId){
+        List<Resource> list = null;
+        if (SecurityUtils.isUserAdmin(userId)) {// 超级用户
+            list = this.findAppAndMenuResources();
+        } else {
+            list = this.findAuthorityAppAndMenuResourcesByUserId(userId);
+        }
+
+        return list;
     }
 
     /**
@@ -415,6 +428,23 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
             list = this.findAuthorityAppResourcesByUserId(userId);
         }
         return  list;
+    }
+
+
+    /**
+     * 查找用户菜单
+     * @param userId 用户ID
+     * @return
+     */
+    public List<Resource> findMenuResourcesWithPermissions(String userId){
+        List<Resource> list = null;
+        if (SecurityUtils.isUserAdmin(userId)) {// 超级用户
+            list = this.findMenuResources();
+        } else {
+            list = this.findAuthorityMenuResourcesByUserId(userId);
+        }
+
+        return list;
     }
 
 
