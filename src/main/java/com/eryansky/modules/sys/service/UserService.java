@@ -5,11 +5,9 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
 import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm.entity.StatusState;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.StringUtils;
@@ -52,15 +50,6 @@ public class UserService extends CrudService<UserDao, User> {
 
     @Autowired
     private OrganService organService;
-    @Autowired
-    private RoleService roleService;
-    @Autowired
-    private ResourceService resourceService;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private UserPasswordService userPasswordService;
-
 
 
     /**
@@ -148,25 +137,9 @@ public class UserService extends CrudService<UserDao, User> {
     }
 
     /**
-     * 得到当前登录用户.
-     * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
-     */
-    public User getCurrentUser() {
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        User user = dao.get(sessionInfo.getUserId());
-        return user;
-    }
-
-    /**
      * 得到超级用户.
      *
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     public User getSuperUser() {
         User superUser = dao.get(User.SUPERUSER_ID);//超级用户ID为1
@@ -181,9 +154,6 @@ public class UserService extends CrudService<UserDao, User> {
      * 判断用户是否是超级用户
      * @param userId 用户Id
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     public boolean isSuperUser(String userId){
         User superUser = getSuperUser();
@@ -198,9 +168,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param password
      *            密码
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @SuppressWarnings("unchecked")
     public User getUserByLP(String loginName, String password){
@@ -219,9 +186,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param mobile
      * @param password
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     public User getUserByMP(String mobile, String password){
         Assert.notNull(mobile, "参数[mobile]为空!");
@@ -239,9 +203,6 @@ public class UserService extends CrudService<UserDao, User> {
      * <br>注：排除已删除的对象
      * @param loginName 登录名
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @SuppressWarnings("unchecked")
     public User getUserByLoginName(String loginName){

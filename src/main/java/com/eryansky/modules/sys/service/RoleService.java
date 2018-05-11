@@ -33,9 +33,6 @@ import java.util.Set;
 public class RoleService extends CrudService<RoleDao, Role> {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private RoleDao dao;
 
     /**

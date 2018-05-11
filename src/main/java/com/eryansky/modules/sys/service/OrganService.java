@@ -45,10 +45,13 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     private static final String ICON_USER_RED = "eu-icon-user_red";
     private static final String ICON_USER = "eu-icon-user";
     private static final String ICON_GROUP = "eu-icon-group";
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private OrganDao dao;
+
+    @Autowired
+    private UserService userService;
+
 
     /**
      * 保存或修改.
