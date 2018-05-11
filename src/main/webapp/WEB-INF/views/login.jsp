@@ -17,14 +17,14 @@
     <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-1.10.2.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-migrate-1.2.1.min.js" charset="utf-8"></script>
     <%-- jQuery Cookie插件 --%>
-    <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery.cookie-min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery.cookie${yuicompressor}.js" charset="utf-8"></script>
     <link id="easyuiTheme" rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/themes/<c:out value="${cookie.easyuiThemeName.value}" default="bootstrap"/>/easyui.css" />
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/easyui-icon.css" />
     <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/eu-icon.css" />
     <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/jquery.easyui.mine.js" charset="utf-8"></script>
 
     <%-- jQuery方法扩展 --%>
-    <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-extend.js" charset="utf-8"></script>
+    <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-extend${yuicompressor}.js" charset="utf-8"></script>
 
     <link href="${ctxStatic}/js/jquery-validation/1.11.1/jquery.validate.min.css" type="text/css" rel="stylesheet" />
     <script src="${ctxStatic}/js/jquery-validation/1.11.1/jquery.validate.min.js" type="text/javascript"></script>

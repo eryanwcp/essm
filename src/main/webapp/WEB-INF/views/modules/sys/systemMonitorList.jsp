@@ -16,7 +16,6 @@
 				dataType: 'json',
 				success: function (data) {
 					if (data.code == 1) {
-						console.log(data['obj']);
 						var html = Mustache.render($("#systemList").html(),data['obj']);
 						$("#systemInfo_div").html(html);
 					} else {

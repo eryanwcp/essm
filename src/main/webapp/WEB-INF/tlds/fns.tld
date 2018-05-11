@@ -88,14 +88,14 @@
         <description>获取当前用户对象</description>
         <name>getUser</name>
         <function-class>com.eryansky.core.security.SecurityUtils</function-class>
-        <function-signature>com.eryansky.modules.sys.entity.User getCurrentUser()</function-signature>
+        <function-signature>com.eryansky.modules.sys.mapper.User getCurrentUser()</function-signature>
         <example>${fns:getUser()}</example>
     </function>
     <function>
         <description>根据ID获得用户对象</description>
         <name>getUserById</name>
         <function-class>com.eryansky.core.security.SecurityUtils</function-class>
-        <function-signature>com.eryansky.modules.sys.entity.User getUserById(java.lang.String)</function-signature>
+        <function-signature>com.eryansky.modules.sys.mapper.User getUserById(java.lang.String)</function-signature>
         <example>${fns:getUserById(id)}</example>
     </function>
 

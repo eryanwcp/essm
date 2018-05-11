@@ -9,15 +9,15 @@
 
 <%-- 引入jQuery --%>
 <script type="text/javascript" src="${appURL}/static/js/jquery/jquery-2.1.4.js" charset="utf-8"></script>
-<script type="text/javascript" src="${appURL}/static/js/jquery/jquery-extend.js" charset="utf-8"></script>
+<script type="text/javascript" src="${appURL}/static/js/jquery/jquery-extend${yuicompressor}.js" charset="utf-8"></script>
 
 <%-- jQuery Cookie插件 --%>
-<script type="text/javascript" src="${appURL}/static/js/jquery/jquery.cookie-min.js" charset="utf-8"></script>
+<script type="text/javascript" src="${appURL}/static/js/jquery/jquery.cookie${yuicompressor}.js" charset="utf-8"></script>
 
 <script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/af/fastclick.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/af/appframework.ui.js"></script>
 <%--自定义js--%>
-<script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/mobile.js?_=${sysInitTime}"></script>
+<script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/mobile${yuicompressor}.js?_=${sysInitTime}"></script>
 
 <%--<link rel="stylesheet" type="text/css" href="${appURL}/static/mobile/af/icons.css" />--%>
 <link rel="stylesheet" type="text/css" href="${appURL}/static/mobile/af/af.ui.mine.css" />

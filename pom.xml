@@ -584,11 +584,21 @@
                         disk/**,
                         userfiles/**,
                         static/js/bootstrap/2.3.2/docs/**,
-                        static/js/easyui-1.4/src/**,
-                        static/js/easyui-1.4/**/*.html,
+                        static/js/bootstrap/3.2.0/**,
+                        static/js/easyui-1.4.5/src/**,
+                        static/js/easyui-1.4.5/**/*.html,
+                        static/js/easyui-1.4.5/**/*.json,
+                        static/js/easyui-1.4.5/**/*.txt,
                         static/js/jquery-ztree/3.5.12/api/**,
                         static/js/jquery-ztree/3.5.12/demo/**,
                         static/js/My97DatePicker/docs/**,
+                        static/js/jquery-validation/1.11.1/*/*.*,
+                        static/js/jquery-validation/1.11.1/test/**,
+                        static/js/fancyBox/lib/**,
+                        static/js/fancyBox/demo/**,
+                        static/js/jquery-jbox/2.3/docs/**,
+                        static/js/jquery-jbox/2.3/Skins2/**,
+                        static/js/treeTable/demo/**,
                     </warSourceExcludes>
                     <webappDirectory>${project.build.directory}/${project.artifactId}</webappDirectory>
                     <!--
