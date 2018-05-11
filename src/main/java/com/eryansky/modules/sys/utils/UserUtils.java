@@ -114,6 +114,9 @@ public class UserUtils {
 
 
     public static String getDefaultOrganId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
         User user = getUser(userId);
         if(user != null){
             return user.getDefaultOrganId();
@@ -122,6 +125,9 @@ public class UserUtils {
     }
 
     public static String getDefaultOrganName(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
             return organExtend.getName();
