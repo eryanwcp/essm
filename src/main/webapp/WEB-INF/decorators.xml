@@ -6,6 +6,8 @@
     </excludes>
 
     <!-- 默认装饰页面, 在需要装饰的页面增加<meta name="decorator" content="default"/> -->
+    <decorator name="default" page="modules/sys/layouts/default.jsp" />
     <decorator name="default_sys" page="modules/sys/layouts/default.jsp" />
+    <decorator name="default_full" page="modules/sys/layouts/default.jsp" />
     <decorator name="default_sys_mobile" page="modules/sys/layouts/default_mobile.jsp" />
 </decorators>
