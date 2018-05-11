@@ -134,7 +134,7 @@ public class OrganUtils {
 
     public static boolean hasChild(String organId){
         List<Organ> list = organService.findByParent(organId);
-        return  Collections3.isEmpty(list) ? false:true;
+        return  Collections3.isNotEmpty(list);
     }
 
 
