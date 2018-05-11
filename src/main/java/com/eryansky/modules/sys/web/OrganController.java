@@ -260,12 +260,10 @@ public class OrganController extends SimpleController {
             if(SecurityUtils.isCurrentUserAdmin() || (StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.ALL.getValue()))){
                 organId = null;
             }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY_AND_CHILD.getValue()))){
-                User user = userService.get(sessionInfo.getUserId());
-                organId = UserUtils.getCompanyId(user.getId());
+                organId = UserUtils.getCompanyId(sessionInfo.getUserId());
 
             }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.OFFICE_AND_CHILD.getValue()))){
-                User user = userService.get(sessionInfo.getUserId());
-                organId = user.getDefaultOrganId();//TODO officeId
+                organId = UserUtils.getDefaultOrganId(sessionInfo.getUserId());
             }
             _parentId = organId;
         }

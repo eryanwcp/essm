@@ -95,7 +95,7 @@ $(function () {
 
     //数据列表
     $user_datagrid = $('#user_datagrid').datagrid({
-        url: ctxAdmin + '/sys/user/userDatagrid',
+        url: ctxAdmin + '/sys/user/datagrid',
         fit: true,
         pagination: true,//底部分页
         rownumbers: true,//显示行数
@@ -275,12 +275,12 @@ $(function () {
         }
     }).datagrid('showTooltip');
 
-    $loginNameOrName = $("#loginNameOrName").autocomplete(ctxAdmin+'/sys/user/autoComplete', {
+    $query = $("#query").autocomplete(ctxAdmin+'/sys/user/autoComplete', {
         remoteDataType:'json',
         minChars: 0,
         maxItemsToShow: 10
     });
-    var ac = $loginNameOrName.data('autocompleter');
+    var ac = $query.data('autocompleter');
     //添加查询属性
     ac.setExtraParam("rows",ac.options.maxItemsToShow);
 });

@@ -98,6 +98,27 @@ public class UserController extends SimpleController {
     }
 
 
+
+    /**
+     * 自定义查询
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = {"datagrid"})
+    @ResponseBody
+    public Datagrid<User> datagrid(String organId,String query,String userType) {
+        Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
+        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+        if(StringUtils.isBlank(organId)){
+            organId = sessionInfo.getLoginOrganId();
+        }
+
+        page = userService.findPage(page,organId, query, userType);
+        Datagrid<User> dg = new Datagrid<User>(page.getTotalCount(), page.getResult());
+        return dg;
+    }
+
     /**
      * @param model
      * @return
@@ -442,26 +463,6 @@ public class UserController extends SimpleController {
     }
 
 
-
-    /**
-     * 自定义查询
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = {"userDatagrid"})
-    @ResponseBody
-    public Datagrid<User> userDatagrid(String organId,String loginNameOrName,String userType) {
-        Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        if(StringUtils.isBlank(organId)){
-            organId = sessionInfo.getLoginOrganId();
-        }
-
-        page = userService.findPage(page,organId, loginNameOrName, userType);
-        Datagrid<User> dg = new Datagrid<User>(page.getTotalCount(), page.getResult());
-        return dg;
-    }
 
     /**
      * 用户列表

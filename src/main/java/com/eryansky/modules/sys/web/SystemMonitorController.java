@@ -68,7 +68,7 @@ public class SystemMonitorController extends SimpleController {
      * @param cacheName 缓存名称
      * @return
      */
-    @Logging(value = "系统监控-清空缓存",logType = LogType.access)
+    @Logging(value = "系统监控清空缓存",logType = LogType.access)
     @RequiresPermissions(value = AppConstants.ROLE_SYSTEM_MANAGER)
     @RequestMapping("clearCache")
     @ResponseBody

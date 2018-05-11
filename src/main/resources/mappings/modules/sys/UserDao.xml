@@ -110,8 +110,8 @@
         <where>
             a.status = #{status}
             AND (o.id = #{organId}  OR o.parent_ids LIKE
-            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
+                <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
             )
             <if test="query != null and query !=''">
                 AND (
@@ -119,6 +119,9 @@
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
                 OR a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                OR a.code LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
                 )
@@ -343,7 +346,7 @@
         ORDER BY a.sort asc
     </select>
 
-    <select id="findUserIdsByRoleId" resultType="User">
+    <select id="findUserIdsByRoleId" resultType="java.lang.String">
         SELECT
         a.id
         FROM t_sys_user a

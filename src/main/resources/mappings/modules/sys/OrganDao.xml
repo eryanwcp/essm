@@ -206,9 +206,9 @@
         <where>
             a.status = '0'
             <if test="id != null and id !=''">
-                AND a.parent_ids LIKE
+                AND (a.parent_id = #{id} OR a.parent_ids LIKE
                 <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
             </if>
         </where>
         ORDER BY a.sort asc

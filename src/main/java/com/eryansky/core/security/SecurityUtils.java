@@ -90,8 +90,9 @@ public class SecurityUtils {
                         return true;
                     }
                 }
+            }else{
+                return resourceService.isUserPermittedResourceCode(userId,resourceCode);
             }
-            return resourceService.isUserPermittedResourceCode(userId,resourceCode);
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
         }
@@ -195,16 +196,14 @@ public class SecurityUtils {
                         return true;
                     }
                 }
-            }
-
-
-            List<Role> list = roleService.findRolesByUserId(userId);
-            for (Role role : list) {
-                if (StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())) {
-                    return true;
+            }else{
+                List<Role> list = roleService.findRolesByUserId(userId);
+                for (Role role : list) {
+                    if (StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())) {
+                        return true;
+                    }
                 }
             }
-
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

@@ -65,7 +65,7 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
         requestUrl = requestUrl.replaceAll("//","/");
         //注解处理
         Boolean annotationHandler = this.annotationHandler(request,response,o,sessionInfo,requestUrl);
-        if(annotationHandler != null && annotationHandler){
+        if(annotationHandler != null){
             return annotationHandler;
         }
         //数据库处理

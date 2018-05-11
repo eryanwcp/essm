@@ -7,6 +7,7 @@ package com.eryansky.modules.sys.service;
 
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -140,6 +141,7 @@ public class RoleService extends CrudService<RoleDao, Role> {
         Parameter parameter = new Parameter();
         parameter.put(Role.FIELD_STATUS,Role.STATUS_NORMAL);
         parameter.put("organId",organId);
+        parameter.put("isSystem", YesOrNo.YES.getValue());
         return dao.findOrganRolesAndSystemRoles(parameter);
     }
 

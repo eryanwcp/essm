@@ -41,6 +41,9 @@
         FROM t_sys_role a
         <where>
             a.status = #{status}
+            <if test="organId != null and organId !=''">
+                AND a.organ_id = #{organId}
+            </if>
         </where>
         <choose>
             <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
@@ -120,8 +123,7 @@
         FROM t_sys_role a
         <where>
             a.status = '0'
-            AND a.organ_id = #{organId}
-            AND a.is_system = #{isSystem}
+            AND (a.organ_id = #{organId} OR a.is_system = #{isSystem})
         </where>
     </select>
 

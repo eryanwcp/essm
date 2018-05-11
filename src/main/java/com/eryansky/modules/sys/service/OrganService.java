@@ -234,7 +234,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             }
         }else{
             if(cascade){
-                organs = this.findChildsOrgans(parentId);
+                organs = this.findOwnerAndChildsOrgans(parentId);
             }else{
                 organs = this.findByParent(parentId,StatusState.NORMAL.getValue());
             }
@@ -639,7 +639,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @param id 机构ID
      * @return
      */
-    public List<Organ> findChildsOrgans(String id){
+    public List<Organ> findChilds(String id){
         Parameter parameter = new Parameter();
         parameter.put(Organ.FIELD_STATUS,Organ.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME,new Organ().getDbName());
@@ -726,7 +726,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @return
      */
     public List<Organ> findChildsDepartmentOrgans(String id){
-        List<Organ> organs = findChildsOrgans(id);
+        List<Organ> organs = findChilds(id);
         List<Organ> list = Lists.newArrayList();
         for(Organ organ:organs){
             if(OrganType.department.getValue().equals(organ.getType()) && OrganUtils.getOrganCompanyId(organ.getId()).equals(id)){
@@ -742,7 +742,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @return
      */
     public List<String> findChildsDepartmentOrganIds(String id){
-        List<Organ> organs = findChildsOrgans(id);
+        List<Organ> organs = findChilds(id);
         List<String> list = Lists.newArrayList();
         for(Organ organ:organs){
             if(OrganType.department.getValue().equals(organ.getType()) && OrganUtils.getOrganCompanyId(organ.getId()).equals(id)){
