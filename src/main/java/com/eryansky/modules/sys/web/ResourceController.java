@@ -26,6 +26,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -59,7 +61,7 @@ public class ResourceController extends SimpleController {
 
     @RequestMapping(value = {"treegrid"})
     @ResponseBody
-    public Datagrid<Resource> treegrid(String sort, String order) throws Exception {
+    public Datagrid<Resource> treegrid(Resource model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Resource entity = new Resource();
         List<Resource> list = resourceService.findList(entity);
         Datagrid<Resource> dg = new Datagrid<Resource>(list.size(), list);
