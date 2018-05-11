@@ -10,13 +10,6 @@
     var ctxAdmin = "${ctxAdmin}";
     var ctxFront = "${ctxFront}";
     var ctxStatic = "${ctxStatic}";
-    isSuperUser = function() {
-        var isSuperUser = "${sessionInfo.superUser}";
-        if(isSuperUser == "true"){
-            return true;
-        }
-        return false;
-    }
 </script>
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/css/default.css?_=${sysInitTime}" />
 <%-- 引入jQuery --%>

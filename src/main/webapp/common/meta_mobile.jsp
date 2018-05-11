@@ -32,11 +32,4 @@
     var ctxStatic = "${ctxStatic}";
     var ctxMobile = "${ctxMobile}";
     var appURL = "${appURL}";
-    isSuperUser = function() {
-        var isSuperUser = "${sessionInfo.superUser}";
-        if(isSuperUser == "true"){
-            return true;
-        }
-        return false;
-    }
 </script>

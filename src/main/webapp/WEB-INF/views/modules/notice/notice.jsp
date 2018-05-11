@@ -9,6 +9,14 @@
     <e:hasPermission name="notice:repeat">
         hasRepeatPermission = true;
     </e:hasPermission>
+    isSuperUser = function() {
+        var isSuperUser = "${sessionInfo.superUser}";
+        if(isSuperUser == "true"){
+            return true;
+        }
+        return false;
+    }
+    var isSuperUser = isSuperUser();
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/notice/notice${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <%-- easyui-layout布局 --%>

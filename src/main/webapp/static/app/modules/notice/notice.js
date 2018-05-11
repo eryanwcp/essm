@@ -1,5 +1,6 @@
 var noticeId = noticeId;
 var hasRepeatPermission = hasRepeatPermission;
+var isSuperUser = isSuperUser;
 
 
 var $notice_datagrid;
@@ -13,7 +14,7 @@ var $query_PublishUser_MultiSelect;
 
 var _operateType = undefined;//全局变量
 $(function () {
-    if(isSuperUser()){//meta.jsp
+    if(isSuperUser){//meta.jsp
         $("#publishUserIds_tr").show();
         $("#layout_north").panel("resize",{height:138});
         $.parser.parse($(".easyui-layout").parent());
