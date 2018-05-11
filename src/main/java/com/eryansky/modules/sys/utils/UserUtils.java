@@ -90,7 +90,7 @@ public class UserUtils {
     public static String getCompanyCode(String userId){
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
-            return organExtend.getCompanyCode();
+            return organExtend.getCode();
         }
         return null;
     }
@@ -98,7 +98,7 @@ public class UserUtils {
     public static String getCompanyName(String userId){
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
-            return organExtend.getCompanyName();
+            return organExtend.getName();
         }
         return null;
     }
@@ -116,19 +116,6 @@ public class UserUtils {
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
             return organExtend.getName();
-        }
-        return null;
-    }
-
-    /**
-     * 根据userId查找用户姓名
-     * @param userIds 用户ID集合
-     * @return
-     */
-    public static String getUserNames(List<String> userIds){
-        if(Collections3.isNotEmpty(userIds)){
-            List<User> list = userService.findUsersByIds(userIds);
-            return ConvertUtils.convertElementPropertyToString(list, "name", ",");
         }
         return null;
     }
