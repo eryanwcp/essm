@@ -11,6 +11,7 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.ApplicationSessionContext;
 import com.eryansky.core.security.annotation.RequiresPermissions;
+import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheUtils;
@@ -69,7 +70,7 @@ public class SystemMonitorController extends SimpleController {
      * @return
      */
     @Logging(value = "系统监控清空缓存",logType = LogType.access)
-    @RequiresPermissions(value = AppConstants.ROLE_SYSTEM_MANAGER)
+    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
     @RequestMapping("clearCache")
     @ResponseBody
     public Result clearCache(String cacheName){
