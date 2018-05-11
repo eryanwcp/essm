@@ -5,9 +5,6 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
-import com.eryansky.common.exception.ServiceException;
-import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.utils.CacheConstants;
@@ -80,9 +77,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * 根据角色编码查找
      * @param code 角色编
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     public Role getByCode(String code) {
         Parameter parameter = Parameter.newParameter();
@@ -94,9 +88,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
     /**
      * 查找所有
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @Cacheable(value = { CacheConstants.ROLE_ALL_CACHE})
     public List<Role> findAll() {

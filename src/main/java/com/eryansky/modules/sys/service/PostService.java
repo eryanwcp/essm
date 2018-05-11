@@ -5,9 +5,6 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
-import com.eryansky.common.exception.ServiceException;
-import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.hibernate.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
@@ -65,7 +62,7 @@ public class PostService extends CrudService<PostDao, Post> {
         savePostOrgans(entity.getId(),entity.getOrganIds());
     }
 
-    public Page<Post> findPage(Page<Post> p, Post entity) throws DaoException, SystemException, ServiceException {
+    public Page<Post> findPage(Page<Post> p, Post entity) {
         Parameter parameter = new Parameter();
         parameter.put(Post.FIELD_STATUS,Post.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME,new Post().getDbName());

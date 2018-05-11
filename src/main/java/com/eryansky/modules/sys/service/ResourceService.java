@@ -5,8 +5,6 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
-import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.model.Menu;
 import com.eryansky.common.model.TreeNode;
@@ -706,12 +704,8 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param userId 用户ID
      * @param resourceCode 资源编码
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
-    public boolean isUserPermittedResourceCode(String userId, String resourceCode) throws DaoException, SystemException,
-            ServiceException {
+    public boolean isUserPermittedResourceCode(String userId, String resourceCode) {
         Assert.notNull(userId, "参数[userId]为空!");
         Assert.notNull(resourceCode, "参数[resourceCode]为空!");
         List<Resource> list = this.findAuthorityResourcesByUserId(userId);
@@ -733,8 +727,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @return
      */
     @Cacheable(value = {CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE})
-    public boolean isAuthorityWithPermissions(String requestUrl, String userId)
-            throws DaoException,SystemException,ServiceException{
+    public boolean isAuthorityWithPermissions(String requestUrl, String userId){
         //如果是超级管理员 直接允许被授权
         if(SecurityUtils.isUserAdmin(userId)) {
             return true;
@@ -763,8 +756,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * 查找需要拦截的所有url规则
      * @return
      */
-    public List<String> getAllInterceptorUrls()
-            throws DaoException,SystemException,ServiceException{
+    public List<String> getAllInterceptorUrls(){
         List<String> markUrls = Lists.newArrayList();
         //查找所有资源
         List<Resource> resources = this.findResources();
@@ -781,8 +773,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param requestUrl 检查的URL地址
      * @return
      */
-    public boolean isInterceptorUrl(String requestUrl)
-            throws DaoException,SystemException,ServiceException{
+    public boolean isInterceptorUrl(String requestUrl){
         List<String> markUrlList = this.getAllInterceptorUrls();
         for(String markUrl :markUrlList){
             String[] markUrls = markUrl.split(";");
@@ -801,8 +792,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param userId   用户ID
      * @return    List<String> 用户拥有的markUrl地址
      */
-    public List<String> getUserAuthoritysByUserId(String userId)
-            throws DaoException,SystemException,ServiceException{
+    public List<String> getUserAuthoritysByUserId(String userId){
         List<String> userAuthoritys = Lists.newArrayList();
         List<TreeNode> treeNodes = this.findTreeNodeResourcesWithPermissions(userId);
         for(TreeNode node : treeNodes){
@@ -831,8 +821,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @return
      */
     @Transactional(readOnly = false)
-    public void iSynchronous(String resourceType, String code, String name, String parentCode, String status) throws DaoException, SystemException,
-            ServiceException {
+    public void iSynchronous(String resourceType, String code, String name, String parentCode, String status) {
         Validate.notNull(code, "参数[code]不能为null");
         if (status == null) {
             status = StatusState.NORMAL.getValue();

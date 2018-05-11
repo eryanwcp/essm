@@ -5,7 +5,6 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.hibernate.Parameter;
@@ -76,8 +75,6 @@ public class LogService extends CrudService<LogDao, Log> {
     /**
      * 清空有效期之外的日志
      * @param  day 保留时间 （天）
-     * @throws DaoException
-     * @throws SystemException
      */
     @Transactional(readOnly = false)
     public int clearInvalidLog(int day){

@@ -5,9 +5,6 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.exception.DaoException;
-import com.eryansky.common.exception.ServiceException;
-import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
@@ -103,9 +100,6 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
      * @param isCascade
      *            是否级联加载
      * @return List<TreeNode> 映射关系： TreeNode.text-->Dicitonary.name;TreeNode.id-->Dicitonary.id;
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @SuppressWarnings("unchecked")
     public List<TreeNode> getByDictionaryId(String dictionaryId, String excludeDictionaryItemId, boolean isCascade){
@@ -138,12 +132,8 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
      * @param isCascade
      *            是否级联加载
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
-    public TreeNode getTreeNode(DictionaryItem entity, String excludeDictionaryItemId, boolean isCascade)
-            throws DaoException, SystemException, ServiceException {
+    public TreeNode getTreeNode(DictionaryItem entity, String excludeDictionaryItemId, boolean isCascade){
         TreeNode node = new TreeNode(entity.getId(), entity.getName());
         List<DictionaryItem> subDictionaries = dao.findChilds(entity);
         if (isCascade) {// 递归查询子节点
@@ -229,7 +219,6 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
      *
      * @param dictionaryCode 字典分类编码
      * @return
-     * @throws DaoException ,SystemException,ServiceException
      */
     @Cacheable(value = {CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE})
     @SuppressWarnings("unchecked")
@@ -248,13 +237,9 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
      * 获取下拉列表
      * @param dictionaryCode 数据字典编码
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @Cacheable(value = { CacheConstants.DICTIONARYITEM_CONBOBOX_CACHE})
-    public List<Combobox> getByDictionaryCode(String dictionaryCode)
-            throws DaoException, SystemException, ServiceException {
+    public List<Combobox> getByDictionaryCode(String dictionaryCode){
         DictionaryItem dictionaryItem = new DictionaryItem();
         Dictionary dictionary = new Dictionary();
         dictionary.setCode(dictionaryCode);
@@ -304,12 +289,8 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
      * @param entity
      * @param isCascade 是否级联
      * @return
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
-    public TreeNode getTreeNode(DictionaryItem entity,boolean isCascade)
-            throws DaoException, SystemException, ServiceException {
+    public TreeNode getTreeNode(DictionaryItem entity,boolean isCascade){
         TreeNode node = new TreeNode(entity.getCode(), entity.getName());
         List<DictionaryItem> subDictionaries = dao.findChilds(entity);
         if (isCascade) {// 递归查询子节点
