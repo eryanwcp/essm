@@ -74,7 +74,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
         Assert.notNull(entity, "参数[entity]为空!");
         super.save(entity);
         saveRoleOrgans(entity.getId(),entity.getOrganIds());
-        logger.warn("保存色Role:{}",entity.getId());
     }
 
     /**
