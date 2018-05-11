@@ -16,10 +16,7 @@ import com.eryansky.common.utils.encode.Encrypt;
 import com.eryansky.common.utils.encode.Encryption;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityType;
-import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys.mapper.Organ;
-import com.eryansky.modules.sys.mapper.Post;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Sets;
@@ -47,10 +44,6 @@ public class UserService extends CrudService<UserDao, User> {
 
     @Autowired
     private UserDao dao;
-
-    @Autowired
-    private OrganService organService;
-
 
     /**
      * 清空缓存 非Manager调用
@@ -124,12 +117,10 @@ public class UserService extends CrudService<UserDao, User> {
                 + "," + CacheConstants.ORGAN_USER_TREE_CACHE);
         if(!Collections3.isEmpty(ids)){
             for(String id :ids){
-                User superUser = this.getSuperUser();
-                if (id.equals(superUser.getId())) {
+                if (isSuperUser(id)) {
                     throw new SystemException("不允许删除超级用户!");
                 }
-                User user = get(id);
-                dao.delete(user);
+                dao.delete(new User(id));
             }
         }else{
             logger.warn("参数[ids]为空.");
@@ -183,8 +174,8 @@ public class UserService extends CrudService<UserDao, User> {
 
     /**
      * 根据手机号和密码验证
-     * @param mobile
-     * @param password
+     * @param mobile 电话号码
+     * @param password 密码
      * @return
      */
     public User getUserByMP(String mobile, String password){

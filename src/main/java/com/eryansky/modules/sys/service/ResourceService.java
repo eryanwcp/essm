@@ -73,9 +73,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * 自定义保存资源.
      * <br/>说明：如果保存的资源类型为“功能” 则将所有子资源都设置为“功能”类型
      * @param entity 资源对象
-     * @throws DaoException
-     * @throws SystemException
-     * @throws ServiceException
      */
     @CacheEvict(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
@@ -121,6 +118,19 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         }
 
     }
+
+    /**
+     * 根据资源编码获取对象
+     * @param resourceCode 资源编码
+     * @return
+     */
+    public Resource getByCode(String resourceCode) {
+        Parameter parameter = new Parameter();
+        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put("code",resourceCode);
+        return dao.getByCode(parameter);
+    }
+
 
     /**
      * 查找本机以及下级数据
@@ -183,17 +193,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     }
 
 
-    /**
-     * 根据资源编码获取对象
-     * @param resourceCode 资源编码
-     * @return
-     */
-    public Resource getByCode(String resourceCode) {
-        Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
-        parameter.put("code",resourceCode);
-        return dao.getByCode(parameter);
-    }
+
 
     /**
      * 查找用户资源
@@ -216,6 +216,29 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         parameter.put("userId",userId);
         parameter.put("types",resourceTypes);
         return dao.findResourcesByUserId(parameter);
+    }
+
+    /**
+     * 查找用户资源IDS
+     * @param userId 用户ID
+     * @return
+     */
+    public List<String> findResourceIdsByUserId(String userId){
+        return findResourceIdsByUserId(userId,null);
+    }
+
+    /**
+     * 查找用户资源IDS
+     * @param userId 用户ID
+     * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
+     * @return
+     */
+    public List<String> findResourceIdsByUserId(String userId, List<String> resourceTypes){
+        Parameter parameter = new Parameter();
+        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
+        parameter.put("userId",userId);
+        parameter.put("types",resourceTypes);
+        return dao.findResourceIdsByUserId(parameter);
     }
 
 
@@ -267,30 +290,17 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         return dao.findResourceIdsByRoleId(parameter);
     }
 
+
+
+
     /**
-     * 查找用户资源IDS
+     * 查找用户资源
      * @param userId 用户ID
      * @return
      */
-    public List<String> findResourceIdsByUserId(String userId){
-        return findResourceIdsByUserId(userId,null);
+    public List<Resource> findAuthorityResourcesByUserId(String userId){
+        return findAuthorityResourcesByUserId(userId, null);
     }
-
-    /**
-     * 查找用户资源IDS
-     * @param userId 用户ID
-     * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
-     * @return
-     */
-    public List<String> findResourceIdsByUserId(String userId, List<String> resourceTypes){
-        Parameter parameter = new Parameter();
-        parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
-        parameter.put("userId",userId);
-        parameter.put("types",resourceTypes);
-        return dao.findResourceIdsByUserId(parameter);
-    }
-
-
 
     /**
      * 查找用户授权应用、导航菜单资源
@@ -324,15 +334,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         List<String> resourceTypes = Lists.newArrayList();
         resourceTypes.add(ResourceType.menu.getValue());
         return  findAuthorityResourcesByUserId(userId, resourceTypes);
-    }
-
-    /**
-     * 查找用户资源
-     * @param userId 用户ID
-     * @return
-     */
-    public List<Resource> findAuthorityResourcesByUserId(String userId){
-        return findAuthorityResourcesByUserId(userId, null);
     }
 
     /**
@@ -476,7 +477,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         parameter.put(Resource.FIELD_STATUS,Resource.STATUS_NORMAL);
         parameter.put("excludeResourceId",excludeResourceId);
         parameter.put("types",resourceTypes);
-        return  dao.findWithExculdeId(parameter);
+        return  dao.findQuery(parameter);
     }
 
     /**
@@ -719,15 +720,14 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         return flag;
     }
 
-
     /**
      * 根据请求地址判断用户是否有权访问该url
-     * @param requestUrl 请求URL地址
      * @param userId 用户ID
+     * @param requestUrl 请求URL地址
      * @return
      */
     @Cacheable(value = {CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE})
-    public boolean isAuthorityWithPermissions(String requestUrl, String userId){
+    public boolean isUserPermittedResourceMarkUrl(String userId,String requestUrl){
         //如果是超级管理员 直接允许被授权
         if(SecurityUtils.isUserAdmin(userId)) {
             return true;

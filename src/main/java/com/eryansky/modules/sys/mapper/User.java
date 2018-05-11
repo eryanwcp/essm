@@ -108,6 +108,12 @@ public class User extends DataEntity<User> implements IUser {
 
     private String query;
 
+    public User() {
+    }
+
+    public User(String id) {
+        super(id);
+    }
 
     public void setLoginName(String loginName) {
         this.loginName = loginName;

@@ -60,100 +60,104 @@ public class SecurityUtils {
      * @return
      */
     public static Boolean isPermitted(String resourceCode) {
-        boolean flag = false;
-        try {
-            SessionInfo sessionInfo = getCurrentSessionInfo();
-            if(sessionInfo == null){
-                return flag;
-            }
-            if (sessionInfo.isSuperUser()) {// 超级用户
-                flag = true;
-            } else {
-//                flag = resourceManager.isUserPermittedResourceCode(sessionInfo.getUserId(), resourceCode);
-                for (Permisson permisson:sessionInfo.getPermissons()) {
-                    if (resourceCode.equalsIgnoreCase(permisson.getCode())) {
-                        return true;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage(),e);
-        }
-        return flag;
+        return isPermitted(null,resourceCode);
     }
 
 
     /**
      * 是否授权某个资源
      *
+     * @param userId 用户ID
      * @param resourceCode 资源编码
      * @return
      */
-    public static Boolean isPermitted(String resourceCode, String userId) {
-        boolean flag = false;
+    public static Boolean isPermitted(String userId,String resourceCode) {
         try {
-            if(StringUtils.isBlank(userId)){
-                return flag;
+            SessionInfo sessionInfo = getCurrentSessionInfo();
+            if (userId == null) {
+                if (sessionInfo != null) {
+                    userId = sessionInfo.getUserId();
+                }
             }
-            User user = UserUtils.getUser(userId);
-            if(user == null){
-                return flag;
+            if (userId == null) {
+                throw new SystemException("用户[" + userId + "]不存在.");
             }
-            boolean isUserAdmin = userService.isSuperUser(userId);
-            if (isUserAdmin) {// 超级用户
-                flag = true;
-            } else {
-                List<Resource> resources = resourceService.findAuthorityResourcesByUserId(userId);
-                if (Collections3.isNotEmpty(resources)) {
-                    for(Resource resource:resources){
-                        if(StringUtils.isNotBlank(resource.getCode()) && resourceCode.equalsIgnoreCase(resource.getCode())){
-                            return true;
-                        }
+
+//            flag = resourceService.isUserPermittedResourceCode(sessionInfo.getUserId(), resourceCode);
+            if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                for(Permisson permisson:sessionInfo.getPermissons()){
+                    if (resourceCode.equalsIgnoreCase(permisson.getCode())) {
+                        return true;
                     }
                 }
             }
+            return resourceService.isUserPermittedResourceCode(userId,resourceCode);
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
         }
-        return flag;
+        return false;
+    }
+
+    /**
+     * 是否授权某个URL地址
+     *
+     * @param url 资源编码
+     * @return
+     */
+    public static Boolean isPermittedUrl(String url) {
+        return isPermittedUrl(null,url);
     }
 
 
     /**
-     * 授权某个URL地址
-     * @param url
+     * 是否授权某个URL地址
+     *
+     * @param userId 用户ID
+     * @param url 资源编码
      * @return
      */
-    public static Boolean isPermittedUrl(String url) {
+    public static Boolean isPermittedUrl(String userId, String url) {
         boolean flag = false;
         try {
             SessionInfo sessionInfo = getCurrentSessionInfo();
-            if (sessionInfo.isSuperUser()) {// 超级用户
-                flag = true;
-            } else {
-                boolean needInterceptor = resourceService.isInterceptorUrl(url);//是否需要拦截
-                if(needInterceptor){
-                    for (Permisson permisson:sessionInfo.getPermissons()) {
-                        if(!flag && StringUtils.isNotBlank(permisson.getMarkUrl())){
-                            String[] markUrls = permisson.getMarkUrl().split(";");
-                            for(int i=0;i<markUrls.length;i++){
-                                if(StringUtils.isNotBlank(markUrls[i]) && StringUtils.simpleWildcardMatch(markUrls[i],url)){
-                                    flag = true;
-                                    break;
-                                }
+            if (userId == null) {
+                if (sessionInfo != null) {
+                    userId = sessionInfo.getUserId();
+                }
+            }
+            if (userId == null) {
+                throw new SystemException("用户[" + userId + "]不存在.");
+            }
+
+            //是否需要拦截
+//            boolean needInterceptor = resourceService.isInterceptorUrl(url);
+//            if(!needInterceptor){
+//                return true;
+//            }
+
+            if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                for(Permisson permisson:sessionInfo.getPermissons()){
+                    if(!flag && StringUtils.isNotBlank(permisson.getMarkUrl())){
+                        String[] markUrls = permisson.getMarkUrl().split(";");
+                        for(int i=0;i<markUrls.length;i++){
+                            if(StringUtils.isNotBlank(markUrls[i]) && StringUtils.simpleWildcardMatch(markUrls[i],url)){
+                                flag = true;
+                                break;
                             }
                         }
-
                     }
-                }else{//无需拦截
-                    flag = true;
                 }
+                return flag;
+            }else{
+                return resourceService.isUserPermittedResourceMarkUrl(userId,url);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
         }
         return flag;
     }
+
+
 
     /**
      * 是否授权某个角色
@@ -174,7 +178,6 @@ public class SecurityUtils {
      * @return
      */
     public static Boolean isPermittedRole(String userId, String roleCode) {
-        boolean flag = false;
         try {
             SessionInfo sessionInfo = getCurrentSessionInfo();
             if (userId == null) {
@@ -186,20 +189,26 @@ public class SecurityUtils {
                 throw new SystemException("用户[" + userId + "]不存在.");
             }
 
-
-            if (sessionInfo.isSuperUser()) {// 超级用户
-                flag = true;
-            } else {
-                for (PermissonRole permissonRole : sessionInfo.getPermissonRoles()) {
+            if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                for(PermissonRole permissonRole:sessionInfo.getPermissonRoles()){
                     if (roleCode.equalsIgnoreCase(permissonRole.getCode())) {
                         return true;
                     }
                 }
             }
+
+
+            List<Role> list = roleService.findRolesByUserId(userId);
+            for (Role role : list) {
+                if (StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())) {
+                    return true;
+                }
+            }
+
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
-        return flag;
+        return false;
     }
 
 
@@ -291,8 +300,7 @@ public class SecurityUtils {
                 }
             }
 
-            User user = UserUtils.getUser(userId);
-            List<Post> posts = postService.findPostsByUserId(user.getId());
+            List<Post> posts = postService.findPostsByUserId(userId);
             for (Post post : posts) {
                 if (postCode.equalsIgnoreCase(post.getCode())) {
                     return true;
@@ -318,11 +326,9 @@ public class SecurityUtils {
         List<String> roleIds = roleService.findRoleIdsByUserId(user.getId());
         sessionInfo.setRoleIds(roleIds);
         sessionInfo.setLoginOrganId(user.getDefaultOrganId());
-        sessionInfo.setLoginCompanyCode(UserUtils.getCompanyCode(user.getId()));
         sessionInfo.setLoginOrganName(UserUtils.getDefaultOrganName(user.getId()));
+        sessionInfo.setLoginCompanyCode(UserUtils.getCompanyCode(user.getId()));
         sessionInfo.setLoginCompanyId(UserUtils.getCompanyId(user.getId()));
-
-        sessionInfo.setName(user.getName());
         return sessionInfo;
     }
 

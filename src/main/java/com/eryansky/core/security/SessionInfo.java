@@ -78,10 +78,6 @@ public class SessionInfo implements Serializable {
      */
     private List<String> roleIds;
     /**
-     * 角色名称组合
-     */
-    private String roleNames;
-    /**
      * 部门ID
      */
     private String loginOrganId;
@@ -101,10 +97,6 @@ public class SessionInfo implements Serializable {
      * 系统登录部门名称
      */
     private String loginOrganName;
-    /**
-     * 用户属组织机构名称 以","分割
-     */
-    private String organNames;
     /**
      * 用户岗位
      */
@@ -278,20 +270,6 @@ public class SessionInfo implements Serializable {
     }
 
     /**
-     * 角色名称组合
-     */
-    public String getRoleNames() {
-        return roleNames;
-    }
-
-    /**
-     * 设置 角色名称组合
-     */
-    public void setRoleNames(String roleNames) {
-        this.roleNames = roleNames;
-    }
-
-    /**
      * 角色ID集合
      */
     public List<String> getRoleIds() {
@@ -394,22 +372,6 @@ public class SessionInfo implements Serializable {
      */
     public void setLoginOrganName(String loginOrganName) {
         this.loginOrganName = loginOrganName;
-    }
-
-    /**
-     * 组织机构名称
-     *
-     * @return
-     */
-    public String getOrganNames() {
-        return organNames;
-    }
-
-    /**
-     * 设置组织机构名称
-     */
-    public void setOrganNames(String organNames) {
-        this.organNames = organNames;
     }
 
     public List<String> getPostCodes() {

@@ -31,7 +31,7 @@ public interface ResourceDao extends TreeDao<Resource> {
 
     List<Resource> findChild(Parameter parameter);
 
-    List<Resource> findWithExculdeId(Parameter parameter);
+    List<Resource> findQuery(Parameter parameter);
 
     List<Resource> findCustomQuery(Parameter parameter);
 

@@ -27,7 +27,7 @@ public class UserUtils {
     private static UserPasswordService userPasswordService = SpringContextHolder.getBean(UserPasswordService.class);
 
     /**
-     * 根据userId查找用户姓名
+     * 根据userId查找用户
      * @param userId 用户ID
      * @return
      */
@@ -79,17 +79,27 @@ public class UserUtils {
     }
 
 
+    /**
+     * 根据userId查找用户所属单位ID
+     * @param userId 用户ID
+     * @return
+     */
     public static String getCompanyId(String userId){
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        OrganExtend organExtend = OrganUtils.getCompanyByUserId(userId);
         if(organExtend != null){
-            return organExtend.getCompanyId();
+            return organExtend.getId();
         }
         return null;
     }
 
+    /**
+     * 根据userId查找用户所属单位编码
+     * @param userId 用户ID
+     * @return
+     */
     public static String getCompanyCode(String userId){
         if(StringUtils.isBlank(userId)){
             return null;
@@ -101,6 +111,11 @@ public class UserUtils {
         return null;
     }
 
+    /**
+     * 根据userId查找用户所属单位名称
+     * @param userId 用户ID
+     * @return
+     */
     public static String getCompanyName(String userId){
         if(StringUtils.isBlank(userId)){
             return null;
@@ -112,7 +127,11 @@ public class UserUtils {
         return null;
     }
 
-
+    /**
+     * 根据userId查找用户所属机构ID
+     * @param userId 用户ID
+     * @return
+     */
     public static String getDefaultOrganId(String userId){
         if(StringUtils.isBlank(userId)){
             return null;
@@ -124,6 +143,11 @@ public class UserUtils {
         return null;
     }
 
+    /**
+     * 根据userId查找用户所属机构名称
+     * @param userId 用户ID
+     * @return
+     */
     public static String getDefaultOrganName(String userId){
         if(StringUtils.isBlank(userId)){
             return null;
@@ -135,6 +159,11 @@ public class UserUtils {
         return null;
     }
 
+    /**
+     * 更新用户密码
+     * @param user 用户
+     * @return
+     */
     public static UserPassword addUserPasswordUpdate(User user){
         UserPassword userPassword = new UserPassword(user.getId(),user.getPassword());
         userPassword.setOriginalPassword(user.getOriginalPassword());
@@ -142,6 +171,13 @@ public class UserUtils {
         return userPassword;
     }
 
+    /**
+     * 更新用户密码
+     * @param userId 用户
+     * @param password 密码
+     * @param originalPassword 原始密码
+     * @return
+     */
     public static UserPassword addUserPasswordUpdate(String userId,String password,String originalPassword){
         UserPassword userPassword = new UserPassword(userId,password);
         userPassword.setOriginalPassword(originalPassword);
