@@ -241,19 +241,11 @@ public class Log extends DataEntity<Log> {
 
 
     public String getUserOfficeName(){
-        User user = UserUtils.getUser(this.getUserId());
-        if(user != null){
-            return UserUtils.getDefaultOrganName(userId);
-        }
-        return null;
+        return UserUtils.getDefaultOrganName(userId);
     }
 
     public String getUserCompanyName(){
-        User user = UserUtils.getUser(this.getUserId());
-        if(user != null){
-            return UserUtils.getCompanyName(userId);
-        }
-        return null;
+        return UserUtils.getCompanyName(userId);
     }
 
     /**
