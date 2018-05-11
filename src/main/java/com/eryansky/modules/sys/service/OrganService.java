@@ -445,7 +445,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @param organs
      */
     @Transactional(readOnly = false)
-    private void updateParentIds(List<Organ> organs){
+    public void updateParentIds(List<Organ> organs){
         for(Organ organ:organs){
             dao.updateParentIds(organ);
         }
