@@ -42,5 +42,7 @@ public interface SystemDao extends BaseDao {
 
     OrganExtend getOrganExtendByUserId(Parameter parameter);
 
+    OrganExtend getCompanyByUserId(Parameter parameter);
+
 	
 }

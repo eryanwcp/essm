@@ -80,6 +80,9 @@ public class UserUtils {
 
 
     public static String getCompanyId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
             return organExtend.getCompanyId();
@@ -88,17 +91,23 @@ public class UserUtils {
     }
 
     public static String getCompanyCode(String userId){
-        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
-        if(organExtend != null){
-            return organExtend.getCode();
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        OrganExtend company = OrganUtils.getCompanyByUserId(userId);
+        if(company != null){
+            return company.getCode();
         }
         return null;
     }
 
     public static String getCompanyName(String userId){
-        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
-        if(organExtend != null){
-            return organExtend.getName();
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        OrganExtend company = OrganUtils.getCompanyByUserId(userId);
+        if(company != null){
+            return company.getName();
         }
         return null;
     }

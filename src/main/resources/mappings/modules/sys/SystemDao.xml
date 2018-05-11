@@ -167,5 +167,16 @@
 		LEFT JOIN t_sys_user u ON u.default_organ_id = a.id
 		WHERE u.id = #{userId}
 	</select>
-	
+
+	<select id="getCompanyByUserId" resultType="OrganExtend">
+		SELECT
+		<include refid="organExtendColumns"/>
+		FROM t_sys_organ_extend e
+		LEFT JOIN t_sys_user u ON u.default_organ_id = e.id
+		LEFT JOIN t_sys_organ_extend a ON a.id = e.company_id
+		WHERE u.id = #{userId}
+	</select>
+
+
+
 </mapper>

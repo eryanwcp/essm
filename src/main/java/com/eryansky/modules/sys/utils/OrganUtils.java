@@ -75,9 +75,16 @@ public class OrganUtils {
         return systemService.getOrganExtendByUserId(userId);
     }
 
-    public static OrganExtend getOrganExtendCompanyByUserId(String userId){
-        OrganExtend organExtend = getOrganExtendByUserId(userId);
-        return getOrganExtend(organExtend.getCompanyId());
+    /**
+     * 根据用户ID查找
+     * @param userId 用户ID
+     * @return
+     */
+    public static OrganExtend getCompanyByUserId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        return systemService.getCompanyByUserId(userId);
     }
 
 
@@ -87,6 +94,9 @@ public class OrganUtils {
      * @return
      */
     public static String getOrganCompanyId(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
         OrganExtend organExtend = getOrganExtend(organId);
         if(organExtend != null){
             return organExtend.getCompanyId();

@@ -110,4 +110,17 @@ public class SystemService extends BaseService {
         return dao.getOrganExtendByUserId(parameter);
     }
 
+    /**
+     * 根据用户ID查找
+     * @param userId
+     * @return
+     */
+    public OrganExtend getCompanyByUserId(String userId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(OrganExtend.FIELD_STATUS,OrganExtend.STATUS_NORMAL);
+        parameter.put("userId",userId);
+        return dao.getCompanyByUserId(parameter);
+    }
+
+
 }
