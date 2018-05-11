@@ -440,17 +440,6 @@ public class UserService extends CrudService<UserDao, User> {
         }
     }
 
-    public boolean checkPostForUser(User user, Post post){
-        Validate.notNull(user, "参数[user]为空!");
-        Validate.notNull(post, "参数[post]为空!");
-        boolean flag = false;
-        List<String> userOrganIds = organService.findOrganIdsByUserId(user.getId());
-        if(Collections3.isNotEmpty(userOrganIds) && userOrganIds.contains(post.getOrganId())){
-            flag = true;
-        }
-        return flag;
-    }
-
     /**
      * 排序号交换
      * @param upUserId
@@ -686,9 +675,6 @@ public class UserService extends CrudService<UserDao, User> {
     }
 
 
-
-
-
     /**
      * 注销 空操 可提供切面使用
      */
@@ -748,10 +734,6 @@ public class UserService extends CrudService<UserDao, User> {
             dao.deleteNotInUserOrgansPostsByUserId(parameter);
         }
     }
-
-
-
-
 
 
     /**
