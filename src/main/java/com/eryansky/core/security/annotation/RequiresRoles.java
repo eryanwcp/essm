@@ -24,5 +24,5 @@ public @interface RequiresRoles {
 
     String[] value() default {};
 
-    public Logical logical() default AND;
+    Logical logical() default AND;
 }
