@@ -20,9 +20,9 @@ public class NoticeSendInfo extends BaseEntity<NoticeSendInfo> {
     private String noticeId;
     private Notice notice;
     /**
-     * 接收人类型 {@link com.eryansky.modules.mail._enum.ReceiveObjectType}
+     * 接收人类型 {@link com.eryansky.modules.notice._enum.ReceiveObjectType}
      */
-    private Integer receiveObjectType;
+    private String receiveObjectType;
     /**
      * 接收对象ID
      */
@@ -55,11 +55,11 @@ public class NoticeSendInfo extends BaseEntity<NoticeSendInfo> {
         return this.notice;
     }
 
-    public Integer getReceiveObjectType() {
+    public String getReceiveObjectType() {
         return receiveObjectType;
     }
 
-    public void setReceiveObjectType(Integer receiveObjectType) {
+    public void setReceiveObjectType(String receiveObjectType) {
         this.receiveObjectType = receiveObjectType;
     }
 

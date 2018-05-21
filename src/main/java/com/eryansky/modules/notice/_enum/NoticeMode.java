@@ -7,29 +7,29 @@ public enum NoticeMode {
     /**
      * 未发布(0)
      */
-    UnPublish(0, "未发布"),
+    UnPublish("0", "未发布"),
     /**
      * 生效(1)
      */
-    Effective(1, "已发布"),
+    Effective("1", "已发布"),
     /**
      * 待生效(2)
      */
-    Invalidated(2, "已失效"),
+    Invalidated("2", "已失效"),
     /**
      * 正在发布(3)
      */
-    Publishing(3, "正在发布");
+    Publishing("3", "正在发布");
     /**
-     * 值 Integer型
+     * 值 String型
      */
-    private final Integer value;
+    private final String value;
     /**
      * 描述 String型
      */
     private final String description;
 
-    NoticeMode(Integer value, String description) {
+    NoticeMode(String value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -39,7 +39,7 @@ public enum NoticeMode {
      *
      * @return value
      */
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -52,7 +52,7 @@ public enum NoticeMode {
         return description;
     }
 
-    public static NoticeMode getByValue(Integer value) {
+    public static NoticeMode getByValue(String value) {
         if (null == value)
             return null;
         for (NoticeMode _enum : NoticeMode.values()) {

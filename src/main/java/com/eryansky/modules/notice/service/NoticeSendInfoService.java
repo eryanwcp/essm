@@ -35,10 +35,10 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
     /**
      * 通知发送配置信息
      * @param noticeId 通知ID
-     * @param receiveObjectType {@link com.eryansky.modules.mail._enum.ReceiveObjectType}
+     * @param receiveObjectType {@link com.eryansky.modules.notice._enum.ReceiveObjectType}
      * @return
      */
-    public List<NoticeSendInfo> findNoticeSendInfos(String noticeId,Integer receiveObjectType){
+    public List<NoticeSendInfo> findNoticeSendInfos(String noticeId,String receiveObjectType){
         NoticeSendInfo noticeSendInfo = new NoticeSendInfo();
         Notice notice = new Notice(noticeId);
         notice.setStatus(StatusState.NORMAL.getValue());

@@ -64,7 +64,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 0表示不置顶，1表示置顶
      */
-    private Integer isTop;
+    private String isTop;
     /**
      * 结束置顶天数
      */
@@ -73,7 +73,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 状态 默认：未发布 {@link NoticeMode}
      */
-    private Integer mode = NoticeMode.UnPublish.getValue();
+    private String mode = NoticeMode.UnPublish.getValue();
     /**
      * 发布日期
      */
@@ -148,11 +148,11 @@ public class Notice extends DataEntity<Notice> {
     }
 
 
-    public void setIsTop(Integer isTop) {
+    public void setIsTop(String isTop) {
         this.isTop = isTop;
     }
 
-    public Integer getIsTop() {
+    public String getIsTop() {
         return this.isTop;
     }
 
@@ -165,11 +165,11 @@ public class Notice extends DataEntity<Notice> {
     }
 
 
-    public void setMode(Integer mode) {
+    public void setMode(String mode) {
         this.mode = mode;
     }
 
-    public Integer getMode() {
+    public String getMode() {
         return this.mode;
     }
 

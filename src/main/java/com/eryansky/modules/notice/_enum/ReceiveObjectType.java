@@ -7,34 +7,34 @@ public enum ReceiveObjectType {
     /**
      * 用户(0)
      */
-    User(0, "用户"),
+    User("0", "用户"),
     /**
      * 联系人(1)
      */
-    UserGroup(1, "用户组"),
+    UserGroup("1", "用户组"),
     /**
      * 部门(2)
      */
-    Organ(2, "部门"),
+    Organ("2", "部门"),
     /**
      * 联系人(3)
      */
-    Contact(3, "联系人"),
+    Contact("3", "联系人"),
     /**
      * 联系人组(4)
      */
-    ContactGroup(4, "联系人组");
+    ContactGroup("4", "联系人组");
 
     /**
-     * 值 Integer型
+     * 值 String型
      */
-    private final Integer value;
+    private final String value;
     /**
      * 描述 String型
      */
     private final String description;
 
-    ReceiveObjectType(Integer value, String description) {
+    ReceiveObjectType(String value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -44,7 +44,7 @@ public enum ReceiveObjectType {
      *
      * @return value
      */
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -57,7 +57,7 @@ public enum ReceiveObjectType {
         return description;
     }
 
-    public static ReceiveObjectType getByValue(Integer value) {
+    public static ReceiveObjectType getByValue(String value) {
         if (null == value)
             return null;
         for (ReceiveObjectType _enum : ReceiveObjectType.values()) {

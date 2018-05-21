@@ -7,22 +7,22 @@ public enum IsTop {
     /**
      * 不置顶(0)
      */
-    No(0, "不置顶"),
+    No("0", "不置顶"),
     /**
      * 置顶(1)
      */
-    Yes(1, "置顶");
+    Yes("1", "置顶");
 
     /**
-     * 值 Integer型
+     * 值 String型
      */
-    private final Integer value;
+    private final String value;
     /**
      * 描述 String型
      */
     private final String description;
 
-    IsTop(Integer value, String description) {
+    IsTop(String value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -32,7 +32,7 @@ public enum IsTop {
      *
      * @return value
      */
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -45,7 +45,7 @@ public enum IsTop {
         return description;
     }
 
-    public static IsTop getByValue(Integer value) {
+    public static IsTop getByValue(String value) {
         if (null == value)
             return null;
         for (IsTop _enum : IsTop.values()) {

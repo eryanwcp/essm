@@ -349,7 +349,7 @@ public class NoticeController extends SimpleController {
         return result;
     }
 
-    private void saveNoticeSendInfos(List<String> ids, String noticeId,Integer receieveObjectType){
+    private void saveNoticeSendInfos(List<String> ids, String noticeId,String receieveObjectType){
         if(Collections3.isNotEmpty(ids)) {
             for(String id : ids){
                 NoticeSendInfo noticeSendInfo = new NoticeSendInfo();

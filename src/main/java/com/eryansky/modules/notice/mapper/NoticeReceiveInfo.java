@@ -146,7 +146,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
         return getNotice().getPublishTime();
     }
 
-    public Integer getIsTop() {
+    public String getIsTop() {
         return getNotice().getIsTop();
     }
 

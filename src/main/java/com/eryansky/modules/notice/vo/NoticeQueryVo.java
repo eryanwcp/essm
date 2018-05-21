@@ -36,11 +36,11 @@ public class NoticeQueryVo implements Serializable {
     /**
      * 是否置顶 {@link com.eryansky.modules.notice._enum.IsTop}
      */
-    private Integer isTop;
+    private String isTop;
     /**
      * 是否阅读 {@link com.eryansky.modules.notice._enum.NoticeReadMode}
      */
-    private Integer isRead;
+    private String isRead;
     /**
      * 通知发布人
      */
@@ -78,19 +78,19 @@ public class NoticeQueryVo implements Serializable {
         this.endTime = endTime;
     }
 
-    public Integer getIsTop() {
+    public String getIsTop() {
         return isTop;
     }
 
-    public void setIsTop(Integer isTop) {
+    public void setIsTop(String isTop) {
         this.isTop = isTop;
     }
 
-    public Integer getIsRead() {
+    public String getIsRead() {
         return isRead;
     }
 
-    public void setIsRead(Integer isRead) {
+    public void setIsRead(String isRead) {
         this.isRead = isRead;
     }
 
