@@ -57,7 +57,7 @@ public enum ReceiveObjectType {
         return description;
     }
 
-    public static ReceiveObjectType getReceiveObjectType(Integer value) {
+    public static ReceiveObjectType getByValue(Integer value) {
         if (null == value)
             return null;
         for (ReceiveObjectType _enum : ReceiveObjectType.values()) {
@@ -67,7 +67,7 @@ public enum ReceiveObjectType {
         return null;
     }
 
-    public static ReceiveObjectType getReceiveObjectType(String description) {
+    public static ReceiveObjectType getByDescription(String description) {
         if (null == description)
             return null;
         for (ReceiveObjectType _enum : ReceiveObjectType.values()) {

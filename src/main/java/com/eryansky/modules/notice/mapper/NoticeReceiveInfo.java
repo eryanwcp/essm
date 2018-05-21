@@ -90,7 +90,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
      * @return
      */
     public String getIsReadView(){
-        NoticeReadMode s = NoticeReadMode.getNoticeReadMode(isRead);
+        NoticeReadMode s = NoticeReadMode.getByValue(isRead);
         String str = "";
         if(s != null){
             str =  s.getDescription();
@@ -175,6 +175,6 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
      * @return
      */
     public String isReadView(){
-        return this.isRead() == true ? NoticeReadMode.readed.getDescription():NoticeReadMode.unreaded.getDescription();
+        return this.isRead() ? NoticeReadMode.readed.getDescription():NoticeReadMode.unreaded.getDescription();
     }
 }

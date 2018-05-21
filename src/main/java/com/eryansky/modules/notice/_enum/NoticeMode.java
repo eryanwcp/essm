@@ -52,7 +52,7 @@ public enum NoticeMode {
         return description;
     }
 
-    public static NoticeMode getNoticeMode(Integer value) {
+    public static NoticeMode getByValue(Integer value) {
         if (null == value)
             return null;
         for (NoticeMode _enum : NoticeMode.values()) {
@@ -62,7 +62,7 @@ public enum NoticeMode {
         return null;
     }
 
-    public static NoticeMode getNoticeMode(String description) {
+    public static NoticeMode getByDescription(String description) {
         if (null == description)
             return null;
         for (NoticeMode _enum : NoticeMode.values()) {

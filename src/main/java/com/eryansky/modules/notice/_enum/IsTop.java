@@ -45,7 +45,7 @@ public enum IsTop {
         return description;
     }
 
-    public static IsTop getIsTop(Integer value) {
+    public static IsTop getByValue(Integer value) {
         if (null == value)
             return null;
         for (IsTop _enum : IsTop.values()) {
@@ -55,7 +55,7 @@ public enum IsTop {
         return null;
     }
 
-    public static IsTop getIsTop(String description) {
+    public static IsTop getByDescription(String description) {
         if (null == description)
             return null;
         for (IsTop _enum : IsTop.values()) {

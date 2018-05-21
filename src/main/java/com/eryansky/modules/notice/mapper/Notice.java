@@ -241,7 +241,7 @@ public class Notice extends DataEntity<Notice> {
     }
 
     public String getIsTopView() {
-        IsTop s = IsTop.getIsTop(isTop);
+        IsTop s = IsTop.getByValue(isTop);
         String str = "";
         if (s != null) {
             str = s.getDescription();
@@ -250,7 +250,7 @@ public class Notice extends DataEntity<Notice> {
     }
 
     public String getModeView() {
-        NoticeMode s = NoticeMode.getNoticeMode(mode);
+        NoticeMode s = NoticeMode.getByValue(mode);
         String str = "";
         if (s != null) {
             str = s.getDescription();

@@ -43,7 +43,7 @@ public enum NoticeReceiveScope {
         return description;
     }
 
-    public static NoticeReceiveScope getNoticeReceiveScopeByValue(String value) {
+    public static NoticeReceiveScope getByValue(String value) {
         if (null == value)
             return null;
         for (NoticeReceiveScope _enum : NoticeReceiveScope.values()) {
@@ -53,7 +53,7 @@ public enum NoticeReceiveScope {
         return null;
     }
 
-    public static NoticeReceiveScope getNoticeReceiveScopeByDescription(String description) {
+    public static NoticeReceiveScope getByDescription(String description) {
         if (null == description)
             return null;
         for (NoticeReceiveScope _enum : NoticeReceiveScope.values()) {

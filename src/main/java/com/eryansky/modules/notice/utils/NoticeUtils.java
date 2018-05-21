@@ -13,6 +13,7 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.mapper.Notice;
+import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeSendInfoService;
@@ -56,10 +57,9 @@ public class NoticeUtils {
      * @return
      */
     public static boolean isRead(String noticeId) {
-//        return noticeReceiveInfoService.isRead(SecurityUtils.getCurrentSessionInfo().getUserId(), noticeId);
-        return true;
+        NoticeReceiveInfo noticeReceiveInfo = noticeReceiveInfoService.getUserNotice(SecurityUtils.getCurrentUserId(), noticeId);
+        return noticeReceiveInfo != null && noticeReceiveInfo.isRead();
     }
-
 
 
     public static List<String> getNoticeFileIds(String noticeId) {
