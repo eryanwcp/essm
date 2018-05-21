@@ -6,7 +6,7 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>3.0.20180510-SNAPSHOT</version>
+    <version>3.0.20180521-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -652,7 +652,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>${tomcat.version}</version>
                 <configuration>
-                    <url>http://10.36.10.54:8082/manager/text</url>
+                    <url>http://127.0.0.1:8080/manager/text</url>
                     <server>tomcat7</server>
                     <username>admin</username>
                     <password>password</password>
