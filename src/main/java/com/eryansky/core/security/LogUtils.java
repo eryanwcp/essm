@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class LogUtils {
 
-    public static final Logger ERROR_LOG = LoggerFactory.getLogger("essh-error");
-    public static final Logger ACCESS_LOG = LoggerFactory.getLogger("essh-access");
+    public static final Logger ERROR_LOG = LoggerFactory.getLogger("essm-error");
+    public static final Logger ACCESS_LOG = LoggerFactory.getLogger("essm-access");
 
     /**
      * 记录访问日志

@@ -1,6 +1,6 @@
 ﻿<%@ page import="com.eryansky.utils.AppConstants" %>
 <%@ page import="com.eryansky.common.web.utils.WebUtils" %>
-<%@ taglib prefix="e" uri="/essh-tags" %>
+<%@ taglib prefix="e" uri="/essm-tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"  %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
