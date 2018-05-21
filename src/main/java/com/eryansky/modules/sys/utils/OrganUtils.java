@@ -11,7 +11,6 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.service.OrganService;
-import com.eryansky.modules.sys.service.SystemService;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import java.util.List;
 public class OrganUtils {
 
     private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
-    private static SystemService systemService = SpringContextHolder.getBean(SystemService.class);
 
     /**
      * 根据机构ID查找机构名称
@@ -46,7 +44,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return systemService.getOrganExtend(organId);
+        return organService.getOrganExtend(organId);
     }
 
     /**
@@ -58,7 +56,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return systemService.getOrganCompany(organId);
+        return organService.getOrganCompany(organId);
     }
 
     /**
@@ -70,7 +68,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        return systemService.getOrganExtendByUserId(userId);
+        return organService.getOrganExtendByUserId(userId);
     }
 
     /**
@@ -82,7 +80,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        return systemService.getCompanyByUserId(userId);
+        return organService.getCompanyByUserId(userId);
     }
 
 

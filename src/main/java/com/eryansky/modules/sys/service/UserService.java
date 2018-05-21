@@ -321,6 +321,31 @@ public class UserService extends CrudService<UserDao, User> {
     }
 
 
+    /**
+     * 获取单位下直属部门用户
+     * @param companyId 单位ID
+     * @return
+     */
+    public List<User> findUsersByCompanyId(String companyId) {
+        Assert.notNull(companyId, "参数[companyId]为空!");
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("companyId",companyId);
+        return dao.findUsersByCompanyId(parameter);
+    }
+
+    /**
+     * 获取单位下直属部门用户IDS
+     * @param companyId 单位ID
+     * @return
+     */
+    public List<String> findUserIdsByCompanyId(String companyId) {
+        Assert.notNull(companyId, "参数[companyId]为空!");
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("companyId",companyId);
+        return dao.findUserIdsByCompanyId(parameter);
+    }
 
 
 

@@ -38,13 +38,4 @@ public interface SystemDao extends BaseDao {
      */
     int deleteOrganExtend(@Param("id") String id);
 
-    OrganExtend getOrganExtend(Parameter parameter);
-
-    OrganExtend getOrganCompany(Parameter parameter);
-
-    OrganExtend getOrganExtendByUserId(Parameter parameter);
-
-    OrganExtend getCompanyByUserId(Parameter parameter);
-
-	
 }

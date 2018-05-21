@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.sys.dao.SystemSerialNumberDao">
+    
+	<sql id="systemSerialNumberColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.module_name AS "moduleName",
+		a.module_code AS "moduleCode",
+		a.config_template AS "configTemplate",
+		a.max_serial AS "maxSerial",
+		a.year_clear AS "yearClear",
+		a.is_auto_increment AS "isAutoIncrement",
+		a.pre_max_num AS "preMaxNum",
+		a.remark AS "remark"
+	</sql>
+	
+	<select id="get" resultType="SystemSerialNumber">
+		SELECT
+			<include refid="systemSerialNumberColumns"/>
+		FROM t_sys_serial_number a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SystemSerialNumber">
+		SELECT
+			<include refid="systemSerialNumberColumns"/>
+		FROM t_sys_serial_number a
+		WHERE a.status = #{STATUS_NORMAL}
+	</select>
+
+	<select id="find" resultType="SystemSerialNumber">
+		SELECT
+		<include refid="systemSerialNumberColumns"/>
+		FROM t_sys_serial_number a
+		WHERE a.status = #{STATUS_NORMAL}
+		AND a.module_code = #{moduleCode}
+	</select>
+
+
+	<select id="findAllList" resultType="SystemSerialNumber">
+		SELECT
+			<include refid="systemSerialNumberColumns"/>
+		FROM t_sys_serial_number a
+		WHERE a.status = #{STATUS_NORMAL}
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_sys_serial_number(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			module_name,
+			module_code,
+			config_template,
+			max_serial,
+			year_clear,
+			is_auto_increment,
+			pre_max_num,
+			remark
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{moduleName},
+			#{moduleCode},
+			#{configTemplate},
+			#{maxSerial},
+			#{yearClear},
+			#{isAutoIncrement},
+			#{preMaxNum},
+			#{remark}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_sys_serial_number SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			module_name = #{moduleName},
+			module_code = #{moduleCode},
+			config_template = #{configTemplate},
+			max_serial = #{maxSerial},
+			year_clear = #{yearClear},
+			is_auto_increment = #{isAutoIncrement},
+			pre_max_num = #{preMaxNum},
+			remark = #{remark}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_sys_serial_number SET
+			status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

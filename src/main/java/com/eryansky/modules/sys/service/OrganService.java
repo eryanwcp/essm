@@ -756,5 +756,109 @@ public class OrganService extends TreeService<OrganDao, Organ> {
 
 
 
+    /**
+     * 根据机构ID查找
+     * @param organId
+     * @return
+     */
+    public OrganExtend getOrganExtend(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("id",organId);
+        return dao.getOrganExtend(parameter);
+    }
+    /**
+     * 根据机构ID查找
+     * @param organId
+     * @return
+     */
+    public OrganExtend getOrganCompany(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("id",organId);
+        return dao.getOrganCompany(parameter);
+    }
+
+    /**
+     * 根据用户ID查找
+     * @param userId
+     * @return
+     */
+    public OrganExtend getOrganExtendByUserId(String userId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("userId",userId);
+        return dao.getOrganExtendByUserId(parameter);
+    }
+
+    /**
+     * 根据用户ID查找
+     * @param userId
+     * @return
+     */
+    public OrganExtend getCompanyByUserId(String userId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("userId",userId);
+        return dao.getCompanyByUserId(parameter);
+    }
+
+
+    /**
+     * 查找机构下直属部门
+     * @param organId
+     * @return
+     */
+    public List<OrganExtend> findDepartmentOrganExtendsByCompanyId(String organId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findDepartmentOrganExtendsByCompanyId(parameter);
+    }
+
+
+    /**
+     * 查找机构下直属部门ID
+     * @param organId
+     * @return
+     */
+    public List<String> findDepartmentOrganIdsByCompanyId(String organId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findDepartmentOrganIdsByCompanyId(parameter);
+    }
+
+
+    /**
+     * 查找机构下直属部门以及小组
+     * @param organId
+     * @return
+     */
+    public List<OrganExtend> findDepartmentAndGroupOrganExtendsByCompanyId(String organId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findDepartmentAndGroupOrganExtendsByCompanyId(parameter);
+    }
+
+
+    /**
+     * 查找机构下直属部门以及小组IDS
+     * @param organId
+     * @return
+     */
+    public List<String> findDepartmentAndGroupOrganIdsByCompanyId(String organId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findDepartmentAndGroupOrganIdsByCompanyId(parameter);
+    }
 
 }

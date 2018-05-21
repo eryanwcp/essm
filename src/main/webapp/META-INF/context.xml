@@ -11,5 +11,7 @@
               <!--maxWait="500"-->
               <!--maxActive="20"-->
             <!--/>-->
+    <!-- terracotta session集群配置 另需将terracotta-session-1.3.7.jar、terracotta-toolkit-1.6-runtime-5.7.0.jar放置在Tomcat lib目录下-->
+    <!--<Valve className="org.terracotta.session.TerracottaTomcat70xSessionValve" tcConfigUrl="10.36.10.16:9510"/>-->
 </Context>	
 

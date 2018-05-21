@@ -332,6 +332,34 @@
         ORDER BY a.sort ASC
     </select>
 
+    <select id="findUsersByCompanyId" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ_extend o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND o.company_id = #{companyId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findUserIdsByCompanyId" resultType="java.lang.String">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ_extend o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND o.company_id = #{companyId}
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
+
+
 
     <select id="findUsersByRoleId" resultType="java.lang.String">
         SELECT

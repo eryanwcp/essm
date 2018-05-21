@@ -114,78 +114,10 @@
 	<delete id="deleteOrganExtend">
 		DELETE FROM t_sys_organ_extend
 		<where>
-		<if test="id != null and id != ''">
-			AND id = #{id}
-		</if>
-	</where>
+			<if test="id != null and id != ''">
+				AND id = #{id}
+			</if>
+		</where>
 	</delete>
-
-
-	<sql id="organExtendColumns">
-		a.id AS "id",
-		a.create_user AS "createUser",
-		a.create_time AS "createTime",
-		a.status AS "status",
-		a.update_user AS "updateUser",
-		a.update_time AS "updateTime",
-		a.version AS "version",
-		a.NAME AS "name",
-		a.SHORT_NAME AS "shortName",
-		a.TYPE AS "type",
-		a.CODE AS "code",
-		a.SYS_CODE AS "sysCode",
-		a.ADDRESS AS "address",
-		a.MOBILE AS "mobile",
-		a.PHONE AS "phone",
-		a.FAX AS "fax",
-		a.MANAGER_USER_ID AS "managerUserId",
-		a.DEPUTY_MANAGER_USER_ID AS "deputyManagerUserId",
-		a.SUPER_MANAGER_USER_ID AS "superManagerUserId",
-		a.sort AS "sort",
-		a.PARENT_ID AS "parentId",
-		a.PARENT_IDS AS "parentIds",
-		a.AREA_ID AS "areaId",
-		a.REMARK AS "remark",
-		a.COMPANY_ID AS "companyId",
-		a.COMPANY_CODE AS "companyCode",
-		a.HOME_COMPANY_ID AS "homeCompanyId",
-		a.HOME_COMPANY_CODE AS "homeCompanyCode",
-		a.LEVEL AS "level"
-	</sql>
-
-	<select id="getOrganExtend" resultType="OrganExtend">
-		SELECT
-		<include refid="organExtendColumns"/>
-		FROM t_sys_organ_extend a
-		WHERE a.id = #{id}
-	</select>
-
-	<select id="getOrganCompany" resultType="OrganExtend">
-		SELECT
-		<include refid="organExtendColumns"/>
-		FROM t_sys_organ_extend e
-		LEFT JOIN t_sys_organ_extend a ON a.id = e.company_id
-		WHERE e.id = #{id}
-	</select>
-
-
-	<select id="getOrganExtendByUserId" resultType="OrganExtend">
-		SELECT
-		<include refid="organExtendColumns"/>
-		FROM t_sys_organ_extend a
-		LEFT JOIN t_sys_user u ON u.default_organ_id = a.id
-		WHERE u.id = #{userId}
-	</select>
-
-	<select id="getCompanyByUserId" resultType="OrganExtend">
-		SELECT
-		<include refid="organExtendColumns"/>
-		FROM t_sys_organ_extend e
-		LEFT JOIN t_sys_user u ON u.default_organ_id = e.id
-		LEFT JOIN t_sys_organ_extend a ON a.id = e.company_id
-		WHERE u.id = #{userId}
-	</select>
-
-
 
 </mapper>
