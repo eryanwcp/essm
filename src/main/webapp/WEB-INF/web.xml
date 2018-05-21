@@ -88,26 +88,7 @@
         <!--<url-pattern>/*</url-pattern>-->
     <!--</filter-mapping>-->
 
-    <!--<filter>-->
-        <!--<filter-name>AccessLogFilter</filter-name>-->
-        <!--<filter-class>com.eryansky.core.web.filter.AccessLogFilter</filter-class>-->
-        <!--&lt;!&ndash;<async-supported>true</async-supported>&ndash;&gt;-->
-        <!--<init-param>-->
-            <!--<param-name>blackListURL</param-name>-->
-            <!--<param-value>/static/**,*.js,*.css,*.jpg,*.gif,*.png,*.ico</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>-->
-            <!--<param-name>whiteListURL</param-name>-->
-            <!--<param-value>/**</param-value>-->
-        <!--</init-param>-->
-    <!--</filter>-->
 
-
-    <!--<filter-mapping>-->
-        <!--<filter-name>AccessLogFilter</filter-name>-->
-        <!--<url-pattern>/*</url-pattern>-->
-        <!--<dispatcher>REQUEST</dispatcher>-->
-    <!--</filter-mapping>-->
 
 
     <!-- 生产环境下使用 Response Header Added Filter -->
