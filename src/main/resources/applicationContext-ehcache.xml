@@ -12,6 +12,9 @@
 
     <description>Spring3.1原生EhCache缓存</description>
 
+    <context:property-placeholder ignore-unresolvable="true" location="classpath*:/appconfig.properties" />
+
+
     <!-- 启用缓存注解功能 -->
     <cache:annotation-driven cache-manager="ehCacheManager" />
 
@@ -21,6 +24,6 @@
 
     <!-- cacheManagerFactory工厂类 -->
     <bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:/cache/ehcache-local.xml" />
+        <property name="configLocation" value="classpath:${ehcache.configLocation}" />
     </bean>
 </beans>
