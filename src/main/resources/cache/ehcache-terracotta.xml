@@ -6,6 +6,9 @@
 
     <!-- 默认缓存配置. -->
     <defaultCache maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600" maxElementsOnDisk="100000" >
+        <terracotta clustered="true">
+            <nonstop/>
+        </terracotta> <!-- 开启集群 -->
     </defaultCache>
 
 	<!-- Special objects setting. -->
@@ -20,7 +23,7 @@
 
     <!--自定义登录用户Session信息-->
     <cache name="sessionCache" maxEntriesLocalHeap="10000"
-           eternal="false" timeToLiveSeconds="0" timeToIdleSeconds="0"  memoryStoreEvictionPolicy="LFU"  diskExpiryThreadIntervalSeconds="600">
+           eternal="false" timeToLiveSeconds="0" timeToIdleSeconds="0"  diskExpiryThreadIntervalSeconds="600">
         <terracotta clustered="true">
             <nonstop/>
         </terracotta> <!-- 开启集群 -->
