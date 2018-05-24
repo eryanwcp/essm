@@ -6,8 +6,8 @@
 package com.eryansky.core.orm.mybatis.entity;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.persistence.AbstractBaseEntity;
-import com.eryansky.common.persistence.IUser;
+import com.eryansky.common.orm.persistence.AbstractBaseEntity;
+import com.eryansky.common.orm.persistence.IUser;
 import com.eryansky.common.utils.Identities;
 import com.eryansky.common.utils.io.PropertiesLoader;
 import com.eryansky.core.security.SecurityUtils;

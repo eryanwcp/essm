@@ -6,7 +6,7 @@
 package com.eryansky.core.orm.mybatis.entity;
 
 import com.eryansky.common.orm._enum.StatusState;
-import com.eryansky.common.persistence.IDataEntity;
+import com.eryansky.common.orm.persistence.IDataEntity;
 import com.eryansky.common.utils.Identities;
 import com.eryansky.core.security.SecurityUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -6,7 +6,7 @@
 package com.eryansky.core.orm.mybatis.service;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.persistence.CrudDao;
+import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;

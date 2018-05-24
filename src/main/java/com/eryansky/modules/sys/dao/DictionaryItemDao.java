@@ -6,7 +6,7 @@
 package com.eryansky.modules.sys.dao;
 
 import com.eryansky.common.orm.mybatis.MyBatisDao;
-import com.eryansky.common.persistence.CrudDao;
+import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.modules.sys.mapper.DictionaryItem;
 
 import java.util.List;

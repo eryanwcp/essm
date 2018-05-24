@@ -5,7 +5,7 @@
  */
 package com.eryansky.core.security;
 
-import com.eryansky.common.persistence.AbstractBaseEntity;
+import com.eryansky.common.orm.persistence.AbstractBaseEntity;
 import com.eryansky.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;

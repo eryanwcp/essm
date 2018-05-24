@@ -46,7 +46,7 @@
                         </property>
                         <property name="annotatedClasses">
                             <list>
-                                <value>com.eryansky.common.persistence.AbstractBaseEntity</value>
+                                <value>com.eryansky.common.orm.persistence.AbstractBaseEntity</value>
                             </list>
                         </property>
                     </bean>

@@ -16,7 +16,7 @@
         <property name="dataSource" ref="defaultDataSource"/>
         <property name="typeAliasesPackage" value="com.eryansky.modules.sys.mapper,com.eryansky.modules.notice.mapper,
         com.eryansky.modules.disk.mapper"/>
-        <property name="typeAliasesSuperType" value="com.eryansky.common.persistence.AbstractBaseEntity"/>
+        <property name="typeAliasesSuperType" value="com.eryansky.common.orm.persistence.AbstractBaseEntity"/>
         <property name="mapperLocations" value="classpath:/mappings/modules/**/*.xml"/>
         <property name="configLocation" value="classpath:/mybatis-config.xml"></property>
     </bean>
@@ -30,6 +30,6 @@
     </bean>
     <!-- MyBatis end -->
 
-    <bean class="com.eryansky.common.persistence.MapperLoader"></bean>
+    <bean class="com.eryansky.common.orm.persistence.MapperLoader"></bean>
 
 </beans>

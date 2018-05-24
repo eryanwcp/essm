@@ -3,7 +3,7 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  */
-package com.eryansky.common.persistence;
+package com.eryansky.common.orm.persistence;
 
 /**
  * DAO支持类实现

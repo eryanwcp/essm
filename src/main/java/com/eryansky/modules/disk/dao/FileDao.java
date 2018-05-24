@@ -7,7 +7,7 @@ package com.eryansky.modules.disk.dao;
 
 import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
-import com.eryansky.common.persistence.CrudDao;
+import com.eryansky.common.orm.persistence.CrudDao;
 
 import com.eryansky.modules.disk.mapper.File;
 

@@ -5,7 +5,7 @@
  */
 package com.eryansky.core.orm.mybatis.dao;
 
-import com.eryansky.common.persistence.CrudDao;
+import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.core.orm.mybatis.entity.TreeEntity;
 
 import java.util.List;

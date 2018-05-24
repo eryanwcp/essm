@@ -6,7 +6,7 @@
 package com.eryansky.modules.sys.mapper;
 
 
-import com.eryansky.common.persistence.IUser;
+import com.eryansky.common.orm.persistence.IUser;
 import com.eryansky.common.utils.Pinyin4js;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
