@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.orm.entity.Parameter;
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys.dao.AreaDao;

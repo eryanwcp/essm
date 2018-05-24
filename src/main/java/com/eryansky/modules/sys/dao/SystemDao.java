@@ -5,10 +5,8 @@
  */
 package com.eryansky.modules.sys.dao;
 
-import com.eryansky.common.orm.entity.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.persistence.BaseDao;
-import com.eryansky.modules.sys.mapper.OrganExtend;
 import org.apache.ibatis.annotations.Param;
 
 /**

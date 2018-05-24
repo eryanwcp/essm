@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.orm.entity.Parameter;
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.sys._enum.YesOrNo;

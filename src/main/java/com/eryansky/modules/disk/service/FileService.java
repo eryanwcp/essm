@@ -6,7 +6,7 @@
 package com.eryansky.modules.disk.service;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm.entity.Parameter;
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.collections.Collections3;

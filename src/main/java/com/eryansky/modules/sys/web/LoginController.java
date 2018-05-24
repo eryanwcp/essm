@@ -10,7 +10,7 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Menu;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
-import com.eryansky.common.orm.entity.StatusState;
+import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.encode.Encrypt;

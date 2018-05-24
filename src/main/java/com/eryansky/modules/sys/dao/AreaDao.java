@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.sys.dao;
 
-import com.eryansky.common.orm.entity.Parameter;
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.core.orm.mybatis.dao.TreeDao;
 import com.eryansky.modules.sys.mapper.Area;

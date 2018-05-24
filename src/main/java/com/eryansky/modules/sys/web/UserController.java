@@ -22,7 +22,6 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.sys.utils.RoleUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.excelTools.ExcelUtils;
 import com.eryansky.core.excelTools.JsGridReportBase;
@@ -658,7 +657,7 @@ public class UserController extends SimpleController {
     /**
      * 锁定用户 批量
      * @param userIds
-     * @param status {@link com.eryansky.common.orm.entity.StatusState}
+     * @param status {@link com.eryansky.common.orm._enum.StatusState}
      * @return
      */
     @Logging(value = "用户管理-锁定用户",logType = LogType.access)

@@ -5,7 +5,7 @@
  */
 package com.eryansky.modules.notice.service;
 
-import com.eryansky.common.orm.entity.StatusState;
+import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.notice.dao.NoticeSendInfoDao;
 import com.eryansky.modules.notice.mapper.Notice;

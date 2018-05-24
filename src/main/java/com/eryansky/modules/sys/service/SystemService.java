@@ -5,12 +5,8 @@
  */
 package com.eryansky.modules.sys.service;
 
-import com.eryansky.common.orm.entity.Parameter;
-import com.eryansky.common.utils.StringUtils;
-import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.orm.mybatis.service.BaseService;
 import com.eryansky.modules.sys.dao.SystemDao;
-import com.eryansky.modules.sys.mapper.OrganExtend;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
