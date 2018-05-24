@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2014 http://www.jfit.com.cn
+ * Copyright (c) 2012-2018 http://www.eryansky.com
  * <p/>
- * 江西省锦峰软件科技有限公司
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.modules.sys.mapper;
 
