@@ -111,7 +111,7 @@
 
             </div>
             <div class="footer">
-                <label class="checkbox inline">
+                <label class="checkbox inline" style="border: none;">
                     <input type="checkbox" id="rememberMe" name="rememberMe"> <span style="color:#08c;">记住我</span>
                 </label>
                 <input class="btn btn-primary" type="submit" value="登 录"/>
