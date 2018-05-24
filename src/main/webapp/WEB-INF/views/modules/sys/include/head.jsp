@@ -4,7 +4,7 @@
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="author" content="锦峰软件"/>
+<meta name="author" content="尔演"/>
 <link rel="shortcut icon" href="${ctxStatic}/img/favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
@@ -27,18 +27,6 @@
 <script src="${ctxStatic}/js/My97DatePicker/WdatePicker.js" type="text/javascript"></script>
 <link href="${ctxStatic}/js/fancyBox/source/jquery.fancybox.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/js/fancyBox/source/jquery.fancybox.js" type="text/javascript"></script>
-
-<%--兼容区--%>
-<!--[if IE 7]>
-<link href="${ctxStatic}/img/jfit_css/font-awesome-ie7.min.css" rel="stylesheet" type="text/css" />
-<![endif]-->
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<link href="${ctxStatic}/img/jfit_css/bootstrap-ie78.css" rel="stylesheet" type="text/css" />
-<script src="${ctxStatic}/img/jfit_css/respond.src.js" type="text/javascript"></script>
-<script src="${ctxStatic}/img/jfit_css/html5.js" type="text/javascript"></script>
-<![endif]-->
-
 <script src="${ctxStatic}/js/bootstrap/dropdown/bootstrap-hover-dropdown.js" type="text/javascript"></script>
 <!--[if lt IE 7 ]> <script src="${ctxStatic}/js/dd_belatedpng.js"></script> <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script> <![endif]-->
 
