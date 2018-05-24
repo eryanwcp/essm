@@ -14,6 +14,7 @@ import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.core.security.SecurityUtils;
@@ -715,7 +716,8 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         Assert.notNull(resource,"参数resource不能为空");
         Menu menu = new Menu(resource.getId(), resource.getName());
         menu.setpId(resource.getParentId());
-        menu.setHref(resource.getUrl());
+        String url = resource.getUrl();
+        menu.setHref(url);
         menu.addAttributes("type", resource.getType());
         return menu;
     }

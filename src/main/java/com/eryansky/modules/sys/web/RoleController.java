@@ -94,16 +94,17 @@ public class RoleController extends SimpleController {
     }
 
     /**
-     * @param role
+     * @param model
      * @return
      * @throws Exception
      */
     @RequestMapping(value = {"input"})
-    public String input(@ModelAttribute("model") Role role,Model uiModel) throws Exception {
-        if(StringUtils.isBlank(role.getId()) && !SecurityUtils.isCurrentUserAdmin()){
-            role.setIsSystem(YesOrNo.NO.getValue());
+    public String input(@ModelAttribute("model") Role model, Model uiModel) throws Exception {
+        if(StringUtils.isBlank(model.getId()) && !SecurityUtils.isCurrentUserAdmin()){
+            model.setIsSystem(YesOrNo.NO.getValue());
         }
-        uiModel.addAttribute("model", role);
+        uiModel.addAttribute("organIds", roleService.findRoleOrganIds(model.getId()));
+        uiModel.addAttribute("model", model);
         uiModel.addAttribute("roleTypes", RoleType.values());
         return "modules/sys/role-input";
     }

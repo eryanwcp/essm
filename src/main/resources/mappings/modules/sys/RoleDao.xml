@@ -205,6 +205,12 @@
             SELECT #{id}, #{item} FROM dual
         </foreach>
     </insert>
+
+    <select id="findRoleOrganIds" resultType="java.lang.String">
+        SELECT a.organ_id
+        FROM t_sys_role_organ a
+        WHERE a.role_id = #{id}
+    </select>
     <!--角色机构-->
 
 

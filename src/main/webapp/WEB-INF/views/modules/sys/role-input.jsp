@@ -1,8 +1,8 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="/common/taglibs.jsp"%>
 <script type="text/javascript">
-    var organIds = ${fns:toJson(model.organIds)};
-    var isSystem = ${model.isSystem};
+    var organIds = ${fns:toJson(organIds)};
+    var isSystem = "${model.isSystem}";
 </script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/sys/role-input${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 

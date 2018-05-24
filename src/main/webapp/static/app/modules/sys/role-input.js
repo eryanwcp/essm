@@ -1,8 +1,8 @@
 var organIds = organIds;
 var isSystem = isSystem;
 
-var $organ_combotree;
-var $organIds_combotree;
+var $organ_combotree = undefined;
+var $organIds_combotree = undefined;
 $(function () {
     loadData();
     loadDataScope();
@@ -78,7 +78,9 @@ function loadDataScope(data) {
                 $("#div_organIds").show();
             }else{
                 $("#div_organIds").hide();
-                $organIds_combotree.combotree("setValue","");
+                if($organIds_combotree){
+                    $organIds_combotree.combotree("setValue","");
+                }
             }
         }
     });

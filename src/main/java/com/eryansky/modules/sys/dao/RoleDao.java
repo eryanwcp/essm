@@ -44,6 +44,13 @@ public interface RoleDao extends CrudDao<Role> {
      */
     int insertRoleOrgans(Parameter parameter);
 
+    /**
+     * 角色机构关联信息
+     * @param parameter
+     * @return
+     */
+    List<String> findRoleOrganIds(Parameter parameter);
+
 
 
     /**

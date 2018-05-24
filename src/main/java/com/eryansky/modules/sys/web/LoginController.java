@@ -297,9 +297,7 @@ public class LoginController extends SimpleController {
     @RequestMapping(value = {"apps"})
     @ResponseBody
     public List<Menu> apps() {
-        HttpServletRequest request = SpringMVCHolder.getRequest();
         List<Menu> menus = Lists.newArrayList();
-        String head = this.getHeadFromUrl(request.getRequestURL().toString());
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if (sessionInfo != null) {
             List<Resource> resources = resourceService.findMenuResourcesWithPermissions(sessionInfo.getUserId());

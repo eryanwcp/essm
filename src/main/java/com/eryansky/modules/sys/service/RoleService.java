@@ -176,6 +176,19 @@ public class RoleService extends CrudService<RoleDao, Role> {
     }
 
     /**
+     * 查找角色关联机构
+     * @param id
+     */
+    public List<String> findRoleOrganIds(String id){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("id",id);
+        return dao.findRoleOrganIds(parameter);
+    }
+
+
+
+
+    /**
      * 保存角色用户关联信息
      * 保存之前先删除原有
      * @param id 角色ID

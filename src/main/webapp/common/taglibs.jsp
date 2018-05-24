@@ -11,7 +11,7 @@
 <c:set var="ctxFront" value="${pageContext.request.contextPath}${fns:getFrontPath()}" />
 <c:set var="ctxMobile" value="${pageContext.request.contextPath}${fns:getMobilePath()}" />
 <c:set var="ctxStatic" value="${pageContext.request.contextPath}/static"/>
-<c:set var="ev" value="1.4.5"/>
+<c:set var="ev" value="1.5.5.2"/>
 <%
     long sysInitTime = AppConstants.SYS_INIT_TIME;
     //系统启动时间
