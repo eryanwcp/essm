@@ -1,0 +1,43 @@
+[{
+    "id":"startMenu1",
+    "text":"权限管理",
+    "href":"#",
+    "children":[{
+	    "id":"startMenu11",
+	    "text":"资源管理",
+	    "href":"http://localhost/essh/base/resource.action",
+        "iconCls":"icon-ok"
+    },{
+        "id":"startMenu12",
+        "text":"角色管理",
+        "href":"http://localhost/essh/base/role.action",
+        "iconCls":"icon-ok"
+    },{
+        "id":"startMenu13",
+        "text":"用户管理",
+        "href":"http://localhost/essh/base/user.action",
+        "iconCls":"icon-ok"
+    }],
+	"iconCls":"icon-ok"
+},"-",{
+    "id":"startMenu2",
+    "text":"系统管理",
+    "href":"#",
+	"iconCls":"icon-ok",
+    "children":[{
+        "id":"startMenu21",
+        "text":"bug管理",
+        "href":"http://localhost/essh/sys/bug.action",
+        "iconCls":"icon-ok"
+    },{
+        "id":"startMenu22",
+        "text":"字典类型管理",
+        "href":"http://localhost/essh/sys/dictionary-type.action",
+        "iconCls":"icon-ok"
+    },{
+        "id":"startMenu13",
+        "text":"数据字典",
+        "href":"http://localhost/essh/sys/dictionary.action",
+        "iconCls":"icon-ok"
+    }]
+}]

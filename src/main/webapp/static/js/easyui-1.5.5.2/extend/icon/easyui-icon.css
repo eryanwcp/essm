@@ -1,0 +1,94 @@
+
+.easyui-icon-blank{
+    background:url('../../themes/icons/blank.gif') no-repeat center center;
+}
+.easyui-icon-add{
+    background:url('../../themes/icons/edit_add.png') no-repeat center center;
+}
+.easyui-icon-edit{
+    background:url('../../themes/icons/pencil.png') no-repeat center center;
+}
+.easyui-icon-clear{
+    background:url('../../themes/icons/clear.png') no-repeat center center;
+}
+.easyui-icon-remove{
+    background:url('../../themes/icons/edit_remove.png') no-repeat center center;
+}
+.easyui-icon-save{
+    background:url('../../themes/icons/filesave.png') no-repeat center center;
+}
+.easyui-icon-cut{
+    background:url('../../themes/icons/cut.png') no-repeat center center;
+}
+.easyui-icon-ok{
+    background:url('../../themes/icons/ok.png') no-repeat center center;
+}
+.easyui-icon-no{
+    background:url('../../themes/icons/no.png') no-repeat center center;
+}
+.easyui-icon-cancel{
+    background:url('../../themes/icons/cancel.png') no-repeat center center;
+}
+.easyui-icon-reload{
+    background:url('../../themes/icons/reload.png') no-repeat center center;
+}
+.easyui-icon-search{
+    background:url('../../themes/icons/search.png') no-repeat center center;
+}
+.easyui-icon-print{
+    background:url('../../themes/icons/print.png') no-repeat center center;
+}
+.easyui-icon-help{
+    background:url('../../themes/icons/help.png') no-repeat center center;
+}
+.easyui-icon-undo{
+    background:url('../../themes/icons/undo.png') no-repeat center center;
+}
+.easyui-icon-redo{
+    background:url('../../themes/icons/redo.png') no-repeat center center;
+}
+.easyui-icon-back{
+    background:url('../../themes/icons/back.png') no-repeat center center;
+}
+.easyui-icon-sum{
+    background:url('../../themes/icons/sum.png') no-repeat center center;
+}
+.easyui-icon-tip{
+    background:url('../../themes/icons/tip.png') no-repeat center center;
+}
+.easyui-icon-filter{
+    background:url('../../themes/icons/filter.png') no-repeat center center;
+}
+.easyui-icon-man{
+    background:url('../../themes/icons/man.png') no-repeat center center;
+}
+.easyui-icon-lock{
+    background:url('../../themes/icons/lock.png') no-repeat center center;
+}
+
+
+.easyui-icon-mini-add{
+    background:url('../../themes/icons/mini_add.png') no-repeat center center;
+}
+.easyui-icon-mini-edit{
+    background:url('../../themes/icons/mini_edit.png') no-repeat center center;
+}
+.easyui-icon-mini-refresh{
+    background:url('../../themes/icons/mini_refresh.png') no-repeat center center;
+}
+
+.easyui-icon-large-picture{
+    background:url('../../themes/icons/large_picture.png') no-repeat center center;
+}
+.easyui-icon-large-clipart{
+    background:url('../../themes/icons/large_clipart.png') no-repeat center center;
+}
+.easyui-icon-large-shapes{
+    background:url('../../themes/icons/large_shapes.png') no-repeat center center;
+}
+.easyui-icon-large-smartart{
+    background:url('../../themes/icons/large_smartart.png') no-repeat center center;
+}
+.easyui-icon-large-chart{
+    background:url('../../themes/icons/large_chart.png') no-repeat center center;
+}

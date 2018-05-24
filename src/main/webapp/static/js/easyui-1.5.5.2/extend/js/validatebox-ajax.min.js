@@ -1,0 +1,4 @@
+/*!
+ * 服务端异步校验
+ */
+$.extend($.fn.validatebox.defaults.rules,{ajax_exist:{validator:function(a,b){return ajax_exist(a,b)},message:"该数据项已存在."},user_loginName:{validator:function(a,b){return user_loginName(a,b)},message:"该用户已存在."},menu_name:{validator:function(a,b){return menu_name(a,b)},message:"该菜单名称已被使用."}});var ajax_exist=function(b,c){var a=ajax_check(c[1],c[2],b,c);return a};var user_loginName=function(b,c){var a=ajax_check("User","loginName",b,c);return a};var menu_name=function(b,c){var a=ajax_check("Resource","name",b,c);return a};var ajax_check=function(c,g,d,f){var e=null;if(f!=null){var b=f[0];e=$(b).val()}else{e=$("input[name='id']").val()}var a;$.ajax({url:"${ctx}/common/fieldCheck",async:false,data:{entityName:c,fieldName:g,fieldValue:d,rowId:e},dataType:"json",success:function(h){if(h.code==1){a=h.obj}}});return a};
