@@ -480,7 +480,7 @@ public class UserService extends CrudService<UserDao, User> {
         if (downUser.getSort() == null) {
             downUserOrderNo = 1;
         }
-        if (upUserOrderNo == downUserOrderNo) {
+        if (upUserOrderNo.equals(downUserOrderNo)) {
             if (moveUp) {
                 upUser.setSort(upUserOrderNo - 1);
             } else {
