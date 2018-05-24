@@ -4,7 +4,7 @@
 <meta http-equiv="Cache-Control" content="no-store" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<meta name="author" content="尔演"/>
+<meta name="author" content="尔演&Eryan"/>
 <link rel="shortcut icon" href="${ctxStatic}/img/favicon.ico" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />

@@ -5,23 +5,19 @@
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+<meta name="author" content="尔演&Eryan"/>
 <link rel="shortcut icon" href="${appURL}/static/img/favicon.ico" />
-
 <%-- 引入jQuery --%>
 <script type="text/javascript" src="${appURL}/static/js/jquery/jquery-2.1.4.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="${appURL}/static/js/jquery/jquery-extend${yuicompressor}.js" charset="utf-8"></script>
-
 <%-- jQuery Cookie插件 --%>
 <script type="text/javascript" src="${appURL}/static/js/jquery/jquery.cookie${yuicompressor}.js" charset="utf-8"></script>
-
 <script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/af/fastclick.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/af/appframework.ui.js"></script>
 <%--自定义js--%>
 <script type="text/javascript" charset="utf-8" src="${appURL}/static/mobile/mobile${yuicompressor}.js?_=${sysInitTime}"></script>
-
 <%--<link rel="stylesheet" type="text/css" href="${appURL}/static/mobile/af/icons.css" />--%>
 <link rel="stylesheet" type="text/css" href="${appURL}/static/mobile/af/af.ui.mine.css" />
-
 <%--自定义css--%>
 <link rel="stylesheet" type="text/css" href="${appURL}/static/app/mobile/mobile${yuicompressor}.css?_=${sysInitTime}" />
 <script type="text/javascript">
