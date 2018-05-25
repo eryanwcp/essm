@@ -42,6 +42,49 @@ public class FolderService extends CrudService<FolderDao, Folder> {
     @Autowired
     private FileService fileService;
 
+    /**
+     * 根据编码获取 获取系统文件夹
+     * <br/>如果不存在则自动创建
+     * @param code 系统文件夹编码
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public Folder checkSystemFolderByCode(String code){
+        Validate.notBlank(code, "参数[code]不能为null.");
+        List<Folder> list =  findFoldersByUserId(null,null,FolderAuthorize.SysTem.getValue(),code);
+        Folder folder =  list.isEmpty() ? null:list.get(0);
+        if(folder == null){
+            folder = new Folder();
+            folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
+            folder.setCode(code);
+            save(folder);
+        }
+        return folder;
+    }
+
+
+    /**
+     * 根据编码获取 获取用户的系统文件夹
+     * <br/>如果不存在则自动创建
+     * @param code 系统文件夹编码
+     * @param userId 用户ID
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public Folder checkSystemFolderByCode(String code,String userId){
+        Validate.notBlank(code, "参数[code]不能为null.");
+        Validate.notNull(userId, "参数[userId]不能为null.");
+        List<Folder> list =  findFoldersByUserId(userId,null,FolderAuthorize.SysTem.getValue(),code);
+        Folder folder =  list.isEmpty() ? null:list.get(0);
+        if(folder == null){
+            folder = new Folder();
+            folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
+            folder.setCode(code);
+            folder.setUserId(userId);
+            save(folder);
+        }
+        return folder;
+    }
 
     /**
      * 保存文件。 若为编辑部门下文件时需要判断是否有子文件夹并更新子文件夹的部门信息
@@ -123,27 +166,6 @@ public class FolderService extends CrudService<FolderDao, Folder> {
 
     }
 
-    /**
-     * 某个用户是否可以操作文件夹
-     * @param userId 用户ID
-     * @param folder 文件夹
-     * @return
-     */
-    public boolean isOperateFolder(String userId,Folder folder){
-        String _userId = userId;
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        if(_userId == null){
-            _userId = sessionInfo.getUserId();
-        }
-
-        boolean operateAble =  DiskUtils.isDiskAdmin(_userId);
-        if(!operateAble){
-            if(sessionInfo.getUserId().equals(folder.getUserId())){
-                operateAble = true;
-            }
-        }
-        return operateAble;
-    }
 
     /**
      * 是否允操作文件夹
@@ -231,19 +253,6 @@ public class FolderService extends CrudService<FolderDao, Folder> {
             }
         }
         return treeNodes;
-    }
-
-    /**
-     * TODO 我的分享和分享给我不由此进入；其他类型云盘查询隐藏文件夹
-     * @param userId
-     *            指定登录人
-     * @param folderAuthorize
-     *            指定云盘类型--> 不含我的分享和分享给我
-     * @return
-     */
-    public List<Folder> getAuthorizeFolders(String userId,
-                                            String folderAuthorize) {
-        return getFoldersByFolderAuthorize(folderAuthorize,userId,null);
     }
 
 

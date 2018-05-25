@@ -20,12 +20,10 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.disk.service.DiskService;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
-import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityUtils;
@@ -438,7 +436,7 @@ public class NoticeController extends SimpleController {
         try {
             file = DiskUtils.saveNoticeFile(sessionInfo,multipartFile);
             file.setStatus(StatusState.LOCK.getValue());
-            DiskUtils.updateFile(file);
+            DiskUtils.saveFile(file);
             result = Result.successResult().setObj(file.getId()).setMsg("文件上传成功！");
         } catch (InvalidExtensionException e) {
             exception = e;

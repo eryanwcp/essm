@@ -13,7 +13,6 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
-import com.eryansky.modules.disk.service.DiskService;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.service.FolderService;
 import com.google.common.collect.Maps;
@@ -55,7 +54,6 @@ public class DiskUtils {
 
     protected static Logger logger = LoggerFactory.getLogger(DiskUtils.class);
 
-    private static DiskService diskService = SpringContextHolder.getBean(DiskService.class);
     private static FolderService folderService = SpringContextHolder.getBean(FolderService.class);
     private static FileService fileService = SpringContextHolder.getBean(FileService.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
@@ -193,11 +191,11 @@ public class DiskUtils {
      * @return
      */
     public static Folder getSystemFolderByCode(String code) {
-        return diskService.checkSystemFolderByCode(code);
+        return folderService.checkSystemFolderByCode(code);
     }
 
     public static Folder getSystemFolderByCode(String code,String userId) {
-        return diskService.checkSystemFolderByCode(code,userId);
+        return folderService.checkSystemFolderByCode(code,userId);
     }
 
     /**
@@ -206,7 +204,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserNoticeFolder(String userId) {
-        return diskService.checkSystemFolderByCode(FOLDER_NOTICE,userId);
+        return folderService.checkSystemFolderByCode(FOLDER_NOTICE,userId);
     }
 
 
@@ -216,7 +214,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserPhotoFolder(String userId) {
-        return diskService.checkSystemFolderByCode(FOLDER_USER_PHOTO,userId);
+        return folderService.checkSystemFolderByCode(FOLDER_USER_PHOTO,userId);
     }
 
     /**
@@ -225,7 +223,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder getUserKindEditorFolder(String userId) {
-        return diskService.checkSystemFolderByCode(FOLDER_KINDEDITOR,userId);
+        return folderService.checkSystemFolderByCode(FOLDER_KINDEDITOR,userId);
     }
 
 
@@ -265,7 +263,7 @@ public class DiskUtils {
         file.setFileSize(multipartFile.getSize());
         file.setFileSuffix(FilenameUtils.getExtension(multipartFile.getOriginalFilename()));
         iFileManager.saveFile(file.getFilePath(),multipartFile.getInputStream(), true);
-        diskService.saveFile(file);
+        fileService.save(file);
         return file;
     }
 
@@ -309,7 +307,7 @@ public class DiskUtils {
         workbook.write(fileOut);
         fileOut.close();
 //        iFileManager.saveFile(file.getFilePath(),multipartFile.getInputStream(), true);
-        diskService.saveFile(file);
+        fileService.save(file);
         return file;
     }
 
@@ -397,7 +395,7 @@ public class DiskUtils {
      * @return
      */
     public static List<File> findFilesByIds(List<String> fildIds) {
-        return diskService.findFilesByIds(fildIds);
+        return fileService.findFilesByIds(fildIds);
     }
 
 
@@ -428,17 +426,7 @@ public class DiskUtils {
      * @return
      */
     public static void saveFile(File file){
-        diskService.saveFile(file);
-    }
-
-
-    /**
-     * 更新文件
-     * @param file 文件
-     * @return
-     */
-    public static void updateFile(File file){
-        diskService.saveFile(file);
+        fileService.save(file);
     }
 
 
@@ -449,7 +437,7 @@ public class DiskUtils {
      */
     public static void deleteFile(String fileId){
         Validate.notNull(fileId, "参数[fileId]不能为null.");
-        diskService.deleteFile(fileId);
+        fileService.deleteFile(fileId);
     }
     /**
      * 删除文件
@@ -458,7 +446,7 @@ public class DiskUtils {
      */
     public static void deleteFile(File file){
         Validate.notNull(file, "参数[file]不能为null.");
-        diskService.deleteFile( file);
+        fileService.deleteFile(file.getId());
     }
 
 
@@ -477,7 +465,7 @@ public class DiskUtils {
         if(fileId == null){
             return null;
         }
-        File file = diskService.getFileById(fileId);
+        File file = fileService.get(fileId);
         return getDiskFile(file);
     }
 

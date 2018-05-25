@@ -63,8 +63,6 @@ public class DiskController extends SimpleController {
     private FolderService folderService;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private DiskService diskService;
 
     public static final String NODE_TYPE = "nType";
     public static final String NODE_OPERATE = "operate";
@@ -519,7 +517,7 @@ public class DiskController extends SimpleController {
             SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
             Folder folder = folderService.get(folderId);
             if (folder != null) {
-                File file = diskService.fileUpload(sessionInfo, folder,uploadFile);
+                File file = fileService.fileUpload(sessionInfo, folder,uploadFile);
                 String obj = null;
                 if (file != null) {
                     obj = file.getId();
