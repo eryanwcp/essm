@@ -35,7 +35,7 @@
 				<e:hasPermission name="sys:systemSerialNumber:edit">
 					<a href="${ctxAdmin}/sys/systemSerialNumber/form?id=${model.id}" >修改</a>
 					<a href="${ctxAdmin}/sys/systemSerialNumber/delete?id=${model.id}"
-					   onclick="return confirmx('要删除表单数据吗？', this.href)">删除</a>
+					   onclick="return confirmx('要删除数据吗？', this.href)">删除</a>
 				</e:hasPermission>
 			</td>
 		</tr>
