@@ -7,6 +7,7 @@ package com.eryansky.modules.disk.web;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk.mapper.File;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -43,6 +44,7 @@ import java.util.*;
 @RequestMapping(value = "${adminPath}/disk/filekindeditor")
 public class FileKindEditorController extends SimpleController{
 
+    private static final String FOLDER_KINDEDITOR = "kindeditor";
     //图片mime类型
     private static final String[] IMAGE_EXTENSION = FileUploadUtils.IMAGE_EXTENSION;
 
@@ -106,7 +108,7 @@ public class FileKindEditorController extends SimpleController{
 //            basePath +=  File.separator + FileUploadUtils.datePath();//添加日期目录
 //            String url = FileUploadUtils.upload(request, AppConstants.getDiskBaseDir() + File.separator + basePath, multipartFile, allowedExtension, maxSize, false, null);
 
-            File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_KINDEDITOR, sessionInfo, multipartFile);
+            File file = DiskUtils.saveSystemFile(FOLDER_KINDEDITOR, sessionInfo, multipartFile);
             String filename =  DiskUtils.getVirtualFilePath(file);
 
             return successResponse(request, file.getName(), filename);
@@ -171,7 +173,7 @@ public class FileKindEditorController extends SimpleController{
         }
 
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        String basePath = DiskUtils.getKindEditorRelativePath(sessionInfo.getUserId());
+        String basePath = DiskUtils.getDISKStoreDir(FOLDER_KINDEDITOR,sessionInfo.getUserId());
 
         //上一级目录
         String moveupDirPath = "";
@@ -181,7 +183,7 @@ public class FileKindEditorController extends SimpleController{
 
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Folder folder = DiskUtils.getUserKindEditorFolder(sessionInfo.getUserId());
+        Folder folder = DiskUtils.getSystemFolderByCode(sessionInfo.getUserId());
         List<File> files = DiskUtils.getFolderFiles(folder.getId(),fileSuffixs);
         for (File file : files) {
 

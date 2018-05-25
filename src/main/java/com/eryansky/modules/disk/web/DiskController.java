@@ -579,8 +579,7 @@ public class DiskController extends SimpleController {
     public ModelAndView fileDownload(HttpServletResponse response,
                              HttpServletRequest request, @PathVariable String fileId) {
         File file = fileService.get(fileId);
-        downloadSingleFileUtil(response, request, file);
-        return null;
+        return downloadSingleFileUtil(response, request, file);
 
     }
 

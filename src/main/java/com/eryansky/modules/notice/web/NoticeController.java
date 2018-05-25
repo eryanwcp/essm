@@ -217,7 +217,7 @@ public class NoticeController extends SimpleController {
                 for (File sourceFile : sourceFiles) {
                     File file = sourceFile.copy();
                     file.setStatus(StatusState.LOCK.getValue());
-                    file.setFolderId(DiskUtils.getUserNoticeFolder(loginUserId).getId());
+                    file.setFolderId(DiskUtils.getSystemFolderByCode(Notice.FOLDER_NOTICE,loginUserId).getId());
                     file.setUserId(loginUserId);
                     DiskUtils.saveFile(file);
                     newFileIds.add(file.getId());
@@ -434,7 +434,7 @@ public class NoticeController extends SimpleController {
         Exception exception = null;
         File file = null;
         try {
-            file = DiskUtils.saveNoticeFile(sessionInfo,multipartFile);
+            file = DiskUtils.saveSystemFile(Notice.FOLDER_NOTICE,sessionInfo,multipartFile);
             file.setStatus(StatusState.LOCK.getValue());
             DiskUtils.saveFile(file);
             result = Result.successResult().setObj(file.getId()).setMsg("文件上传成功！");

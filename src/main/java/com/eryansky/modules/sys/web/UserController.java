@@ -445,7 +445,7 @@ public class UserController extends SimpleController {
         Result result = null;
         try {
             SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-            File file = DiskUtils.saveSystemFile(DiskUtils.FOLDER_USER_PHOTO, sessionInfo, multipartFile);
+            File file = DiskUtils.saveSystemFile(User.FOLDER_USER_PHOTO, sessionInfo, multipartFile);
             String filename =  DiskUtils.getVirtualFilePath(file);
             result = Result.successResult().setObj(filename);
         } catch (InvalidExtensionException e) {

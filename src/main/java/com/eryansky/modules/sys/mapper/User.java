@@ -28,6 +28,7 @@ import java.util.Date;
 public class User extends DataEntity<User> implements IUser {
 
     public static final String SUPERUSER_ID = "1";
+    public static final String FOLDER_USER_PHOTO = "userPhoto";
 
     /**
      * 登录名

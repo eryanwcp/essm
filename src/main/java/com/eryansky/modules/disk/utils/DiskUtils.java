@@ -58,18 +58,6 @@ public class DiskUtils {
     private static FileService fileService = SpringContextHolder.getBean(FileService.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
     /**
-     * 文件夹标识 通知
-     */
-    public static String FOLDER_NOTICE = "notice";
-    /**
-     * kindeditor
-     */
-    public static String FOLDER_KINDEDITOR = "kindeditor";
-    /**
-     * 用户头像
-     */
-    public static String FOLDER_USER_PHOTO = "userphoto";
-    /**
      * 文件上传失败提示信息
      */
     public static final String UPLOAD_FAIL_MSG = "文件上传失败！";
@@ -77,31 +65,6 @@ public class DiskUtils {
      * 文件虚拟路径 用于文件转发
      */
     public static final String FILE_VIRTUAL_PATH = "disk/file/";
-
-    /**
-     * KindEditor编辑器文件
-     * @param userId
-     * @return
-     */
-    public static String getKindEditorRelativePath(String userId) {
-        Folder folder = new Folder();
-        folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
-        folder.setCode(FOLDER_KINDEDITOR);
-        return getDISKStoreDir(folder, userId);
-    }
-
-
-    /**
-     * 得到用户头像出差相对路径
-     * @param userId 用户ID
-     * @return
-     */
-    public static String getUserPhotoRelativePath(String userId) {
-        Folder folder = new Folder();
-        folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
-        folder.setCode(FOLDER_USER_PHOTO);
-        return getDISKStoreDir(folder, userId);
-    }
 
 
     /**
@@ -156,6 +119,19 @@ public class DiskUtils {
     }
 
     /**
+     * 本地磁盘存储目录
+     * @param folderCode
+     * @param userId
+     * @return
+     */
+    public static String getDISKStoreDir(String  folderCode, String userId) {
+        Folder folder = new Folder();
+        folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
+        folder.setCode(folderCode);
+        return getDISKStoreDir(folder,userId);
+    }
+
+    /**
      * FTP存储目录
      * @param folder
      * @param userId
@@ -198,33 +174,7 @@ public class DiskUtils {
         return folderService.checkSystemFolderByCode(code,userId);
     }
 
-    /**
-     * 获取用户通知文件夹
-     * @param userId
-     * @return
-     */
-    public static Folder getUserNoticeFolder(String userId) {
-        return folderService.checkSystemFolderByCode(FOLDER_NOTICE,userId);
-    }
 
-
-    /**
-     * 获取用户头像文件夹
-     * @param userId
-     * @return
-     */
-    public static Folder getUserPhotoFolder(String userId) {
-        return folderService.checkSystemFolderByCode(FOLDER_USER_PHOTO,userId);
-    }
-
-    /**
-     * 获取用户KindEditor编辑器文件夹
-     * @param userId
-     * @return
-     */
-    public static Folder getUserKindEditorFolder(String userId) {
-        return folderService.checkSystemFolderByCode(FOLDER_KINDEDITOR,userId);
-    }
 
 
     /**
@@ -310,27 +260,6 @@ public class DiskUtils {
         fileService.save(file);
         return file;
     }
-
-
-    /**
-     * 保存通知文件
-     *
-     * @param sessionInfo
-     * @param multipartFile
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveNoticeFile(SessionInfo sessionInfo, MultipartFile multipartFile)
-            throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        return saveSystemFile(DiskUtils.FOLDER_NOTICE, sessionInfo,
-                multipartFile);
-    }
-
 
 
     /**

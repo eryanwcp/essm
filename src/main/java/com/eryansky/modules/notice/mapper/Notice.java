@@ -31,6 +31,7 @@ import java.util.List;
 @JsonFilter(" ")
 public class Notice extends DataEntity<Notice> {
 
+    public static final String FOLDER_NOTICE = "notice";
     public static final String DATE_TIME_SHORT_FORMAT = "yyyy-MM-dd HH:mm";
 
     /**
