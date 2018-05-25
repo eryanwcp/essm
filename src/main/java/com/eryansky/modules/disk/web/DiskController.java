@@ -357,7 +357,7 @@ public class DiskController extends SimpleController {
             FolderAuthorize fa = FolderAuthorize.getByValue(folderAuthorize);
             Folder _folder = new Folder(folderId);
             if(fa != null){
-                _folder = folderService.initHideFolder(folderAuthorize,loginUserId);
+                _folder = folderService.initHideFolderAndSave(folderAuthorize,loginUserId);
             }
             File entity = new File();
             entity.setQuery(fileName);
@@ -437,7 +437,7 @@ public class DiskController extends SimpleController {
         Folder model = null;
         if(FolderAuthorize.User.getValue().equals(folderId)){
             String loginUserId = SecurityUtils.getCurrentUserId();
-            model = folderService.initHideFolder(FolderAuthorize.User.getValue(), loginUserId);
+            model = folderService.initHideFolderAndSave(FolderAuthorize.User.getValue(), loginUserId);
         }else if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
             model = folderService.get(folderId);
         }else {
@@ -472,7 +472,7 @@ public class DiskController extends SimpleController {
     @ResponseBody
     public Result delFolderFile(
             @RequestParam(value = "fileIds", required = false) List<String> fileIds) {
-        fileService.deleteFolderFiles(fileIds);
+        fileService.deleteFileByFileIds(fileIds);
         return Result.successResult();
     }
 
@@ -488,7 +488,7 @@ public class DiskController extends SimpleController {
     public Result cascadeDelFile(
             @RequestParam(value = "fileCodes", required = false) List<String> fileCodes)
             throws Exception {
-        fileService.cascadeDelFile(fileCodes);
+        fileService.deleteFileByFolderCode(fileCodes);
         return Result.successResult();
     }
 

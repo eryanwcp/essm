@@ -167,11 +167,11 @@ public class DiskUtils {
      * @return
      */
     public static Folder getSystemFolderByCode(String code) {
-        return folderService.checkSystemFolderByCode(code);
+        return folderService.checkAndSaveSystemFolderByCode(code);
     }
 
     public static Folder getSystemFolderByCode(String code,String userId) {
-        return folderService.checkSystemFolderByCode(code,userId);
+        return folderService.checkAndSaveSystemFolderByCode(code,userId);
     }
 
 
@@ -306,7 +306,7 @@ public class DiskUtils {
      * @return
      */
     public static List<File> getFolderFiles(String folderId,List<String> fileSuffixs) {
-        return fileService.getFolderFiles(folderId,fileSuffixs);
+        return fileService.findFolderFiles(folderId,fileSuffixs);
     }
 
     /**
@@ -315,7 +315,7 @@ public class DiskUtils {
      * @return
      */
     public static void deleteFolderFiles(List<String> fildIds){
-        fileService.deleteFolderFiles(fildIds);
+        fileService.deleteFileByFileIds(fildIds);
     }
 
     /**
@@ -366,7 +366,7 @@ public class DiskUtils {
      */
     public static void deleteFile(String fileId){
         Validate.notNull(fileId, "参数[fileId]不能为null.");
-        fileService.deleteFile(fileId);
+        fileService.deleteFileByFileId(fileId);
     }
     /**
      * 删除文件
@@ -375,7 +375,7 @@ public class DiskUtils {
      */
     public static void deleteFile(File file){
         Validate.notNull(file, "参数[file]不能为null.");
-        fileService.deleteFile(file.getId());
+        fileService.deleteFileByFileId(file.getId());
     }
 
 

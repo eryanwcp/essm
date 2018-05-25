@@ -9,7 +9,6 @@ import com.eryansky.modules.sys.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * 文件
@@ -25,7 +24,7 @@ public class File extends DataEntity<File> implements Serializable {
 
 	/**
 	 * 文件标识 用户ID + "_" + hex(md5(filename + now nano time + counter++)) $
-	 * {@link com.eryansky.core.web.upload.FileUploadUtils.encodingFilenamePrefix}
+	 * {@link com.eryansky.core.web.upload.FileUploadUtils#encodingFilenamePrefix}
 	 * 区别于文件的md5
 	 */
 	private String code;
@@ -53,7 +52,7 @@ public class File extends DataEntity<File> implements Serializable {
 	/**
 	 * 文件分类 {@link FileType}
 	 */
-	private String fileType = FileType.Other.getValue();
+	private String fileType;
 	/**
 	 * 所属文件夹
 	 */
@@ -74,6 +73,7 @@ public class File extends DataEntity<File> implements Serializable {
 	 * 构造方法
 	 */
 	public File() {
+		this.fileType = FileType.Other.getValue();
 	}
 
 	public String getName() {

@@ -16,7 +16,6 @@ import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.disk.web.DiskController;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
@@ -49,17 +48,8 @@ public class FolderService extends CrudService<FolderDao, Folder> {
      * @return
      */
     @Transactional(readOnly = false)
-    public Folder checkSystemFolderByCode(String code){
-        Validate.notBlank(code, "参数[code]不能为null.");
-        List<Folder> list =  findFoldersByUserId(null,null,FolderAuthorize.SysTem.getValue(),code);
-        Folder folder =  list.isEmpty() ? null:list.get(0);
-        if(folder == null){
-            folder = new Folder();
-            folder.setFolderAuthorize(FolderAuthorize.SysTem.getValue());
-            folder.setCode(code);
-            save(folder);
-        }
-        return folder;
+    public Folder checkAndSaveSystemFolderByCode(String code){
+        return checkAndSaveSystemFolderByCode(code,null);
     }
 
 
@@ -71,9 +61,8 @@ public class FolderService extends CrudService<FolderDao, Folder> {
      * @return
      */
     @Transactional(readOnly = false)
-    public Folder checkSystemFolderByCode(String code,String userId){
+    public Folder checkAndSaveSystemFolderByCode(String code, String userId){
         Validate.notBlank(code, "参数[code]不能为null.");
-        Validate.notNull(userId, "参数[userId]不能为null.");
         List<Folder> list =  findFoldersByUserId(userId,null,FolderAuthorize.SysTem.getValue(),code);
         Folder folder =  list.isEmpty() ? null:list.get(0);
         if(folder == null){
@@ -119,10 +108,10 @@ public class FolderService extends CrudService<FolderDao, Folder> {
      *             用户Id
      */
     @Transactional(readOnly = false)
-    public Folder initHideFolder(String folderAuthorize, String userId) {
+    public Folder initHideFolderAndSave(String folderAuthorize, String userId) {
         Folder folder = null;
         if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
-            folder = initHideForUser(userId);
+            folder = initHideFolderAndSaveForUser(userId);
         }
         return folder;
 
@@ -133,7 +122,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
      * 判断和创建个人云盘的默认文件夹
      */
     @Transactional(readOnly = false)
-    public Folder initHideForUser(String userId) {
+    public Folder initHideFolderAndSaveForUser(String userId) {
         List<Folder> list = findFoldersByUserId(userId,FolderType.HIDE.getValue(),FolderAuthorize.User.getValue(),null);
         Folder folder = Collections3.isEmpty(list) ? null:list.get(0);
         if (folder == null) {
@@ -159,7 +148,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
         List<String> fileIds = Lists.newArrayList();
         List<String> folderIds = Lists.newArrayList();
         recursiveFolderAndFile(folderIds, fileIds, folderId);
-        fileService.deleteFolderFiles(fileIds);
+        fileService.deleteFileByFileIds(fileIds);
         for(String id:folderIds){
             this.delete(id);
         }
@@ -319,7 +308,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
                                         List<String> fileIds, String folderId) {
         folderIds.add(folderId);
         if (Collections3.isNotEmpty(fileIds)) {
-            List<File> folderFiles = fileService.getFolderFiles(folderId);
+            List<File> folderFiles = fileService.findFolderFiles(folderId);
             for (File folderFile : folderFiles) {
                 fileIds.add(folderFile.getId());
             }

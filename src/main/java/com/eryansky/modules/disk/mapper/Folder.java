@@ -36,7 +36,7 @@ public class Folder extends DataEntity<Folder> {
     /**
      * 授权 {@link FolderAuthorize}
      */
-    private String folderAuthorize = FolderAuthorize.User.getValue();
+    private String folderAuthorize;
     /**
      * 文件夹标识 授权类型为System时使用
      */
@@ -62,12 +62,14 @@ public class Folder extends DataEntity<Folder> {
     /**
      * 文件夹类型
      */
-    private String type = FolderType.NORMAL.getValue();
+    private String type;
 
     /**
      * 构造方法
      */
     public Folder() {
+        this.folderAuthorize = FolderAuthorize.User.getValue();
+        this.type = FolderType.NORMAL.getValue();
     }
 
     public Folder(String id) {
