@@ -65,7 +65,7 @@
         </choose>
     </select>
 
-    <select id="findChildsByParentId" resultType="Folder">
+    <select id="findChilds" resultType="Folder">
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a

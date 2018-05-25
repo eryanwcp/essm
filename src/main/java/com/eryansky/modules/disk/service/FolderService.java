@@ -352,7 +352,7 @@ public class FolderService extends CrudService<FolderDao, Folder> {
         parameter.put("type",FolderType.NORMAL.getValue());
         parameter.put("parentId",parentId);
 
-        return dao.findChildsByParentId(parameter);
+        return dao.findChilds(parameter);
     }
 
 

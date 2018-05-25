@@ -22,7 +22,7 @@ import java.util.List;
 public interface FolderDao extends CrudDao<Folder> {
 
 
-    List<Folder> findChildsByParentId(Parameter parameter);
+    List<Folder> findChilds(Parameter parameter);
 
     List<Folder> findFoldersByUserId(Parameter parameter);
 
