@@ -89,7 +89,7 @@ public enum FileType {
      * @param fileSuffix
      * @return
      */
-    public static FileType getFileTypeByFileSuffix(String fileSuffix) {
+    public static FileType getByFileSuffix(String fileSuffix) {
         FileType fileType = FileType.Other;
         if (StringUtils.isNotBlank(fileSuffix)){
             //TODO
