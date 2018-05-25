@@ -24,8 +24,6 @@ import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededException;
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.disk.service.DiskService;
-import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.VersionLogType;
@@ -62,10 +60,6 @@ public class VersionLogController extends SimpleController {
 
     @Autowired
     private VersionLogService versionLogService;
-    @Autowired
-    private DiskService diskService;
-    @Autowired
-    private FileService fileService;
 
 
 
@@ -123,7 +117,7 @@ public class VersionLogController extends SimpleController {
 
         String fileId=versionLog.getFileId();
         if (StringUtils.isNotBlank(fileId)) {
-            file = diskService.getFileById(versionLog.getFileId());
+            file = DiskUtils.getFile(versionLog.getFileId());
         }
         modelAndView.addObject("file", file);
         modelAndView.addObject("model", versionLog);
@@ -215,9 +209,9 @@ public class VersionLogController extends SimpleController {
         }
         //更新文件为有效状态 上传的时候为lock状态
         if (StringUtils.isNotBlank(versionLog.getFileId())) {
-            File vlFile = diskService.getFileById(versionLog.getFileId());
+            File vlFile = DiskUtils.getFile(versionLog.getFileId());
             vlFile.setStatus(StatusState.NORMAL.getValue());
-            diskService.saveFile(vlFile);
+            DiskUtils.saveFile(vlFile);
         }
         versionLogService.save(versionLog);
         result = Result.successResult();
@@ -270,7 +264,7 @@ public class VersionLogController extends SimpleController {
         File file = null;
         VersionLog model = versionLogService.get(id);
         if(StringUtils.isNotBlank(model.getFileId())){
-            file = diskService.getFileById(model.getFileId());
+            file = DiskUtils.getFile(model.getFileId());
         }
         modelAndView.addObject("file", file);
         modelAndView.addObject("model", model);
@@ -290,7 +284,7 @@ public class VersionLogController extends SimpleController {
     public ModelAndView downloadApp(HttpServletRequest request,HttpServletResponse response,@PathVariable String versionLogType) throws Exception {
         VersionLog versionLog = versionLogService.getLatestVersionLog(versionLogType);
         if(versionLog != null && versionLog.getFileId() != null){
-            File file = diskService.getFileById(versionLog.getFileId());
+            File file = DiskUtils.getFile(versionLog.getFileId());
             WebUtils.setDownloadableHeader(request, response, file.getName());
             file.getDiskFile();
             java.io.File tempFile = file.getDiskFile();

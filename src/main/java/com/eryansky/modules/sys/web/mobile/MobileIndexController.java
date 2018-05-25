@@ -12,7 +12,7 @@ import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.annotation.Mobile;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.disk.service.FileService;
+import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.VersionLogType;
 import com.eryansky.modules.sys.mapper.VersionLog;
@@ -40,8 +40,6 @@ public class MobileIndexController extends SimpleController {
 
     @Autowired
     private VersionLogService versionLogService;
-    @Autowired
-    private FileService fileService;
 
     @Logging(logType = LogType.access,value = "移动门户（网页版）")
     @RequestMapping("")
@@ -135,7 +133,7 @@ public class MobileIndexController extends SimpleController {
         }
         if(versionLog != null && versionLog.getFileId() != null){
             try {
-                File file = fileService.get(versionLog.getFileId());
+                File file = DiskUtils.getFile(versionLog.getFileId());
                 if(VersionLogType.Android.getValue().equals(versionLogType)) {
                     response.setContentType(MIME_ANDROID_TYPE);
                 }

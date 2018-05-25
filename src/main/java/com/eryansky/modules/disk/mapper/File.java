@@ -5,7 +5,6 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.modules.disk._enum.FileType;
 import com.eryansky.modules.disk.utils.DiskUtils;
-import com.eryansky.modules.disk.utils.FileUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 
@@ -196,7 +195,7 @@ public class File extends DataEntity<File> implements Serializable {
 	 * 文件所处位置
 	 */
 	public String getLocation() {
-		return FileUtils.getFileLocationName(folderId);
+		return DiskUtils.getFileLocationName(folderId);
 	}
 
 	public String getPrettyFileSize() {

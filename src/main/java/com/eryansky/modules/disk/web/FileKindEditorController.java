@@ -18,7 +18,6 @@ import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededExcepti
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.utils.DiskUtils;
-import com.eryansky.modules.disk.utils.FileUtils;
 import com.eryansky.utils.AppConstants;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FilenameUtils;
@@ -183,7 +182,7 @@ public class FileKindEditorController extends SimpleController{
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Folder folder = DiskUtils.getUserKindEditorFolder(sessionInfo.getUserId());
-        List<File> files = FileUtils.getFolderFiles(folder.getId(),fileSuffixs);
+        List<File> files = DiskUtils.getFolderFiles(folder.getId(),fileSuffixs);
         for (File file : files) {
 
             Map<String, Object> fileMetaInfo = Maps.newHashMap();

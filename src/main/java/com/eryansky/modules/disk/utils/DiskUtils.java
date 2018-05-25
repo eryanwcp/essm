@@ -11,9 +11,11 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.service.DiskService;
-import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.modules.disk.service.FileService;
+import com.eryansky.modules.disk.service.FolderService;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.web.upload.FileUploadUtils;
@@ -53,8 +55,9 @@ public class DiskUtils {
 
     protected static Logger logger = LoggerFactory.getLogger(DiskUtils.class);
 
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
     private static DiskService diskService = SpringContextHolder.getBean(DiskService.class);
+    private static FolderService folderService = SpringContextHolder.getBean(FolderService.class);
+    private static FileService fileService = SpringContextHolder.getBean(FileService.class);
     private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
     /**
      * 文件夹标识 通知
@@ -330,6 +333,105 @@ public class DiskUtils {
                 multipartFile);
     }
 
+
+
+    /**
+     * 获取文件的位置
+     *
+     * @param folderId
+     *            文件所属文件夹
+     * @return
+     */
+    public static String getFileLocationName(String folderId) {
+        StringBuffer location = new StringBuffer("");
+        Folder folder = folderService.get(folderId);
+        if (folder != null) {
+            String type = folder.getType();// 文件夹类型
+            String userName = folder.getUserName();// 文件夹创建人
+            String folderName = folder.getName();// 文件夹名称
+            String folderAuthorize = folder.getFolderAuthorize();// 文件夹授权类型
+            if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
+                location.append(FolderAuthorize.User.getDescription())
+                        .append("：").append(userName);
+                if (FolderType.NORMAL.getValue().equals(type)) {
+                    location.append("： ").append(folderName);
+                }
+            }
+
+        }
+        return location.toString();
+    }
+
+
+    /**
+     * 获取文件夹文件
+     * @param folderId
+     * @return
+     */
+    public static List<File> getFolderFiles(String folderId) {
+        return getFolderFiles(folderId,null);
+    }
+
+
+    /**
+     * 获取文件夹文件
+     * @param folderId
+     * @return
+     */
+    public static List<File> getFolderFiles(String folderId,List<String> fileSuffixs) {
+        return fileService.getFolderFiles(folderId,fileSuffixs);
+    }
+
+    /**
+     * 更新文件
+     * @param fildIds 文件IDS
+     * @return
+     */
+    public static void deleteFolderFiles(List<String> fildIds){
+        fileService.deleteFolderFiles(fildIds);
+    }
+
+    /**
+     * 根据IDS查找文件
+     * @param fildIds 文件IDS
+     * @return
+     */
+    public static List<File> findFilesByIds(List<String> fildIds) {
+        return diskService.findFilesByIds(fildIds);
+    }
+
+
+    /**
+     * 统计文件大小
+     * @param fileIds 文件ID集合
+     * @return
+     */
+    public static long countFileSize(List<String> fileIds){
+        if(Collections3.isNotEmpty(fileIds)){
+            return fileService.countFileSize(fileIds);
+        }
+        return 0L;
+    }
+
+    /**
+     * 根据文件ID获取文件
+     * @param fileId
+     * @return
+     */
+    public static File getFile(String fileId){
+        return fileService.get(fileId);
+    }
+
+    /**
+     * 保存文件
+     * @param file 文件
+     * @return
+     */
+    public static void saveFile(File file){
+        diskService.saveFile(file);
+    }
+
+
     /**
      * 更新文件
      * @param file 文件
@@ -493,7 +595,7 @@ public class DiskUtils {
         }
 
         boolean isAdmin = false;
-        if (userService.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER) || SecurityUtils.isPermittedRole(AppConstants.ROLE_DISK_MANAGER)) {//系统管理员 + 网盘管理员
+        if (SecurityUtils.isUserAdmin(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER) || SecurityUtils.isPermittedRole(AppConstants.ROLE_DISK_MANAGER)) {//系统管理员 + 网盘管理员
             isAdmin = true;
         }
         return isAdmin;
