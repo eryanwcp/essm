@@ -435,7 +435,7 @@ public class DiskController extends SimpleController {
         ModelAndView modelAndView = new ModelAndView(
                 "modules/disk/disk-fileInput");
         Folder model = null;
-        if(FolderAuthorize.User.getValue().toString().equals(folderId)){
+        if(FolderAuthorize.User.getValue().equals(folderId)){
             String loginUserId = SecurityUtils.getCurrentUserId();
             model = folderService.initHideFolder(FolderAuthorize.User.getValue(), loginUserId);
         }else if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
@@ -609,7 +609,7 @@ public class DiskController extends SimpleController {
     }
 
     /**
-     * 文件下载----云盘单用,做Joinpoint
+     * 文件下载
      *
      * @param fileIds
      *            入参Ids拼接字符串
