@@ -65,7 +65,7 @@ public class MobileIndexController extends SimpleController {
     @Mobile(value = MobileValue.PC)
     @RequiresUser(required = false)
     @RequestMapping("download")
-    public ModelAndView download(Integer versionLogType,String versionCode){
+    public ModelAndView download(String versionLogType,String versionCode){
         ModelAndView modelAndView = new ModelAndView("mobile/download");
         VersionLog versionLog = null;
         boolean likeIOS = AppUtils.likeIOS(UserAgentUtils.getHTTPUserAgent(SpringMVCHolder.getRequest()));
@@ -102,7 +102,7 @@ public class MobileIndexController extends SimpleController {
     @RequiresUser(required = false)
     @ResponseBody
     @RequestMapping(value = {"getNewVersion/{versionLogType}"})
-    public Result getNewVersion(@PathVariable Integer versionLogType){
+    public Result getNewVersion(@PathVariable String versionLogType){
         Result result = null;
         VersionLog max = versionLogService.getLatestVersionLog(versionLogType);
         result = Result.successResult().setObj(max);
@@ -126,7 +126,7 @@ public class MobileIndexController extends SimpleController {
     public ModelAndView fileDownload(HttpServletResponse response,
                                      HttpServletRequest request,
                                      String versionCode,
-                                     @PathVariable Integer versionLogType) {
+                                     @PathVariable String versionLogType) {
         VersionLog versionLog = null;
         if(StringUtils.isNotBlank(versionCode)){
             versionLog = versionLogService.getByVersionCode(versionLogType,versionCode);

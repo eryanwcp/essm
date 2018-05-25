@@ -95,7 +95,7 @@
     </select>
 
 
-    <select id="findOwnAndChild" resultType="Organ">
+    <select id="findOwnerAndChild" resultType="Organ">
         SELECT
         <include refid="organColumns"/>
         FROM t_sys_organ a
@@ -114,7 +114,7 @@
         ORDER BY a.sort asc
     </select>
 
-    <select id="findOwnAndChildIds" resultType="java.lang.String">
+    <select id="findOwnerAndChildIds" resultType="java.lang.String">
         SELECT
         a.id
         FROM t_sys_organ a
@@ -133,7 +133,7 @@
     </select>
 
 
-    <select id="findOwnAndChilds" resultType="Organ">
+    <select id="findOwnerAndChilds" resultType="Organ">
         SELECT
         <include refid="organColumns"/>
         FROM t_sys_organ a
@@ -142,7 +142,7 @@
         a.status = '0'
         <if test="id != null and id !=''">
             AND (a.id = #{id} OR a.parent_ids LIKE
-            <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+            <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
             <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
         </if>
         <if test="types != null and types.size() !=0">
@@ -154,7 +154,7 @@
         ORDER BY a.sort asc
     </select>
 
-    <select id="findOwnAndChildsIds" resultType="java.lang.String">
+    <select id="findOwnerAndChildsIds" resultType="java.lang.String">
         SELECT
         a.id
         FROM t_sys_organ a
@@ -198,6 +198,29 @@
         ORDER BY a.sort asc
     </select>
 
+    <select id="findChildIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_organ a
+        <where>
+            <if test="status != null and status.size() !=0">
+                AND a.status IN
+                <foreach collection="status" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <choose>
+                <when test="parentId != null and parentId !=''">
+                    AND a.parent_id = #{parentId}
+                </when>
+                <otherwise>
+                    AND (a.parent_id IS NULL OR a.parent_id = '' OR a.parent_id = '0')
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY a.sort asc
+    </select>
+
     <select id="findChilds" resultType="Organ">
         SELECT
         <include refid="organColumns"/>
@@ -209,6 +232,12 @@
                 AND (a.parent_id = #{id} OR a.parent_ids LIKE
                 <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            </if>
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
             </if>
         </where>
         ORDER BY a.sort asc
@@ -224,6 +253,12 @@
                 AND a.parent_ids LIKE
                 <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            </if>
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
             </if>
         </where>
         ORDER BY a.sort asc
@@ -242,13 +277,13 @@
         <include refid="organJoins"/>
         <where>
             <if test="status != null and status !=''">
-                a.status = #{status}
+                AND a.status = #{status}
             </if>
             <if test="code != null and code !=''">
-                a.code = #{code}
+                AND a.code = #{code}
             </if>
             <if test="type != null and type !=''">
-                a.type = #{type}
+                AND a.type = #{type}
             </if>
         </where>
 

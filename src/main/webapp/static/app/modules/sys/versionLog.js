@@ -28,6 +28,7 @@ function initDatagrid(){
         idField: 'id',
         frozenColumns:[[
             {field: 'ck',checkbox: true,width: 60},
+            {field: 'app',title: 'APP',width: 80},
             {field: 'versionName',title: '版本号',width: 120,
                 formatter: function (value, rowData, rowIndex) {
                     return "<a href='#' onclick='view(\"" + rowData["id"]+"\")' >"+value+"</a>";
@@ -39,10 +40,11 @@ function initDatagrid(){
             {field: 'versionCode',title: '内部版本号',width: 100,align: 'right'},
             {field: 'versionLogTypeView',title: '类型',width: 120},
             {field: 'remark',title: '更新说明',width: 360 },
-            {field: 'updateUser', title: '更新人', width: 100,hidden:true} ,
-            {field: 'updateTime', title: '更新时间', width: 146,sortable: true} ,
+            {field: 'isPubView',title: '是否发布',width: 120},
+            {field: 'pubTime', title: '发布时间', width: 146,sortable: true} ,
             {field: 'operate', title: '操作', formatter:function(value,rowData,rowIndex){
-                    var operaterHtml = "<a class='easyui-linkbutton' iconCls='easyui-icon-remove' onclick='del(" + rowIndex + ");' >删除</a>";
+                    var operaterHtml = "<a class='easyui-linkbutton' iconCls='easyui-icon-edit' onclick='edit(" + rowIndex + ");' >编辑</a>";
+                    operaterHtml += "<a class='easyui-linkbutton' iconCls='easyui-icon-remove' onclick='del(" + rowIndex + ");' >删除</a>";
                     return operaterHtml;
                 }
             }
@@ -122,6 +124,9 @@ function formInit() {
 //显示弹出窗口 新增：row为空
 function showDialog(row) {
     var inputUrl = ctxAdmin + "/sys/versionLog/input";
+    if(row){
+        inputUrl += "?id=" + row['id'];
+    }
     //弹出对话窗口
     $versionLog_dialog = $('<div/>').dialog({
         title: '系统更新详细信息',

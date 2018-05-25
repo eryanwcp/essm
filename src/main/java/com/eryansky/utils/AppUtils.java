@@ -230,17 +230,32 @@ public class AppUtils {
 
     /**
      * 查找父级节点
-     * @param parentId
-     * @param treeNodes
+     * @param parentId 父ID
+     * @param treeNodes 节点集合
      * @return
      */
     public static TreeNode getParentTreeNode(String parentId, List<TreeNode> treeNodes){
+        return getParentTreeNode(parentId,null,treeNodes);
+    }
+    /**
+     * 查找父级节点
+     * @param parentId 父ID
+     * @param type 节点类型
+     * @param treeNodes 节点集合
+     * @return
+     */
+    public static TreeNode getParentTreeNode(String parentId,String type, List<TreeNode> treeNodes){
         TreeNode t = null;
         for(TreeNode treeNode:treeNodes){
-            if(parentId.equals(treeNode.getId())){
+            String _type = (String)treeNode.getAttributes().get("type");
+            if(type != null && type.equals(_type) && parentId.equals(treeNode.getId())){
+                t = treeNode;
+                break;
+            }else if(parentId.equals(treeNode.getId())){
                 t = treeNode;
                 break;
             }
+
         }
         return t;
     }
@@ -277,10 +292,14 @@ public class AppUtils {
             }
 
             if(StringUtils.isNotBlank(treeNode.getpId())){
-                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), tempTreeNodes);
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(),(String)treeNode.getAttributes().get("type"), tempTreeNodes);
                 if(pTreeNode != null){
                     for(TreeNode treeNode2:tempTreeNodes){
                         if(treeNode2.getId().equals(pTreeNode.getId())){
+                            pTreeNode.setState(TreeNode.STATE_CLOASED);
+                            if(Collections3.isEmpty(treeNode.getChildren())){
+                                treeNode.setState(TreeNode.STATE_OPEN);
+                            }
                             treeNode2.addChild(treeNode);
                             removeKeyIds.add(treeNode.getId());
                             break;
@@ -306,6 +325,9 @@ public class AppUtils {
             for(TreeNode treeNode4:tempTreeNodes){
                 if(treeNode4.getId().equals(_key)){
                     treeNode = treeNode4;
+                    if(Collections3.isEmpty(treeNode.getChildren())){
+                        treeNode.setState(TreeNode.STATE_OPEN);
+                    }
                     result.add(treeNode);
                     break;
                 }

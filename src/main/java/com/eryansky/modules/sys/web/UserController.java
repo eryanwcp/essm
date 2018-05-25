@@ -482,21 +482,17 @@ public class UserController extends SimpleController {
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.ALL.getValue()))){
             list = userService.findAllNormalWithExclude(excludeUserIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY_AND_CHILD.getValue()))){
-            User user = userService.get(sessionInfo.getUserId());
-            String organId = UserUtils.getCompanyId(user.getId());
+            String organId = sessionInfo.getLoginCompanyId();
             list = userService.findOwnerAndChildsUsers(organId, excludeUserIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY.getValue()))){
-            User user = userService.get(sessionInfo.getUserId());
-            String organId = UserUtils.getCompanyId(user.getId());
-            List<String> organIds = organService.findOrganChildsDepartmentOrganIds(organId);
+            String organId = sessionInfo.getLoginCompanyId();
+            List<String> organIds = organService.findDepartmentAndGroupOrganIdsByCompanyId(organId);
             list = userService.findUsersByOrganIds(organIds);
         }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.OFFICE_AND_CHILD.getValue()))){
-            User user = userService.get(sessionInfo.getUserId());
-            String organId = user.getDefaultOrganId();
+            String organId = sessionInfo.getLoginOrganId();
             list = userService.findOwnerAndChildsUsers(organId, excludeUserIds);
         }else{
-            User user = userService.get(sessionInfo.getUserId());
-            String organId = UserUtils.getCompanyId(user.getId());
+            String organId = sessionInfo.getLoginOrganId();
             list = userService.findOwnerAndChildsUsers(organId,excludeUserIds);
         }
 

@@ -1,4 +1,7 @@
 var jsessionid = jsessionid;
+var modelId = modelId;
+var modelIsPub = modelIsPub;
+var modelIsTip = modelIsTip;
 
 $(function () {
     //日志类型 搜索选项
@@ -8,6 +11,14 @@ $(function () {
         width:120
     });
     uploadify();
+
+    if(modelId == ""){  //新增
+        $("input[name=isPub]:eq(0)").prop("checked",'checked');//状态 初始化值
+        $("input[name=isTip]:eq(0)").prop("checked",'checked');//状态 初始化值
+    }else{
+        $('input[name=isPub][value='+modelIsPub+']').prop("checked",'checked');
+        $('input[name=isTip][value='+modelIsTip+']').prop("checked",'checked');
+    }
 });
 
 function uploadify() {
@@ -39,4 +50,9 @@ function uploadify() {
 
 function loadOrOpen(fileId) {
     $('#annexFrame').attr('src', ctxAdmin + '/disk/fileDownload/' + fileId);
+}
+
+function delUpload(id){
+    $("#fileId").val("");
+    $("#"+id).parent().remove();
 }

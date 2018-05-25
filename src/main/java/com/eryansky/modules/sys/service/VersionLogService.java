@@ -9,6 +9,8 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.core.orm.mybatis.service.CrudService;
+import com.eryansky.modules.sys._enum.VersionLogType;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.dao.VersionLogDao;
 import com.eryansky.modules.sys.mapper.VersionLog;
 import com.eryansky.utils.AppConstants;
@@ -18,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 版本更新日志
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2015-09-29 
+ * @date 2015-09-29
  */
 @Service
 @Transactional(readOnly = true)
@@ -35,6 +37,7 @@ public class VersionLogService extends CrudService<VersionLogDao,VersionLog>{
 
     public Page<VersionLog> findPage(Page<VersionLog> page, Parameter parameter) {
         parameter.put(BaseInterceptor.PAGE,page);
+        parameter.put(VersionLog.FIELD_STATUS,VersionLog.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         page.setResult(dao.findQueryList(parameter));
         return page;
@@ -50,11 +53,11 @@ public class VersionLogService extends CrudService<VersionLogDao,VersionLog>{
     }
     /**
      * 根据版本号查找
-     * @param versionLogType {@link com.eryansky.modules.sys._enum.VersionLogType}
+     * @param versionLogType {@link VersionLogType}
      * @param versionCode
      * @return
      */
-    public VersionLog getByVersionCode(Integer versionLogType,String versionCode) {
+    public VersionLog getByVersionCode(String versionLogType,String versionCode) {
         VersionLog versionLog = new VersionLog();
         versionLog.setVersionLogType(versionLogType);
         versionLog.setVersionCode(versionCode);
@@ -66,7 +69,20 @@ public class VersionLogService extends CrudService<VersionLogDao,VersionLog>{
      * @param versionLogType
      * @return
      */
-    public VersionLog getLatestVersionLog(Integer versionLogType) {
-        return dao.getLatestVersionLog(versionLogType);
+    public VersionLog getLatestVersionLog(String versionLogType) {
+        return getLatestVersionLog(versionLogType, YesOrNo.YES.getValue());
+    }
+
+    /**
+     * 获取当前最新版本
+     * @param versionLogType
+     * @param isPub
+     * @return
+     */
+    public VersionLog getLatestVersionLog(String versionLogType,String isPub) {
+        VersionLog entity = new VersionLog();
+        entity.setVersionLogType(versionLogType);
+        entity.setIsPub(isPub);
+        return dao.getLatestVersionLog(entity);
     }
 }

@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.sys.dao.VersionLogDao">
-    
+
 	<sql id="sysVersionLogColumns">
 		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.app AS "app",
 		a.version_log_type AS "versionLogType",
 		a.version_name AS "versionName",
 		a.version_code AS "versionCode",
-		a.update_user AS "updateUser",
-		a.update_time AS "updateTime",
+		a.is_pub AS "isPub",
+		a.is_tip AS "isTip",
+		a.pub_time AS "pubTime",
 		a.remark AS "remark",
 		a.file_id AS "fileId"
 	</sql>
-	
+
 	<sql id="sysVersionLogJoins">
 		LEFT JOIN t_sys_user u ON u.id = a.update_user
 	</sql>
-    
+
 	<select id="get" resultType="VersionLog">
-		SELECT 
-			<include refid="sysVersionLogColumns"/>
+		SELECT
+		<include refid="sysVersionLogColumns"/>
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
 		WHERE a.id = #{id}
@@ -31,9 +39,14 @@
 		<include refid="sysVersionLogColumns"/>
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
-		WHERE a.version_code = #{versionCode}
+		WHERE
+		a.status = #{status}
+		AND a.version_code = #{versionCode}
 		<if test="versionLogType != null and versionLogType != ''">
 			AND a.version_log_type = #{versionLogType}
+		</if>
+		<if test="isPub != null and isPub != ''">
+			AND a.is_pub = #{isPub}
 		</if>
 	</select>
 
@@ -42,18 +55,25 @@
 		<include refid="sysVersionLogColumns"/>
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
-		WHERE a.version_log_type = #{versionLogType}
-		AND a.version_code = (SELECT MAX(c.version_code) FROM t_sys_version_log c WHERE c.version_log_type = #{versionLogType})
+		<where>
+			a.status = #{status}
+			AND a.version_log_type = #{versionLogType}
+			<if test="isPub != null and isPub !=''">
+				AND a.is_pub = #{isPub}
+			</if>
+			AND a.version_code = (SELECT MAX(CAST(c.version_code AS signed)) FROM t_sys_version_log c WHERE c.version_log_type = #{versionLogType} AND c.status = #{status})
+		</where>
+
 	</select>
 
 
 	<select id="findList" resultType="VersionLog">
-		SELECT 
-			<include refid="sysVersionLogColumns"/>
+		SELECT
+		<include refid="sysVersionLogColumns"/>
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
 		<where>
-			1=1
+			a.status = #{status}
 		</where>
 		<choose>
 			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
@@ -71,7 +91,7 @@
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
 		<where>
-			1=1
+			a.status = #{status}
 			<if test="versionLogType != null">
 				AND a.version_log_type = #{versionLogType}
 			</if>
@@ -111,15 +131,15 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="VersionLog">
-		SELECT 
-			<include refid="sysVersionLogColumns"/>
+		SELECT
+		<include refid="sysVersionLogColumns"/>
 		FROM t_sys_version_log a
 		<include refid="sysVersionLogJoins"/>
 		<where>
-			1=1
-		</where>		
+			a.status = #{status}
+		</where>
 		<choose>
 			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
@@ -129,45 +149,70 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<insert id="insert">
 		INSERT INTO t_sys_version_log(
-			id,
-			version_log_type,
-			version_name,
-			version_code,
-			update_user,
-			update_time,
-			remark,
-			file_id
+		id,
+		status,
+		version,
+		create_user,
+		create_time,
+		update_user,
+		update_time,
+		APP,
+		VERSION_LOG_TYPE,
+		VERSION_CODE,
+		VERSION_NAME,
+		IS_PUB,
+		is_tip,
+		PUB_TIME,
+		REMARK,
+		FILE_ID
 		) VALUES (
-			#{id},
-			#{versionLogType},
-			#{versionName},
-			#{versionCode},
-			#{updateUser},
-			#{updateTime},
-			#{remark},
-			#{fileId}
+		#{id},
+		#{status},
+		1,
+		#{createUser},
+		#{createTime},
+		#{updateUser},
+		#{updateTime},
+		#{app},
+		#{versionLogType},
+		#{versionCode},
+		#{versionName},
+		#{isPub},
+		#{isTip},
+		#{pubTime},
+		#{remark},
+		#{fileId}
 		)
 	</insert>
-	
+
 	<update id="update">
 		UPDATE t_sys_version_log SET
-			version_log_type = #{versionLogType},
-			version_name = #{versionName},
-			version_code = #{versionCode},
-			browser_type = #{browserType},
-			update_user = #{updateUser},
-			update_time = #{updateTime},
-			remark = #{remark},
-			file_id = #{fileId}
+		status = #{status},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime},
+		APP = #{app},
+		VERSION_LOG_TYPE = #{versionLogType},
+		VERSION_CODE = #{versionCode},
+		VERSION_NAME = #{versionName},
+		IS_PUB = #{isPub},
+		is_tip = #{isTip},
+		PUB_TIME = #{pubTime},
+		REMARK = #{remark},
+		FILE_ID = #{fileId}
 		WHERE id = #{id}
 	</update>
-	
+
 	<update id="delete">
-		DELETE FROM t_sys_version_log
-		WHERE id = #{id}
+		 UPDATE t_sys_version_log SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id}
 	</update>
 
 	<delete id="removeAll">

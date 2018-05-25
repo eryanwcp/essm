@@ -1,25 +1,26 @@
 /**
- * Copyright (c) 2012-2014 http://www.eryansky.com
+ * Copyright (c) 2014 http://www.jfit.com.cn
  * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * 江西省锦峰软件科技有限公司
  */
 package com.eryansky.modules.sys.mapper;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
-import com.eryansky.core.orm.mybatis.entity.BaseEntity;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.VersionLogType;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.eryansky.modules.sys._enum.YesOrNo;
 
 import java.util.Calendar;
 import java.util.Date;
 
 /**
  * 系统更新日志
- * @author 尔演&Eryan eryanwcp@gmail.com
+ * @author 温春平@wencp wencp@jx.tobacco.gov.cn
  * @date 2015-01-09
  */
-public class VersionLog extends BaseEntity<VersionLog> {
+public class VersionLog extends DataEntity<VersionLog> {
 
     /**
      * 版本号
@@ -34,17 +35,25 @@ public class VersionLog extends BaseEntity<VersionLog> {
      */
     private String fileId;
     /**
+     * APP标识
+     */
+    private String app;
+    /**
      * 更新类型 ${@link VersionLogType}
      */
-    private Integer versionLogType;
+    private String versionLogType;
     /**
-     * 更新时间
+     * 是否发布
      */
-    private Date updateTime;
+    private String isPub;
     /**
-     * 更新发布人
+     * 是否提示
      */
-    private String updateUser;
+    private String isTip;
+    /**
+     * 发布时间
+     */
+    private Date pubTime;
     /**
      * 变更说明
      */
@@ -61,16 +70,12 @@ public class VersionLog extends BaseEntity<VersionLog> {
     @Override
     public void prePersist() {
         super.prePersist();
-        String user = SecurityUtils.getCurrentUserId();
-        this.updateUser = user;
-        this.updateTime = Calendar.getInstance().getTime();
+        this.pubTime = Calendar.getInstance().getTime();
     }
 
     @Override
     public void preUpdate() {
-        String user = SecurityUtils.getCurrentUserId();
-        this.updateUser = user;
-        this.updateTime = Calendar.getInstance().getTime();
+        this.pubTime = Calendar.getInstance().getTime();
     }
 
     public String getVersionName() {
@@ -97,29 +102,64 @@ public class VersionLog extends BaseEntity<VersionLog> {
         this.fileId = fileId;
     }
 
-    public Integer getVersionLogType() {
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
+
+    public String getVersionLogType() {
         return versionLogType;
     }
 
-    public void setVersionLogType(Integer versionLogType) {
+    public void setVersionLogType(String versionLogType) {
         this.versionLogType = versionLogType;
     }
 
     @JsonFormat(pattern = DATE_TIME_FORMAT, timezone = TIMEZONE)
-    public Date getUpdateTime() {
-        return updateTime;
+    public Date getPubTime() {
+        return pubTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setPubTime(Date updateTime) {
+        this.pubTime = updateTime;
     }
 
-    public String getUpdateUser() {
-        return updateUser;
+
+    public String getIsPub() {
+        return isPub;
     }
 
-    public void setUpdateUser(String updateUser) {
-        this.updateUser = updateUser;
+    public String getIsPubView() {
+        YesOrNo s = YesOrNo.getByValue(isPub);
+        String str = "";
+        if (s != null) {
+            str = s.getDescription();
+        }
+        return str;
+    }
+
+    public void setIsPub(String isPub) {
+        this.isPub = isPub;
+    }
+
+    public String getIsTip() {
+        return isTip;
+    }
+
+    public void setIsTip(String isTip) {
+        this.isTip = isTip;
+    }
+
+    public String getIsTipView() {
+        YesOrNo s = YesOrNo.getByValue(isTip);
+        String str = "";
+        if (s != null) {
+            str = s.getDescription();
+        }
+        return str;
     }
 
     public String getRemark() {
@@ -134,7 +174,7 @@ public class VersionLog extends BaseEntity<VersionLog> {
      * 系统类型描述.
      */
     public String getVersionLogTypeView() {
-        VersionLogType ss = VersionLogType.getVersionLogType(versionLogType);
+        VersionLogType ss = VersionLogType.getByValue(versionLogType);
         String str = "";
         if (ss != null) {
             str = ss.getDescription();

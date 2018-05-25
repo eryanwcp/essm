@@ -12,10 +12,8 @@ import com.eryansky.modules.sys._enum.RoleType;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -154,7 +152,7 @@ public class Role extends DataEntity<Role> {
     }
 
     public String getIsSystemView() {
-        YesOrNo s = YesOrNo.getYesOrNoByValue(isSystem);
+        YesOrNo s = YesOrNo.getByValue(isSystem);
         String str = "";
         if (s != null) {
             str = s.getDescription();

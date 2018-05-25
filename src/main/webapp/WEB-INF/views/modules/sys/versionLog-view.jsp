@@ -12,7 +12,8 @@
                 "render": "div",
                 "size": 100,
                 "color": "#3a3",
-                "text": '${httpPrefix}'+$("#link_download").attr("href")
+                <%--"text": '${httpPrefix}'+$("#link_download").attr("href")--%>
+                "text": '${appURL}/m/download?versionCode=${model.versionCode}&versionLogType=${model.versionLogType}'
             });
         }
     });

@@ -263,8 +263,7 @@ public class NoticeController extends SimpleController {
         List<User> list = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY.getValue()))){
-            String organId = UserUtils.getCompanyId(sessionInfo.getUserId());
-            List<String> organIds = organService.findOrganChildsDepartmentOrganIds(organId);
+            List<String> organIds = organService.findDepartmentAndGroupOrganIdsByCompanyId(sessionInfo.getLoginCompanyId());
             list = userService.findUsersByOrganIds(organIds);
         }else{
             list = userService.findWithInclude(includeIds, query);

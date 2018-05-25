@@ -38,7 +38,7 @@ public enum YesOrNo {
         return description;
     }
 
-    public static YesOrNo getYesOrNoByValue(String value) {
+    public static YesOrNo getByValue(String value) {
         if (null == value)
             return null;
         for (YesOrNo _enum : YesOrNo.values()) {
@@ -48,7 +48,7 @@ public enum YesOrNo {
         return null;
     }
 
-    public static YesOrNo getYesOrNoByDescription(String description) {
+    public static YesOrNo getByDescription(String description) {
         if (null == description)
             return null;
         for (YesOrNo _enum : YesOrNo.values()) {

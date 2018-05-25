@@ -24,15 +24,16 @@ public interface OrganDao extends TreeDao<Organ> {
 
     List<Organ> findCustomQuery(Parameter parameter);
 
-    List<Organ> findOwnAndChild(Parameter parameter);
+    List<Organ> findOwnerAndChild(Parameter parameter);
 
-    List<String> findOwnAndChildIds(Parameter parameter);
+    List<String> findOwnerAndChildIds(Parameter parameter);
 
-    List<Organ> findOwnAndChilds(Parameter parameter);
+    List<Organ> findOwnerAndChilds(Parameter parameter);
 
-    List<String> findOwnAndChildsIds(Parameter parameter);
+    List<String> findOwnerAndChildsIds(Parameter parameter);
 
     List<Organ> findChild(Parameter parameter);
+    List<String> findChildIds(Parameter parameter);
 
     List<Organ> findChilds(Parameter parameter);
 

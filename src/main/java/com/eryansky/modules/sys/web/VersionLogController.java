@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2012-2018 http://www.eryansky.com
- * <p/>
- * Licensed under the Apache License, Version 2.0 (the "License");
+ *  Copyright (c) 2014 http://www.jfit.com.cn
+ *
+ *          江西省锦峰软件科技有限公司
  */
 package com.eryansky.modules.sys.web;
 
@@ -53,7 +53,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author 尔演&Eryan eryanwcp@gmail.com
+ * @author 温春平@wencp wencp@jx.tobacco.gov.cn
  * @date 2015-01-09
  */
 @Controller
@@ -68,11 +68,11 @@ public class VersionLogController extends SimpleController {
     private FileService fileService;
 
 
-    @Logging(value = "版本管理",logType = LogType.access)
+
     @RequestMapping(value = {""})
     public String list() {return "modules/sys/versionLog";}
 
-    @ModelAttribute
+    @ModelAttribute("model")
     public VersionLog get(@RequestParam(required=false) String id) {
         if (StringUtils.isNotBlank(id)){
             return versionLogService.get(id);
@@ -146,9 +146,9 @@ public class VersionLogController extends SimpleController {
         }
 
         VersionLogType[] lts = VersionLogType.values();
-        for (int i = 0; i < lts.length; i++) {
+        for(int i = 0; i < lts.length; i++) {
             Combobox combobox = new Combobox();
-            combobox.setValue(lts[i].getValue().toString());
+            combobox.setValue(lts[i].getValue());
             combobox.setText(lts[i].getDescription());
             cList.add(combobox);
         }
@@ -202,12 +202,12 @@ public class VersionLogController extends SimpleController {
      * @param versionLog
      * @return
      */
-    @Logging(value = "版本管理-保存版本",logType = LogType.access)
     @RequestMapping(value = { "save" })
     @ResponseBody
     public Result save(@ModelAttribute("model") VersionLog versionLog) {
         Result result;
-        if(versionLogService.getByVersionCode(versionLog.getVersionLogType(),versionLog.getVersionCode())!=null){
+        VersionLog checkEntity = versionLogService.getByVersionCode(versionLog.getVersionLogType(),versionLog.getVersionCode());
+        if(checkEntity !=null && !checkEntity.getId().equals(versionLog.getId())){
             result=new Result(Result.WARN, "版本内部编号为[" + versionLog.getVersionCode()
                     + "]已存在,请修正!", "versionCode");
             logger.debug(result.toString());
@@ -235,7 +235,7 @@ public class VersionLogController extends SimpleController {
         Result result = null;
         if(Collections3.isNotEmpty(ids)){
             for(String id:ids){
-                versionLogService.delete(id);
+                versionLogService.delete(new VersionLog(id));
             }
         }
         result = Result.successResult();
@@ -287,7 +287,7 @@ public class VersionLogController extends SimpleController {
      */
     @RequiresUser(required = false)
     @RequestMapping(value = {"downloadApp/{versionLogType}"})
-    public ModelAndView downloadApp(HttpServletRequest request,HttpServletResponse response,@PathVariable Integer versionLogType) throws Exception {
+    public ModelAndView downloadApp(HttpServletRequest request,HttpServletResponse response,@PathVariable String versionLogType) throws Exception {
         VersionLog versionLog = versionLogService.getLatestVersionLog(versionLogType);
         if(versionLog != null && versionLog.getFileId() != null){
             File file = diskService.getFileById(versionLog.getFileId());

@@ -5,7 +5,9 @@
  */
 package test.utils;
 
+import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.mapper.JsonMapper;
+import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.service.*;
 import org.junit.Test;
@@ -68,6 +70,25 @@ public class SysServiceTest {
 
 
         System.out.println(resourceService.isUserPermittedResourceCode("1",""));
+
+    }
+
+
+    @Test
+    public void organ() throws Exception{
+//        List<Organ> companys = organService.findCompanyOrgans();
+//        System.out.println(JsonMapper.toJsonString(companys));
+//        List<TreeNode> treeNodes = organService.findCompanyTreeNodes();
+//        System.out.println(JsonMapper.toJsonString(treeNodes));
+//        System.out.println(organService.findChilds("1"));
+//        System.out.println(organService.findChilds("4eebbb72532c4b8ebca0e68ac0b189ad"));
+//        System.out.println(organService.findOwnerAndChilds("1"));
+//        System.out.println(organService.findOwnerAndChilds("4eebbb72532c4b8ebca0e68ac0b189ad"));
+//        System.out.println(organService.findDepartmentAndGroupOrganExtendsByCompanyId("1"));
+//        System.out.println(organService.findRoots());
+
+
+
 
     }
 
