@@ -234,7 +234,7 @@ public class DiskController extends SimpleController {
         }
         FileSizeType[] _enums = FileSizeType.values();
         for (int i = 0; i < _enums.length; i++) {
-            Combobox combobox = new Combobox(_enums[i].getValue().toString(),
+            Combobox combobox = new Combobox(_enums[i].getValue(),
                     _enums[i].getDescription());
             cList.add(combobox);
         }
