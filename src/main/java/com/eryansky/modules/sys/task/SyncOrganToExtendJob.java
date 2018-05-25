@@ -31,8 +31,7 @@ public class SyncOrganToExtendJob {
     @Scheduled(cron="0 0 0 * * ?")
     public void execute(){
         logger.info("定时任务...开始：同步organ扩展表");
-        systemService.deleteOrganExtend();
-        systemService.insertToOrganExtend();
+        systemService.syncOrganToExtend();
         logger.info("定时任务...结束：同步organ扩展表");
     }
 
