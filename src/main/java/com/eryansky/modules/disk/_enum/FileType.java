@@ -91,8 +91,19 @@ public enum FileType {
      */
     public static FileType getByFileSuffix(String fileSuffix) {
         FileType fileType = FileType.Other;
-        if (StringUtils.isNotBlank(fileSuffix)){
-            //TODO
+        if(StringUtils.isBlank(fileSuffix)){
+            return fileType;
+        }
+        if (StringUtils.containsAny(fileSuffix,"txt","wps","doc","docx","pdf","ppt","pptx","xls","xlsx")){
+            return Document;
+        }else if (StringUtils.containsAny(fileSuffix,"jpg","jpeg","png","gif","bmp")){
+            return Image;
+        }else if (StringUtils.containsAny(fileSuffix,"mp3","wma")){
+            return Music;
+        }else if (StringUtils.containsAny(fileSuffix,"avi","rmvb","mp4","swf","fla")){
+            return Video;
+        }else if (StringUtils.containsAny(fileSuffix,"exe","apk")){
+            return Soft;
         }
         return fileType;
     }

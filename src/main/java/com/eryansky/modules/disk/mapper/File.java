@@ -76,6 +76,12 @@ public class File extends DataEntity<File> implements Serializable {
 		this.fileType = FileType.Other.getValue();
 	}
 
+	@Override
+	public void prePersist() {
+		super.prePersist();
+		this.fileType = FileType.getByFileSuffix(fileSuffix).getValue();
+	}
+
 	public String getName() {
 		return name;
 	}
