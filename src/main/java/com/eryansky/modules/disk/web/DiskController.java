@@ -206,11 +206,11 @@ public class DiskController extends SimpleController {
             cList.add(selectCombobox);
         }
 
-        Combobox combobox = new Combobox(FolderAuthorize.User.getValue().toString(), FolderAuthorize.User.getDescription());
+        Combobox combobox = new Combobox(FolderAuthorize.User.getValue(), FolderAuthorize.User.getDescription());
         cList.add(combobox);
 
         if ("search".equals(requestType)) {
-            combobox = new Combobox(FolderAuthorize.SysTem.getValue().toString(), FolderAuthorize.SysTem.getDescription());
+            combobox = new Combobox(FolderAuthorize.SysTem.getValue(), FolderAuthorize.SysTem.getDescription());
             cList.add(combobox);
         }
 
