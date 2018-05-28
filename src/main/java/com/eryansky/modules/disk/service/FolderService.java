@@ -5,7 +5,6 @@
 */
 package com.eryansky.modules.disk.service;
 
-import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
