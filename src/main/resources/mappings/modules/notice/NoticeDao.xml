@@ -115,13 +115,6 @@
 			<if test="isTop != null">
 				AND a.is_top = #{isTop}
 			</if>
-			/*TODO 分页查询存在问题*/
-			<!--<if test="publishUserIds != null and publishUserIds.size() !=0">-->
-			<!--AND a.user_id IN-->
-			<!--<foreach collection="publishUserIds" item="item" index="index" open="(" separator="," close=")" >-->
-			<!--#{item,jdbcType=VARCHAR}-->
-			<!--</foreach>-->
-			<!--</if>-->
 			<if test="mode != null">
 				AND a.mode = #{mode}
 			</if>
