@@ -150,8 +150,7 @@ public class FileService extends CrudService<FileDao, File> {
         java.io.File tempFile = null;
         try {
             String fullName = uploadFile.getOriginalFilename();
-            String code = FileUploadUtils.encodingFilenamePrefix(sessionInfo.getUserId().toString(),
-                    fullName);
+            String code = FileUploadUtils.encodingFilenamePrefix(sessionInfo.getUserId(),fullName);
             String storePath = iFileManager.getStorePath(folder,sessionInfo.getUserId(),uploadFile.getOriginalFilename());
 
 
@@ -272,6 +271,20 @@ public class FileService extends CrudService<FileDao, File> {
         parameter.put("folderId",folderId);
         parameter.put("fileSuffixs",fileSuffixs);
         return dao.findFolderFiles(parameter);
+    }
+
+    public List<File> findOwnerAndChildsFolderFiles(String folderId) {
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put("folderId",folderId);
+        return dao.findOwnerAndChildsFolderFiles(parameter);
+    }
+
+    public List<String> findOwnerAndChildsIdsFolderFiles(String folderId) {
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put("folderId",folderId);
+        return dao.findOwnerAndChildsIdsFolderFiles(parameter);
     }
 
     /**

@@ -8,15 +8,15 @@ package com.eryansky.modules.disk.service;
 import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm.model.Parameter;
-import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
-import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk._enum.FolderType;
-import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.web.DiskController;
+import com.eryansky.utils.AppConstants;
+import com.eryansky.utils.AppUtils;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.dao.FolderDao;
-import com.eryansky.core.orm.mybatis.service.CrudService;
 
 import java.util.List;
 
@@ -36,7 +35,7 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class FolderService extends CrudService<FolderDao, Folder> {
+public class FolderService extends TreeService<FolderDao, Folder> {
 
     @Autowired
     private FileService fileService;
@@ -75,32 +74,13 @@ public class FolderService extends CrudService<FolderDao, Folder> {
         return folder;
     }
 
-    /**
-     * 保存文件。 若为编辑部门下文件时需要判断是否有子文件夹并更新子文件夹的部门信息
-     *
-     * @param folder
-     *            文件夹对象
-     */
     @Transactional(readOnly = false)
     public void saveFolder(Folder folder) {
-        String folderId = folder.getId();
-        String folderOrganId = folder.getOrganId();
-        if (StringUtils.isNotBlank(folderId) && StringUtils.isNotBlank(folderOrganId)) {
-            List<Folder> children = Lists.newArrayList();
-            recursiveFolder(children, folder);
-            if (Collections3.isNotEmpty(children)) {
-                for (Folder child : children) {
-                    child.setOrganId(folderOrganId);
-                    save(child);// 更新子文件夹的部门Id
-                }
-
-            }
-        }
         save(folder);
     }
 
     /**
-     * 查找默认文件夹,无则初始化---> 针对 我的云盘、部门云盘 、公共云盘
+     * 查找默认文件夹,无则初始化---> 针对 我的云盘
      *
      * @param folderAuthorize
      *            云盘类型Id
@@ -140,137 +120,56 @@ public class FolderService extends CrudService<FolderDao, Folder> {
     /**
      * 删除文件夹 包含子级文件夹以及文件
      * @param folderId
-     * @param folderId
      */
     @Transactional(readOnly = false)
     public void deleteFolderAndFiles(String folderId) {
         Validate.notNull(folderId,"参数[folderId]不能为null.");
-        List<String> fileIds = Lists.newArrayList();
-        List<String> folderIds = Lists.newArrayList();
-        recursiveFolderAndFile(folderIds, fileIds, folderId);
+        List<String> fileIds = fileService.findOwnerAndChildsIdsFolderFiles(folderId);
+        dao.deleteCascadeByFolderId(new Folder(folderId));
         fileService.deleteFileByFileIds(fileIds);
-        for(String id:folderIds){
-            this.delete(id);
-        }
-
     }
 
 
-    /**
-     * 是否允操作文件夹
-     *
-     * @param folderId
-     *            文件夹ID
-     * @param isAdmin
-     *            是否是管理员
-     * @return
-     */
-    public boolean isOperateFolder(String folderId, boolean isAdmin) {
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        Folder folder = get(folderId);
-        boolean operateAble = isAdmin;
-        if (!operateAble && folder != null) {
-            if (sessionInfo.getUserId().equals(folder.getUserId())) {
-                operateAble = true;
-            }
-        }
-        return operateAble;
-    }
 
-    /**
-     * 递归文件夹树
-     * @param treeNodes
-     *            传入的树节点
-     * @param folder
-     *            树节点隶属的文件夹
-     * @param excludeFolderId
-     *            父文件夹
-     * @param isAdmin
-     *            是否有管理员权限
-     * @param isCascade
-     *            是否递归
-     */
-    public void recursiveFolderTreeNode(List<TreeNode> treeNodes,
-                                        Folder folder, String excludeFolderId, Boolean isAdmin,
-                                        boolean isCascade) {
-        TreeNode treeNode = new TreeNode(folder.getId().toString(),
-                folder.getName());
+    public TreeNode folderToTreeNode(Folder folder) {
+        TreeNode treeNode = new TreeNode(folder.getId(),folder.getName());
         treeNode.getAttributes().put(DiskController.NODE_TYPE,
                 DiskController.NType.Folder.toString());
-        if (isAdmin != null) {
-            treeNode.getAttributes().put(DiskController.NODE_OPERATE,isOperateFolder(folder.getId(), isAdmin));
-        }
-        treeNode.getAttributes().put(DiskController.NODE_USERNAME,
-                folder.getUserName());
+        treeNode.getAttributes().put(DiskController.NODE_USERNAME,folder.getUserName());
         treeNode.setIconCls("icon-folder");
-        treeNodes.add(treeNode);
-        if (isCascade) {
-            List<Folder> childFolders = this.findChildsByParentId(folder.getId());
-            List<TreeNode> childTreeNodes = Lists.newArrayList();
-            for (Folder childFolder : childFolders) {
-                if (!childFolder.getId().equals(excludeFolderId)) {
-                    this.recursiveFolderTreeNode(childTreeNodes, childFolder,
-                            excludeFolderId, isAdmin, isCascade);
-                }
-            }
-            if (Collections3.isNotEmpty(childTreeNodes)) {
-                treeNode.setState(TreeNode.STATE_CLOASED);
-                for (TreeNode childTreeNode : childTreeNodes) {
-                    treeNode.addChild(childTreeNode);
-                }
-            }
-        }
-
+        treeNode.setpId(folder.getParentId());
+        return treeNode;
     }
+
 
     /**
      *
      * @param folderAuthorize {@link com.eryansky.modules.disk._enum.FolderAuthorize}
      * @param userId 用户ID
      * @param excludeFolderId 排除的文件夹ID
-     * @param isAdmin  是否有管理员权限
-     * @param isCascade 是否级联
      * @return
      */
-    public List<TreeNode> getFolders(String folderAuthorize, String userId,  String excludeFolderId, Boolean isAdmin, boolean isCascade){
+    public List<TreeNode> findNormalTypeFolderTreeNodes(String folderAuthorize, String userId, String excludeFolderId){
         Validate.notNull(folderAuthorize,"参数[folderAuthorize]不能为null.");
-        List<Folder> folders = this.getFoldersByFolderAuthorize(folderAuthorize,userId,null);
+        List<Folder>  list = findFolders(folderAuthorize,userId,FolderType.NORMAL.getValue(),null,null,excludeFolderId);
         List<TreeNode> treeNodes = Lists.newArrayList();
-        for(Folder folder:folders){
-            if(!folder.getId().equals(excludeFolderId)){
-                this.recursiveFolderTreeNode(treeNodes,folder,excludeFolderId,isAdmin,isCascade);
-            }
+        for(Folder folder:list){
+            treeNodes.add(folderToTreeNode(folder));
         }
-        return treeNodes;
+        return AppUtils.toTreeTreeNodes(treeNodes);
     }
 
-
-    /**
-     * 查询某个授权类型下的文件夹
-     * 0个人：个人文件夹
-     * @param folderAuthorize
-     * @param userId
-     * @param parentId 上级文件夹 null:查询顶级文件夹 不为null:查询该级下一级文件夹
-     * @return
-     */
-    public List<Folder> getFoldersByFolderAuthorize(String folderAuthorize,
-                                                    String userId, String parentId) {
-        Validate.notNull(folderAuthorize, "参数[folderAuthorize]不能为null.");
-        Parameter parameter = new Parameter();
-        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
-        parameter.put("folderAuthorize",folderAuthorize);
-        parameter.put("parentId",parentId);
-        parameter.put("type",FolderType.NORMAL.getValue());
-
-        if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
-            Validate.notNull(userId, "参数[userId]不能为null.");
-            parameter.put("userId", userId);
-        } else {
-            throw new ServiceException("无法识别参数[folderAuthorize]："
-                    + folderAuthorize);
-        }
-
-        return dao.getFoldersByFolderAuthorize(parameter);
+    public List<Folder> findFolders(String folderAuthorize, String userId,String type,String code,String parentId, String excludeFolderId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.addParameter(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.addParameter(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
+        parameter.addParameter("folderAuthorize",folderAuthorize);
+        parameter.addParameter("userId",userId);
+        parameter.addParameter("type",type);
+        parameter.addParameter("code",code);
+        parameter.addParameter("parentId",parentId);
+        parameter.addParameter("excludeFolderId",excludeFolderId);
+        return dao.findFolders(parameter);
     }
 
 
@@ -283,6 +182,10 @@ public class FolderService extends CrudService<FolderDao, Folder> {
         return findFoldersByUserId(userId,null,null,null);
     }
 
+    public List<Folder> findNormalTypeFoldersByUserId(String userId){
+        return findFoldersByUserId(userId,FolderType.NORMAL.getValue(),null,null);
+    }
+
     public List<Folder> findFoldersByUserId(String userId,String type,String folderAuthorize,String code){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
@@ -293,66 +196,74 @@ public class FolderService extends CrudService<FolderDao, Folder> {
         return dao.findFoldersByUserId(parameter);
     }
 
-
-    /**
-     * 递归 查找文件夹下的文件夹以及文件
-     *
-     * @param folderIds
-     *            父文件夹
-     * @param fileIds
-     *            文件Id集合
-     * @param folderId
-     *            文件夹Id集合
-     */
-    private void recursiveFolderAndFile(List<String> folderIds,
-                                        List<String> fileIds, String folderId) {
-        folderIds.add(folderId);
-        if (Collections3.isNotEmpty(fileIds)) {
-            List<File> folderFiles = fileService.findFolderFiles(folderId);
-            for (File folderFile : folderFiles) {
-                fileIds.add(folderFile.getId());
-            }
-        }
-        List<Folder> childFolders = this.findChildsByParentId(folderId);
-        if (Collections3.isNotEmpty(childFolders)) {
-            for (Folder childFolder : childFolders) {
-                recursiveFolderAndFile(folderIds, fileIds, childFolder.getId());
-            }
-        }
-    }
-
-    /**
-     * 递归 查找文件夹下的子文件夹集合
-     *
-     * @param folderList
-     *            子文件夹集合
-     * @param folder
-     *            父文件夹
-     */
-    private void recursiveFolder(List<Folder> folderList, Folder folder) {
-        List<Folder> childFolders = this.findChildsByParentId(folder.getId());
-        if (Collections3.isNotEmpty(childFolders)) {
-            for (Folder childFolder : childFolders) {
-                if (folderList != null) {
-                    folderList.add(childFolder);
-                }
-                recursiveFolder(folderList, childFolder);
-            }
-        }
-    }
-
     /**
      * 根据父级ID查找子级文件夹
      * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
      * @return
      */
-    public List<Folder> findChildsByParentId(String parentId){
+    public List<Folder> findNormalTypeChild(String parentId){
+        return findChild(parentId,FolderType.NORMAL.getValue());
+    }
+    /**
+     * 根据父级ID查找子级文件夹
+     * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
+     * @return
+     */
+    public List<Folder> findChild(String parentId){
+        return findChild(parentId,null);
+    }
+
+    /**
+     * 根据父级ID查找子级文件夹
+     * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
+     * @param type {@link FolderType}
+     * @return
+     */
+    public List<Folder> findChild(String parentId, String type){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
-        parameter.put("type",FolderType.NORMAL.getValue());
-        parameter.put("parentId",parentId);
+        parameter.put("type",type);
+        parameter.put("id",parentId);
+        return dao.findChild(parameter);
+    }
+    /**
+     * 根据父级ID查找子级文件夹(包含下级)
+     * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
+     * @return
+     */
+    public List<Folder> findNormalTypeChilds(String parentId){
+        return findChilds(parentId,FolderType.NORMAL.getValue());
+    }
+    /**
+     * 根据父级ID查找子级文件夹(包含下级)
+     * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
+     * @return
+     */
+    public List<Folder> findChilds(String parentId){
+        return findChilds(parentId,null);
+    }
 
+
+    /**
+     * 根据父级ID查找子级文件夹(包含下级)
+     * @param parentId 父级文件夹ID null:查询顶级文件夹 不为null:查询该级下一级文件夹
+     * @param type {@link FolderType}
+     * @return
+     */
+    public List<Folder> findChilds(String parentId, String type){
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("type",type);
+        parameter.put("id",parentId);
         return dao.findChilds(parameter);
+    }
+
+
+    public List<String> findChildsIds(String parentId){
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("id",parentId);
+        return dao.findChildsIds(parameter);
     }
 
 

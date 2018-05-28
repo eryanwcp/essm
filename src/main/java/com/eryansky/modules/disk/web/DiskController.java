@@ -21,6 +21,7 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.DownloadUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.modules.disk.mapper.Folder;
+import com.eryansky.utils.AppUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.aop.annotation.Logging;
@@ -50,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 我的云盘 管理 包含：文件夹的管理 文件的管理 以及文件分享
+ * 我的云盘 管理 包含：文件夹的管理 文件的管理
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2014-11-22
@@ -97,6 +98,7 @@ public class DiskController extends SimpleController {
     /**
      * 我的云盘
      */
+    @Logging(logType = LogType.access,value = "我的云盘")
     @RequestMapping(value = { "" })
     public ModelAndView list() {
         ModelAndView modelAndView = new ModelAndView("modules/disk/disk");
@@ -105,71 +107,8 @@ public class DiskController extends SimpleController {
 
 
     /**
-     * 文件检索
-     */
-    @RequestMapping(value = { "search" })
-    public ModelAndView searchList() {
-        boolean isAdmin = DiskUtils.isDiskAdmin(SecurityUtils.getCurrentUserId());
-        ModelAndView modelAndView = new ModelAndView("modules/disk/disk-search");
-        modelAndView.addObject("isAdmin", isAdmin);
-        return modelAndView;
-    }
-
-
-    /**
-     * 文件检索
-     *
-     * @param fileName
-     *            文件名
-     * @param folderAuthorize
-     *            云盘类型
-     * @param startTime
-     *            开始时间
-     * @param endTime
-     *            结束时间
-     * @param personIds
-     *            上传人Id集合
-     * @return
-     */
-
-    @RequestMapping(value = { "fileSearchDatagrid" })
-    @ResponseBody
-    public String fileSearchDatagrid(
-            String fileName,
-            String folderAuthorize,
-            String sizeType,
-            Date startTime,
-            Date endTime,
-            @RequestParam(value = "personIds", required = false) List<String> personIds) {
-        String json = JsonMapper.getInstance().toJson(new Datagrid());
-        String userId = SecurityUtils.getCurrentUserId(); // 登录人Id
-        boolean isAdmin = DiskUtils.isDiskAdmin(userId); // 是否是云盘管理员
-        if (isAdmin) {
-            userId = null;
-        }
-        userId = Collections3.isNotEmpty(personIds) ? personIds.get(0):userId;
-        Page<File> page = new Page<File>(SpringMVCHolder.getRequest());
-        page = fileService.searchFilePage(page, userId, fileName,
-                folderAuthorize, sizeType, startTime, endTime);
-        if (page != null) {
-            Datagrid<File> dg = new Datagrid<File>(page.getTotalCount(),
-                    page.getResult());
-            json = JsonMapper.getInstance().toJson(
-                    dg,
-                    File.class,
-                    new String[] { "id", "name", "code", "prettyFileSize",
-                            "location", "createTime", "ownerName" });
-        }
-        return json;
-
-    }
-
-
-    /**
      * 文件夹树
-     *
-     * @param folderAuthorize
-     *            {@link com.eryansky.modules.disk._enum.FolderAuthorize}
+     * @param folderAuthorize {@link FolderAuthorize}
      * @param excludeFolderId
      * @param selectType
      * @return
@@ -183,9 +122,7 @@ public class DiskController extends SimpleController {
             treeNodes.add(selectTreeNode);
         }
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        List<TreeNode> folderTreeNodes = null;
-        folderTreeNodes = folderService.getFolders(folderAuthorize,
-                sessionInfo.getUserId(),  excludeFolderId, null,true);
+        List<TreeNode> folderTreeNodes = folderService.findNormalTypeFolderTreeNodes(folderAuthorize,sessionInfo.getUserId(),  excludeFolderId);
         treeNodes.addAll(folderTreeNodes);
         return treeNodes;
     }
@@ -247,6 +184,7 @@ public class DiskController extends SimpleController {
      *
      * @return
      */
+    @Logging(logType = LogType.access,value = "我的云盘-文件夹保存")
     @RequestMapping(value = { "saveFolder" })
     @ResponseBody
     public Result saveFolder(@ModelAttribute("model") Folder folder) {
@@ -264,6 +202,7 @@ public class DiskController extends SimpleController {
      *            文件夹ID
      * @return
      */
+    @Logging(logType = LogType.access,value = "我的云盘-文件夹删除")
     @RequestMapping(value = { "folderRemove/{folderId}" })
     @ResponseBody
     public Result folderRemove(@PathVariable String folderId) {
@@ -274,31 +213,15 @@ public class DiskController extends SimpleController {
     /**
      * 递归用户文件夹树
      *
-     * @param userTreeNodes
      * @param folder
-     * @param isCascade
      */
-    public void recursiveUserFolderTreeNode(List<TreeNode> userTreeNodes,
-                                            Folder folder, boolean isCascade) {
+    public TreeNode folderToTreeNode(Folder folder) {
         TreeNode treeNode = new TreeNode(folder.getId(),folder.getName());
         treeNode.getAttributes().put(DiskController.NODE_TYPE,DiskController.NType.Folder.toString());
         treeNode.getAttributes().put(DiskController.NODE_OPERATE, true);
         treeNode.setIconCls(ICON_FOLDER);
-        userTreeNodes.add(treeNode);
-        if (isCascade) {
-            List<Folder> childFolders = folderService.findChildsByParentId(folder.getId());
-            List<TreeNode> childTreeNodes = Lists.newArrayList();
-            for (Folder childFolder : childFolders) {
-                this.recursiveUserFolderTreeNode(childTreeNodes, childFolder,isCascade);
-            }
-            if (Collections3.isNotEmpty(childTreeNodes)) {
-                treeNode.setState(TreeNode.STATE_CLOASED);
-                for (TreeNode childTreeNode : childTreeNodes) {
-                    treeNode.addChild(childTreeNode);
-                }
-            }
-        }
-
+        treeNode.setpId(folder.getParentId());
+        return treeNode;
     }
 
 
@@ -315,19 +238,17 @@ public class DiskController extends SimpleController {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String loginUserId = sessionInfo.getUserId(); // 登录人Id
 
-        TreeNode userOwnerTreeNode = new TreeNode(FolderAuthorize.User.getValue().toString(), FolderAuthorize.User.getDescription());
+        TreeNode userOwnerTreeNode = new TreeNode(FolderAuthorize.User.getValue(), FolderAuthorize.User.getDescription());
         userOwnerTreeNode.getAttributes().put(NODE_TYPE,NType.FolderAuthorize.toString());
         userOwnerTreeNode.setIconCls(ICON_DISK);
+        treeNodes.add(userOwnerTreeNode);
 
-        List<Folder> userFolders = folderService.getFoldersByFolderAuthorize(FolderAuthorize.User.getValue(),loginUserId, null);
+        List<Folder> userFolders = folderService.findNormalTypeFoldersByUserId(loginUserId);
         List<TreeNode> userFolderTreeNodes = Lists.newArrayList();
         for (Folder folder : userFolders) {
-            this.recursiveUserFolderTreeNode(userFolderTreeNodes, folder, true);
+            userFolderTreeNodes.add(this.folderToTreeNode(folder));
         }
-        for (TreeNode userFolderTreeNode : userFolderTreeNodes) {
-            userOwnerTreeNode.addChild(userFolderTreeNode);
-        }
-        treeNodes.add(userOwnerTreeNode);
+        treeNodes.addAll(AppUtils.toTreeTreeNodes(userFolderTreeNodes));
         return treeNodes;
     }
 
@@ -379,8 +300,7 @@ public class DiskController extends SimpleController {
             json = JsonMapper.getInstance().toJson(
                     dg,
                     File.class,
-                    new String[] { "id", "fileId", "name", "prettyFileSize",
-                            "createTime", "userName", "operate_all" });
+                    new String[] { "id", "fileId", "name", "prettyFileSize","createTime", "userName", "operate_all" });
         }
 
         return json;
@@ -391,14 +311,13 @@ public class DiskController extends SimpleController {
      *
      * @param folderId
      * @param folderAuthorize
-     *            {@link com.eryansky.modules.disk._enum.FolderAuthorize}
+     *            {@link FolderAuthorize}
      * @param parentFolderId
-     * @param organId
      * @return
      */
     @RequestMapping(value = { "folderInput" })
     public ModelAndView folderInput(String folderId, Integer folderAuthorize,
-                                    String parentFolderId, String organId, String roleId) {
+                                    String parentFolderId) {
         ModelAndView modelAndView = new ModelAndView(
                 "modules/disk/disk-folderInput");
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
@@ -416,7 +335,6 @@ public class DiskController extends SimpleController {
             }
         }
         modelAndView.addObject("parentFolderId", parentFolderId);
-        modelAndView.addObject("organId", organId);
         return modelAndView;
     }
 
@@ -454,6 +372,7 @@ public class DiskController extends SimpleController {
      *
      * @return
      */
+    @Logging(logType = LogType.access,value = "我的云盘-文件修改")
     @RequestMapping(value = { "fileSave" })
     @ResponseBody
     public Result fileSave(@ModelAttribute("model") File file) {
@@ -468,10 +387,10 @@ public class DiskController extends SimpleController {
      *            文件Id集合
      * @return
      */
+    @Logging(logType = LogType.access,value = "我的云盘-文件删除")
     @RequestMapping(value = { "delFolderFile" })
     @ResponseBody
-    public Result delFolderFile(
-            @RequestParam(value = "fileIds", required = false) List<String> fileIds) {
+    public Result delFolderFile(@RequestParam(value = "fileIds", required = false) List<String> fileIds) {
         fileService.deleteFileByFileIds(fileIds);
         return Result.successResult();
     }
@@ -483,11 +402,10 @@ public class DiskController extends SimpleController {
      *            文件code集合
      * @throws Exception
      */
+    @Logging(logType = LogType.access,value = "我的云盘-文件级联删除")
     @RequestMapping(value = { "cascadeDelFile" })
     @ResponseBody
-    public Result cascadeDelFile(
-            @RequestParam(value = "fileCodes", required = false) List<String> fileCodes)
-            throws Exception {
+    public Result cascadeDelFile(@RequestParam(value = "fileCodes", required = false) List<String> fileCodes){
         fileService.deleteFileByFolderCode(fileCodes);
         return Result.successResult();
     }
@@ -563,17 +481,76 @@ public class DiskController extends SimpleController {
 
     }
 
+    /**
+     * 文件检索
+     */
+    @Logging(logType = LogType.access,value = "我的云盘-文件检索")
+    @RequestMapping(value = { "search" })
+    public ModelAndView searchList() {
+        boolean isAdmin = DiskUtils.isDiskAdmin(SecurityUtils.getCurrentUserId());
+        ModelAndView modelAndView = new ModelAndView("modules/disk/disk-search");
+        modelAndView.addObject("isAdmin", isAdmin);
+        return modelAndView;
+    }
 
 
     /**
-     * 文件下载------通知、邮件共用
+     * 文件检索
+     *
+     * @param fileName
+     *            文件名
+     * @param folderAuthorize
+     *            云盘类型
+     * @param startTime
+     *            开始时间
+     * @param endTime
+     *            结束时间
+     * @param personIds
+     *            上传人Id集合
+     * @return
+     */
+
+    @RequestMapping(value = { "fileSearchDatagrid" })
+    @ResponseBody
+    public String fileSearchDatagrid(
+            String fileName,
+            String folderAuthorize,
+            String sizeType,
+            Date startTime,
+            Date endTime,
+            @RequestParam(value = "personIds", required = false) List<String> personIds) {
+        String json = JsonMapper.getInstance().toJson(new Datagrid());
+        String userId = SecurityUtils.getCurrentUserId(); // 登录人Id
+        boolean isAdmin = DiskUtils.isDiskAdmin(userId); // 是否是云盘管理员
+        if (isAdmin) {
+            userId = null;
+        }
+        userId = Collections3.isNotEmpty(personIds) ? personIds.get(0):userId;
+        Page<File> page = new Page<File>(SpringMVCHolder.getRequest());
+        page = fileService.searchFilePage(page, userId, fileName,
+                folderAuthorize, sizeType, startTime, endTime);
+        if (page != null) {
+            Datagrid<File> dg = new Datagrid<File>(page.getTotalCount(),
+                    page.getResult());
+            json = JsonMapper.getInstance().toJson(
+                    dg,
+                    File.class,
+                    new String[] { "id", "name", "code", "prettyFileSize","location", "createTime", "userName" });
+        }
+        return json;
+
+    }
+
+
+
+    /**
+     * 文件下载
      *
      * @param response
      * @param request
-     * @param fileId
-     *            文件ID
+     * @param fileId 文件ID
      */
-    @Logging(logType = LogType.access,value = "下载文件[#fileId]")
+    @Logging(logType = LogType.access,value = "下载文件")
     @RequiresUser(required = false)
     @RequestMapping(value = { "fileDownload/{fileId}" })
     public ModelAndView fileDownload(HttpServletResponse response,
@@ -610,10 +587,10 @@ public class DiskController extends SimpleController {
     /**
      * 文件下载
      *
-     * @param fileIds
-     *            入参Ids拼接字符串
+     * @param fileIds 入参Ids拼接字符串
      * @throws Exception
      */
+    @Logging(logType = LogType.access,value = "下载文件")
     @RequestMapping(value = { "downloadDiskFile" })
     public ModelAndView downloadDiskFile(
             HttpServletResponse response,
@@ -639,8 +616,7 @@ public class DiskController extends SimpleController {
      *
      * @param response
      * @param request
-     * @param fileList
-     *            文件对象集合
+     * @param fileList 文件对象集合
      * @throws Exception
      */
     private ModelAndView downloadMultiFileUtil(HttpServletResponse response,
@@ -671,6 +647,7 @@ public class DiskController extends SimpleController {
      * 清空缓存目录 正在运行时 慎用
      * @return
      */
+    @Logging(logType = LogType.access,value = "我的云盘-清空缓存目录")
     @RequestMapping(value = { "clearTempDir" })
     @ResponseBody
     public Result clearTempDir(){

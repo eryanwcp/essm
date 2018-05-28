@@ -157,6 +157,51 @@
     </select>
 
 
+    <select id="findOwnerAndChildsFolderFiles" resultType="File">
+        SELECT
+        <include refid="fileColumns"/>
+        FROM t_disk_file a
+        <include refid="fileJoins"/>
+        <where>
+            a.status = #{status}
+            AND (
+                f.id = #{parentId} AND  OR f.parent_ids LIKE
+                <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            )
+            <if test="fileSuffixs != null and fileIds.size() !=0">
+                AND a.file_suffix IN
+                <foreach collection="fileSuffixs" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.update_time DESC
+    </select>
+
+    <select id="findOwnerAndChildsIdsFolderFiles" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_disk_file a
+        <include refid="fileJoins"/>
+        <where>
+            a.status = #{status}
+            AND (
+            f.id = #{parentId} AND  OR f.parent_ids LIKE
+            <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            )
+            <if test="fileSuffixs != null and fileIds.size() !=0">
+                AND a.file_suffix IN
+                <foreach collection="fileSuffixs" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY a.update_time DESC
+    </select>
+
+
 
     <select id="countFileSize" resultType="long">
         SELECT

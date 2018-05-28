@@ -247,7 +247,7 @@ public class AppUtils {
     public static TreeNode getParentTreeNode(String parentId,String type, List<TreeNode> treeNodes){
         TreeNode t = null;
         for(TreeNode treeNode:treeNodes){
-            String _type = (String)treeNode.getAttributes().get("type");
+            String _type = (String)treeNode.getAttributes().get("nType");
             if(type != null && type.equals(_type) && parentId.equals(treeNode.getId())){
                 t = treeNode;
                 break;
@@ -292,7 +292,7 @@ public class AppUtils {
             }
 
             if(StringUtils.isNotBlank(treeNode.getpId())){
-                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(),(String)treeNode.getAttributes().get("type"), tempTreeNodes);
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(),(String)treeNode.getAttributes().get("nype"), tempTreeNodes);
                 if(pTreeNode != null){
                     for(TreeNode treeNode2:tempTreeNodes){
                         if(treeNode2.getId().equals(pTreeNode.getId())){

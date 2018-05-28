@@ -1,6 +1,6 @@
 package com.eryansky.modules.disk.mapper;
 
-import com.eryansky.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.core.orm.mybatis.entity.TreeEntity;
 import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.sys.utils.OrganUtils;
@@ -11,11 +11,7 @@ import com.eryansky.modules.sys.utils.UserUtils;
  * 文件夹
  */
 @SuppressWarnings("serial")
-public class Folder extends DataEntity<Folder> {
-    /**
-     * 名称
-     */
-    private String name;
+public class Folder extends TreeEntity<Folder> {
     /**
      * 存储路径
      */
@@ -28,10 +24,6 @@ public class Folder extends DataEntity<Folder> {
      * 备注
      */
     private String remark;
-    /**
-     * 排序
-     */
-    private Integer orderNo;
 
     /**
      * 授权 {@link FolderAuthorize}
@@ -45,14 +37,6 @@ public class Folder extends DataEntity<Folder> {
      * 所属用户
      */
     private String userId;
-    /**
-     * 所属部门
-     */
-    private String organId;
-    /**
-     * 授权角色
-     */
-    private String roleId;
 
     /**
      * 父级ID
@@ -74,6 +58,16 @@ public class Folder extends DataEntity<Folder> {
 
     public Folder(String id) {
         super(id);
+    }
+
+    @Override
+    public Folder getParent() {
+        return parent;
+    }
+
+    @Override
+    public void setParent(Folder parent) {
+        this.parent = parent;
     }
 
     public String getName() {
@@ -132,30 +126,6 @@ public class Folder extends DataEntity<Folder> {
         this.userId = userId;
     }
 
-    public Integer getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(Integer orderNo) {
-        this.orderNo = orderNo;
-    }
-
-    public String getOrganId() {
-        return organId;
-    }
-
-    public void setOrganId(String organId) {
-        this.organId = organId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
-
     public String getParentId() {
         return parentId;
     }
@@ -174,10 +144,5 @@ public class Folder extends DataEntity<Folder> {
 
     public String getUserName() {
         return UserUtils.getUserName(userId);
-    }
-
-    public String getOrganName() {
-        return OrganUtils.getOrganName(organId);
-
     }
 }

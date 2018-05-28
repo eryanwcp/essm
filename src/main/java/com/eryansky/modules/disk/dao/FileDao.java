@@ -25,9 +25,28 @@ public interface FileDao extends CrudDao<File> {
 
     List<File> findFilesByIds(Parameter parameter);
 
-    List<File> findFolderFiles(Parameter parameter);
 
     List<File> findAdvenceQueryList(Parameter parameter);
 
     Long countFileSize(Parameter parameter);
+
+    /**
+     * 查找文件夹下所有文件（不包含下级文件夹的文件）
+     * @param parameter
+     * @return
+     */
+    List<File> findFolderFiles(Parameter parameter);
+
+    /**
+     * 查找文件夹下所有文件（包含下级文件夹的文件）
+     * @param parameter
+     * @return
+     */
+    List<File> findOwnerAndChildsFolderFiles(Parameter parameter);
+    /**
+     * 查找文件夹下所有文件IDS（包含下级文件夹的文件）
+     * @param parameter
+     * @return
+     */
+    List<String> findOwnerAndChildsIdsFolderFiles(Parameter parameter);
 }

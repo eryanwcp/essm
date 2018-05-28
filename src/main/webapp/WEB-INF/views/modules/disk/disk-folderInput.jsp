@@ -1,20 +1,15 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="/common/taglibs.jsp" %>
 <script type="text/javascript">
-var folder_from_organ_div  = undefined;
-var parentId_combotree = undefined;
-var folderAuthorize_combobox = undefined;
-var organId_combobox = undefined;
-var defaultFolderIdValue = undefined; //文件夹Id
-var defaultParentIdValue = undefined; //父文件夹Id
-var defaultOrganIdValue = undefined; //所属部门Id
-var defaultFolderAuthorizeValue = undefined; //所属归类Id
+    var parentId_combotree = undefined;
+    var folderAuthorize_combobox = undefined;
+    var defaultFolderIdValue = undefined; //文件夹Id
+    var defaultParentIdValue = undefined; //父文件夹Id
+    var defaultFolderAuthorizeValue = undefined; //所属归类Id
     $(function () {
-    	    folder_from_organ_div = $("#organ_div");
     	    defaultFolderAuthorizeValue = '${not empty folderAuthorize ? folderAuthorize : model.folderAuthorize}';
     	    defaultFolderIdValue = '${not empty folderId ? folderId : model.id}';
     	    defaultParentIdValue = '${not empty parentFolderId ? parentFolderId : model.parentId}';
-    	    defaultOrganIdValue = '${not empty organId ? organId : model.organId}';
             loadFolderAuthorize();
     });
 
@@ -26,69 +21,28 @@ var defaultFolderAuthorizeValue = undefined; //所属归类Id
             value: defaultFolderAuthorizeValue,
             editable: false,
             onSelect: function(record) {
-                toggole(record.value, '', true);
+                loadParent(record.value,  defaultFolderIdValue);
             },
             onLoadSuccess: function() {
                 var selectFolderAuthorizeValue = $(this).combobox('getValue');
-                toggole(defaultFolderAuthorizeValue, defaultOrganIdValue, false);
+                loadParent(selectFolderAuthorizeValue,  defaultFolderIdValue);
             }
         });
     }
   
-  //加载父级文件夹下拉框
+    //加载父级文件夹下拉框
     function loadParent(folderAuthorizeValue, folderIdValue, organIdValue) {
         parentId_combotree = $("#parentId").combotree({
-            url: '${ctxAdmin}/disk/folderTree?selectType=select&folderAuthorize=' + folderAuthorizeValue + '&excludeFolderId=' + folderIdValue + "&organId=" + organIdValue,
+            url: '${ctxAdmin}/disk/folderTree?selectType=select&folderAuthorize=' + folderAuthorizeValue + '&excludeFolderId=' + folderIdValue,
             onLoadSuccess: function() {
                 //如果默认归类与选中归类相同时
                 if (defaultFolderAuthorizeValue == folderAuthorizeValue) {
-                    if ('2'  == folderAuthorizeValue) { //机构归类下还需判断选中机构与默认机构是否相同
-                        var organId = organId_combobox.combotree('getValue'); //选中的机构下拉框Id
-                        if ( defaultOrganIdValue == organId ) {
-                            parentId_combotree.combotree('setValue', defaultParentIdValue);
-                        }
-                    } else {
-                        parentId_combotree.combotree('setValue', defaultParentIdValue);
-                    }
+                    parentId_combotree.combotree('setValue', defaultParentIdValue);
                 }
             }
         });
 
     }
-
-    function toggole(selectFolderAuthorizeValue,organIdValue, clear) {
-        if (clear) {
-            if (organId_combobox != undefined) {
-                organId_combobox.combobox("clear");
-            }
-        }
-        if ('2' == selectFolderAuthorizeValue) { //机构
-            folder_from_organ_div.show();
-            loadOrgan(selectFolderAuthorizeValue);
-        } else {
-            folder_from_organ_div.hide();
-            loadParent(selectFolderAuthorizeValue, defaultFolderIdValue, organIdValue);
-         }
-    }
-
-    function loadOrgan(selectFolderAuthorizeValue) {
-        organId_combobox = $("#organId").combotree({
-            url: "${ctxAdmin}/sys/organ/tree?selectType=select&dataScope=2&cascade=true",
-            valueField: 'id',
-            textField: 'text',
-            value: defaultOrganIdValue,
-//            validType: ['combotreeRequired[\'#organId\']'],
-            onSelect: function(record) {
-                loadParent(selectFolderAuthorizeValue, defaultFolderIdValue, record.id);
-            },
-            onLoadSuccess: function() {
-                var organId = organId_combobox.combotree('getValue');
-                loadParent(selectFolderAuthorizeValue, defaultFolderIdValue, organId);
-            }
-        });
-    }
-
-
 
 </script>
 <div>
@@ -108,13 +62,9 @@ var defaultFolderAuthorizeValue = undefined; //所属归类Id
             <input id="folderAuthorize" name="folderAuthorize" style="width: 120px;height: 28px;"/>
                    <%--data-options="validType:['comboboxRequired[\'#folderAuthorize\']']"/>--%>
         </div>
-        <div id="organ_div" style="display: none;">
-            <label>所属部门:</label>
-            <input id="organId" name="organId" style="width: 260px;height: 28px;" />
-        </div>
         <div>
             <label>上级文件夹:</label>
-            <input id="parentId" name="parentId" style="width: 260px;height: 28px;" />
+            <input id="parentId" name="parent.id" style="width: 260px;height: 28px;" />
         </div>
         <div>
             <label>备注:</label>

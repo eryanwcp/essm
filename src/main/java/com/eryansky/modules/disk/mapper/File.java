@@ -171,20 +171,9 @@ public class File extends DataEntity<File> implements Serializable {
 	}
 
 	/**
-	 * 文件上传人---区别收藏操作
+	 * 文件上传人
 	 */
 	public String getUserName() {
-		if (shareUserId != null) {
-			return UserUtils.getUserName(shareUserId);
-		} else {
-			return UserUtils.getUserName(userId);
-		}
-	}
-
-	/**
-	 * 文件拥有者
-	 */
-	public String getOwnerName() {
 		return UserUtils.getUserName(userId);
 	}
 
@@ -208,9 +197,6 @@ public class File extends DataEntity<File> implements Serializable {
 		return PrettyMemoryUtils.prettyByteSize(fileSize);
 	}
 
-	/**
-	 * disk.jsp页面下载方法入参共用性
-	 */
 	public String getFileId() {
 		return this.id;
 	}

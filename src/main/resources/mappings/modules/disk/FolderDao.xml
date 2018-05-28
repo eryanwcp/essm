@@ -14,21 +14,26 @@
         a.folder_authorize AS "folderAuthorize",
         a.limit_size AS "limitSize",
         a.name AS "name",
-        a.order_no AS "orderNo",
-        a.organ_id AS "organId",
+        a.sort AS "sort",
         a.parent_id AS "parentId",
+        a.parent_id AS "parent.id",
+		p.name AS "parent.name",
+        a.parent_ids AS "parentIds",
         a.path AS "path",
         a.remark AS "remark",
-        a.role_id AS "roleId",
         a.type AS "type",
         a.user_id AS "userId"
-        
+    </sql>
+
+    <sql id="folderJoins">
+        LEFT JOIN t_disk_folder p ON p.id = a.parent_id
     </sql>
 
     <select id="get" resultType="Folder">
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a
+        <include refid="folderJoins"/>
         WHERE a.id = #{id}
     </select>
 
@@ -36,6 +41,7 @@
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a
+        <include refid="folderJoins"/>
         <where>
             a.status = #{status}
         </where>
@@ -44,7 +50,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.update_time DESC
+                ORDER BY a.sort ASC
             </otherwise>
         </choose>
     </select>
@@ -53,6 +59,7 @@
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a
+        <include refid="folderJoins"/>
         <where>
         </where>
         <choose>
@@ -65,29 +72,111 @@
         </choose>
     </select>
 
-    <select id="findChilds" resultType="Folder">
+    <select id="findByParentIdsLike" resultType="Folder">
+        SELECT
+        a.id,
+        a.parent_id AS "parent.id",
+        a.parent_ids
+        FROM t_disk_folder a
+        WHERE a.status = #{STATUS_NORMAL}
+        AND a.parent_ids LIKE #{parentIds}
+        ORDER BY a.sort asc
+    </select>
+
+    <select id="findChild" resultType="Folder">
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a
+        <include refid="folderJoins"/>
         <where>
             a.status = #{status}
             AND a.type = #{type}
             <choose>
-                <when test="parentId != null and parentId !=''">
-                    AND a.parent_id = #{parentId}
+                <when test="id != null and id !=''">
+                    AND a.parent_id = #{id}
                 </when>
                 <otherwise>
                     AND a.parent_id IS null or a.parent_id == ''
                 </otherwise>
             </choose>
         </where>
-        ORDER BY a.update_time DESC
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findChilds" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <include refid="folderJoins"/>
+        <where>
+            a.status = #{status}
+            <if test="type != null and type !=''">
+                AND a.type = #{type}
+            </if>
+            <if test="id != null and id !=''">
+                AND (a.parent_id = #{id} OR a.parent_ids LIKE
+                <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            </if>
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findChildsIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_disk_folder a
+        <where>
+            a.status = #{status}
+            <if test="type != null and type !=''">
+                AND a.type = #{type}
+            </if>
+            <if test="id != null and id !=''">
+                AND (a.parent_id = #{id} OR a.parent_ids LIKE
+                <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            </if>
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findFolders" resultType="Folder">
+        SELECT
+        <include refid="folderColumns"/>
+        FROM t_disk_folder a
+        <include refid="folderJoins"/>
+        <where>
+            a.status = #{status}
+            <if test="userId != null and userId !=''">
+                AND a.user_id = #{userId}
+            </if>
+            <if test="type != null and type !=''">
+                AND a.type = #{type}
+            </if>
+            <if test="folderAuthorize != null and folderAuthorize !=''">
+                AND a.folder_authorize = #{folderAuthorize}
+            </if>
+            <if test="code != null and code !=''">
+                AND a.code = #{code}
+            </if>
+            <if test="parentId != null and parentId !=''">
+                AND  a.parent_id = #{parentId}
+            </if>
+            <if test="excludeFolderId != null and excludeFolderId !=''">
+                AND a.id <![CDATA[ <> ]]> #{excludeFolderId} AND a.parent_ids NOT LIKE
+                <if test="dbName == 'db2'">'%,'||#{excludeFolderId}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{excludeFolderId}, ',%')</if>
+            </if>
+
+        </where>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findFoldersByUserId" resultType="Folder">
         SELECT
         <include refid="folderColumns"/>
         FROM t_disk_folder a
+        <include refid="folderJoins"/>
         <where>
             a.status = #{status}
             <if test="userId != null and userId !=''">
@@ -103,36 +192,8 @@
                 AND a.code = #{code}
             </if>
         </where>
-        ORDER BY a.update_time DESC
+        ORDER BY a.sort ASC
     </select>
-
-    <select id="getFoldersByFolderAuthorize" resultType="Folder">
-        SELECT
-        <include refid="folderColumns"/>
-        FROM t_disk_folder a
-        <where>
-            a.status = #{status}
-            AND a.folder_authorize = #{folderAuthorize}
-            <if test="userId != null and userId !=''">
-                AND a.user_id = #{userId}
-            </if>
-            <if test="type != null and type !=''">
-                AND a.type = #{type}
-            </if>
-            <choose>
-                <when test="parentId != null and parentId !=''">
-                   AND  a.parent_id = #{parentId}
-                </when>
-                <otherwise>
-                    AND a.parent_id IS NULL OR a.parent_id = ''
-                </otherwise>
-            </choose>
-        </where>
-        ORDER BY a.update_time DESC
-    </select>
-
-
-
 
 
     <insert id="insert">
@@ -148,12 +209,11 @@
         folder_authorize,
         limit_size,
         name,
-        order_no,
-        organ_id,
+        sort,
         parent_id,
+        parent_ids,
         path,
         remark,
-        role_id,
         type,
         user_id
         ) VALUES (
@@ -168,12 +228,11 @@
         #{folderAuthorize},
         #{limitSize},
         #{name},
-        #{orderNo},
-        #{organId},
+        #{sort},
         #{parentId},
+        #{parentIds},
         #{path},
         #{remark},
-        #{roleId},
         #{type},
         #{userId}
         )
@@ -189,12 +248,11 @@
         folder_authorize = #{folderAuthorize},
         limit_size = #{limitSize},
         name = #{name},
-        order_no = #{orderNo},
-        organ_id = #{organId},
+        sort = #{sort},
         parent_id = #{parentId},
+        parent_ids = #{parentIds},
         path = #{path},
         remark = #{remark},
-        role_id = #{roleId},
         type = #{type},
         user_id = #{userId}
          WHERE id = #{id}
@@ -207,6 +265,18 @@
         update_user = #{updateUser},
         update_time = #{updateTime}
         WHERE id = #{id}
+    </delete>
+
+
+    <delete id="deleteCascadeByFolderId">
+        UPDATE t_disk_folder SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE (id = #{id} OR parent_id = #{id} OR parent_ids LIKE
+        <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+        <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
     </delete>
 
 </mapper>

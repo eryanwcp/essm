@@ -92,7 +92,7 @@ function loadSearchDatagrid() {
                 width: 110
             },
             {
-                field: 'ownerName',
+                field: 'userName',
                 title: '拥有者',
                 width: 100
             },
