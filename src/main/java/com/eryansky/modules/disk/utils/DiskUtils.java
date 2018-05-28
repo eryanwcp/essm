@@ -366,7 +366,7 @@ public class DiskUtils {
      */
     public static void deleteFile(String fileId){
         Validate.notNull(fileId, "参数[fileId]不能为null.");
-        fileService.deleteFileByFileId(fileId);
+        fileService.deleteByFileId(fileId);
     }
     /**
      * 删除文件
@@ -375,7 +375,7 @@ public class DiskUtils {
      */
     public static void deleteFile(File file){
         Validate.notNull(file, "参数[file]不能为null.");
-        fileService.deleteFileByFileId(file.getId());
+        fileService.deleteByFileId(file.getId());
     }
 
 

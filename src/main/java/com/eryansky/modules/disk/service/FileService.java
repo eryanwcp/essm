@@ -174,7 +174,7 @@ public class FileService extends CrudService<FileDao, File> {
             throw new ServiceException(DiskUtils.UPLOAD_FAIL_MSG + e.getMessage(), e);
         } finally {
 //			if (exception != null && file != null) {
-//				DiskUtils.deleteFileByFileId(null, file.getId());
+//				DiskUtils.deleteByFileId(null, file.getId());
 //			}
             if(tempFile != null && tempFile.exists()){
                 tempFile.delete();
@@ -192,8 +192,8 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileId 文件ID
      */
     @Transactional(readOnly = false)
-    public void deleteFileByFileId(String fileId){
-        deleteFileByFileId(fileId,false);
+    public void deleteByFileId(String fileId){
+        deleteByFileId(fileId,false);
     }
 
     /**
@@ -203,7 +203,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param deleteDiskFile 删除磁盘文件
      */
     @Transactional(readOnly = false)
-    public void deleteFileByFileId(String fileId,boolean deleteDiskFile){
+    public void deleteByFileId(String fileId, boolean deleteDiskFile){
         File file = dao.get(fileId);
         try {
             //检查文件是否被引用
@@ -266,7 +266,7 @@ public class FileService extends CrudService<FileDao, File> {
     public void deleteFileByFileIds(List<String> fileIds) {
         if (Collections3.isNotEmpty(fileIds)) {
             for (String fileId : fileIds) {
-                deleteFileByFileId(fileId);
+                deleteByFileId(fileId);
             }
         } else {
             logger.warn("参数[ids]为空.");
@@ -287,7 +287,7 @@ public class FileService extends CrudService<FileDao, File> {
                 List<File> fileList = findByCode(code, null);
                 if (Collections3.isNotEmpty(fileList)) {
                     for (File file : fileList) {
-                        deleteFileByFileId(file.getId(),true);
+                        deleteByFileId(file.getId(),true);
                     }
                 }
             }
