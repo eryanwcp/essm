@@ -45,12 +45,13 @@ public class Post extends DataEntity<Post> {
     /**
      * 附属机构
      */
-    private Set<String> organIds = Sets.newHashSet();
+    private Set<String> organIds;
 
     private String query;
 
 
     public Post() {
+        this.organIds = Sets.newHashSet();
     }
 
     public Post(String id) {

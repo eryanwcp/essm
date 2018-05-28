@@ -61,12 +61,13 @@ public class Role extends DataEntity<Role> {
     /**
      * 按明细设置数据范围 授权机构
      */
-    private Set<String> organIds = Sets.newHashSet();
+    private Set<String> organIds;
 
 
     public Role() {
         this.isSystem = YesOrNo.YES.getValue();
         this.isActivity = YesOrNo.YES.getValue();
+        this.organIds = Sets.newHashSet();
     }
 
     public Role(String id) {
