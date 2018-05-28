@@ -29,7 +29,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
     /**
      * 是否已读 默认值：否 {@link NoticeReadMode}
      */
-    private String isRead = NoticeReadMode.unreaded.getValue();
+    private String isRead;
     /**
      * 读取时间
      */
@@ -41,6 +41,7 @@ public class NoticeReceiveInfo extends BaseEntity<NoticeReceiveInfo> {
 
     public NoticeReceiveInfo() {
         super();
+        this.isRead = NoticeReadMode.unreaded.getValue();
     }
 
     public NoticeReceiveInfo(String id) {

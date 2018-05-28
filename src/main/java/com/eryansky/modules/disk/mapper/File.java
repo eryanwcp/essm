@@ -3,6 +3,7 @@ package com.eryansky.modules.disk.mapper;
 import com.eryansky.common.utils.PrettyMemoryUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.core.web.upload.FileUploadUtils;
 import com.eryansky.modules.disk._enum.FileType;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
@@ -24,7 +25,7 @@ public class File extends DataEntity<File> implements Serializable {
 
 	/**
 	 * 文件标识 用户ID + "_" + hex(md5(filename + now nano time + counter++)) $
-	 * {@link com.eryansky.core.web.upload.FileUploadUtils#encodingFilenamePrefix}
+	 * {@link FileUploadUtils#encodingFilenamePrefix}
 	 * 区别于文件的md5
 	 */
 	private String code;

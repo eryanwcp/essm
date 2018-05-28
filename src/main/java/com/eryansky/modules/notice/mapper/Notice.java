@@ -39,7 +39,7 @@ public class Notice extends DataEntity<Notice> {
      */
     private String title;
     /**
-     * 通知公告类型 {@DictionaryUtils.DIC_NOTICE}
+     * 通知公告类型 {@ling DictionaryUtils#DIC_NOTICE}
      */
     private String type;
     /**
@@ -49,7 +49,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 附件
      */
-    private List<String> fileIds = new ArrayList<String>(0);
+    private List<String> fileIds;
 
 
     /**
@@ -74,7 +74,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 状态 默认：未发布 {@link NoticeMode}
      */
-    private String mode = NoticeMode.UnPublish.getValue();
+    private String mode;
     /**
      * 发布日期
      */
@@ -83,7 +83,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 生效时间
      */
-    private Date effectTime = Calendar.getInstance().getTime();
+    private Date effectTime;
     /**
      * 失效时间 为空，则一直有效
      */
@@ -91,16 +91,21 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 是否记录 查看情况
      */
-    private String isRecordRead = YesOrNo.YES.getValue();
+    private String isRecordRead;
 
     /**
      * 接收范围 {@link NoticeReceiveScope}
      */
-    private String receiveScope = NoticeReceiveScope.COMPANY_AND_CHILD.getValue();
+    private String receiveScope;
 
 
     public Notice() {
         super();
+        this.fileIds = new ArrayList<String>(0);
+        this.mode = NoticeMode.UnPublish.getValue();
+        this.effectTime = Calendar.getInstance().getTime();
+        this.isRecordRead = YesOrNo.YES.getValue();
+        this.receiveScope = NoticeReceiveScope.COMPANY_AND_CHILD.getValue();
     }
 
     public Notice(String id) {

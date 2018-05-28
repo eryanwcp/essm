@@ -6,6 +6,7 @@
 package com.eryansky.modules.notice.mapper;
 
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
+import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.utils.NoticeUtils;
 
 /**
@@ -20,7 +21,7 @@ public class NoticeSendInfo extends BaseEntity<NoticeSendInfo> {
     private String noticeId;
     private Notice notice;
     /**
-     * 接收人类型 {@link com.eryansky.modules.notice._enum.ReceiveObjectType}
+     * 接收人类型 {@link ReceiveObjectType}
      */
     private String receiveObjectType;
     /**
