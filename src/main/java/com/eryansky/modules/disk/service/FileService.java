@@ -193,11 +193,22 @@ public class FileService extends CrudService<FileDao, File> {
      */
     @Transactional(readOnly = false)
     public void deleteFileByFileId(String fileId){
+        deleteFileByFileId(fileId,false);
+    }
+
+    /**
+     *
+     * 文件删除
+     * @param fileId 文件ID
+     * @param deleteDiskFile 删除磁盘文件
+     */
+    @Transactional(readOnly = false)
+    public void deleteFileByFileId(String fileId,boolean deleteDiskFile){
         File file = dao.get(fileId);
         try {
             //检查文件是否被引用
             List<File> files = this.findByCode(file.getCode(),fileId);
-            if(Collections3.isEmpty(files)){
+            if(deleteDiskFile && Collections3.isEmpty(files)){
                 iFileManager.deleteFile(file.getFilePath());
                 logger.debug("删除文件：{}", new Object[]{file.getFilePath()});
             }
@@ -239,7 +250,7 @@ public class FileService extends CrudService<FileDao, File> {
                 List<File> fileList = findByCode(code, null);
                 if (Collections3.isNotEmpty(fileList)) {
                     for (File file : fileList) {
-                        deleteFileByFileId(file.getId());
+                        deleteFileByFileId(file.getId(),true);
                     }
                 }
             }
@@ -268,6 +279,7 @@ public class FileService extends CrudService<FileDao, File> {
     public List<File> findFolderFiles(String folderId, List<String> fileSuffixs) {
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("folderId",folderId);
         parameter.put("fileSuffixs",fileSuffixs);
         return dao.findFolderFiles(parameter);
@@ -276,6 +288,7 @@ public class FileService extends CrudService<FileDao, File> {
     public List<File> findOwnerAndChildsFolderFiles(String folderId) {
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("folderId",folderId);
         return dao.findOwnerAndChildsFolderFiles(parameter);
     }
@@ -283,6 +296,7 @@ public class FileService extends CrudService<FileDao, File> {
     public List<String> findOwnerAndChildsIdsFolderFiles(String folderId) {
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
         parameter.put("folderId",folderId);
         return dao.findOwnerAndChildsIdsFolderFiles(parameter);
     }

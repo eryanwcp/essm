@@ -42,7 +42,7 @@
             a.status = #{status}
             AND a.code = #{code}
             <if test="excludeFileId != null and excludeFileId != ''">
-                AND a.code <![CDATA[ <> ]]> #{excludeFileId}
+                AND a.id <![CDATA[ <> ]]> #{excludeFileId}
             </if>
         </where>
     </select>
@@ -138,7 +138,7 @@
         <include refid="fileJoins"/>
         <where>
             a.status = #{status}
-            AND a.folder_id = #{folder}
+            AND a.folder_id = #{folderId}
             <if test="fileSuffixs != null and fileIds.size() !=0">
                 AND a.file_suffix IN
                 <foreach collection="fileSuffixs" item="item" open="(" separator="," close=")">
@@ -165,9 +165,9 @@
         <where>
             a.status = #{status}
             AND (
-                f.id = #{parentId} AND  OR f.parent_ids LIKE
-                <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+                f.id = #{folderId} OR f.parent_ids LIKE
+                <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>
             )
             <if test="fileSuffixs != null and fileIds.size() !=0">
                 AND a.file_suffix IN
@@ -187,9 +187,9 @@
         <where>
             a.status = #{status}
             AND (
-            f.id = #{parentId} AND  OR f.parent_ids LIKE
-            <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+                f.id = #{folderId} OR f.parent_ids LIKE
+                <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>
             )
             <if test="fileSuffixs != null and fileIds.size() !=0">
                 AND a.file_suffix IN
