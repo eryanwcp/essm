@@ -221,6 +221,43 @@ public class FileService extends CrudService<FileDao, File> {
     }
 
     /**
+     * 根据文件夹ID级联删除文件（包含下级文件夹）
+     * @param fileId 文件ID
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public void deleteCascadeByFolderId(String fileId){
+        deleteCascadeByFolderId(fileId,false);
+    }
+
+    /**
+     * 根据文件夹ID级联删除文件（包含下级文件夹）
+     * @param fileId 文件ID
+     * @param deleteDiskFile 删除磁盘文件
+     * @return
+     */
+    @Transactional(readOnly = false)
+    public void deleteCascadeByFolderId(String fileId,boolean deleteDiskFile){
+        File file = dao.get(fileId);
+        try {
+            //检查文件是否被引用
+            List<File> files = this.findByCode(file.getCode(),fileId);
+            if(deleteDiskFile && Collections3.isEmpty(files)){
+                iFileManager.deleteFile(file.getFilePath());
+                logger.debug("删除文件：{}", new Object[]{file.getFilePath()});
+            }
+            dao.deleteCascadeByFolderId(file);
+        } catch (IOException e) {
+            logger.error("删除文件[{}]失败,{}",new Object[]{file.getFilePath(),e.getMessage()});
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+
+
+
+    /**
      *
      * 文件删除
      * @param fileIds 文件集合

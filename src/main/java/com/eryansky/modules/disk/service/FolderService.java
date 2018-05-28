@@ -124,9 +124,8 @@ public class FolderService extends TreeService<FolderDao, Folder> {
     @Transactional(readOnly = false)
     public void deleteFolderAndFiles(String folderId) {
         Validate.notNull(folderId,"参数[folderId]不能为null.");
-        List<String> fileIds = fileService.findOwnerAndChildsIdsFolderFiles(folderId);
         dao.deleteCascadeByFolderId(new Folder(folderId));
-        fileService.deleteFileByFileIds(fileIds);
+        fileService.deleteCascadeByFolderId(folderId);
     }
 
 

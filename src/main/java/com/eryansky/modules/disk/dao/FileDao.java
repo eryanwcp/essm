@@ -21,6 +21,13 @@ import java.util.List;
 @MyBatisDao
 public interface FileDao extends CrudDao<File> {
 
+    /**
+     * 根据文件夹ID级联删除文件（包含下级文件夹）
+     * @param entity
+     * @return
+     */
+    int deleteCascadeByFolderId(File entity);
+
     List<File> findByCode(Parameter parameter);
 
     List<File> findFilesByIds(Parameter parameter);

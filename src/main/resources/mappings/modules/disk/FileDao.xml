@@ -307,4 +307,17 @@
         WHERE id = #{id}
     </delete>
 
+    <delete id="deleteCascadeByFolderId">
+        UPDATE t_disk_file a
+        LEFT JOIN t_disk_folder f  ON f.id = a.folder_id
+         SET
+        a.status = #{STATUS_DELETE},
+        a.version = a.version +1,
+        a.update_user = #{updateUser},
+        a.update_time = #{updateTime}
+        WHERE (f.id = #{folderId} OR f.parent_ids LIKE
+        <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
+        <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>)
+    </delete>
+
 </mapper>
