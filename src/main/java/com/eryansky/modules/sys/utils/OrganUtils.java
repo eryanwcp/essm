@@ -23,7 +23,7 @@ public class OrganUtils {
     private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
 
     /**
-     * 根据机构ID查找机构名称
+     * 根据机构ID查找机构
      * @param organId 机构ID
      * @return
      */
