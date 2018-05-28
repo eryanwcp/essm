@@ -96,7 +96,7 @@ public enum FileType {
         }
         if (StringUtils.containsAny(fileSuffix,"txt","wps","doc","docx","pdf","ppt","pptx","xls","xlsx")){
             return Document;
-        }else if (StringUtils.containsAny(fileSuffix,"jpg","jpeg","png","gif","bmp")){
+        }else if (StringUtils.containsAny(fileSuffix,"jpg","jpeg","png","gif","bmp","psd")){
             return Image;
         }else if (StringUtils.containsAny(fileSuffix,"mp3","wma")){
             return Music;
