@@ -23,15 +23,28 @@ public class RoleUtils {
     private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
 
     /**
+     * 根据角色ID查找角色
+     * @param roleId 角色ID
+     * @return
+     */
+    public static Role getRole(String roleId){
+        if(StringUtils.isBlank(roleId)){
+            return null;
+        }
+        return roleService.get(roleId);
+    }
+
+
+    /**
      * 根据角色ID查找角色名称
      * @param roleId 角色ID
      * @return
      */
     public static String getRoleName(String roleId){
         if(StringUtils.isNotBlank(roleId)){
-            Role Role = roleService.get(roleId);
-            if(Role != null){
-                return Role.getName();
+            Role role = roleService.get(roleId);
+            if(role != null){
+                return role.getName();
             }
         }
         return null;
