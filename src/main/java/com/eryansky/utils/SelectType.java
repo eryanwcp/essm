@@ -53,7 +53,7 @@ public enum SelectType {
 		return description;
 	}
 
-	public static SelectType getSelectTypeValue(String value) {
+	public static SelectType getByValue(String value) {
 		if (null == value)
 			return null;
 		for (SelectType _enum : SelectType.values()) {
@@ -63,7 +63,7 @@ public enum SelectType {
 		return null;
 	}
 	
-	public static SelectType getSelectTypeDescription(String description) {
+	public static SelectType getDescription(String description) {
 		if (null == description)
 			return null;
 		for (SelectType _enum : SelectType.values()) {
@@ -82,7 +82,7 @@ public enum SelectType {
         TreeNode selectTreeNode = null;
         //为combobox添加  "---全部---"、"---请选择---"
         if(StringUtils.isNotBlank(selectType)){
-            SelectType s = SelectType.getSelectTypeValue(selectType);
+            SelectType s = SelectType.getByValue(selectType);
             String title = selectType;
             if(s != null){
                 title = s.getDescription();
@@ -101,7 +101,7 @@ public enum SelectType {
         Combobox selectCombobox = null;
         //为combobox添加  "---全部---"、"---请选择---"
         if(StringUtils.isNotBlank(selectType)){
-            SelectType s = SelectType.getSelectTypeValue(selectType);
+            SelectType s = SelectType.getByValue(selectType);
             String title = selectType;
             if(s != null){
                 title = s.getDescription();
