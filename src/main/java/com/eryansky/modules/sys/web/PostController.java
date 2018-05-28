@@ -17,6 +17,7 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Post;
 import com.eryansky.modules.sys.mapper.User;
@@ -59,6 +60,7 @@ public class PostController extends SimpleController{
         }
     }
 
+    @RequiresPermissions("sys:post:view")
     @Logging(value = "岗位管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -97,6 +99,7 @@ public class PostController extends SimpleController{
         return modelAndView;
     }
 
+    @RequiresPermissions("sys:post:edit")
     @Logging(value = "岗位管理-保存岗位",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -124,6 +127,7 @@ public class PostController extends SimpleController{
      * @param ids 主键ID集合
      * @return
      */
+    @RequiresPermissions("sys:post:edit")
     @Logging(value = "岗位管理-删除岗位",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
@@ -149,6 +153,7 @@ public class PostController extends SimpleController{
     /**
      * 修改岗位用户.
      */
+    @RequiresPermissions("sys:post:edit")
     @Logging(value = "岗位管理-岗位用户",logType = LogType.access)
     @RequestMapping(value = {"updatePostUser"})
     @ResponseBody

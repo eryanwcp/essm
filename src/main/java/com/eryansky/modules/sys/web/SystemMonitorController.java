@@ -37,6 +37,7 @@ public class SystemMonitorController extends SimpleController {
      * 系统信息
      * @return
      */
+    @RequiresPermissions("sys:systemMonitor:view")
     @Logging(value = "系统监控",logType = LogType.access)
     @RequestMapping("")
     public ModelAndView list(){

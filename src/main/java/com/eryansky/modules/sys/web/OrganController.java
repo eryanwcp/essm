@@ -13,8 +13,10 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.OrganType;
@@ -66,6 +68,7 @@ public class OrganController extends SimpleController {
         }
     }
 
+    @RequiresPermissions("sys:organ:view")
     @Logging(value = "机构管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -161,6 +164,7 @@ public class OrganController extends SimpleController {
     /**
      * 保存.
      */
+    @RequiresPermissions("sys:organ:edit")
     @Logging(value = "机构管理-保存机构",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -191,6 +195,7 @@ public class OrganController extends SimpleController {
      * @param id 主键ID
      * @return
      */
+    @RequiresPermissions("sys:organ:edit")
     @Logging(value = "机构管理-删除机构",logType = LogType.access)
     @RequestMapping(value = {"delete/{id}"})
     @ResponseBody
@@ -225,6 +230,7 @@ public class OrganController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:organ:edit")
     @Logging(value = "机构管理-机构用户",logType = LogType.access)
     @RequestMapping(value = {"updateOrganUser"})
     @ResponseBody
@@ -367,6 +373,7 @@ public class OrganController extends SimpleController {
      * 同步机构所有父级ID
      * @return
      */
+    @RequiresPermissions("sys:organ:sync")
     @Logging(value = "机构管理-同步机构所有父级ID",logType = LogType.access)
     @ResponseBody
     @RequestMapping(value = "syncAllParentIds")
@@ -375,5 +382,33 @@ public class OrganController extends SimpleController {
         return Result.successResult();
     }
 
+    /**
+     * 重新初始化机构系统编码
+     * @return
+     */
+    @RequiresPermissions("sys:organ:sync")
+    @ResponseBody
+    @RequestMapping(value = "initSysCode")
+    public Result initSysCode(){
+        List<Organ> roots = organService.findRoots();
+        for(int i=0;i<roots.size();i++){
+            Organ organ = roots.get(i);
+            rOrgan(organ, "360"+i, 0);
+        }
+        return Result.successResult();
+    }
+
+    //递归
+    private void rOrgan(Organ organ, String prefix, int index) {
+        String code = prefix + String.format("%02d", index);
+        organ.setSysCode(code);
+        organService.saveOrgan(organ);
+        List<Organ> childOrgans = organService.findByParent(organ.getId(), DataEntity.STATUS_NORMAL);
+        index = 0;
+        for (Organ childOrgan : childOrgans) {
+            prefix = organ.getSysCode();
+            rOrgan(childOrgan, prefix, index++);
+        }
+    }
 
 }

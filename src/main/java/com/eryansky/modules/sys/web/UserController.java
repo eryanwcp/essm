@@ -20,6 +20,7 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.disk.mapper.File;
 import com.google.common.collect.Lists;
@@ -90,6 +91,7 @@ public class UserController extends SimpleController {
         }
     }
 
+    @RequiresPermissions("sys:user:view")
     @Logging(value = "用户管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -155,6 +157,7 @@ public class UserController extends SimpleController {
     /**
      * 保存.
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-保存用户",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -192,7 +195,7 @@ public class UserController extends SimpleController {
     }
 
 
-
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-删除用户",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
@@ -222,6 +225,7 @@ public class UserController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-修改密码",logType = LogType.access)
     @RequestMapping(value = {"updateUserPassword"})
     @ResponseBody
@@ -286,6 +290,7 @@ public class UserController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-修改密码",logType = LogType.access)
     @RequestMapping(value = {"_updateUserPassword"})
     @ResponseBody
@@ -311,6 +316,7 @@ public class UserController extends SimpleController {
     /**
      * 修改用户角色.
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-用户角色",logType = LogType.access)
     @RequestMapping(value = {"updateUserRole"})
     @ResponseBody
@@ -357,6 +363,7 @@ public class UserController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-用户机构",logType = LogType.access)
     @RequestMapping(value = {"updateUserOrgan"})
     @ResponseBody
@@ -383,6 +390,7 @@ public class UserController extends SimpleController {
      * @param userIds 用户Id集合
      * @param postIds 岗位ID集合
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-用户岗位",logType = LogType.access)
     @RequestMapping(value = {"updateUserPost"})
     @ResponseBody
@@ -419,6 +427,7 @@ public class UserController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-用户资源",logType = LogType.access)
     @RequestMapping(value = {"updateUserResource"})
     @ResponseBody
@@ -640,6 +649,7 @@ public class UserController extends SimpleController {
      * @param moveUp
      * @return
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-排序调整",logType = LogType.access)
     @RequestMapping(value = {"changeOrderNo"})
     @ResponseBody
@@ -656,6 +666,7 @@ public class UserController extends SimpleController {
      * @param status {@link com.eryansky.common.orm._enum.StatusState}
      * @return
      */
+    @RequiresPermissions("sys:user:edit")
     @Logging(value = "用户管理-锁定用户",logType = LogType.access)
     @RequestMapping(value = {"lock"})
     @ResponseBody
@@ -735,6 +746,7 @@ public class UserController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:user:edit")
     @RequestMapping("export")
     public void export(HttpServletRequest request, HttpServletResponse response) throws Exception{
         response.setContentType("application/msexcel;charset=UTF-8");

@@ -20,6 +20,7 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededException;
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
@@ -62,7 +63,8 @@ public class VersionLogController extends SimpleController {
     private VersionLogService versionLogService;
 
 
-
+    @RequiresPermissions("sys:versionLog:view")
+    @Logging(value = "版本更新",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {return "modules/sys/versionLog";}
 
@@ -196,6 +198,8 @@ public class VersionLogController extends SimpleController {
      * @param versionLog
      * @return
      */
+    @RequiresPermissions("sys:versionLog:edit")
+    @Logging(value = "版本更新-保存版本",logType = LogType.access)
     @RequestMapping(value = { "save" })
     @ResponseBody
     public Result save(@ModelAttribute("model") VersionLog versionLog) {
@@ -222,6 +226,7 @@ public class VersionLogController extends SimpleController {
      * 清空数据
      * @return
      */
+    @RequiresPermissions("sys:versionLog:edit")
     @Logging(value = "版本管理-删除版本",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody

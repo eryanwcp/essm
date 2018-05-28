@@ -12,6 +12,7 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Dictionary;
 import com.eryansky.modules.sys.mapper.DictionaryItem;
@@ -73,6 +74,7 @@ public class DictionaryItemController extends SimpleController {
      * @param parentId       上级ID
      * @return
      */
+    @RequiresPermissions("sys:dictionary:edit")
     @Logging(value = "字典管理-保存字典项",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -101,6 +103,7 @@ public class DictionaryItemController extends SimpleController {
         return result;
     }
 
+    @RequiresPermissions("sys:dictionary:edit")
     @Logging(value = "字典管理-删除字典项",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody

@@ -13,6 +13,7 @@ import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.ResourceType;
 import com.eryansky.modules.sys.mapper.Area;
@@ -53,6 +54,7 @@ public class ResourceController extends SimpleController {
         }
     }
 
+    @RequiresPermissions("sys:resource:view")
     @Logging(value = "资源管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -82,12 +84,10 @@ public class ResourceController extends SimpleController {
         return "modules/sys/resource-input";
     }
 
-
-
-
     /**
      * 保存.
      */
+    @RequiresPermissions("sys:resource:edit")
     @Logging(value = "资源管理-保存资源",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -122,6 +122,7 @@ public class ResourceController extends SimpleController {
     /**
      * 删除.
      */
+    @RequiresPermissions("sys:resource:edit")
     @Logging(value = "资源管理-删除资源",logType = LogType.access)
     @RequestMapping(value = {"delete/{id}"})
     @ResponseBody

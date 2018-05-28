@@ -18,6 +18,7 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.RoleType;
@@ -67,6 +68,7 @@ public class RoleController extends SimpleController {
         }
     }
 
+    @RequiresPermissions("sys:role:view")
     @Logging(value = "角色管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -112,6 +114,7 @@ public class RoleController extends SimpleController {
     /**
      * 保存.
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-保存角色",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -135,6 +138,7 @@ public class RoleController extends SimpleController {
     /**
      * 删除.
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-删除角色",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
@@ -171,6 +175,7 @@ public class RoleController extends SimpleController {
      *
      * @return
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-角色资源",logType = LogType.access)
     @RequestMapping(value = {"updateRoleResource"})
     @ResponseBody
@@ -240,6 +245,7 @@ public class RoleController extends SimpleController {
      * @param userIds 用户ID
      * @return
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-添加关联用户",logType = LogType.access)
     @RequestMapping(value = {"addRoleUser"})
     @ResponseBody
@@ -256,6 +262,7 @@ public class RoleController extends SimpleController {
      * @param userIds 用户IDS
      * @return
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-移除关联用户",logType = LogType.access)
     @RequestMapping(value = {"removeRoleUser"})
     @ResponseBody
@@ -272,6 +279,7 @@ public class RoleController extends SimpleController {
      * @return
      * @throws Exception
      */
+    @RequiresPermissions("sys:role:edit")
     @Logging(value = "角色管理-保存角色用户",logType = LogType.access)
     @RequestMapping(value = {"updateRoleUser"})
     @ResponseBody

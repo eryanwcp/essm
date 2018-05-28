@@ -11,6 +11,7 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Config;
 import com.eryansky.modules.sys.service.ConfigService;
@@ -36,6 +37,7 @@ public class ConfigController extends SimpleController {
     private ConfigService configService;
 
 
+    @RequiresPermissions("sys:config:view")
     @Logging(value = "属性配置",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -65,7 +67,7 @@ public class ConfigController extends SimpleController {
         return datagrid;
     }
 
-
+    @RequiresPermissions("sys:config:edit")
     @Logging(value = "属性配置-保存配置",logType = LogType.access)
     @RequestMapping(value = {"save"})
     @ResponseBody
@@ -89,6 +91,7 @@ public class ConfigController extends SimpleController {
      * @param overrideFromProperties
      * @return
      */
+    @RequiresPermissions("sys:config:edit")
     @Logging(value = "属性配置-配置文件同步",logType = LogType.access)
     @RequestMapping(value = {"syncFromProperties"})
     @ResponseBody
@@ -104,6 +107,7 @@ public class ConfigController extends SimpleController {
      * @param ids
      * @return
      */
+    @RequiresPermissions("sys:config:edit")
     @Logging(value = "属性配置-删除配置",logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody

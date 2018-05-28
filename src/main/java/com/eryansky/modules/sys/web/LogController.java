@@ -58,6 +58,7 @@ public class LogController extends SimpleController {
     @Autowired
     private LogService logService;
 
+    @RequiresPermissions("sys:log:view")
     @Logging(value = "日志管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {

@@ -12,6 +12,7 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.sys._enum.LogType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,7 @@ import java.util.List;
 @RequestMapping(value = "${adminPath}/sys/session")
 public class SessionController extends SimpleController {
 
+    @RequiresPermissions("sys:session:view")
     @Logging(value = "在线用户",logType = LogType.access)
     @RequestMapping(value = {""})
     public ModelAndView list(){
@@ -52,6 +54,7 @@ public class SessionController extends SimpleController {
      * @param sessionIds sessionID集合
      * @return
      */
+    @RequiresPermissions("sys:session:edit")
     @RequestMapping(value = {"offline"})
     @ResponseBody
     public Result offline(@RequestParam(value = "sessionIds")List<String> sessionIds){
@@ -59,6 +62,7 @@ public class SessionController extends SimpleController {
         return Result.successResult();
     }
 
+    @RequiresPermissions("sys:session:edit")
     @RequestMapping(value = {"offlineAll"})
     @ResponseBody
     public Result offlineAll(){

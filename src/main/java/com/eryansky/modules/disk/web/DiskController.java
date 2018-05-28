@@ -20,6 +20,7 @@ import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.DownloadUtils;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.utils.AppUtils;
 import com.google.common.collect.Lists;
@@ -98,6 +99,7 @@ public class DiskController extends SimpleController {
     /**
      * 我的云盘
      */
+    @RequiresPermissions("disk:disk:view")
     @Logging(logType = LogType.access,value = "我的云盘")
     @RequestMapping(value = { "" })
     public ModelAndView list() {
@@ -484,6 +486,7 @@ public class DiskController extends SimpleController {
     /**
      * 文件检索
      */
+    @RequiresPermissions("disk:disk:search")
     @Logging(logType = LogType.access,value = "我的云盘-文件检索")
     @RequestMapping(value = { "search" })
     public ModelAndView searchList() {
