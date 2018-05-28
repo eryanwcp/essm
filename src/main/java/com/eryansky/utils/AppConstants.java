@@ -156,12 +156,6 @@ public class AppConstants extends SysConstants {
         return Integer.valueOf(getConfigValue(code, "30"));
     }
 
-
-    public static String getSwftoolsDir() {
-        String code = "swftoolsDir";
-        return getConfigValue(code);
-    }
-
     /**
      * 应用文件 磁盘绝对路径
      *
@@ -262,27 +256,6 @@ public class AppConstants extends SysConstants {
         return PrettyMemoryUtils.prettyByteSize(maxUploadSize);
     }
 
-
-    /**
-     * 用户(员工)默认最大磁盘空间 5G 单位：M
-     *
-     * @return
-     */
-    public static Integer getDiskUserLimitSize() {
-        String code = "disk.userLimitSize";
-        return Integer.valueOf(getConfigValue(code));
-    }
-
-
-    /**
-     * 部门默认最大磁盘空间 10G 单位：M
-     *
-     * @return
-     */
-    public static Integer getDiskOrganLimitSize() {
-        String code = "disk.organLimitSize";
-        return Integer.valueOf(getConfigValue(code));
-    }
 
     /**
      * 启用安全检查
