@@ -176,7 +176,7 @@ public class AppConstants extends SysConstants {
     /**
      * 应用文件存储目录 放置于webapp下 应用相对路径
      * 自动化部署 不推荐使用
-     * 建议使用{@link AppConstants.getDiskBasePath()}
+     * 建议使用{@link AppConstants#getDiskBasePath()}
      *
      * @return
      */
