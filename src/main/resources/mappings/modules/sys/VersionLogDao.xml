@@ -61,7 +61,11 @@
 			<if test="isPub != null and isPub !=''">
 				AND a.is_pub = #{isPub}
 			</if>
-			AND a.version_code = (SELECT MAX(CAST(c.version_code AS signed)) FROM t_sys_version_log c WHERE c.version_log_type = #{versionLogType} AND c.status = #{status})
+			AND a.version_code = (SELECT MAX(CAST(c.version_code AS signed)) FROM t_sys_version_log c WHERE c.version_log_type = #{versionLogType} AND c.status = #{status}
+			<if test="isPub != null and isPub !=''">
+				AND c.is_pub = #{isPub}
+			</if>
+			)
 		</where>
 
 	</select>
