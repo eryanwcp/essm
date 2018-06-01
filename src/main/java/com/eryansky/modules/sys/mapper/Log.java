@@ -5,7 +5,6 @@
  */
 package com.eryansky.modules.sys.mapper;
 
-import com.eryansky.common.orm.persistence.AbstractBaseEntity;
 import com.eryansky.common.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
@@ -13,6 +12,7 @@ import com.eryansky.modules.sys._enum.LogType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.eryansky.modules.sys.utils.UserUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,7 +28,7 @@ public class Log extends DataEntity<Log> {
     /**
      * 操作日志类型
      *
-     * @see com.eryansky.modules.sys._enum.LogType
+     * @see LogType
      */
     private String type;
 
@@ -81,8 +81,23 @@ public class Log extends DataEntity<Log> {
      * 异常信息
      */
     private String exception;
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+    /**
+     * 纬度
+     */
+    private BigDecimal latitude;
+    /**
+     * 精度
+     */
+    private BigDecimal accuracy;
 
 
+    /**
+     * 查询条件
+     */
     private String query;
 
     public Log() {
@@ -110,7 +125,7 @@ public class Log extends DataEntity<Log> {
         this.userId = userId;
     }
 
-    @JsonFormat(pattern = AbstractBaseEntity.DATE_TIME_FORMAT, timezone = AbstractBaseEntity.TIMEZONE)
+    @JsonFormat(pattern = DATE_TIME_FORMAT, timezone = TIMEZONE)
     public Date getOperTime() {
         return operTime;
     }
@@ -193,7 +208,7 @@ public class Log extends DataEntity<Log> {
         this.remark = remark;
     }
 
-//    @JsonIgnore
+    //    @JsonIgnore
     public String getException() {
         return exception;
     }
@@ -202,12 +217,28 @@ public class Log extends DataEntity<Log> {
         this.exception = exception;
     }
 
-    public String getQuery() {
-        return query;
+    public BigDecimal getLongitude() {
+        return longitude;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(BigDecimal accuracy) {
+        this.accuracy = accuracy;
     }
 
     /**
@@ -226,16 +257,25 @@ public class Log extends DataEntity<Log> {
             String paramValue = (param.getValue() != null && param.getValue().length > 0 ? param.getValue()[0] : "");
             params.append(StringUtils.abbr(StringUtils.endsWithIgnoreCase(param.getKey(), "password") ? "" : paramValue, 100));
         }
-        this.remark = params.toString();
+        if(StringUtils.isNotBlank(this.remark)){
+            this.remark = params.insert(0,this.remark).toString();
+        }else{
+            this.remark = params.toString();
+        }
     }
 
+    private String userName;
     /**
      * 用户姓名
      *
      * @return
      */
     public String getUserName() {
-        return UserUtils.getUserName(userId);
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 
@@ -257,5 +297,13 @@ public class Log extends DataEntity<Log> {
             str = s.getDescription();
         }
         return str;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 }

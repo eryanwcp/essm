@@ -8,13 +8,15 @@ package com.eryansky.core.web.interceptor;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.*;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.quartz.LogJob;
+import com.eryansky.modules.sys.service.LogService;
 import com.google.common.collect.Lists;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys.mapper.Log;
-import com.eryansky.modules.sys.task.LogJob;
 import com.eryansky.utils.SpringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LogInterceptor implements HandlerInterceptor {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	private static LogJob logJobManager = SpringContextHolder.getBean(LogJob.class);
+	private static LogService logService = SpringContextHolder.getBean(LogService.class);
 	private static final ThreadLocal<Long> startTimeThreadLocal =
 			new NamedThreadLocal<Long>("ThreadLocal StartTime");
 	@Autowired
@@ -191,7 +193,7 @@ public class LogInterceptor implements HandlerInterceptor {
 		if ((_flag == null || _flag) && flag) {
 			Log log = new Log();
 			log.setTitle(newLogValue);
-			log.setUserId(sessionInfo == null ? "1" : sessionInfo.getUserId());
+			log.setUserId(sessionInfo == null ? User.SUPERUSER_ID : sessionInfo.getUserId());
 			log.setType(logType);
 			log.setIp(IpUtils.getIpAddr(request));
 			log.setUserAgent(UserAgentUtils.getHTTPUserAgent(request));
@@ -205,7 +207,7 @@ public class LogInterceptor implements HandlerInterceptor {
 			log.setParams(request.getParameterMap());
 			// 如果有异常，设置异常信息
 			log.setException(Exceptions.getStackTraceAsString(ex));
-			logJobManager.saveAspectLog(log, handlerMethod);
+			logService.saveAspectLog(log, handlerMethod);
 
 		}
 

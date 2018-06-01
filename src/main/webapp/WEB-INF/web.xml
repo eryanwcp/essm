@@ -14,8 +14,8 @@
         <param-value>
             classpath*:applicationContext.xml,
             classpath*:applicationContext-ehcache.xml,
-            classpath*:applicationContext-task.xml,
-             classpath*:applicationContext-mybatis.xml
+             classpath*:applicationContext-mybatis.xml,
+            classpath*:applicationContext-quartz.xml
         </param-value>
     </context-param>
 

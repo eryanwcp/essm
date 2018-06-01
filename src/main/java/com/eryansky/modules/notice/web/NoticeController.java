@@ -42,7 +42,6 @@ import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeSendInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
-import com.eryansky.modules.notice.task.NoticeAsyncTaskService;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys.mapper.User;
@@ -75,8 +74,6 @@ public class NoticeController extends SimpleController {
     private NoticeReceiveInfoService noticeReceiveInfoService;
     @Autowired
     private NoticeSendInfoService noticeSendInfoService;
-    @Autowired
-    private NoticeAsyncTaskService noticeAsyncTaskService;
     @Autowired
     private UserService userService;
     @Autowired
@@ -333,7 +330,7 @@ public class NoticeController extends SimpleController {
         if(OperateType.Publish.equals(operateType)) {
             notice.setMode(NoticeMode.Publishing.getValue());
             noticeService.save(notice);
-            noticeAsyncTaskService.publish(notice.getId());
+            noticeService.publish(notice.getId());
         }
 
         result = Result.successResult();

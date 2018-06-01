@@ -58,7 +58,6 @@ public class LogController extends SimpleController {
     @Autowired
     private LogService logService;
 
-    @RequiresPermissions("sys:log:view")
     @Logging(value = "日志管理",logType = LogType.access)
     @RequestMapping(value = {""})
     public String list() {
@@ -199,7 +198,7 @@ public class LogController extends SimpleController {
         LogType[] lts = LogType.values();
         for (int i = 0; i < lts.length; i++) {
             Combobox combobox = new Combobox();
-            combobox.setValue(lts[i].getValue().toString());
+            combobox.setValue(lts[i].getValue());
             combobox.setText(lts[i].getDescription());
             cList.add(combobox);
         }

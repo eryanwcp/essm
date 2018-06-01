@@ -5,22 +5,31 @@
  */
 package com.eryansky.modules.sys.service;
 
+import com.eryansky.common.exception.DaoException;
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm.model.Parameter;
+import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.sys.dao.LogDao;
 import com.eryansky.modules.sys.mapper.Log;
+import com.eryansky.modules.sys.mapper.Organ;
+import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.utils.OrganUtils;
+import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.method.HandlerMethod;
 
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 尔演&Eryan eryanwcp@gmail.com
@@ -31,7 +40,7 @@ import java.util.List;
 public class LogService extends CrudService<LogDao, Log> {
 
     @Autowired
-    private LogDao logDao;
+    private LogDao dao;
 
 
     @Override
@@ -56,7 +65,7 @@ public class LogService extends CrudService<LogDao, Log> {
 
     @Transactional(readOnly = false)
     public int remove(String id){
-        int reslutCount = logDao.remove(id);
+        int reslutCount = dao.remove(id);
         logger.debug("清除日志：{}",reslutCount);
         return reslutCount;
     }
@@ -67,7 +76,7 @@ public class LogService extends CrudService<LogDao, Log> {
      */
     @Transactional(readOnly = false)
     public int removeAll(){
-        int reslutCount = logDao.removeAll();
+        int reslutCount = dao.removeAll();
         logger.debug("清空日志：{}",reslutCount);
         return reslutCount;
     }
@@ -75,6 +84,8 @@ public class LogService extends CrudService<LogDao, Log> {
     /**
      * 清空有效期之外的日志
      * @param  day 保留时间 （天）
+     * @throws DaoException
+     * @throws SystemException
      */
     @Transactional(readOnly = false)
     public int clearInvalidLog(int day){
@@ -90,8 +101,37 @@ public class LogService extends CrudService<LogDao, Log> {
 
         Parameter parameter = new Parameter();
         parameter.put("operTime", DateUtils.format(gc.getTime(), DateUtils.DATE_FORMAT));
-        int result = logDao.clearInvalidLog(parameter);
+        int result = dao.clearInvalidLog(parameter);
         return result;
+    }
+
+
+    /**
+     * 清空有效期之外的日志
+     * @param  day 保留时间 （天）
+     * @throws DaoException
+     * @throws SystemException
+     */
+    @Transactional(readOnly = false)
+    public void insertToHistoryAndClear(int day){
+        if(day <0){
+            throw new SystemException("参数[day]不合法，需要大于0.输入为："+day);
+        }
+        Date now = new Date();
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(now); // 得到gc格式的时间
+        gc.add(5, -day); // 2表示月的加减，年代表1依次类推(３周....5天。。)
+        // 把运算完的时间从新赋进对象
+        gc.set(gc.get(gc.YEAR), gc.get(gc.MONTH), gc.get(gc.DATE));
+
+        Parameter parameter = new Parameter();
+        parameter.put("createTime", DateUtils.format(gc.getTime(), DateUtils.DATE_FORMAT));
+        logger.info("备份日志表开始：{}",DateUtils.format(gc.getTime(), DateUtils.DATE_FORMAT));
+        int countInsert = dao.insertToHistory(parameter);//插入历史表
+        logger.info("备份日志表结束:{}",new Object[]{countInsert});
+        logger.info("删除日志表开始：{}",DateUtils.format(gc.getTime(), DateUtils.DATE_FORMAT));
+        int countDelete = dao.clearInvalidLog(parameter);//删除数据
+        logger.info("删除日志表结束:{}",new Object[]{countDelete});
     }
 
     /**
@@ -118,24 +158,104 @@ public class LogService extends CrudService<LogDao, Log> {
         if(startTime != null){
             parameter.put("endTime",DateUtils.format(endTime, DateUtils.DATE_TIME_FORMAT));
         }
-        return logDao.getUserLoginCount(parameter);
+        return dao.getUserLoginCount(parameter);
     }
 
     /**
      * 数据修复 title
      */
     public void dataAutoFix(){
-        List<Log> list = logDao.findNullData();
+        List<Log> list = dao.findNullData();
         if(Collections3.isNotEmpty(list)){
             for(Log log:list){
-                Log _log = logDao.getNotNullData(log.getModule());
+                Log _log = dao.getNotNullData(log.getModule());
                 if(_log != null && StringUtils.isBlank(log.getTitle())){
                     log.setTitle(_log.getTitle());
-                    logDao.update(log);
+                    dao.update(log);
                 }
             }
         }
 
+    }
+
+    /**
+     * 员工登录统计
+     */
+    public Page<Map<String,Object>> getLoginStatistics(Page pg, String name, String startTime, String endTime){
+        Parameter parameter = Parameter.newParameter();
+        if(StringUtils.isNotBlank(startTime)){
+            parameter.put("startTime", startTime + " 00:00:00");
+        }
+        if(StringUtils.isNotBlank(endTime)){
+            parameter.put("endTime", endTime + " 23:59:59");
+        }
+        parameter.put("name", name);
+        parameter.put(BaseInterceptor.PAGE,pg);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
+        parameter.put(Log.FIELD_STATUS, Log.STATUS_NORMAL);
+        List<Map<String,Object>> mapList= dao.getLoginStatistics(parameter);
+        if(Collections3.isNotEmpty(mapList)){
+            for(Map<String,Object> map:mapList){
+                OrganExtend organ = OrganUtils.getOrganCompany((String) map.get("organId"));
+                map.put("company", organ != null ? organ.getName():(String) map.get("name"));
+            }
+        }
+        pg.setResult(mapList);
+        return pg;
+    }
+
+    /**
+     * 模块访问统计
+     */
+    public Page<Map<String,Object>> getModuleStatistics(Page pg, String objectIds,String organId,Boolean onlyCompany, String startTime, String endTime,String postCode){
+        Parameter parameter = new Parameter();
+        if(StringUtils.isNotBlank(startTime)){
+            parameter.put("startTime", startTime + " 00:00:00");
+        }
+        if(StringUtils.isNotBlank(endTime)){
+            parameter.put("endTime", endTime + " 23:59:59");
+        }
+        if (StringUtils.isNotBlank(objectIds)){
+            String [] objectId = objectIds.split(",");
+            parameter.put("objectIds", objectId);
+        }
+        parameter.put("organId", organId);
+        parameter.put("onlyCompany", onlyCompany);
+        parameter.put("postCode", postCode);
+        parameter.put(BaseInterceptor.PAGE,pg);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
+        List<Map<String,Object>> mapList= dao.getModuleStatistics(parameter);
+        pg.setResult(mapList);
+        return pg;
+    }
+
+    /**
+     * 每天访问数据
+     * @return
+     */
+    public List<Map<String,Object>> getDayLoginStatistics(String startTime, String endTime){
+        Parameter parameter = new Parameter();
+        if(StringUtils.isNotBlank(startTime)){
+            startTime+=" 00:00:00";
+            parameter.put("startTime", startTime);
+        }
+        if(StringUtils.isNotBlank(endTime)){
+            endTime+=" 23:59:59";
+            parameter.put("endTime", endTime);
+        }
+//        parameter.put(BaseInterceptor.PAGE,pg);
+        parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
+        List<Map<String,Object>> list= dao.getDayLoginStatistics(parameter);
+        return list;
+    }
+
+
+    /**
+     * 清理过期日志
+     */
+    @Async
+    public void saveAspectLog(Log log, HandlerMethod handler){
+        save(log);
     }
 
 }

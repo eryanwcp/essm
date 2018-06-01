@@ -5,9 +5,7 @@
  */
 package com.eryansky.modules.notice.service;
 
-import com.eryansky.common.exception.DaoException;
 import com.eryansky.common.exception.ServiceException;
-import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.orm.model.Parameter;
@@ -33,6 +31,7 @@ import com.eryansky.modules.notice.vo.NoticeQueryVo;
 import com.eryansky.modules.sys.mapper.User;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,6 +130,15 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      *            公告ID
      */
     public void publish(String noticeId) {
+        Notice notice = this.get(noticeId);
+        if (notice == null) {
+            throw new ServiceException("公告[" + noticeId + "]不存在.");
+        }
+        publish(notice);
+    }
+
+    @Async
+    public void asyncPublish(String noticeId) {
         Notice notice = this.get(noticeId);
         if (notice == null) {
             throw new ServiceException("公告[" + noticeId + "]不存在.");
@@ -275,14 +283,9 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 
     /**
      * 轮询通知 定时发布、到时失效、取消置顶
-     * @throws SystemException
-     * @throws ServiceException
-     * @throws DaoException
      */
-    public void pollNotice() throws SystemException, ServiceException,
-            DaoException {
+    public void pollNotice() {
         // 查询到今天为止所有未删除的通知
-        String hql = " from Notice n where n.status= :p1 and n.noticeMode <> :p2";
         Date nowTime = Calendar.getInstance().getTime();
         Notice notice = new Notice();
         notice.setStatus(StatusState.NORMAL.getValue());

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+        xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
+        default-lazy-init="false">
+
+    <description>Quartz任务配置</description>
+
+    <context:component-scan base-package="com.eryansky.modules.**.quartz"/>
+
+    <!-- 定义受环境影响易变的变量 -->
+    <context:property-placeholder location="classpath:appconfig.properties" />
+
+    <!--quartz数据源-->
+    <bean id="quartzDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+
+        <property name="initialSize" value="1" />
+        <property name="maxActive" value="50" />
+        <property name="maxWait" value="60000" />
+        <property name="minIdle" value="1" />
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+
+        <property name="testWhileIdle" value="true" />
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="false" />
+        <property name="validationQuery" value="${jdbc.validationQuery}" />
+        <property name="defaultAutoCommit" value="true" />
+    </bean>
+
+    <bean class="com.eryansky.core.quartz.QuartJobSchedulingListener" />
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean" lazy-init="true">
+        <property name="jobFactory">
+            <bean class="com.eryansky.core.quartz.SpringQuartzJobFactory"></bean>
+        </property>
+        <!--applicationContextSchedulerContextKey:org.springframework.scheduling.quartz.SchedulerFactoryBean这个类中把spring上下文以key/value的方式存放在了quartz的上下文中了，
+       可以用applicationContextSchedulerContextKey所定义的key得到对应的spring上下文-->
+        <property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>
+         <property name="dataSource" ref="quartzDataSource"/>
+        <!-- 要记得要指定配置文件的位置 -->
+        <property name="configLocation" value="classpath:quartz.properties" />
+        <!-- 启动时延期{秒}开始任务 -->
+        <property name="startupDelay" value="${quartz.startupDelay}"/>
+        <!-- 开启/关闭定时任务  true/false-->
+        <property name="autoStartup" value="${quartz.autoStartup}"/>
+    </bean>
+
+
+</beans>

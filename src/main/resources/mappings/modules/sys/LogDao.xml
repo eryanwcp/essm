@@ -23,7 +23,10 @@
 		a.action AS "action",
 		a.remark AS "remark",
 		a.exception AS "exception",
-		u.name AS "userName"
+		u.name AS "userName",
+		a.longitude AS "longitude",
+		a.latitude AS "latitude",
+		a.accuracy AS "accuracy"
 	</sql>
 
 	<sql id="sysLogJoins">
@@ -45,14 +48,6 @@
 		<include refid="sysLogJoins"/>
 		<where>
 			a.status = #{STATUS_NORMAL}
-			<if test="title != null and title != ''">
-				AND a.title LIKE
-				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
-			</if>
-			<if test="type != null and type !=''">
-				AND a.type = #{type}
-			</if>
 			<if test="query != null and query != ''">
 				AND (
 				a.title LIKE
@@ -64,16 +59,19 @@
 				OR a.remark LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
-				OR u.name LIKE
-				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
-				OR u.login_name LIKE
-				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				)
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
+			</if>
+			<if test="userId != null and userId != ''">
+				AND ( u.name LIKE
+				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+				OR u.login_name LIKE
+				<if test="dbName == 'db2'">'%'||#{userId}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{userId}, '%')</if>
+				)
 			</if>
 		</where>
 		<choose>
@@ -81,7 +79,7 @@
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				ORDER BY a.create_time DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -99,7 +97,7 @@
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				ORDER BY a.create_time DESC
 			</otherwise>
 		</choose>
 	</select>
@@ -109,10 +107,11 @@
 		SELECT
 		count(*)
 		FROM
-		t_sys_log t
+		t_sys_log a
 		WHERE
-		t.action LIKE  CONCAT('%', '用户登录', '%')
-		AND t.user_id = #{userId}
+		t.status = '0'
+		AND a.title LIKE  CONCAT('%', '用户登录', '%')
+		AND a.user_id = #{userId}
 		<choose>
 			<when test="startTime != null and endTime != null">
 				AND a.create_time BETWEEN #{startTime} AND #{endTime}
@@ -124,6 +123,128 @@
 				AND a.create_time <![CDATA[<=]]> #{endTime}
 			</when>
 		</choose>
+	</select>
+
+	<!--查询每日登陆次数-->
+	<select id="getDayLoginStatistics" resultType="java.util.Map">
+		SELECT
+		DATE_FORMAT(a.create_time, '%Y-%m-%d') as "loginDate",
+		count(*) AS "count"
+		FROM
+		t_sys_log a
+		WHERE
+		a.status = '0'
+		AND a.title LIKE  CONCAT('%', '用户登录', '%')
+		<choose>
+			<when test="startTime != null and endTime != null">
+				AND a.create_time BETWEEN #{startTime} AND #{endTime}
+			</when>
+			<when test="startTime != null and endTime == null">
+				AND a.create_time <![CDATA[>=]]> #{startTime}
+			</when>
+			<when test="startTime == null and endTime != null">
+				AND a.create_time <![CDATA[<=]]> #{endTime}
+			</when>
+		</choose>
+		GROUP BY
+		loginDate
+		ORDER BY
+		loginDate ASC
+	</select>
+
+	<!--查询员工登录统计信息-->
+	<select id="getLoginStatistics" resultType="java.util.Map">
+		SELECT
+		o.id AS 'organId',
+		o.name AS 'department',
+		u.name AS 'name',
+		u.login_name AS 'userName',
+		count(*) AS 'count'
+		FROM
+		t_sys_log t
+		LEFT JOIN t_sys_user u ON u.id = t.user_id
+		LEFT JOIN t_sys_organ o ON o.id = u.default_organ_id
+		WHERE
+		t.status = '0'
+		AND t.title LIKE '%用户登录%'
+		<if test="name != null and name !=''">
+			AND (u.login_name like CONCAT('%',#{name},'%')
+			OR u.name LIKE CONCAT('%',#{name},'%'))
+		</if>
+		<choose>
+			<when test="startTime != null and endTime != null">
+				AND t.create_time BETWEEN #{startTime} AND #{endTime}
+			</when>
+			<when test="startTime != null and endTime == null">
+				AND t.create_time <![CDATA[>=]]> #{startTime}
+			</when>
+			<when test="startTime == null and endTime != null">
+				AND t.create_time <![CDATA[<=]]> #{endTime}
+			</when>
+		</choose>
+		GROUP BY
+		t.user_id
+		ORDER BY
+		5 DESC
+	</select>
+
+	<!--查询模块访问统计-->
+	<select id="getModuleStatistics" resultType="java.util.Map">
+		SELECT
+		t.TITLE AS 'module',
+		count(*) AS 'moduleCount'
+		FROM
+		t_sys_log t
+		LEFT JOIN t_sys_user u ON u.id = t.user_id
+		LEFT JOIN t_sys_organ_extend o ON o.id = u.default_organ_id
+		<if test="postCode != null and postCode !=''">
+			LEFT JOIN t_sys_user_post up ON up.user_id = u.id
+			LEFT JOIN t_sys_post p ON p.id = up.post_id
+		</if>
+		WHERE
+		t.status = '0'
+		<choose>
+			<when test="objectIds != null and objectIds !=''">
+				AND u.id in
+				<foreach item="objectIds" index="index" collection="objectIds" open="("
+						 separator="," close=")">
+					#{objectIds, jdbcType=VARCHAR}
+				</foreach>
+			</when>
+			<otherwise>
+				<if test="organId != null and organId != ''">
+					<choose>
+						<when test="onlyCompany != null and onlyCompany">
+							AND o.company_id = #{organId}
+						</when>
+						<otherwise>
+							AND (o.id = #{organId} OR o.parent_ids LIKE CONCAT('%',#{organId},'%'))
+						</otherwise>
+					</choose>
+				</if>
+
+			</otherwise>
+		</choose>
+
+		<choose>
+			<when test="startTime != null and endTime != null">
+				AND t.create_time BETWEEN #{startTime} AND #{endTime}
+			</when>
+			<when test="startTime != null and endTime == null">
+				AND t.create_time <![CDATA[>=]]> #{startTime}
+			</when>
+			<when test="startTime == null and endTime != null">
+				AND t.create_time <![CDATA[<=]]> #{endTime}
+			</when>
+		</choose>
+
+		<if test="postCode != null and postCode !=''">
+			AND p.code = #{postCode}
+		</if>
+		GROUP BY
+		t.TITLE
+		ORDER BY
+		2 DESC
 	</select>
 
 	<!--查询标题为null的数据-->
@@ -169,7 +290,10 @@
 		module,
 		action,
 		remark,
-		exception
+		exception,
+		longitude,
+		latitude,
+		accuracy
 		) VALUES (
 		#{id},
 		#{status},
@@ -190,7 +314,10 @@
 		#{module},
 		#{action},
 		#{remark},
-		#{exception}
+		#{exception},
+		#{longitude},
+		#{latitude},
+		#{accuracy}
 		)
 	</insert>
 
@@ -210,7 +337,10 @@
 		module = #{module},
 		action = #{action},
 		remark = #{remark},
-		exception = #{exception}
+		exception = #{exception},
+		longitude = #{longitude},
+		latitude = #{latitude},
+		accuracy = #{accuracy}
 		WHERE id = #{id}
 	</update>
 
@@ -232,10 +362,67 @@
 	<delete id="clearInvalidLog" >
 		DELETE FROM t_sys_log
 		<where>
-			<if test="operTime != null ">
-				oper_time <![CDATA[<]]> #{operTime}
+			<if test="createTime != null ">
+				create_time <![CDATA[<]]> #{createTime}
 			</if>
 		</where>
 	</delete>
+
+
+	<insert id="insertToHistory">
+		INSERT INTO t_sys_log_history(
+		id,
+		status,
+		version,
+		create_user,
+		create_time,
+		update_user,
+		update_time,
+		type,
+		ip,
+		device_type,
+		browser_type,
+		user_agent,
+		user_id,
+		oper_time,
+		action_time,
+		title,
+		module,
+		action,
+		remark,
+		exception,
+		longitude,
+		latitude,
+		accuracy
+		) SELECT id,
+		status,
+		version,
+		create_user,
+		create_time,
+		update_user,
+		update_time,
+		type,
+		ip,
+		device_type,
+		browser_type,
+		user_agent,
+		user_id,
+		oper_time,
+		action_time,
+		title,
+		module,
+		action,
+		remark,
+		exception,
+		longitude,
+		latitude,
+		accuracy
+		FROM t_sys_log
+		<where>
+			<if test="createTime != null ">
+				create_time <![CDATA[<]]> #{createTime}
+			</if>
+		</where>
+	</insert>
 
 </mapper>

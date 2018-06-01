@@ -5,10 +5,13 @@
  */
 package com.eryansky.modules.sys.dao;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.modules.sys.mapper.Log;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,12 @@ public interface LogDao extends CrudDao<Log> {
 	 * @return
 	 */
 	int removeAll();
+
+	/**
+	 * 插入到历史表
+	 * @return
+	 */
+	int insertToHistory(Parameter parameter);
 
 	/**
 	 * 清空有效期之外的日志
@@ -56,4 +65,25 @@ public interface LogDao extends CrudDao<Log> {
 	 * @return
 	 */
 	Log getNotNullData(String module);
+
+
+	/**
+	 * 员工登录统计
+	 */
+
+	List<Map<String,Object>> getLoginStatistics(Map<String,Object> parameter);
+
+
+	/**
+	 * 模块访问统计
+	 */
+	List<Map<String,Object>> getModuleStatistics(Map<String,Object> parameter);
+
+	/**
+	 * 每天访问数据
+	 * @param parameter
+	 * @return
+	 */
+	List<Map<String,Object>> getDayLoginStatistics(Map<String,Object> parameter);
+
 }
