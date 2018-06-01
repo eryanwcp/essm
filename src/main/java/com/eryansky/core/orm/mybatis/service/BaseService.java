@@ -61,13 +61,14 @@ public abstract class BaseService {
                         if (DataScope.ALL.getValue().equals(r.getDataScope())) {
                             isDataScopeAll = true;
                         } else if (DataScope.COMPANY_AND_CHILD.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
                             OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
+                            sqlString.append(" OR " + oa + ".id = '" + company.getId() + "'");
                             sqlString.append(" OR " + oa + ".parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%'");
                         } else if (DataScope.COMPANY.getValue().equals(r.getDataScope())) {
-                            sqlString.append(" OR " + oa + ".id = '" + UserUtils.getCompanyId(user.getId()) + "'");
+                            OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
+                            sqlString.append(" OR " + oa + ".id = '" + company.getId() + "'");
                             // 包括本公司下的部门 （type=0:公司；type=1：部门）
-                            sqlString.append(" OR (" + oa + ".parent_id = '" + UserUtils.getCompanyId(user.getId()) + "' AND " + oa + ".type = '1')");
+                            sqlString.append(" OR (" + oa + ".parent_id = '" + company.getId() + "' AND " + oa + ".type = '1')");
                         } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(r.getDataScope())) {
                             OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
                             sqlString.append(" OR " + oa + ".id = '" + organExtend.getId() + "'");
@@ -150,8 +151,8 @@ public abstract class BaseService {
                 // 包括本公司下的部门 （type=0:公司；type=1：部门）
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
                 sqlString.append(" WHERE type='1'");
-                sqlString.append(" AND (id = '" + UserUtils.getCompanyId(user.getId()) + "'");
                 OrganExtend company = OrganUtils.getOrganCompany(user.getId());
+                sqlString.append(" AND (id = '" + company.getId() + "'");
                 sqlString.append(" OR parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%')");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.COMPANY.getValue().equals(dataScopeString)) {
