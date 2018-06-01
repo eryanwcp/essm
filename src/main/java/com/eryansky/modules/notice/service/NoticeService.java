@@ -102,11 +102,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
                 parameter.put("content",noticeQueryVo.getContent());
             }
 
-            //TODO 分页查询存在问题
-//            if (Collections3.isNotEmpty(noticeQueryVo.getPublishUserIds())) {
-//                parameter.put("publishUserIds", noticeQueryVo.getPublishUserIds());
-//            }
-
             if (noticeQueryVo.getStartTime() != null) {
                 parameter.put("startTime", DateUtils.format(noticeQueryVo.getStartTime(), DateUtils.DATE_TIME_FORMAT));
             }

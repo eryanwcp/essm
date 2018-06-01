@@ -14,7 +14,6 @@ import com.eryansky.modules.sys.mapper.Role;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.modules.sys.utils.RoleUtils;
-import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +65,9 @@ public abstract class BaseService {
                             sqlString.append(" OR " + oa + ".parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%'");
                         } else if (DataScope.COMPANY.getValue().equals(r.getDataScope())) {
                             OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
-                            sqlString.append(" OR " + oa + ".id = '" + company.getId() + "'");
-                            // 包括本公司下的部门 （type=0:公司；type=1：部门）
-                            sqlString.append(" OR (" + oa + ".parent_id = '" + company.getId() + "' AND " + oa + ".type = '1')");
+//                            sqlString.append(" OR " + oa + ".id = '" + company.getId() + "'");
+//                            sqlString.append(" OR (" + oa + ".parent_id = '" + company.getId() + "' ");
+                            sqlString.append(" OR " + oa + ".company_id = '" + company.getId() + "'");
                         } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(r.getDataScope())) {
                             OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
                             sqlString.append(" OR " + oa + ".id = '" + organExtend.getId() + "'");
@@ -148,18 +147,15 @@ public abstract class BaseService {
         // 生成部门权限SQL语句
         for (String where : StringUtils.split(officeWheres, ",")) {
             if (DataScope.COMPANY_AND_CHILD.getValue().equals(dataScopeString)) {
-                // 包括本公司下的部门 （type=0:公司；type=1：部门）
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
-                sqlString.append(" WHERE type='1'");
                 OrganExtend company = OrganUtils.getOrganCompany(user.getId());
-                sqlString.append(" AND (id = '" + company.getId() + "'");
+                sqlString.append(" WHERE (id = '" + company.getId() + "'");
                 sqlString.append(" OR parent_ids LIKE '" + company.getParentIds() + company.getId() + ",%')");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.COMPANY.getValue().equals(dataScopeString)) {
-                sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
-                sqlString.append(" WHERE type='0'");
+                sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ_extend");
                 OrganExtend company = OrganUtils.getCompanyByUserId(user.getId());
-                sqlString.append(" AND id = '" + company.getId() + "'");
+                sqlString.append(" WHERE company_id = '" + company.getId() + "'");
                 sqlString.append(" AND " + where + ")");
             } else if (DataScope.OFFICE_AND_CHILD.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_organ");
@@ -172,7 +168,7 @@ public abstract class BaseService {
                 OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
                 sqlString.append(" WHERE id = '" + organExtend.getId() + "'");
                 sqlString.append(" AND " + where + ")");
-            } else if (DataScope.CUSTOM.getValue().equals(dataScopeString)) {//TODO
+            } else if (DataScope.CUSTOM.getValue().equals(dataScopeString)) {
                 sqlString.append(" AND EXISTS (SELECT 1 FROM t_sys_role_organ ro123456, t_sys_organ o123456");
                 sqlString.append(" WHERE ro123456.organ_id = o123456.id");
                 sqlString.append(" AND ro123456.role_id = '" + roleId + "'");
