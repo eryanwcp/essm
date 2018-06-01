@@ -15,7 +15,7 @@
 	<!-- Refresh ContentInfoCache every hour. --> 
 	<cache name="contentInfoCache" eternal="false"
 		timeToLiveSeconds="3600" timeToIdleSeconds="3600"
-		maxElementsInMemory="10000" memoryStoreEvictionPolicy="LRU" >
+		maxElementsInMemory="10000" >
         <terracotta clustered="true">
             <nonstop/>
         </terracotta> <!-- 开启集群 -->
