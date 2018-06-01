@@ -27,6 +27,7 @@ import com.eryansky.modules.sys.mapper.Area;
 import com.eryansky.modules.sys.service.*;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
@@ -58,6 +59,8 @@ public class OrganController extends SimpleController {
     private UserService userService;
     @Autowired
     private AreaService areaService;
+    @Autowired
+    private SystemService systemService;
 
     @ModelAttribute("model")
     public Organ get(@RequestParam(required=false) String id) {
@@ -387,6 +390,7 @@ public class OrganController extends SimpleController {
      * @return
      */
     @RequiresPermissions("sys:organ:sync")
+    @Logging(value = "机构管理-重新初始化机构系统编码",logType = LogType.access)
     @ResponseBody
     @RequestMapping(value = "initSysCode")
     public Result initSysCode(){
@@ -409,6 +413,22 @@ public class OrganController extends SimpleController {
             prefix = organ.getSysCode();
             rOrgan(childOrgan, prefix, index++);
         }
+    }
+
+
+    /**
+     * 同步到扩展表
+     * @return
+     */
+    @RequiresPermissions("sys:organ:sync")
+    @Logging(value = "机构管理-同步到扩展表",logType = LogType.access)
+    @ResponseBody
+    @RequestMapping(value = "syncToExtend")
+    public Result syncToExtend(){
+        logger.info("定时任务...开始：同步organ扩展表");
+        systemService.syncOrganToExtend();
+        logger.info("定时任务...结束：同步organ扩展表");
+        return Result.successResult();
     }
 
 }
