@@ -27,7 +27,7 @@
 
 	<sql id="noticeJoins">
 		LEFT JOIN t_sys_user u ON u.id = a.user_id
-		LEFT JOIN t_sys_organ o ON o.id = a.organ_id
+		LEFT JOIN t_sys_organ_extend o ON o.id = a.organ_id
 	</sql>
 
 	<select id="get" resultType="Notice">
