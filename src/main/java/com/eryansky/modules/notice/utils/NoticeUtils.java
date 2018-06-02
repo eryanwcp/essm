@@ -67,7 +67,7 @@ public class NoticeUtils {
         if(StringUtils.isBlank(noticeId)){
             return result;
         }
-        return noticeService.getFileIds(noticeId);
+        return noticeService.findFileIdsByNoticeId(noticeId);
     }
 
     public static List<String> getNoticeReceiveUserIds(String noticeId) {

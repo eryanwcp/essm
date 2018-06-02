@@ -141,11 +141,6 @@
 			</otherwise>
 		</choose>
 	</select>
-	<select id="findNoticeFiles" resultType="java.lang.String">
-		SELECT a.file_id
-		FROM t_notice_file a
-		WHERE a.notice_id = #{noticeId}
-	</select>
 
 	<insert id="insert">
 		INSERT INTO t_notice(
@@ -193,17 +188,6 @@
 		)
 	</insert>
 
-	<delete id="deleteNoticeFile">
-		DELETE FROM t_notice_file WHERE notice_id = #{id}
-	</delete>
-
-	<insert id="insertNoticeFile">
-		INSERT INTO t_notice_file(notice_id, file_id)
-		<foreach collection="fileIds" item="fileId" separator=" union all ">
-			SELECT #{id}, #{fileId} FROM dual
-		</foreach>
-	</insert>
-
 	<update id="update">
 		UPDATE t_notice SET
 		status = #{status},
@@ -231,5 +215,33 @@
 		status = #{STATUS_DELETE}
 		WHERE id = #{id}
 	</update>
+
+
+	<!--通知附件-->
+	<select id="findFileIdsByNoticeId" resultType="java.lang.String">
+		SELECT a.file_id
+		FROM t_notice_file a
+		WHERE a.notice_id = #{noticeId}
+	</select>
+
+	<delete id="deleteNoticeFiles">
+		DELETE FROM t_notice_file
+		<where>
+			<if test="id != null and id !=''">
+				AND notice_id = #{id}
+			</if>
+			<if test="ids != null and ids.size() !=0">
+				AND file_id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+	</delete>
+
+	<insert id="insertNoticeFiles">
+		INSERT INTO t_notice_file(notice_id, file_id)
+		<foreach collection="ids" item="item" separator=" union all ">
+			SELECT #{id}, #{item} FROM dual
+		</foreach>
+	</insert>
+	<!--通知附件-->
 
 </mapper>

@@ -109,8 +109,8 @@ function loadNoticeOrgan() {
 }
 
 var fileIdArray = modelFileIds;
-var _fileIds = fileIdArray.join(",");
-$("#_fileIds").val(_fileIds);
+var fileIds = fileIdArray.join(",");
+$("#fileIds").val(fileIds);
 function uploadify() {
     $('#uploadify').uploadify({
         method: 'post',
@@ -129,8 +129,8 @@ function uploadify() {
                 fileIdArray.push(data.obj);
             }
             $('#' + file.id).find('.data').html(data.msg);
-            var _fileIds = fileIdArray.join(",");
-            $("#_fileIds").val(_fileIds);
+            var fileIds = fileIdArray.join(",");
+            $("#fileIds").val(fileIds);
             var uploadify = this;
             var cancel = $('#uploadify-queue .uploadify-queue-item[id="' + file.id + '"]').find(".cancel a");
             if (cancel) {
@@ -155,8 +155,8 @@ function loadOrOpen(fileId) {
  */
 function delUpload(fileId,pageFileId,uploadify) {
     fileIdArray.splice($.inArray(fileId,fileIdArray),1);
-    var _fileIds = fileIdArray.join(",");
-    $("#_fileIds").val(_fileIds);
+    var fileIds = fileIdArray.join(",");
+    $("#fileIds").val(fileIds);
     $('#' + fileId).remove();
     if(pageFileId){
         $('#' + pageFileId).empty();

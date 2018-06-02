@@ -10,8 +10,6 @@ import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm._enum.StatusState;
-import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.mapper.JsonMapper;
@@ -20,7 +18,6 @@ import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.mapper.File;
-import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
@@ -38,7 +35,6 @@ import com.eryansky.modules.notice._enum.NoticeMode;
 import com.eryansky.modules.notice._enum.NoticeReceiveScope;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
-import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeSendInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
@@ -56,10 +52,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 通知管理
@@ -86,7 +79,7 @@ public class NoticeController extends SimpleController {
         Save,Publish,RePublish,Repeat//保存、发送、重新发布、转发
     }
 
-    @ModelAttribute
+    @ModelAttribute("model")
     public Notice get(@RequestParam(required=false) String id) {
         if (StringUtils.isNotBlank(id)){
             return noticeService.get(id);
@@ -138,8 +131,7 @@ public class NoticeController extends SimpleController {
      * @throws Exception
      */
     @RequestMapping(value = { "readInfo/{id}" })
-    public ModelAndView readInfo(@PathVariable String id)
-            throws Exception {
+    public ModelAndView readInfo(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-readInfo");
         modelAndView.addObject("noticeId",id);
         return modelAndView;
@@ -195,25 +187,27 @@ public class NoticeController extends SimpleController {
 
 
     /**
-     * @param notice
+     * @param model
      * @return
      * @throws Exception
      */
     @RequestMapping(value = { "input" })
-    public ModelAndView input(@ModelAttribute Notice notice,OperateType operateType) {
+    public ModelAndView input(@ModelAttribute("model") Notice model, OperateType operateType) {
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-input");
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String loginUserId = sessionInfo.getUserId();
-        List<File> files = null;
+        List<File> files = Collections.EMPTY_LIST;
+        List<String> fileIds = Collections.EMPTY_LIST;
+        List<String> receiveUserIds = Collections.EMPTY_LIST;
+        List<String> receiveOrganIds = Collections.EMPTY_LIST;
         if (OperateType.Repeat.equals(operateType) ) {// 转发
             List<String> newFileIds = Lists.newArrayList();
-            if (Collections3.isNotEmpty(notice.getFileIds())) {// 文件拷贝
-                List<File> sourceFiles = DiskUtils.findFilesByIds(notice.getFileIds());
+            if (Collections3.isNotEmpty(model.getFileIds())) {// 文件拷贝
+                List<File> sourceFiles = DiskUtils.findFilesByIds(model.getFileIds());
                 List<File> newFiles = new ArrayList<File>(sourceFiles.size());
                 newFileIds = Lists.newArrayList();
                 for (File sourceFile : sourceFiles) {
                     File file = sourceFile.copy();
-                    file.setStatus(StatusState.LOCK.getValue());
                     file.setFolderId(DiskUtils.getSystemFolderByCode(Notice.FOLDER_NOTICE,loginUserId).getId());
                     file.setUserId(loginUserId);
                     DiskUtils.saveFile(file);
@@ -223,19 +217,24 @@ public class NoticeController extends SimpleController {
 
                 files = newFiles;
             }
-            notice = notice.repeat();
-            notice.setFileIds(newFileIds);
+            model = model.repeat();
+            fileIds = newFileIds;
+            model.setFileIds(newFileIds);
+        }else if(!model.getIsNewRecord()){//修改
+            fileIds = noticeService.findFileIdsByNoticeId(model.getId());
+            model.setFileIds(fileIds);
+            files = DiskUtils.findFilesByIds(fileIds);
+
+            receiveUserIds =  noticeSendInfoService.findUserIdsByNoticeId(model.getId());
+            receiveOrganIds =  noticeSendInfoService.findorganIdsByNoticeId(model.getId());
+
         }
-        if (Collections3.isNotEmpty(notice.getFileIds())) {
-            files = DiskUtils.findFilesByIds(notice.getFileIds());
-        }
-
-
-
         modelAndView.addObject("files", files);
-        modelAndView.addObject("effectTime", DateUtils.format(notice.getEffectTime(),Notice.DATE_TIME_SHORT_FORMAT));
+        modelAndView.addObject("fileIds", fileIds);
+        modelAndView.addObject("receiveUserIds", receiveUserIds);
+        modelAndView.addObject("receiveOrganIds", receiveOrganIds);
         modelAndView.addObject("operateType", operateType);
-        modelAndView.addObject("model", notice);
+        modelAndView.addObject("model", model);
         return modelAndView;
     }
 
@@ -258,96 +257,34 @@ public class NoticeController extends SimpleController {
         }else{
             list = userService.findWithInclude(includeIds, query);
         }
-        //系统用户
-
-
-
         return JsonMapper.getInstance().toJson(list,User.class,new String[]{"id","name","defaultOrganName"});
     }
 
 
     /**
      * 保存
-     * @param notice
+     * @param model
      * @param operateType {@link OperateType}
      * @param noticeUserIds
      * @param noticeOrganIds
      * @param fileIds 页面文件ID集合
      * @return
      */
-    @RequestMapping(value = { "_save" })
+    @RequestMapping(value = { "save" })
     @ResponseBody
-    public Result _save(
-            @ModelAttribute("model") Notice notice,OperateType operateType,
-            @RequestParam(value = "_noticeUserIds", required = false) List<String> noticeUserIds,
-            @RequestParam(value = "_noticeOrganIds", required = false) List<String> noticeOrganIds,
-            @RequestParam(value = "_fileIds", required = false)List<String> fileIds) {
+    public Result save(@ModelAttribute("model")Notice model, OperateType operateType,
+                       @RequestParam(value = "_noticeUserIds", required = false) List<String> noticeUserIds,
+                       @RequestParam(value = "_noticeOrganIds", required = false) List<String> noticeOrganIds,
+                       @RequestParam(value = "fileIds", required = false)List<String> fileIds) {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         Result result;
-
-        //更新文件为有效状态 上传的时候为lock状态
-        if(Collections3.isNotEmpty(fileIds)){
-            List<File> noticeFiles = DiskUtils.findFilesByIds(fileIds);
-            for(File noticeFile:noticeFiles){
-                noticeFile.setStatus(StatusState.NORMAL.getValue());
-                DiskUtils.saveFile(noticeFile);
-            }
+        if(StringUtils.isBlank(model.getUserId())){
+            model.setUserId(sessionInfo.getUserId());
+            model.setOrganId(sessionInfo.getLoginOrganId());
         }
-
-        List<String> oldFileIds = null;//原有文件的ID
-        if(StringUtils.isNotBlank(notice.getId())){
-            oldFileIds = noticeService.getFileIds(notice.getId());//原有文件的ID
-        }
-        List<String> newFileIds = fileIds;//当前文件的ID
-        List<String> removeFileIds =  Lists.newArrayList();//删除的文件ID
-        if(Collections3.isEmpty(newFileIds)){
-            removeFileIds = oldFileIds;
-        }else{
-            if(Collections3.isNotEmpty(oldFileIds)){
-                for(String oldFileId:oldFileIds){
-                    if(!newFileIds.contains(oldFileId)){
-                        removeFileIds.add(oldFileId);
-                    }
-                }
-            }
-
-        }
-        //组件上移除文件
-        if(Collections3.isNotEmpty(removeFileIds)){
-            DiskUtils.deleteFolderFiles(removeFileIds);
-        }
-        notice.setFileIds(fileIds);
-
-        if(notice.getUserId() == null){
-            notice.setUserId(sessionInfo.getUserId());
-            notice.setOrganId(sessionInfo.getLoginOrganId());
-        }
-
-        noticeService.save(notice,true);
-        saveNoticeSendInfos(noticeUserIds,notice.getId(), ReceiveObjectType.User.getValue());
-        saveNoticeSendInfos(noticeOrganIds,notice.getId(),ReceiveObjectType.Organ.getValue());
-
-        if(OperateType.Publish.equals(operateType)) {
-            notice.setMode(NoticeMode.Publishing.getValue());
-            noticeService.save(notice);
-            noticeService.publish(notice.getId());
-        }
-
+        noticeService.saveNoticeAndFiles(model,OperateType.Publish.equals(operateType),noticeUserIds,noticeOrganIds,fileIds);
         result = Result.successResult();
         return result;
-    }
-
-    private void saveNoticeSendInfos(List<String> ids, String noticeId,String receieveObjectType){
-        if(Collections3.isNotEmpty(ids)) {
-            for(String id : ids){
-                NoticeSendInfo noticeSendInfo = new NoticeSendInfo();
-                noticeSendInfo.setReceiveObjectType(receieveObjectType);
-                noticeSendInfo.setNoticeId(noticeId);
-                noticeSendInfo.setReceiveObjectId(id);
-                noticeSendInfoService.save(noticeSendInfo);
-            }
-        }
-
     }
 
 
@@ -358,15 +295,10 @@ public class NoticeController extends SimpleController {
      */
     @RequestMapping(value = { "markReaded" })
     @ResponseBody
-    public Result markReaded(
-            @RequestParam(value = "ids", required = false) List<String> ids) {
+    public Result markReaded(@RequestParam(value = "ids", required = false) List<String> ids) {
         Result result = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        for (String id : ids) {
-            NoticeReceiveInfo noticeReceiveInfo = noticeReceiveInfoService.getUserNotice(sessionInfo.getUserId(), id);
-            noticeReceiveInfo.setIsRead(YesOrNo.YES.getValue());
-            noticeReceiveInfoService.save(noticeReceiveInfo);
-        }
+        noticeReceiveInfoService.markUserNoticeReaded(sessionInfo.getUserId(),ids);
         result = Result.successResult();
         return result;
     }
@@ -376,7 +308,7 @@ public class NoticeController extends SimpleController {
      * @param id 通知ID
      * @return
      */
-    @RequiresPermissions("notice:publish")
+    @RequiresPermissions("model:publish")
     @RequestMapping(value = { "publish/{id}" })
     @ResponseBody
     public Result publish(@PathVariable String id) {
@@ -393,7 +325,7 @@ public class NoticeController extends SimpleController {
     @ResponseBody
     public Result invalid(@PathVariable String id) {
         Result result;
-        Notice notice =noticeService.get(id);
+        Notice notice = noticeService.get(id);
         notice.setMode(NoticeMode.Invalidated.getValue());
         notice.setInvalidTime(Calendar.getInstance().getTime());
         noticeService.save(notice);
@@ -406,16 +338,11 @@ public class NoticeController extends SimpleController {
      * @param ids
      * @return
      */
-    @RequestMapping(value = { "_remove" })
+    @RequestMapping(value = { "remove" })
     @ResponseBody
-    public Result _remove(
-            @RequestParam(value = "ids", required = false) List<String> ids) {
+    public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
         Result result = null;
-        if(Collections3.isNotEmpty(ids)){
-            for(String id:ids){
-                noticeService.removeNotice(id);
-            }
-        }
+        noticeService.deleteByIds(ids);
         result = Result.successResult();
         return result;
     }
@@ -432,8 +359,6 @@ public class NoticeController extends SimpleController {
         File file = null;
         try {
             file = DiskUtils.saveSystemFile(Notice.FOLDER_NOTICE,sessionInfo,multipartFile);
-            file.setStatus(StatusState.LOCK.getValue());
-            DiskUtils.saveFile(file);
             result = Result.successResult().setObj(file.getId()).setMsg("文件上传成功！");
         } catch (InvalidExtensionException e) {
             exception = e;
@@ -464,18 +389,18 @@ public class NoticeController extends SimpleController {
 
     /**
      * 删除附件
-     * @param notice
+     * @param model
      * @param fileId
      * @return
      */
     @RequestMapping(value = { "delUpload" })
     @ResponseBody
-    public Result delUpload(@ModelAttribute("model") Notice notice,@RequestParam String fileId) {
+    public Result delUpload(@ModelAttribute("model") Notice model, @RequestParam String fileId) {
         Result result = null;
-        notice.getFileIds().remove(fileId);
-        noticeService.save(notice);
+        List<String> fileIds = new ArrayList<String>(1);
+        fileIds.add(fileId);
+        noticeService.deleteNoticeFiles(model.getId(),fileIds);
         DiskUtils.deleteFile(fileId);
-
         result = Result.successResult();
         return result;
     }
@@ -488,7 +413,7 @@ public class NoticeController extends SimpleController {
      */
     @RequestMapping(value = { "isTopCombobox" })
     @ResponseBody
-    public List<Combobox> IsTopCombobox(String selectType) throws Exception {
+    public List<Combobox> IsTopCombobox(String selectType) {
         List<Combobox> cList = Lists.newArrayList();
         Combobox titleCombobox = SelectType.combobox(selectType);
         if(titleCombobox != null){
@@ -496,8 +421,7 @@ public class NoticeController extends SimpleController {
         }
         IsTop[] _emums = IsTop.values();
         for (IsTop column : _emums) {
-            Combobox combobox = new Combobox(column.getValue().toString(),
-                    column.getDescription());
+            Combobox combobox = new Combobox(column.getValue(),column.getDescription());
             cList.add(combobox);
         }
         return cList;
@@ -585,8 +509,7 @@ public class NoticeController extends SimpleController {
             if(!SecurityUtils.isCurrentUserAdmin() && column.getValue().equals(NoticeReceiveScope.ALL.getValue())){
                 continue;
             }
-            Combobox combobox = new Combobox(column.getValue().toString(),
-                    column.getDescription());
+            Combobox combobox = new Combobox(column.getValue(), column.getDescription());
             cList.add(combobox);
         }
         return cList;

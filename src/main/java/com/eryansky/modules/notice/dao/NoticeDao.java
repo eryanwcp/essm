@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.notice.dao;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.modules.notice.mapper.Notice;
@@ -18,16 +19,18 @@ import java.util.Map;
  */
 @MyBatisDao
 public interface NoticeDao extends CrudDao<Notice> {
+
+    List<Notice> findQueryList(Map<String,Object> parameter);
+
     /**
      * 通知附件
      * @param noticeId
      * @return
      */
-    List<String> findNoticeFiles(String noticeId);
+    List<String> findFileIdsByNoticeId(String noticeId);
 
-    List<Notice> findQueryList(Map<String,Object> parameter);
 
-    int deleteNoticeFile(Notice notice);
+    int deleteNoticeFiles(Parameter parameter);
 
-    int insertNoticeFile(Notice notice);
+    int insertNoticeFiles(Parameter parameter);
 }

@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -108,6 +109,29 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
         return page;
     }
 
+    /**
+     * 设置用户通知为已读状态
+     * @param userId 用户ID
+     * @param noticeIds 通知IDS
+     * @return
+     */
+    public int markUserNoticeReaded(String userId, Collection<String> noticeIds){
+       return updateUserNotices(userId,noticeIds,NoticeReadMode.readed.getValue());
+    }
+
+    /**
+     * 设置用户通知为已读状态
+     * @param userId 用户ID
+     * @param noticeIds 通知IDS
+     * @return
+     */
+    public int updateUserNotices(String userId,Collection<String> noticeIds,String isRead){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("userId",userId);
+        parameter.put("noticeIds",noticeIds);
+        parameter.put("isRead",isRead);
+        return dao.updateUserNotices(parameter);
+    }
 
     public Page<NoticeReceiveInfo> findNoticeReceiveInfos(Page<NoticeReceiveInfo> page,NoticeReceiveInfo entity) {
         Parameter parameter = new Parameter();

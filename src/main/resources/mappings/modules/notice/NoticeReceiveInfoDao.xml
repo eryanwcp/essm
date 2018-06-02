@@ -175,6 +175,21 @@
 		)
 	</insert>
 
+
+	<update id="updateUserNotices">
+		UPDATE t_notice_receive_info SET
+		is_read = #{isRead},
+		read_time = #{readTime}
+		<where>
+			<if test="userId != null and userId !=''">
+				AND user_id = #{userId}
+			</if>
+			<if test="noticeIds != null and noticeIds.size() !=0">
+				AND id IN <foreach collection="noticeIds" item="item" open="(" separator="," close=")">#{item}</foreach>
+			</if>
+		</where>
+	</update>
+
 	<update id="update">
 		UPDATE t_notice_receive_info SET
 		notice_id = #{noticeId},

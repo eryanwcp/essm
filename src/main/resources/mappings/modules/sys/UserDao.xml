@@ -64,10 +64,10 @@
                 AND (
                 a.login_name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 OR a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
         </where>
@@ -110,20 +110,20 @@
         <where>
             a.status = #{status}
             AND (o.id = #{organId}  OR o.parent_ids LIKE
-                <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+                <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
             )
             <if test="query != null and query !=''">
                 AND (
                 a.login_name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 OR a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 OR a.code LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
             <if test="userType != null and userType !=''">
@@ -161,10 +161,10 @@
                 AND (
                 a.login_name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 OR a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
             <if test="userIds != null and userIds.size() !=0">
@@ -213,17 +213,17 @@
         <where>
             a.status = #{status}
             AND (o.id = #{organId}  OR o.parent_ids LIKE
-              <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+              <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
               <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>
             )
             <if test="query != null and query !=''">
                 AND (
                     a.login_name LIKE
                     <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                    <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                     OR a.name LIKE
                     <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                    <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
             <if test="excludeUserIds != null and excludeUserIds.size() != 0">
@@ -272,7 +272,7 @@
         <where>
             a.status = #{status}
             AND (o.id = #{organId}  OR o.parent_ids LIKE
-            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+            <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
             <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
             <if test="excludeUserIds != null and excludeUserIds.size() != 0">
                 AND o.id NOT IN
@@ -285,7 +285,7 @@
     </select>
 
 
-    <select id="findOwnerAndChildsUsersIds" resultType="User">
+    <select id="findOwnerAndChildsUsersIds" resultType="java.lang.String">
         SELECT
         a.id
         FROM t_sys_user a
@@ -293,8 +293,8 @@
         LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
         <where>
             a.status = #{status}
-            AND (o.id = #{organId}  OR a.parent_ids LIKE
-            <if test="dbName == 'db2'">'%'||#{organId}||'%'</if>
+            AND (o.id = #{organId}  OR o.parent_ids LIKE
+            <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
             <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
             <if test="excludeUserIds != null and excludeUserIds.size() != 0">
                 AND o.id NOT IN
@@ -400,10 +400,10 @@
                 AND (
                 a.login_name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 OR a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
         </where>

@@ -18,5 +18,7 @@ import java.util.List;
 @MyBatisDao
 public interface NoticeSendInfoDao extends CrudDao<NoticeSendInfo> {
 
-    List<NoticeSendInfo> findQueryList(NoticeSendInfo noticeSendInfo);
+    List<NoticeSendInfo> findQueryList(NoticeSendInfo entity);
+
+    List<String> findObjectIdsByNoticeId(NoticeSendInfo entity);
 }

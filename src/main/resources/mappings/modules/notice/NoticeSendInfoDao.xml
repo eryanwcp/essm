@@ -67,6 +67,19 @@
 		</where>
 	</select>
 
+
+	<select id="findObjectIdsByNoticeId" resultType="java.lang.String">
+		SELECT
+		a.id
+		FROM t_notice_send_info a
+		<where>
+			AND a.notice_id  = #{noticeId}
+			<if test="receiveObjectType != null and receiveObjectType != ''">
+				AND a.receive_object_type = #{receiveObjectType}
+			</if>
+		</where>
+	</select>
+
 	<select id="findAllList" resultType="NoticeSendInfo">
 		SELECT
 		<include refid="noticeSendInfoColumns"/>

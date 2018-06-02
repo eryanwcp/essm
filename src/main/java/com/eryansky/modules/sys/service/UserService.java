@@ -590,6 +590,7 @@ public class UserService extends CrudService<UserDao, User> {
     public List<String> findOwnerAndChildsUserIds(String organId){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
         parameter.put("organId",organId);
         return dao.findOwnerAndChildsUsersIds(parameter);
     }

@@ -15,15 +15,16 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.modules.notice._enum.NoticeReadMode;
+import com.eryansky.modules.disk.utils.DiskUtils;
+import com.eryansky.modules.notice._enum.*;
+import com.eryansky.modules.notice.mapper.NoticeSendInfo;
+import com.eryansky.modules.notice.web.NoticeController;
+import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
-import com.eryansky.modules.notice._enum.IsTop;
-import com.eryansky.modules.notice._enum.NoticeMode;
-import com.eryansky.modules.notice._enum.NoticeReceiveScope;
 import com.eryansky.modules.notice.dao.NoticeDao;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
@@ -53,22 +54,61 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     @Autowired
 	private UserService userService;
 
-    public void save(Notice entity,boolean updateFile) {
+
+
+    /**
+     * 保存通知和文件
+     * @param entity
+     * @param isPub
+     * @param userIds
+     * @param organIds
+     * @param fileIds
+     */
+    public void saveNoticeAndFiles(Notice entity,Boolean isPub,Collection<String> userIds,Collection<String> organIds,List<String> fileIds) {
+        List<String> oldFileIds = Collections.EMPTY_LIST;
+        if(!entity.getIsNewRecord()){
+            oldFileIds = findFileIdsByNoticeId(entity.getId());
+        }
         super.save(entity);
-        if(updateFile){
-            dao.deleteNoticeFile(entity);
-            if(Collections3.isNotEmpty(entity.getFileIds())){
-                dao.insertNoticeFile(entity);
+        saveNoticeFiles(entity.getId(),fileIds);
+
+        List<String> removeFileIds = Collections3.subtract(oldFileIds,fileIds);
+        if(Collections3.isNotEmpty(removeFileIds)){
+            deleteNoticeFiles(entity.getId(),removeFileIds);
+            DiskUtils.deleteFolderFiles(removeFileIds);
+        }
+
+        saveNoticeSendInfos(userIds, entity.getId(), ReceiveObjectType.User.getValue());
+        saveNoticeSendInfos(organIds, entity.getId(),ReceiveObjectType.Organ.getValue());
+
+        if(isPub != null && isPub) {
+            publish(entity);
+        }
+    }
+
+    private void saveNoticeSendInfos(Collection<String> ids, String noticeId,String receieveObjectType){
+        if(Collections3.isNotEmpty(ids)) {
+            for(String id : ids){
+                NoticeSendInfo noticeSendInfo = new NoticeSendInfo();
+                noticeSendInfo.setReceiveObjectType(receieveObjectType);
+                noticeSendInfo.setNoticeId(noticeId);
+                noticeSendInfo.setReceiveObjectId(id);
+                noticeSendInfoService.save(noticeSendInfo);
             }
         }
+
     }
 
     /**
      * 删除通知
-     * @param noticeId
+     * @param ids
      */
-    public void removeNotice(String noticeId){
-        this.delete(new Notice(noticeId));
+    public void deleteByIds(List<String> ids){
+        if(Collections3.isNotEmpty(ids)){
+            for(String id:ids){
+                this.delete(new Notice(id));
+            }
+        }
     }
 
     /**
@@ -254,20 +294,51 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 
     }
 
-    
     /**
-     * 虚拟删除通知
-     * @param ids
+     * 插入通知附件关联信息
+     * @param id 通知ID
+     * @param ids 文件IDS
      */
-	public void remove(List<String> ids) {
-		if (Collections3.isNotEmpty(ids)) {
-			for (String id : ids) {
-				Notice notice = this.get(id);
-				notice.setStatus(StatusState.DELETE.getValue());
-				this.save(notice);
-			}
-		}
-	}
+    @Transactional(readOnly = false)
+    public void insertNoticeFiles(String id, Collection<String> ids){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("id",id);
+        parameter.put("ids",ids);
+        if(Collections3.isNotEmpty(ids)){
+            dao.insertNoticeFiles(parameter);
+        }
+    }
+
+    /**
+     * 刪除通知附件关联信息
+     * @param id 通知ID
+     * @param ids 文件IDS
+     */
+    @Transactional(readOnly = false)
+    public void deleteNoticeFiles(String id, Collection<String> ids){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("id",id);
+        parameter.put("ids",ids);
+        dao.deleteNoticeFiles(parameter);
+    }
+
+
+    /**
+     * 保存通知附件关联信息
+     * 保存之前先删除原有
+     * @param id 通知ID
+     * @param ids 文件IDS
+     */
+    @Transactional(readOnly = false)
+    public void saveNoticeFiles(String id, Collection<String> ids){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("id",id);
+        parameter.put("ids",ids);
+        dao.deleteNoticeFiles(parameter);
+        if(Collections3.isNotEmpty(ids)){
+            dao.insertNoticeFiles(parameter);
+        }
+    }
 
 
     /**
@@ -275,8 +346,8 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param noticeId
      * @return
      */
-    public List<String> getFileIds(String noticeId){
-        return dao.findNoticeFiles(noticeId);
+    public List<String> findFileIdsByNoticeId(String noticeId){
+        return dao.findFileIdsByNoticeId(noticeId);
     }
 
 

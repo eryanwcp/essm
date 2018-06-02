@@ -297,7 +297,7 @@ function readInfo(noticeId){
 
 function formInit() {
     $notice_form = $('#notice_form').form({
-        url: ctxAdmin + '/notice/_save',
+        url: ctxAdmin + '/notice/save',
         onSubmit: function (param) {
             $.messager.progress({
                 title: '提示信息！',
@@ -480,7 +480,7 @@ function del(){
                     ids[i] = row.id;
                 });
                 $.ajax({
-                    url: ctxAdmin + '/notice/_remove',
+                    url: ctxAdmin + '/notice/remove',
                     type: 'post',
                     data: {ids: ids},
                     dataType: 'json',

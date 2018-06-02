@@ -7,6 +7,7 @@ package com.eryansky.modules.notice.service;
 
 import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.core.orm.mybatis.service.CrudService;
+import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.dao.NoticeSendInfoDao;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
@@ -35,7 +36,7 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
     /**
      * 通知发送配置信息
      * @param noticeId 通知ID
-     * @param receiveObjectType {@link com.eryansky.modules.notice._enum.ReceiveObjectType}
+     * @param receiveObjectType {@link ReceiveObjectType}
      * @return
      */
     public List<NoticeSendInfo> findNoticeSendInfos(String noticeId,String receiveObjectType){
@@ -45,5 +46,36 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
         noticeSendInfo.setNotice(notice);
         noticeSendInfo.setReceiveObjectType(receiveObjectType);
         return dao.findQueryList(noticeSendInfo);
+    }
+
+    /**
+     * 查找接收用户IDS
+     * @param noticeId 通知ID
+     * @return
+     */
+    public List<String> findUserIdsByNoticeId(String noticeId){
+        return findObjectIdsByNoticeId(noticeId,ReceiveObjectType.User.getValue());
+    }
+
+    /**
+     * 查找接收机构IDS
+     * @param noticeId 通知ID
+     * @return
+     */
+    public List<String> findorganIdsByNoticeId(String noticeId){
+        return findObjectIdsByNoticeId(noticeId,ReceiveObjectType.Organ.getValue());
+    }
+
+    /**
+     * 查找接收对象IDS
+     * @param noticeId 通知ID
+     * @param receiveObjectType {@link ReceiveObjectType}
+     * @return
+     */
+    public List<String> findObjectIdsByNoticeId(String noticeId,String receiveObjectType){
+        NoticeSendInfo entity = new NoticeSendInfo();
+        entity.setNoticeId(noticeId);
+        entity.setReceiveObjectType(receiveObjectType);
+        return dao.findObjectIdsByNoticeId(entity);
     }
 }

@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     public List<File> findFilesByIds(List<String> fileIds){
         if(Collections3.isEmpty(fileIds)){
-            return null;
+            return Collections.EMPTY_LIST;
         }
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);

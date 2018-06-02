@@ -6,8 +6,8 @@
     var modelType = '${model.type}';
     var dictionaryTypeCode = '<%=NoticeUtils.DIC_NOTICE%>';
     var modelFileIds = ${fns:toJson(model.fileIds)};
-    var noticeReceiveUserIds =  ${fns:toJson(model.noticeReceiveUserIds)};
-    var noticeReceiveOrganIds = ${fns:toJson(model.noticeReceiveOrganIds)};
+    var noticeReceiveUserIds =  ${fns:toJson(receiveUserIds)};
+    var noticeReceiveOrganIds = ${fns:toJson(receiveOrganIds)};
     var jsessionid = '${sessionInfo.sessionId}';
     var fileSizeLimit = '<%=AppConstants.getPrettyNoticeMaxUploadSize()%>';//附件上传大小限制
 </script>
@@ -80,7 +80,7 @@
                 <td><input id="uploadify" name="file" type="file" multiple="true">
 
                     <div id="queue"></div>
-                    <input id="_fileIds" name="_fileIds" type="hidden" />
+                    <input id="fileIds" name="fileIds" type="hidden" />
                     <c:if test="${not empty files}">
                         <div>
                             <c:forEach items="${files}" begin="0" var="file" varStatus="i">
