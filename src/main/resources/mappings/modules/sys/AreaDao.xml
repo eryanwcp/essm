@@ -105,7 +105,7 @@
 		a.status = '0'
 		<if test="parentId != null and parentId !=''">
 			AND (a.id = #{parentId} OR a.parent_ids LIKE
-			<if test="dbName == 'db2'">'%'||#{parentId}||'%'</if>
+			<if test="dbName == 'db2'">'%,'||#{parentId}||',%'</if>
 			<if test="dbName == 'mysql'">CONCAT('%,', #{parentId}, ',%')</if>)
 		</if>
 		ORDER BY a.code
@@ -130,7 +130,8 @@
 		<where>
 			a.status = '0'
 			<if test="areaId != null and areaId !=''">
-				AND (a.id = #{areaId} OR a.parent_ids LIKE  <if test="dbName == 'db2'">'%'||#{areaId}||'%'</if>
+				AND (a.id = #{areaId} OR a.parent_ids LIKE
+				<if test="dbName == 'db2'">'%,'||#{areaId}||',%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%,', #{areaId}, ',%')</if>)
 			</if>
 

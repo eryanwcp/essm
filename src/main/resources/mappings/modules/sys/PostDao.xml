@@ -98,11 +98,11 @@
             <if test="query != null and query !=''">
                 AND (a.name LIKE
                     <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                    <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                     OR
                     a.code LIKE
                     <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-                    <if test="dbName == 'mysql'">CONCAT('%,', #{query}, ',%')</if>
+                    <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
                 )
             </if>
         </where>

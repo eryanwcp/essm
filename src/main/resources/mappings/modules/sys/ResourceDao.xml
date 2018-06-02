@@ -101,7 +101,7 @@
         a.status = '0'
         <if test="id != null and id !=''">
             AND (a.id = #{id} OR a.parent_ids LIKE
-            <if test="dbName == 'db2'">'%'||#{id}||'%'</if>
+            <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
             <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
         </if>
         <if test="types != null and types.size() !=0">
