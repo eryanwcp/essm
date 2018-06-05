@@ -29,7 +29,7 @@ function loadUser(){
             {field:'id',title:'主键ID',width:100,hidden:'true'},
             {field: 'name', title: '姓名', width: 60, sortable: true},
             {field: 'sexView', title: '性别', width: 50},
-            {field: 'defaultOrganName', title: '机构', width: 120, sortable: true}
+            {field: 'defaultOrganName', title: '部门', width: 120, sortable: true}
         ]],
         onBeforeLoad:function(param){
             param.organId = organId;

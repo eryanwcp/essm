@@ -69,8 +69,6 @@ public class NoticeController extends SimpleController {
     private NoticeSendInfoService noticeSendInfoService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private OrganService organService;
 
     /**
      * 操作类型
@@ -166,14 +164,11 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "view/{id}" })
     public ModelAndView view(@PathVariable String id){
         ModelAndView modelAndView = new ModelAndView("modules/notice/notice-view");
-        List<File> files = null;
+        List<File> files = DiskUtils.findFilesByIds(noticeService.findFileIdsByNoticeId(id));
         Notice model = noticeService.get(id);
-        if(Collections3.isNotEmpty(model.getFileIds())){
-            files = DiskUtils.findFilesByIds(model.getFileIds());
-        }
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
-            NoticeReceiveInfo receiveInfo = noticeReceiveInfoService.getUserNotice(sessionInfo.getUserId(), model.getId());
+            NoticeReceiveInfo receiveInfo = noticeReceiveInfoService.getUserNotice(sessionInfo.getUserId(), id);
             if(receiveInfo != null){
                 receiveInfo.setIsRead(YesOrNo.YES.getValue());
                 receiveInfo.setReadTime(Calendar.getInstance().getTime());
@@ -252,8 +247,7 @@ public class NoticeController extends SimpleController {
         List<User> list = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY.getValue()))){
-            List<String> organIds = organService.findDepartmentAndGroupOrganIdsByCompanyId(sessionInfo.getLoginCompanyId());
-            list = userService.findUsersByOrganIds(organIds);
+            list = userService.findUsersByCompanyId(sessionInfo.getLoginCompanyId());
         }else{
             list = userService.findWithInclude(includeIds, query);
         }
@@ -296,11 +290,9 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "markReaded" })
     @ResponseBody
     public Result markReaded(@RequestParam(value = "ids", required = false) List<String> ids) {
-        Result result = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         noticeReceiveInfoService.markUserNoticeReaded(sessionInfo.getUserId(),ids);
-        result = Result.successResult();
-        return result;
+        return Result.successResult();
     }
 
     /**
@@ -324,13 +316,11 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "invalid/{id}" })
     @ResponseBody
     public Result invalid(@PathVariable String id) {
-        Result result;
         Notice notice = noticeService.get(id);
         notice.setMode(NoticeMode.Invalidated.getValue());
         notice.setInvalidTime(Calendar.getInstance().getTime());
         noticeService.save(notice);
-        result = Result.successResult();
-        return result;
+        return Result.successResult();
     }
 
     /**
@@ -341,10 +331,8 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "remove" })
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
-        Result result = null;
         noticeService.deleteByIds(ids);
-        result = Result.successResult();
-        return result;
+        return Result.successResult();
     }
 
     /**
@@ -396,20 +384,17 @@ public class NoticeController extends SimpleController {
     @RequestMapping(value = { "delUpload" })
     @ResponseBody
     public Result delUpload(@ModelAttribute("model") Notice model, @RequestParam String fileId) {
-        Result result = null;
         List<String> fileIds = new ArrayList<String>(1);
         fileIds.add(fileId);
         noticeService.deleteNoticeFiles(model.getId(),fileIds);
         DiskUtils.deleteFile(fileId);
-        result = Result.successResult();
-        return result;
+        return Result.successResult();
     }
 
     /**
      * 是否置顶 下拉列表
      * @param selectType
      * @return
-     * @throws Exception
      */
     @RequestMapping(value = { "isTopCombobox" })
     @ResponseBody
@@ -496,6 +481,12 @@ public class NoticeController extends SimpleController {
         return json;
     }
 
+    /**
+     * 接收范围选择
+     * @param selectType
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = { "receiveScopeCombobox" })
     @ResponseBody
     public List<Combobox> receiveScopeCombobox(String selectType) throws Exception {
@@ -505,8 +496,9 @@ public class NoticeController extends SimpleController {
             cList.add(titleCombobox);
         }
         NoticeReceiveScope[] _emums = NoticeReceiveScope.values();
+        boolean isAdmin = SecurityUtils.isCurrentUserAdmin();
         for (NoticeReceiveScope column : _emums) {
-            if(!SecurityUtils.isCurrentUserAdmin() && column.getValue().equals(NoticeReceiveScope.ALL.getValue())){
+            if(!isAdmin && column.getValue().equals(NoticeReceiveScope.ALL.getValue())){
                 continue;
             }
             Combobox combobox = new Combobox(column.getValue(), column.getDescription());

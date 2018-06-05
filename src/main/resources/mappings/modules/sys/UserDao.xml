@@ -29,7 +29,6 @@
         a.USER_TYPE AS "userType",
         a.REMARK AS "remark",
         a.weixin AS "weixin"
-        
     </sql>
 
     <select id="get" resultType="User">
@@ -294,8 +293,8 @@
         <where>
             a.status = #{status}
             AND (o.id = #{organId}  OR o.parent_ids LIKE
-            <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
+                <if test="dbName == 'db2'">'%,'||#{organId}||',%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%,', #{organId}, ',%')</if>)
             <if test="excludeUserIds != null and excludeUserIds.size() != 0">
                 AND o.id NOT IN
                 <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
@@ -341,19 +340,31 @@
         <where>
             a.status = #{status}
             AND o.company_id = #{companyId}
+            <if test="excludeUserIds != null and excludeUserIds.size() != 0">
+                AND o.id NOT IN
+                <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
         ORDER BY a.sort asc
     </select>
 
     <select id="findUserIdsByCompanyId" resultType="java.lang.String">
         SELECT
-        <include refid="userColumns"/>
+        a.id
         FROM t_sys_user a
         LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
         LEFT JOIN t_sys_organ_extend o ON o.id = uo.organ_id
         <where>
             a.status = #{status}
             AND o.company_id = #{companyId}
+            <if test="excludeUserIds != null and excludeUserIds.size() != 0">
+                AND o.id NOT IN
+                <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
         ORDER BY a.sort asc
     </select>
@@ -361,7 +372,7 @@
 
 
 
-    <select id="findUsersByRoleId" resultType="java.lang.String">
+    <select id="findUsersByRoleId" resultType="">
         SELECT
         <include refid="userColumns"/>
         FROM t_sys_user a

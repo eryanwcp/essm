@@ -216,18 +216,12 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 
         }else if(NoticeReceiveScope.COMPANY_AND_CHILD.getValue().equals(notice.getReceiveScope())){
             receiveUserIds = userService.findOwnerAndChildsUserIds(UserUtils.getCompanyId(notice.getUserId()));
-
         }else if(NoticeReceiveScope.COMPANY.getValue().equals(notice.getReceiveScope())){
-            List<String> organIds = organService.findDepartmentAndGroupOrganIdsByCompanyId(notice.getOrganId());
-            receiveUserIds = userService.findUserIdsByOrganIds(organIds);
+            receiveUserIds = userService.findUserIdsByCompanyId(UserUtils.getCompanyId(notice.getUserId()));
         }else if(NoticeReceiveScope.OFFICE_AND_CHILD.getValue().equals(notice.getReceiveScope())){
             receiveUserIds = userService.findOwnerAndChildsUserIds(notice.getUserId());
-
         }else if(NoticeReceiveScope.OFFICE.getValue().equals(notice.getReceiveScope())){
-            User user = userService.get(notice.getUserId());
-            List<String> organIds = new ArrayList<String>(1);
-            organIds.add(user.getDefaultOrganId());
-            receiveUserIds = userService.findUserIdsByOrganIds(organIds);
+            receiveUserIds = userService.findUserIdsByOrganId(UserUtils.getDefaultOrganId(notice.getUserId()));
 
         }
         if(Collections3.isNotEmpty(receiveUserIds)){

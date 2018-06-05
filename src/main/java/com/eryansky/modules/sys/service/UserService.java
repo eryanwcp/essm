@@ -326,10 +326,22 @@ public class UserService extends CrudService<UserDao, User> {
      * @return
      */
     public List<User> findUsersByCompanyId(String companyId) {
+        return findUsersByCompanyId(companyId,null);
+    }
+
+
+    /**
+     * 获取单位下直属部门用户
+     * @param companyId 单位ID
+     * @param excludeUserIds 排除的用户IDS
+     * @return
+     */
+    public List<User> findUsersByCompanyId(String companyId, List<String> excludeUserIds) {
         Assert.notNull(companyId, "参数[companyId]为空!");
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("companyId",companyId);
+        parameter.put("excludeUserIds",excludeUserIds);
         return dao.findUsersByCompanyId(parameter);
     }
 
@@ -339,14 +351,24 @@ public class UserService extends CrudService<UserDao, User> {
      * @return
      */
     public List<String> findUserIdsByCompanyId(String companyId) {
+        return findUserIdsByCompanyId(companyId,null);
+    }
+
+
+    /**
+     * 获取单位下直属部门用户IDS
+     * @param companyId 单位ID
+     * @param excludeUserIds 排除的用户IDS
+     * @return
+     */
+    public List<String> findUserIdsByCompanyId(String companyId, List<String> excludeUserIds) {
         Assert.notNull(companyId, "参数[companyId]为空!");
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("companyId",companyId);
+        parameter.put("excludeUserIds",excludeUserIds);
         return dao.findUserIdsByCompanyId(parameter);
     }
-
-
 
     /**
      * 得到排序字段的最大值.
