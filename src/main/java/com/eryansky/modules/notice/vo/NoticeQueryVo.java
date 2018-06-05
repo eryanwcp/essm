@@ -5,6 +5,9 @@
  */
 package com.eryansky.modules.notice.vo;
 
+import com.eryansky.modules.notice._enum.IsTop;
+import com.eryansky.modules.notice._enum.NoticeReadMode;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,11 +37,11 @@ public class NoticeQueryVo implements Serializable {
      */
     private Date endTime;
     /**
-     * 是否置顶 {@link com.eryansky.modules.notice._enum.IsTop}
+     * 是否置顶 {@link IsTop}
      */
     private String isTop;
     /**
-     * 是否阅读 {@link com.eryansky.modules.notice._enum.NoticeReadMode}
+     * 是否阅读 {@link NoticeReadMode}
      */
     private String isRead;
     /**
