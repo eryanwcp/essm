@@ -82,7 +82,7 @@
 <form:form id="searchForm" method="post" class="breadcrumb form-search">
 	&nbsp;&nbsp;<input id="btnSubmit" class="btn btn-primary" type="button" value="刷新" onclick="reLoad();"/>&nbsp;&nbsp;
 	<e:hasPermission name="sys:systemMonitor:edit">
-		<a class="btn btn-link" type="button" value="清空缓存" href="${ctxAdmin}/sys/systemMonitor/clearCache"/>&nbsp;&nbsp;
+		<a class="btn btn-link" target="_blank" href="${ctxAdmin}/sys/systemMonitor/clearCache">清空缓存</a>&nbsp;&nbsp;
 	</e:hasPermission>
 </form:form>
 <div id="systemInfo_div"></div>
