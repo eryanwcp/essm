@@ -152,8 +152,22 @@ public class AppConstants extends SysConstants {
      * 日志保留时间 天(默认值:30).
      */
     public static int getLogKeepTime() {
-        String code = "logKeepTime";
+        String code = "system.logKeepTime";
         return Integer.valueOf(getConfigValue(code, "30"));
+    }
+
+    /**
+     * 应用文件 系统日志文件保存路径
+     *
+     * @return
+     */
+    public static String getLogPath(String defaultPath) {
+        String code = "system.logPath";
+        String value = getConfigValue(code,defaultPath);
+        if (StringUtils.isBlank(value)) {
+            value = defaultPath;
+        }
+        return value;
     }
 
     /**

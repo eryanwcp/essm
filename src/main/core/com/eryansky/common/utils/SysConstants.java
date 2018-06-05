@@ -21,9 +21,7 @@ public class SysConstants {
     public static final String SESSION_VALIDATE_CODE = "validateCode";
     
     private static PropertiesLoader appconfig = null;
-    private static PropertiesLoader sensitive = null;
-    private static PropertiesLoader sqlfilter = null;
-    
+
     /**
      * 配置文件(appconfig.properties)
      */
@@ -61,24 +59,12 @@ public class SysConstants {
         appconfig.modifyProperties(filePath,key,value);
     }
     
+
     /**
-     * 配置文件(sensitive.properties)
+     *  Properties文件加载器 示例：config 不带后缀“.properties”
      */
-    public static PropertiesLoader getSensitive() {
-    	if(sensitive == null){
-    		sensitive = new PropertiesLoader("sensitive.properties");
-    	}
-        return sensitive;
-    }
-    
-    /**
-     * SQL参数过滤配置文件(sqlfilter.properties)
-     */
-    public static PropertiesLoader getSqlfilter() {
-    	if(sqlfilter == null){
-    		sqlfilter = new PropertiesLoader("sqlfilter.properties");
-    	}
-        return sqlfilter;
+    public static PropertiesLoader getPropertiesLoader(String fileName) {
+        return new PropertiesLoader(fileName+".properties");
     }
 
     /**

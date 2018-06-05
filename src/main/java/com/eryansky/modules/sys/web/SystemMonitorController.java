@@ -6,22 +6,35 @@
 package com.eryansky.modules.sys.web;
 
 import com.eryansky.common.model.Result;
+import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.common.utils.collections.ListUtils;
+import com.eryansky.common.utils.io.FileUtils;
+import com.eryansky.common.utils.io.PropertiesLoader;
 import com.eryansky.common.web.springmvc.SimpleController;
+import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.ApplicationSessionContext;
 import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.core.security.annotation.RequiresRoles;
 import com.eryansky.modules.sys._enum.LogType;
-import com.eryansky.utils.AppConstants;
-import com.eryansky.utils.CacheUtils;
-import com.eryansky.utils.ServerStatus;
-import com.eryansky.utils.SigarUtil;
+import com.eryansky.utils.*;
 import net.sf.ehcache.Ehcache;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 系统监控
@@ -97,6 +110,72 @@ public class SystemMonitorController extends SimpleController {
             logger.error(e.getMessage());
         }
         return result;
+    }
+
+
+    /**
+     * 系统监控-系统日志
+     * @param download 下载
+     * @param request
+     * @param response
+     * @param uiModel
+     * @return
+     */
+    @Logging(value = "系统监控-系统日志",logType = LogType.access)
+    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
+    @RequestMapping("log")
+    public String log(@RequestParam(value = "download",defaultValue = "false") boolean download, HttpServletRequest request, HttpServletResponse response, Model uiModel){
+        Result result = null;
+        File file = null;
+        if(download || WebUtils.isAjaxRequest(request)){
+            PropertiesLoader propertiesLoader =AppConstants.getPropertiesLoader("log4j");
+            String appDir = AppUtils.getAppAbsolutePath();
+            String servletContextName = AppUtils.getServletContext().getServletContextName();
+            String logConfigPath = StringUtils.substringAfter(propertiesLoader.getProperty("log4j.appender.RollingFile.File"),"/");
+            String logPath = StringUtils.substringBefore(appDir,servletContextName) + logConfigPath;
+            String _logPath = AppConstants.getLogPath(logPath);
+            file = new File(_logPath);
+        }
+        if(download){
+            WebUtils.setDownloadableHeader(request,response,file.getName());
+            BufferedInputStream is = null;
+            OutputStream os = null;
+            try {
+                os = response.getOutputStream();
+                is = new BufferedInputStream(new FileInputStream(file));
+                IOUtils.copy(is, os);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(is);
+            }
+            return null;
+        }
+        if(WebUtils.isAjaxRequest(request)){
+            try {
+                // 读取日志
+                List<String> logs = FileUtils.readLines(file, "utf-8");
+                List<String> showLogs = logs;
+                StringBuffer log = new StringBuffer();
+                Collections.reverse(logs);
+                Page page = new Page(request,response);
+                page.setPageSize(10000);//最大读取行数
+                if(page.getPageSize()!= Page.PAGESIZE_ALL){
+                    showLogs = Collections3.getPagedList(logs,page.getPageNo(),page.getPageSize());
+                    page.setResult(showLogs);
+                    page.setTotalCount(showLogs.size());
+                }
+                for(int i = showLogs.size()-1;i >= 0;i--){
+                    String line = logs.get(i);
+                    log.append(line.replace("\t","&nbsp;")+"<br>");
+                }
+                return renderString(response,Result.successResult().setMsg(log.toString()).setObj(page));
+            } catch (Exception e) {
+                logger.error(e.getMessage(),e);
+                return renderString(response,Result.errorResult().setMsg(e.getMessage()));
+            }
+        }
+        return "modules/sys/systemMonitor-log";
     }
 
 }

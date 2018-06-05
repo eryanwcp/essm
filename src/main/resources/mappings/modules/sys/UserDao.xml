@@ -372,7 +372,7 @@
 
 
 
-    <select id="findUsersByRoleId" resultType="">
+    <select id="findUsersByRoleId" resultType="User">
         SELECT
         <include refid="userColumns"/>
         FROM t_sys_user a

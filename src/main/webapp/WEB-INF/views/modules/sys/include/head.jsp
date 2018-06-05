@@ -10,6 +10,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 <script src="${ctxStatic}/js/jquery/jquery-1.10.2.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/js/jquery/jquery-migrate-1.2.1.min.js" type="text/javascript"></script>
+<script src="${ctxStatic}/js/jquery/jquery-extend.min.js" type="text/javascript"></script>
 <link href="${ctxStatic}/js/jquery-validation/1.11.1/jquery.validate.min.css" type="text/css" rel="stylesheet" />
 <script src="${ctxStatic}/js/jquery-validation/1.11.1/jquery.validate.min.js" type="text/javascript"></script>
 <script src="${ctxStatic}/js/jquery-validation/1.11.1/jquery.validate.method.min.js" type="text/javascript"></script>

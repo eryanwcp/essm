@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import javax.servlet.ServletContext;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,8 +24,27 @@ import java.util.regex.Pattern;
  */
 public class AppUtils {
 
+    private static ServletContext servletContext;
+
     private AppUtils(){
 
+    }
+
+    public static void init(ServletContext sContext) {
+        servletContext = sContext;
+    }
+
+    public static ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    /**
+     * 返回程序的物理安装路径
+     *
+     * @return String
+     */
+    public static String getAppAbsolutePath() {
+        return servletContext.getRealPath("/");
     }
 
     public static String toJson(Object object){

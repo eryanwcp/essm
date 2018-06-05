@@ -12,6 +12,7 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.server.impl.UserWebServiceImpl;
+import com.eryansky.utils.AppUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,7 @@ public class SystemInitListener extends DefaultSystemInitListener{
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		super.contextInitialized(sce);
+		AppUtils.init(sce.getServletContext());
 		clearTempDir();
 
 		//WebService发布
