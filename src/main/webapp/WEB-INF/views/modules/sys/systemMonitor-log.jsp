@@ -43,7 +43,7 @@
 </ul>
 <form:form id="searchForm" method="post" class="breadcrumb form-search">
 	&nbsp;&nbsp;<input id="btnSubmit" class="btn btn-primary" type="button" value="刷新" onclick="reLoad();"/>&nbsp;&nbsp;
-	&nbsp;&nbsp;<input id="btnSubmit" class="btn btn-primary" type="button" value="下载" onclick="_download();"/>&nbsp;&nbsp;
+	&nbsp;&nbsp;<input class="btn btn-primary" type="button" value="下载" onclick="_download();"/>&nbsp;&nbsp;
 </form:form>
 <div id="systemInfo_div" style="padding: 10px;"></div>
 <iframe id="annexFrame" src="" frameborder="no" style="padding: 0;border: 0;width: 100%;height: 50px;"></iframe>
