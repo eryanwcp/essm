@@ -149,7 +149,7 @@ public class SystemMonitorController extends SimpleController {
                 StringBuffer log = new StringBuffer();
                 Collections.reverse(logs);
                 Page page = new Page(request,response);
-                page.setPageSize(10000);//最大读取行数
+                page.setPageSize(1000);//最大读取行数
                 if(page.getPageSize()!= Page.PAGESIZE_ALL){
                     showLogs = Collections3.getPagedList(logs,page.getPageNo(),page.getPageSize());
                     page.setResult(showLogs);
