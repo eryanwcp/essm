@@ -53,30 +53,20 @@ public class SystemMonitorController extends SimpleController {
     @RequiresPermissions("sys:systemMonitor:view")
     @Logging(value = "系统监控",logType = LogType.access)
     @RequestMapping("")
-    public ModelAndView list(){
-        ModelAndView modelAndView = new ModelAndView("modules/sys/systemMonitorList");
-        return modelAndView;
-    }
-
-
-    /**
-     * 系统信息
-     * @return
-     */
-    @RequestMapping("systemInfo")
-    @ResponseBody
-    public Result systemInfo(){
-        Result result = null;
-        ServerStatus serverStatus = null;
-        try {
-            serverStatus = SigarUtil.getServerStatus();
-            result = Result.successResult().setObj(serverStatus);
-        } catch (Exception e) {
-            result = Result.errorResult();
-            logger.error(e.getMessage());
+    public String list(HttpServletRequest request,HttpServletResponse response){
+        if(WebUtils.isAjaxRequest(request)){
+            ServerStatus serverStatus = null;
+            try {
+                serverStatus = SigarUtil.getServerStatus();
+                return renderString(response,Result.successResult().setObj(serverStatus));
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return renderString(response,Result.errorResult());
+            }
         }
-        return result;
+        return "modules/sys/systemMonitorList";
     }
+
 
     /**
      * 清空缓存
@@ -122,7 +112,7 @@ public class SystemMonitorController extends SimpleController {
      * @return
      */
     @Logging(value = "系统监控-系统日志",logType = LogType.access)
-    @RequiresRoles(value = AppConstants.ROLE_SYSTEM_MANAGER)
+    @RequiresPermissions("sys:systemMonitor:view")
     @RequestMapping("log")
     public String log(@RequestParam(value = "download",defaultValue = "false") boolean download, HttpServletRequest request, HttpServletResponse response, Model uiModel){
         Result result = null;

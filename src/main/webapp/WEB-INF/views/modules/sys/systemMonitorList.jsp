@@ -10,7 +10,7 @@
 		});
 		function reLoad(){
 			$.ajax({
-				url: ctxAdmin + '/sys/systemMonitor/systemInfo',
+				url: ctxAdmin + '/sys/systemMonitor',
 				type: 'get',
 				cache:false,
 				dataType: 'json',
@@ -75,6 +75,10 @@
 	</script>
 </head>
 <body>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="${ctxAdmin}/sys/systemMonitor">系统监控</a></li>
+	<li><a href="${ctxAdmin}/sys/systemMonitor/log">系统日志</a></li>
+</ul>
 <form:form id="searchForm" method="post" class="breadcrumb form-search">
 	&nbsp;&nbsp;<input id="btnSubmit" class="btn btn-primary" type="button" value="刷新" onclick="reLoad();"/>&nbsp;&nbsp;
 </form:form>
