@@ -122,8 +122,8 @@ public class SystemMonitorController extends SimpleController {
             String appDir = AppUtils.getAppAbsolutePath();
             String servletContextName = AppUtils.getServletContext().getServletContextName();
             String logConfigPath = StringUtils.substringAfter(propertiesLoader.getProperty("log4j.appender.RollingFile.File"),"/");
-            String logPath = StringUtils.substringBefore(appDir,servletContextName) + logConfigPath;
-            String _logPath = AppConstants.getLogPath(logPath);
+            String logPath = StringUtils.substringBefore(appDir,servletContextName).replace("webapps","").replace(File.separator+File.separator,File.separator) + logConfigPath;
+            String _logPath = AppConstants.getLogPath(logPath);//读取配置文件配置的路径
             file = new File(_logPath);
         }
         if(download){
