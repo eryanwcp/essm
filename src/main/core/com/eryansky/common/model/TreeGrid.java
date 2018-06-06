@@ -94,6 +94,27 @@ public class TreeGrid implements Serializable {
         return this;
 	}
 
+	/**
+	 * 添加自定义属性
+	 * @param key key
+	 * @param object 值
+	 * @return
+	 */
+	public TreeGrid addAttribute(String key, Object object) {
+		this.attributes.put(key,object);
+		return this;
+	}
+
+	/**
+	 * 返回自定义属性
+	 * @param key
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T getAttribute(String key) {
+		return (T) attributes.get(key);
+	}
+
 	public String getParentText() {
 		return parentText;
 	}

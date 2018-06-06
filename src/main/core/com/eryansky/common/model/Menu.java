@@ -82,9 +82,19 @@ public class Menu implements Serializable {
 	 * @param object 值
 	 * @return
 	 */
-	public Menu addAttributes(String key, Object object) {
+	public Menu addAttribute(String key, Object object) {
 		this.attributes.put(key,object);
 		return this;
+	}
+
+	/**
+	 * 返回自定义属性
+	 * @param key
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T getAttribute(String key) {
+		return (T) attributes.get(key);
 	}
 
 	/**

@@ -17,7 +17,6 @@ import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.User;
-import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.CacheConstants;
@@ -387,10 +386,10 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             treeNode.setState(organ.getState());
         }
         treeNode.setpId(organ.getParentId());
-        treeNode.addAttributes("code", organ.getCode());
-        treeNode.addAttributes("sysCode", organ.getSysCode());
-        treeNode.addAttributes("type", organ.getType());
-        treeNode.addAttributes("nType", "o");//节点类型 机构
+        treeNode.addAttribute("code", organ.getCode());
+        treeNode.addAttribute("sysCode", organ.getSysCode());
+        treeNode.addAttribute("type", organ.getType());
+        treeNode.addAttribute("nType", "o");//节点类型 机构
         return treeNode;
     }
 
@@ -406,8 +405,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         }else{
             treeNode.setIconCls(ICON_USER);
         }
-        treeNode.addAttributes("nType", "u");//节点类型 用户
-        treeNode.addAttributes("loginName", user.getLoginName());//节点类型 用户
+        treeNode.addAttribute("nType", "u");//节点类型 用户
+        treeNode.addAttribute("loginName", user.getLoginName());//节点类型 用户
         return treeNode;
     }
 

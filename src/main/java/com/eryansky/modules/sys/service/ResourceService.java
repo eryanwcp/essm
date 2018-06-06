@@ -699,10 +699,10 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     private TreeNode resourceToTreeNode(Resource resource) {
         TreeNode treeNode = new TreeNode(resource.getId(),resource.getName(), resource.getIconCls());
         treeNode.setpId(resource.getParentId());
-        treeNode.addAttributes("url", resource.getUrl());
-        treeNode.addAttributes("markUrl", resource.getMarkUrl());
-        treeNode.addAttributes("code", resource.getCode());
-        treeNode.addAttributes("type", resource.getType());
+        treeNode.addAttribute("url", resource.getUrl());
+        treeNode.addAttribute("markUrl", resource.getMarkUrl());
+        treeNode.addAttribute("code", resource.getCode());
+        treeNode.addAttribute("type", resource.getType());
         return treeNode;
     }
 
@@ -717,7 +717,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
         menu.setpId(resource.getParentId());
         String url = resource.getUrl();
         menu.setHref(url);
-        menu.addAttributes("type", resource.getType());
+        menu.addAttribute("type", resource.getType());
         return menu;
     }
 

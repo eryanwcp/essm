@@ -5,10 +5,10 @@
  */
 package com.eryansky.common.model;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,15 +50,15 @@ public class TreeNode implements Serializable {
 	/**
 	 * 是否勾选状态（默认：否false）
 	 */
-	private Boolean checked = false;
+	private Boolean checked;
 	/**
 	 * ztree 设置节点是否隐藏 checkbox / radio [setting.check.enable = true 时有效]
 	 */
-	private Boolean nocheck = false;
+	private Boolean nocheck;
 	/**
 	 * 自定义属性
 	 */
-	private Map<String, Object> attributes = new HashMap<String, Object>(0);
+	private Map<String, Object> attributes;
 	/**
 	 * 子节点
 	 */
@@ -66,7 +66,7 @@ public class TreeNode implements Serializable {
 	/**
 	 * 是否展开 (open,closed)-(默认值:open)
 	 */
-	private String state = STATE_OPEN;
+	private String state;
 
 	public TreeNode() {
 		this(null, null, "");
@@ -112,7 +112,10 @@ public class TreeNode implements Serializable {
 		this.text = text;
 		this.state = state;
 		this.iconCls = iconCls;
-		this.children = Lists.newArrayList();
+		this.children = Collections.emptyList();
+		this.checked = false;
+		this.nocheck = false;
+		this.attributes = new HashMap<String, Object>(0);
 	}
 
 	/**
@@ -177,9 +180,19 @@ public class TreeNode implements Serializable {
 	 * @param object 值
 	 * @return
 	 */
-	public TreeNode addAttributes(String key, Object object) {
+	public TreeNode addAttribute(String key, Object object) {
 		this.attributes.put(key,object);
 		return this;
+	}
+
+	/**
+	 * 返回自定义属性
+	 * @param key
+	 * @param <T>
+	 * @return
+	 */
+	public <T> T getAttribute(String key) {
+		return (T) attributes.get(key);
 	}
 
 	/**
@@ -256,6 +269,7 @@ public class TreeNode implements Serializable {
         return this;
 	}
 
+
 	/**
 	 * 子节点
 	 */
@@ -312,7 +326,7 @@ public class TreeNode implements Serializable {
 			return false;
 		}
 		TreeNode that = (TreeNode) obj;
-		return null == this.getId() ? false : this.getId().equals(that.getId());
+		return null != this.getId() && this.getId().equals(that.getId());
 	}
 
 
