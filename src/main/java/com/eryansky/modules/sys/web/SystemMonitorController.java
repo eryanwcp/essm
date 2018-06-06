@@ -60,7 +60,7 @@ public class SystemMonitorController extends SimpleController {
                 return renderString(response,Result.errorResult());
             }
         }
-        return "modules/sys/systemMonitorList";
+        return "modules/sys/systemMonitor";
     }
 
 
