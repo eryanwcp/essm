@@ -11,7 +11,7 @@ import com.eryansky.modules.sys._enum.AreaType;
 import org.hibernate.validator.constraints.Length;
 
 /**
- * 区域Entity
+ * 行政区域
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-05-12

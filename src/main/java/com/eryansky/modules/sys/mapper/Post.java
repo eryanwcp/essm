@@ -13,7 +13,7 @@ import com.google.common.collect.Sets;
 import java.util.Set;
 
 /**
- * 岗位表 entity
+ * 岗位
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

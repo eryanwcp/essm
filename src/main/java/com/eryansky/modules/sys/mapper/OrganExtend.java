@@ -8,7 +8,7 @@ package com.eryansky.modules.sys.mapper;
 
 
 /**
- * 机构表 entity
+ * 机构扩展
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

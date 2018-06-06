@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Copyright (c) 2012-2014 http://www.eryansky.com
+ * Copyright (c) 2012-2018 http://www.eryansky.com
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */

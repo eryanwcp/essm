@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2014 http://www.eryansky.com
+ * Copyright (c) 2012-2018 http://www.eryansky.com
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -9,7 +9,7 @@ import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * 系统数据字典Entity.
+ * 数据字典项
  *
  * @author : 尔演&Eryan eryanwcp@gmail.com
  * @date : 2013-1-23 下午9:08:36

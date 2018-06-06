@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * 机构表 entity
+ * 机构
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

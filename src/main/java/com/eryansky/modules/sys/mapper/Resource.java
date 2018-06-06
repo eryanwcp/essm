@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
- * 资源表 entity
+ * 资源/权限（菜单、功能）
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

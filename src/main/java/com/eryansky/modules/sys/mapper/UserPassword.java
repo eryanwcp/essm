@@ -13,7 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * 用户密码修改记录 entity
+ * 用户密码修改记录
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

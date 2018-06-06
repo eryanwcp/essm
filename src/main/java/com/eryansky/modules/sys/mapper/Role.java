@@ -17,7 +17,7 @@ import com.google.common.collect.Sets;
 import java.util.Set;
 
 /**
- * 角色表 entity
+ * 角色表
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08

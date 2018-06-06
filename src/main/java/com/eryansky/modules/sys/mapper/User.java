@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 /**
- * 用户表 entity
+ * 用户
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2018-05-08
