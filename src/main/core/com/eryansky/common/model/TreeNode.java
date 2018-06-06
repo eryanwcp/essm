@@ -8,10 +8,7 @@ package com.eryansky.common.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * easyui树形节点TreeNode模型.
@@ -112,7 +109,7 @@ public class TreeNode implements Serializable {
 		this.text = text;
 		this.state = state;
 		this.iconCls = iconCls;
-		this.children = Collections.emptyList();
+		this.children = new ArrayList<TreeNode>(0);
 		this.checked = false;
 		this.nocheck = false;
 		this.attributes = new HashMap<String, Object>(0);
