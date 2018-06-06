@@ -5,6 +5,9 @@
  */
 package com.eryansky.utils;
 
+import com.eryansky.common.web.springmvc.SpringMVCHolder;
+import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.security.SecurityUtils;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -39,6 +42,10 @@ public class SpringUtils {
             for (int i = 0; i < paraNameArr.length; i++) {
                 context.setVariable(paraNameArr[i], args[i]);
             }
+            //Ajax请求
+            context.setVariable("isAjax", WebUtils.isAjaxRequest(SpringMVCHolder.getRequest()));
+            //Session信息
+            context.setVariable("sessionInfo", SecurityUtils.getCurrentSessionInfo());
             return parser.parseExpression(str).getValue(context, String.class);
         } catch (Exception e) {
 //            logger.error(e.getMessage(),e);

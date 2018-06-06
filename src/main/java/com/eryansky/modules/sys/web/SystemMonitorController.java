@@ -47,7 +47,7 @@ public class SystemMonitorController extends SimpleController {
      * @return
      */
     @RequiresPermissions("sys:systemMonitor:view")
-    @Logging(value = "系统监控",logType = LogType.access)
+    @Logging(value = "系统监控",logType = LogType.access,logging = "!#isAjax")
     @RequestMapping("")
     public String list(HttpServletRequest request,HttpServletResponse response){
         if(WebUtils.isAjaxRequest(request)){
@@ -107,7 +107,7 @@ public class SystemMonitorController extends SimpleController {
      * @param uiModel
      * @return
      */
-    @Logging(value = "系统监控-系统日志",logType = LogType.access)
+    @Logging(value = "系统监控-系统日志",logType = LogType.access,logging = "!#isAjax")
     @RequiresPermissions("sys:systemMonitor:view")
     @RequestMapping("log")
     public String log(@RequestParam(value = "download",defaultValue = "false") boolean download, HttpServletRequest request, HttpServletResponse response, Model uiModel){
