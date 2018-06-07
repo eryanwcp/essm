@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2018 http://www.eryansky.com
+ * Copyright (c) 2012-2014 http://www.eryansky.com
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -18,9 +18,12 @@ import java.lang.reflect.Method;
 /**
  * Spring工具类
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2016-04-13 
+ * @date 2016-04-13
  */
 public class SpringUtils {
+
+    public static final String PARAM_SESSION = "sessionInfo";
+    public static final String PARAM_IS_AJAX = "isAjax";
     /**
      * 解析Spring SpEL表达式
      * @param str 原表达式
@@ -42,10 +45,16 @@ public class SpringUtils {
             for (int i = 0; i < paraNameArr.length; i++) {
                 context.setVariable(paraNameArr[i], args[i]);
             }
-            //Ajax请求
-            context.setVariable("isAjax", WebUtils.isAjaxRequest(SpringMVCHolder.getRequest()));
-            //Session信息
-            context.setVariable("sessionInfo", SecurityUtils.getCurrentSessionInfo());
+
+            //系统注入数据
+            try {
+                //Session信息
+                context.setVariable(PARAM_SESSION, SecurityUtils.getCurrentSessionInfo());
+                //Ajax请求
+                context.setVariable(PARAM_IS_AJAX, WebUtils.isAjaxRequest(SpringMVCHolder.getRequest()));
+            } catch (Exception e) {
+            }
+
             return parser.parseExpression(str).getValue(context, String.class);
         } catch (Exception e) {
 //            logger.error(e.getMessage(),e);

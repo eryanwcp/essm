@@ -26,7 +26,7 @@ public class TagController extends SimpleController {
 	/**
 	 * 树结构选择标签（treeselect.tag）
 	 */
-	@RequiresUser
+	@RequiresUser(required = false)
 	@RequestMapping(value = "treeselect")
 	public String treeselect(HttpServletRequest request, Model model) {
 		model.addAttribute("url", request.getParameter("url")); 	// 树结构数据URL
@@ -40,7 +40,7 @@ public class TagController extends SimpleController {
 	/**
 	 * 图标选择标签（iconselect.tag）
 	 */
-	@RequiresUser
+	@RequiresUser(required = false)
 	@RequestMapping(value = "iconselect")
 	public String iconselect(HttpServletRequest request, Model model) {
 		model.addAttribute("value", request.getParameter("value"));
