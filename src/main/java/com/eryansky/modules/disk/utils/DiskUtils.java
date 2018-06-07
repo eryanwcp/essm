@@ -218,6 +218,36 @@ public class DiskUtils {
     }
 
     /**
+     * 保持用户邮件 外部邮件系统
+     * @param userId
+     * @param inputStream
+     * @param fileName
+     * @return
+     * @throws InvalidExtensionException
+     * @throws FileUploadBase.FileSizeLimitExceededException
+     * @throws FileNameLengthLimitExceededException
+     * @throws IOException
+     */
+    public static File saveUserFile(String userId,String folderCode, InputStream inputStream, String fileName) throws InvalidExtensionException,
+            FileUploadBase.FileSizeLimitExceededException,
+            FileNameLengthLimitExceededException, IOException {
+        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
+        Folder folder = getSystemFolderByCode(folderCode, userId);
+        String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
+        File file = new File();
+        file.setFolderId(folder.getId());
+        file.setCode(code);
+        file.setUserId(userId);
+        file.setName(fileName);
+        file.setFilePath(storeFilePath);
+        file.setFileSize(Long.valueOf(inputStream.available()));
+        file.setFileSuffix(FilenameUtils.getExtension(fileName));
+        iFileManager.saveFile(file.getFilePath(),inputStream, true);
+        fileService.save(file);
+        return file;
+    }
+
+    /**
      * 保存系统文件
      *
      * @param folderCode

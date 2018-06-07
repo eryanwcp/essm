@@ -208,6 +208,7 @@ public class NoticeController extends SimpleController {
                     DiskUtils.saveFile(file);
                     newFileIds.add(file.getId());
                     newFiles.add(file);
+                    DiskUtils.saveFile(file);
                 }
 
                 files = newFiles;
