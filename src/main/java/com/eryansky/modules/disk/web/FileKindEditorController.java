@@ -7,7 +7,6 @@ package com.eryansky.modules.disk.web;
 
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
-import com.eryansky.modules.disk._enum.FolderAuthorize;
 import com.eryansky.modules.disk.mapper.File;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,7 +18,6 @@ import com.eryansky.core.web.upload.exception.FileNameLengthLimitExceededExcepti
 import com.eryansky.core.web.upload.exception.InvalidExtensionException;
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.utils.DiskUtils;
-import com.eryansky.utils.AppConstants;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -173,7 +171,7 @@ public class FileKindEditorController extends SimpleController{
         }
 
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        String basePath = DiskUtils.getDISKStoreDir(FOLDER_KINDEDITOR,sessionInfo.getUserId());
+//        String basePath = DiskUtils.getDISKStoreDir(FOLDER_KINDEDITOR,sessionInfo.getUserId());
 
         //上一级目录
         String moveupDirPath = "";
@@ -183,7 +181,8 @@ public class FileKindEditorController extends SimpleController{
 
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Folder folder = DiskUtils.getSystemFolderByCode(sessionInfo.getUserId());
+//        Folder folder = DiskUtils.checkAndSaveSystemFolderByCode(FOLDER_KINDEDITOR);
+        Folder folder = DiskUtils.checkAndSaveSystemFolderByCode(FOLDER_KINDEDITOR,sessionInfo.getUserId());
         List<File> files = DiskUtils.getFolderFiles(folder.getId(),fileSuffixs);
         for (File file : files) {
 

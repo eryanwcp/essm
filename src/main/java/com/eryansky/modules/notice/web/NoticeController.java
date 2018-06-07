@@ -19,7 +19,6 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.sys._enum.YesOrNo;
-import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -203,7 +202,7 @@ public class NoticeController extends SimpleController {
                 newFileIds = Lists.newArrayList();
                 for (File sourceFile : sourceFiles) {
                     File file = sourceFile.copy();
-                    file.setFolderId(DiskUtils.getSystemFolderByCode(Notice.FOLDER_NOTICE,loginUserId).getId());
+                    file.setFolderId(DiskUtils.checkAndSaveSystemFolderByCode(Notice.FOLDER_NOTICE,loginUserId).getId());
                     file.setUserId(loginUserId);
                     DiskUtils.saveFile(file);
                     newFileIds.add(file.getId());

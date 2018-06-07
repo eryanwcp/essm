@@ -162,15 +162,21 @@ public class DiskUtils {
      * 根据编码获取 获取系统文件夹 <br/>
      * 如果不存在则自动创建
      *
-     * @param code
-     *            系统文件夹编码
+     * @param code 系统文件夹编码
      * @return
      */
-    public static Folder getSystemFolderByCode(String code) {
+    public static Folder checkAndSaveSystemFolderByCode(String code) {
         return folderService.checkAndSaveSystemFolderByCode(code);
     }
-
-    public static Folder getSystemFolderByCode(String code,String userId) {
+    /**
+     * 根据编码获取 获取系统文件夹 <br/>
+     * 如果不存在则自动创建
+     *
+     * @param code 系统文件夹编码
+     * @param userId 用户ID
+     * @return
+     */
+    public static Folder checkAndSaveSystemFolderByCode(String code, String userId) {
         return folderService.checkAndSaveSystemFolderByCode(code,userId);
     }
 
@@ -202,7 +208,7 @@ public class DiskUtils {
         }
 
         String code = FileUploadUtils.encodingFilenamePrefix(userId + "",multipartFile.getOriginalFilename());
-        Folder folder = getSystemFolderByCode(folderCode, userId);
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
         String storeFilePath = iFileManager.getStorePath(folder,userId,multipartFile.getOriginalFilename());
         File file = new File();
         file.setFolderId(folder.getId());
@@ -232,7 +238,7 @@ public class DiskUtils {
             FileUploadBase.FileSizeLimitExceededException,
             FileNameLengthLimitExceededException, IOException {
         String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = getSystemFolderByCode(folderCode, userId);
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
         String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
         File file = new File();
         file.setFolderId(folder.getId());
@@ -273,7 +279,7 @@ public class DiskUtils {
         }
 
         String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = getSystemFolderByCode(folderCode, userId);
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
         String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
         File file = new File();
         file.setFolderId(folder.getId());
