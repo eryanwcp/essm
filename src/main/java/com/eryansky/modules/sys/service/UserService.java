@@ -246,7 +246,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param query 查询条件
      * @return
      */
-    public List<User> findWithInclude(List<String> userIds, String query){
+    public List<User> findWithInclude(Collection<String> userIds, String query){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
@@ -283,7 +283,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param excludeUserIds 排除的用户IDS
      * @return
      */
-    public List<User> findUsersByOrgan(String organId, String query, List<String> excludeUserIds) {
+    public List<User> findUsersByOrgan(String organId, String query, Collection<String> excludeUserIds) {
         if(StringUtils.isBlank(organId)){
             return new ArrayList<User>(0);
         }
@@ -297,7 +297,7 @@ public class UserService extends CrudService<UserDao, User> {
         return dao.findUsersByOrgan(parameter);
     }
 
-    public Page<User> findUsersByOrgan(Page<User> page, String organId, String loginNameOrName, List<String> excludeUserIds) {
+    public Page<User> findUsersByOrgan(Page<User> page, String organId, String loginNameOrName, Collection<String> excludeUserIds) {
         if(StringUtils.isBlank(organId)){
             return page;
         }
@@ -375,7 +375,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param excludeUserIds 排除的用户IDS
      * @return
      */
-    public List<User> findUsersByCompanyId(String companyId, List<String> excludeUserIds) {
+    public List<User> findUsersByCompanyId(String companyId, Collection<String> excludeUserIds) {
         Assert.notNull(companyId, "参数[companyId]为空!");
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
@@ -400,7 +400,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param excludeUserIds 排除的用户IDS
      * @return
      */
-    public List<String> findUserIdsByCompanyId(String companyId, List<String> excludeUserIds) {
+    public List<String> findUserIdsByCompanyId(String companyId, Collection<String> excludeUserIds) {
         Assert.notNull(companyId, "参数[companyId]为空!");
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
@@ -425,7 +425,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param organIds 所所机构ID集合
      * @param defaultOrganId 默认机构
      */
-    public void updateUserOrgan(Set<String> userIds,Set<String> organIds, String defaultOrganId){
+    public void updateUserOrgan(Collection<String> userIds,Collection<String> organIds, String defaultOrganId){
         if(Collections3.isNotEmpty(userIds)){
             for(String userId:userIds){
                 User model = this.get(userId);
@@ -449,7 +449,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param userIds 用户ID集合
      * @param roleIds 角色ID集合
      */
-    public void updateUserRole(Set<String> userIds,Set<String> roleIds){
+    public void updateUserRole(Collection<String> userIds,Collection<String> roleIds){
         if(Collections3.isNotEmpty(userIds)){
             for(String userId:userIds){
                 saveUserRoles(userId,roleIds);
@@ -464,7 +464,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param userIds 用户ID集合
      * @param postIds 岗位ID集合
      */
-    public void updateUserPost(Set<String> userIds,Set<String> postIds) throws ServiceException{
+    public void updateUserPost(Collection<String> userIds,Collection<String> postIds) throws ServiceException{
         if(Collections3.isNotEmpty(userIds)){
             for(String userId:userIds){
                 String organId = UserUtils.getDefaultOrganId(userId);
@@ -480,7 +480,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param userIds 用户ID集合
      * @param resourceIds 资源ID集合
      */
-    public void updateUserResource(Set<String> userIds,Set<String> resourceIds) throws ServiceException{
+    public void updateUserResource(Collection<String> userIds,Collection<String> resourceIds) throws ServiceException{
         if(Collections3.isNotEmpty(userIds)){
             for(String userId:userIds){
                 saveUserResources(userId,resourceIds);
@@ -495,7 +495,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param userIds 用户ID集合
      * @param password 密码(未加密)
      */
-    public void updateUserPassword(List<String> userIds,String password) throws ServiceException{
+    public void updateUserPassword(Collection<String> userIds,String password) throws ServiceException{
         if(Collections3.isNotEmpty(userIds)){
             for(String userId:userIds){
                 User model = this.get(userId);
@@ -560,7 +560,7 @@ public class UserService extends CrudService<UserDao, User> {
      * 锁定用户 批量
      * @param userIds 用户ID集合
      */
-    public void lockUsers(List<String> userIds,String status){
+    public void lockUsers(Collection<String> userIds,String status){
         if(Collections3.isNotEmpty(userIds)){
             List<User> list = findUsersByIds(userIds);
             for(User user:list){
@@ -577,7 +577,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param userIds 用户ID集合
      * @return
      */
-    public List<User> findUsersByIds(List<String> userIds) {
+    public List<User> findUsersByIds(Collection<String> userIds) {
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("ids",userIds);
@@ -589,7 +589,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param organIds
      * @return
      */
-    public List<User> findUsersByOrganIds(List<String> organIds) {
+    public List<User> findUsersByOrganIds(Collection<String> organIds) {
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("organIds",organIds);
@@ -612,7 +612,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param organIds
      * @return
      */
-    public List<String> findUserIdsByOrganIds(List<String> organIds) {
+    public List<String> findUserIdsByOrganIds(Collection<String> organIds) {
         if(Collections3.isEmpty(organIds)){
             return null;
         }
@@ -630,7 +630,7 @@ public class UserService extends CrudService<UserDao, User> {
      * @param organId 机构ID
      * @return
      */
-    public List<User> findOwnerAndChildsUsers(String organId, List<String> excludeUserIds){
+    public List<User> findOwnerAndChildsUsers(String organId, Collection<String> excludeUserIds){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
