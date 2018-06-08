@@ -80,7 +80,7 @@
         FROM t_disk_folder a
         WHERE a.status = #{STATUS_NORMAL}
         AND a.parent_ids LIKE #{parentIds}
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChild" resultType="Folder">

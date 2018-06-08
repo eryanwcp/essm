@@ -90,7 +90,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.sort asc
+                ORDER BY a.sort ASC
             </otherwise>
         </choose>
     </select>
@@ -107,7 +107,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.sort asc
+                ORDER BY a.sort ASC
             </otherwise>
         </choose>
     </select>
@@ -129,7 +129,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOwnerAndChildIds" resultType="java.lang.String">
@@ -147,7 +147,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -169,7 +169,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOwnerAndChildsIds" resultType="java.lang.String">
@@ -189,7 +189,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChild" resultType="Organ">
@@ -213,7 +213,7 @@
                 </otherwise>
             </choose>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChildIds" resultType="java.lang.String">
@@ -236,7 +236,7 @@
                 </otherwise>
             </choose>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChilds" resultType="Organ">
@@ -258,7 +258,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChildsIds" resultType="java.lang.String">
@@ -279,7 +279,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -304,7 +304,7 @@
                 AND a.type = #{type}
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findWithInclude" resultType="Organ">
@@ -336,7 +336,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findByParentIdsLike" resultType="Organ">
@@ -347,7 +347,7 @@
         FROM t_sys_organ a
         WHERE a.status = #{STATUS_NORMAL}
         AND a.parent_ids LIKE #{parentIds}
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOrgansByIds" resultType="Organ">
@@ -358,7 +358,7 @@
         <where>
             a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOrganUserIds" resultType="java.lang.String">
@@ -371,7 +371,7 @@
             a.status = '0'
             AND o.id = #{organId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -386,7 +386,7 @@
             a.status = '0'
             AND u.id = #{userId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOrganIdsByUserId" resultType="java.lang.String">
@@ -399,7 +399,7 @@
             a.status = '0'
             AND u.id = #{userId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findAssociationOrgansByPostId" resultType="Organ">
@@ -413,7 +413,7 @@
             a.status = '0'
             AND post.id = #{postId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -427,7 +427,7 @@
             a.status = '0'
             AND post.id = #{postId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <insert id="insert">

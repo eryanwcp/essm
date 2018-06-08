@@ -58,7 +58,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.update_time DESC
+                ORDER BY a.sort ASC
             </otherwise>
         </choose>
     </select>
@@ -75,7 +75,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.update_time DESC
+                ORDER BY a.sort ASC
             </otherwise>
         </choose>
     </select>
@@ -88,7 +88,7 @@
         FROM t_sys_resource a
         WHERE a.status = #{STATUS_NORMAL}
         AND a.parent_ids LIKE #{parentIds}
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -110,7 +110,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -130,7 +130,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findChild" resultType="Resource">
@@ -149,7 +149,7 @@
                 </otherwise>
             </choose>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -169,7 +169,7 @@
                 #{item}
             </foreach>
         </if>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -180,17 +180,16 @@
         <include refid="resourceJoins"/>
         <where>
             <if test="status != null and status !=''">
-                a.status = #{status}
+                AND a.status = #{status}
             </if>
             <if test="code != null and code !=''">
-                a.code = #{code}
+                AND a.code = #{code}
             </if>
             <if test="type != null and type !=''">
-                a.type = #{type}
+                AND a.type = #{type}
             </if>
         </where>
-
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="getMaxSort" resultType="java.lang.Integer">
@@ -217,6 +216,7 @@
                 </foreach>
             </if>
         </where>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findResourceIdsByUserId" resultType="java.lang.String">
@@ -235,6 +235,7 @@
                 </foreach>
             </if>
         </where>
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -255,6 +256,7 @@
                 </foreach>
             </if>
         </where>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findResourceIdsByRoleId" resultType="Resource">
@@ -273,6 +275,7 @@
                 </foreach>
             </if>
         </where>
+        ORDER BY a.sort ASC
     </select>
 
 

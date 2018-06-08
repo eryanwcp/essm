@@ -78,7 +78,6 @@
         <where>
             a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
-        ORDER BY a.sort asc
     </select>
 
     <select id="findRolesByOrganId" resultType="Role">
@@ -126,10 +125,6 @@
             AND (a.organ_id = #{organId} OR a.is_system = #{isSystem})
         </where>
     </select>
-
-
-
-
 
     <insert id="insert">
         INSERT INTO t_sys_role(

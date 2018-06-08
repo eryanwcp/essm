@@ -204,7 +204,7 @@
         <where>
             a.id IN <foreach collection="ids" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -237,7 +237,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -251,7 +251,7 @@
             a.status = #{status}
             AND o.id IN <foreach collection="organIds" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUsersIdsByOrganIds" resultType="java.lang.String">
@@ -264,7 +264,7 @@
             a.status = #{status}
             AND o.id IN <foreach collection="organIds" item="item" open="(" separator="," close=")">#{item}</foreach>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findOwnerAndChildsUsers" resultType="User">
@@ -285,7 +285,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -307,7 +307,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -377,7 +377,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUserIdsByCompanyId" resultType="java.lang.String">
@@ -396,7 +396,7 @@
                 </foreach>
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -412,7 +412,7 @@
             a.status = #{status}
             AND r.id = #{roleId}}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUserIdsByRoleId" resultType="java.lang.String">
@@ -425,7 +425,7 @@
             a.status = #{status}
             AND r.id = #{roleId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUsersByRole" resultType="User">
@@ -448,7 +448,7 @@
                 )
             </if>
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
@@ -462,7 +462,7 @@
             a.status = #{status}
             AND p.id = #{postId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUserIdsByPostId" resultType="java.lang.String">
@@ -475,7 +475,7 @@
             a.status = #{status}
             AND p.id = #{postId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUsersByPostIdAndOrganId" resultType="User">
@@ -489,7 +489,7 @@
             AND p.id = #{postId}
             AND up.organ_id = #{organId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findUserIdsByPostIdAndOrganId" resultType="java.lang.String">
@@ -503,7 +503,7 @@
             AND p.id = #{postId}
             AND up.organ_id = #{organId}
         </where>
-        ORDER BY a.sort asc
+        ORDER BY a.sort ASC
     </select>
 
 
