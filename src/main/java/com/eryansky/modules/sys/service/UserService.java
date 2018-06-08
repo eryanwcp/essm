@@ -117,14 +117,27 @@ public class UserService extends CrudService<UserDao, User> {
                 + "," + CacheConstants.ORGAN_USER_TREE_CACHE);
         if(!Collections3.isEmpty(ids)){
             for(String id :ids){
-                if (isSuperUser(id)) {
-                    throw new SystemException("不允许删除超级用户!");
-                }
-                dao.delete(new User(id));
+                deleteById(id);
             }
         }else{
             logger.warn("参数[ids]为空.");
         }
+    }
+
+    @CacheEvict(value = {  CacheConstants.ROLE_ALL_CACHE,
+            CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
+            CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
+            CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
+            CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
+    public void deleteById(String id) {
+        logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
+                + "," + CacheConstants.RESOURCE_USER_MENU_TREE_CACHE
+                + "," + CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
+                + "," + CacheConstants.ORGAN_USER_TREE_CACHE);
+        if (isSuperUser(id)) {
+            throw new SystemException("不允许删除超级用户!");
+        }
+        dao.delete(new User(id));
     }
 
     /**
@@ -305,6 +318,19 @@ public class UserService extends CrudService<UserDao, User> {
         return dao.findOrganUsers(parameter);
     }
 
+    /**
+     * 获取机构用户IDS
+     * @param organId
+     * @return
+     */
+    public List<String> findOrganUserIds(String organId) {
+        Assert.notNull(organId, "参数[organId]为空!");
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findOrganUserIds(parameter);
+    }
+
 
     /**
      * 获取机构用户
@@ -319,6 +345,19 @@ public class UserService extends CrudService<UserDao, User> {
         return dao.findOrganDefaultUsers(parameter);
     }
 
+
+    /**
+     * 获取机构用户IDS
+     * @param organId
+     * @return
+     */
+    public List<String> findOrganDefaultUserIds(String organId) {
+        Assert.notNull(organId, "参数[organId]为空!");
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("organId",organId);
+        return dao.findOrganDefaultUserIds(parameter);
+    }
 
     /**
      * 获取单位下直属部门用户

@@ -48,7 +48,25 @@
         <include refid="organColumns"/>
         FROM t_sys_organ a
         <include refid="organJoins"/>
-        WHERE a.status = '0' AND a.code = #{code}
+        <where>
+            <if test="status != null and status !=''">
+                AND a.status = #{status}
+            </if>
+            AND a.code = #{code}
+        </where>
+    </select>
+
+    <select id="getDeleteByIdOrCode" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            <if test="status != null and status !=''">
+                AND a.status = #{status}
+            </if>
+            AND (a.code = #{code} OR a.id = #{id})
+        </where>
     </select>
 
     <select id="getBySysCode" resultType="Organ">
@@ -72,7 +90,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.update_time DESC
+                ORDER BY a.sort asc
             </otherwise>
         </choose>
     </select>
@@ -89,7 +107,7 @@
                 ORDER BY ${entityPage.orderBy} ${entityPage.order}
             </when>
             <otherwise>
-                ORDER BY a.update_time DESC
+                ORDER BY a.sort asc
             </otherwise>
         </choose>
     </select>
@@ -286,7 +304,38 @@
                 AND a.type = #{type}
             </if>
         </where>
+        ORDER BY a.sort asc
+    </select>
 
+    <select id="findWithInclude" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            <if test="query != null and query !=''">
+                AND (
+                a.name LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                OR a.code LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                )
+            </if>
+            <if test="ids != null and ids.size() !=0">
+                AND a.id IN
+                <foreach collection="ids" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
         ORDER BY a.sort asc
     </select>
 
@@ -541,6 +590,19 @@
         LEFT JOIN t_sys_user u ON u.default_organ_id = e.id
         LEFT JOIN t_sys_organ_extend a ON a.id = e.company_id
         WHERE u.id = #{userId}
+    </select>
+
+    <select id="findOrganExtends" resultType="OrganExtend">
+        SELECT
+        <include refid="organExtendColumns"/>
+        FROM t_sys_organ_extend a
+        <where>
+            a.status = #{status}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN <foreach collection="types" item="item" open="(" separator="," close=")">#{item}</foreach>
+            </if>
+        </where>
+        ORDER BY a.sort ASC
     </select>
 
     <select id="findDepartmentOrganExtendsByCompanyId" resultType="OrganExtend">

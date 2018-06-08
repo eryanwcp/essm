@@ -42,7 +42,12 @@
         SELECT
         <include refid="userColumns"/>
         FROM t_sys_user a
-        WHERE a.status = '0' AND a.login_name = #{loginName}
+        <where>
+            <if test="status != null and status !=''">
+                AND a.status = #{status}
+            </if>
+            AND a.login_name = #{loginName}
+        </where>
     </select>
 
     <select id="findLoginUser" resultType="User">
@@ -319,9 +324,34 @@
         ORDER BY a.sort ASC
     </select>
 
+    <select id="findOrganUserIds" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            AND a.status = '0'
+            AND o.id = #{organId}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
     <select id="findOrganDefaultUsers" resultType="User">
         SELECT
         <include refid="userColumns"/>
+        FROM t_sys_user a
+        LEFT JOIN t_sys_organ o ON o.id = a.default_organ_id
+        <where>
+            AND a.status = '0'
+            AND o.id = #{organId}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+    <select id="findOrganDefaultUserIds" resultType="java.lang.String">
+        SELECT
+        a.id
         FROM t_sys_user a
         LEFT JOIN t_sys_organ o ON o.id = a.default_organ_id
         <where>

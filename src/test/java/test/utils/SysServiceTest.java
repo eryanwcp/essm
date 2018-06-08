@@ -76,9 +76,9 @@ public class SysServiceTest {
 
     @Test
     public void organ() throws Exception{
-//        List<Organ> companys = organService.findCompanyOrgans();
+//        List<Organ> companys = organService.findCompanys();
 //        System.out.println(JsonMapper.toJsonString(companys));
-//        List<TreeNode> treeNodes = organService.findCompanyTreeNodes();
+//        List<TreeNode> treeNodes = organService.findCompanysTree();
 //        System.out.println(JsonMapper.toJsonString(treeNodes));
 //        System.out.println(organService.findChilds("1"));
 //        System.out.println(organService.findChilds("4eebbb72532c4b8ebca0e68ac0b189ad"));

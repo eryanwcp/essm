@@ -6,7 +6,9 @@
 package com.eryansky.modules.sys.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
+import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.mapper.UserPassword;
@@ -155,6 +157,28 @@ public class UserUtils {
             return organExtend.getName();
         }
         return null;
+    }
+
+    /**
+     * 根据userId查找用户姓名
+     * @param userIds 用户ID集合
+     * @return
+     */
+    public static String getUserNames(List<String> userIds){
+        if(Collections3.isNotEmpty(userIds)){
+            List<User> list = userService.findUsersByIds(userIds);
+            return ConvertUtils.convertElementPropertyToString(list, "name", ",");
+        }
+        return null;
+    }
+
+    /**
+     * 得到超级用户
+     * @return
+     */
+    public static User getSuperUser() {
+        User superUser = userService.getSuperUser();
+        return superUser;
     }
 
     /**

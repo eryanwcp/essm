@@ -24,6 +24,8 @@ public interface OrganDao extends TreeDao<Organ> {
 
     List<Organ> findCustomQuery(Parameter parameter);
 
+    List<Organ> findWithInclude(Parameter parameter);
+
     List<Organ> findOwnerAndChild(Parameter parameter);
 
     List<String> findOwnerAndChildIds(Parameter parameter);
@@ -67,6 +69,7 @@ public interface OrganDao extends TreeDao<Organ> {
 
     Organ getByCode(Parameter parameter);
 
+    Organ getDeleteByIdOrCode(Parameter parameter);
 
     Organ getBySysCode(Parameter parameter);
 
@@ -79,6 +82,8 @@ public interface OrganDao extends TreeDao<Organ> {
     OrganExtend getOrganExtendByUserId(Parameter parameter);
 
     OrganExtend getCompanyByUserId(Parameter parameter);
+
+    List<OrganExtend> findOrganExtends(Parameter parameter);
 
     /**
      * 查找机构下直属部门

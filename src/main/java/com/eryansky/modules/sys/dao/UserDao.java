@@ -47,7 +47,12 @@ public interface UserDao extends CrudDao<User> {
 
     List<User> findOrganUsers(Parameter parameter);
 
+    List<String> findOrganUserIds(Parameter parameter);
+
     List<User> findOrganDefaultUsers(Parameter parameter);
+
+    List<String> findOrganDefaultUserIds(Parameter parameter);
+
 
     List<User> findUsersByCompanyId(Parameter parameter);
 

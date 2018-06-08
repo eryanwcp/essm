@@ -213,7 +213,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
             }
         }else if(NoticeReceiveScope.ALL.getValue().equals(notice.getReceiveScope())){
             receiveUserIds = userService.findAllNormalUserIds();
-
         }else if(NoticeReceiveScope.COMPANY_AND_CHILD.getValue().equals(notice.getReceiveScope())){
             receiveUserIds = userService.findOwnerAndChildsUserIds(UserUtils.getCompanyId(notice.getUserId()));
         }else if(NoticeReceiveScope.COMPANY.getValue().equals(notice.getReceiveScope())){
@@ -222,7 +221,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
             receiveUserIds = userService.findOwnerAndChildsUserIds(notice.getUserId());
         }else if(NoticeReceiveScope.OFFICE.getValue().equals(notice.getReceiveScope())){
             receiveUserIds = userService.findUserIdsByOrganId(UserUtils.getDefaultOrganId(notice.getUserId()));
-
         }
         if(Collections3.isNotEmpty(receiveUserIds)){
             for(String userId:receiveUserIds){

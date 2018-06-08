@@ -5,6 +5,8 @@
  */
 package com.eryansky.modules.sys.service;
 
+import com.eryansky.common.exception.ServiceException;
+import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.orm.model.Parameter;
@@ -17,11 +19,13 @@ import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -132,6 +136,24 @@ public class OrganService extends TreeService<OrganDao, Organ> {
 
     /**
      *
+     * 根据编码得到Organ.
+     *
+     * @param code
+     *            机构编码
+     * @return
+     */
+    public Organ getDeleteByIdOrCode(String id,String code){
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        Parameter parameter = new Parameter();
+        parameter.put("id",id);
+        parameter.put("code",code);
+        return  dao.getDeleteByIdOrCode(parameter);
+    }
+
+    /**
+     *
      * 根据系统编码得到Organ.
      *
      * @param sysCode
@@ -158,14 +180,40 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         return list;
     }
 
+    /**
+     *
+     * @param organIds 必须包含的机构ID
+     * @param query 查询关键字
+     * @param types 机构类型
+     * @return
+     */
+    public List<Organ> findWithInclude(List<String> organIds, String query, List<String> types){
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("ids",organIds);
+        parameter.put("types", types);
+        parameter.put("query",query);
+        return dao.findWithInclude(parameter);
+    }
 
+    /**
+     *
+     * @param organIds 必须包含的部门ID
+     * @param query
+     * @return
+     */
+    public List<Organ> findDepartmensWithInclude(List<String> organIds, String query){
+        List<String> organTypes = new ArrayList<String>(1);
+        organTypes.add(OrganType.department.getValue());
+        return findWithInclude(organIds,query,organTypes);
+    }
 
 
     /**
      * 查找所有单位
      * @return
      */
-    public List<Organ> findCompanyOrgans(){
+    public List<Organ> findCompanys(){
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("type",OrganType.organ.getValue());
@@ -176,8 +224,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * 查找所有单位 树形
      * @return
      */
-    public List<TreeNode> findCompanyTreeNodes(){
-        List<Organ> organs = this.findCompanyOrgans();
+    public List<TreeNode> findCompanysTree(){
+        List<Organ> organs = this.findCompanys();
         List<TreeNode> tempTreeNodes = Lists.newArrayList();
         Iterator<Organ> iterator = organs.iterator();
         while (iterator.hasNext()){
@@ -759,6 +807,25 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     }
 
     /**
+     * 查找本机以及下级所有单位
+     * @param id 机构ID
+     * @return
+     */
+    public List<TreeNode> findOwnerAndChildsCompanysTree(String id){
+        List<Organ> organs = this.findOwnerAndChildsCompanys(id);
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
+        Iterator<Organ> iterator = organs.iterator();
+        while (iterator.hasNext()){
+            Organ organ = iterator.next();
+            TreeNode treeNode = this.organToTreeNode(organ);
+            tempTreeNodes.add(treeNode);
+        }
+
+        return AppUtils.toTreeTreeNodes(tempTreeNodes);
+    }
+
+
+    /**
      * 查找下级所有部门
      * @param id 机构ID
      * @return
@@ -818,6 +885,370 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     }
 
 
+    /**
+     * 快速查找方法
+     *
+     * @param unionUsers
+     * @return
+     */
+    public List<TreeNode> getOrganUserTreeDataFast(Collection<String> unionUsers) throws ServiceException {
+        int minGrade = 0;
+        int maxGrade = 0;
+        Map<Integer, Set<Organ>> organMap = Maps.newHashMap();// 树层级 机构
+        Map<String, List<User>> userMap = Maps.newHashMap();// 机构ID 用户
+        if (Collections3.isNotEmpty(unionUsers)) {
+            for (String userId : unionUsers) {
+                User user = userService.get(userId);
+                OrganExtend userOrgan = OrganUtils.getOrganExtendByUserId(userId);
+                if (userOrgan == null) {
+                    throw new ServiceException(Result.ERROR, user.getName() + "未设置默认机构.", null);
+                }
+                //补全上级机构
+                OrganExtend _userOrgan = userOrgan;
+                while (_userOrgan != null) {
+                    Set<Organ> organs = organMap.get(_userOrgan.getLevel());
+                    if (Collections3.isEmpty(organs)) {
+                        organs = Sets.newHashSet();
+                    }
+                    Set<Organ> pSet = organMap.get(_userOrgan.getLevel()+1);
+                    if(Collections3.isEmpty(pSet) || !pSet.contains(_userOrgan)){
+                        organs.add(_userOrgan);
+                    }
+                    organMap.put(_userOrgan.getLevel(), organs);
+
+                    _userOrgan = OrganUtils.getOrganExtend(_userOrgan.getParentId());
+                }
+
+                List<User> users = userMap.get(userOrgan.getId());
+                if (Collections3.isEmpty(users)) {
+                    users = Lists.newArrayList();
+                }
+                users.add(user);
+                userMap.put(userOrgan.getId(), users);
+                if (maxGrade < userOrgan.getLevel()) {
+                    maxGrade = userOrgan.getLevel();
+                }
+                if (minGrade > userOrgan.getLevel()) {
+                    minGrade = userOrgan.getLevel();
+                }
+
+            }
+        }
+        List<Integer> gradeKeys = Lists.newArrayList(organMap.keySet());
+        Collections.sort(gradeKeys);
+
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
+        Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
+
+        gradeKeys = Lists.newArrayList(organMap.keySet());
+        Collections.sort(gradeKeys);
+        for (Integer grade : gradeKeys) {
+            Set<Organ> organs = organMap.get(grade);
+            for (Organ rs : organs) {
+                TreeNode organTreeNode = new TreeNode(rs.getId(), rs.getName());
+                organTreeNode.setpId(rs.get_parentId());
+                Map<String, Object> attributes = Maps.newHashMap();
+                attributes.put("nType", "o");
+                attributes.put("type", rs.getType());
+                attributes.put("sysCode", rs.getSysCode());
+                organTreeNode.setAttributes(attributes);
+                organTreeNode.setIconCls(ICON_GROUP);
+                organTreeNode.setNocheck(true);
+                List<User> userList = userMap.get(rs.getId());
+                if (Collections3.isNotEmpty(userList)) {
+                    Collections.sort(userList, new Comparator<User>() {
+
+                        @Override
+                        public int compare(User u1, User u2) {
+                            if (u1.getSort() > u2.getSort()) {
+                                return 1;
+                            } else if(u1.getSort() < u2.getSort()) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+
+                    });
+                    for (User user : userList) {
+                        TreeNode userNode = new TreeNode(user.getId(), user.getName());
+                        Map<String, Object> userAttributes = Maps.newHashMap();
+                        userAttributes.put("nType", "u");
+                        userNode.setAttributes(userAttributes);
+                        if (SexType.girl.getValue().equals(user.getSex())) {
+                            userNode.setIconCls(ICON_USER_RED);
+                        } else {
+                            userNode.setIconCls(ICON_USER);
+                        }
+                        organTreeNode.addChild(userNode);
+                    }
+                }
+                boolean flag = true;
+                for(TreeNode treeNode0:tempTreeNodes){
+                    if(treeNode0.getId().equals(organTreeNode.getId())){
+                        flag = false;
+                        break;
+                    }
+                }
+                if(flag){
+                    tempTreeNodes.add(organTreeNode);
+                }
+                tempMap.put(organTreeNode.getId(), organTreeNode);
+            }
+        }
+
+
+        Set<String> keyIds = tempMap.keySet();
+        Set<String> removeKeyIds = Sets.newHashSet();
+        Iterator<String> iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode1:tempTreeNodes){
+                if(treeNode1.getId().equals(key)){
+                    treeNode = treeNode1;
+                    break;
+                }
+            }
+
+            if(StringUtils.isNotBlank(treeNode.getpId())){
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(),(String)treeNode.getAttributes().get("nType"), tempTreeNodes);
+                if(pTreeNode != null){
+                    for(TreeNode treeNode2:tempTreeNodes){
+                        if(treeNode2.getId().equals(pTreeNode.getId())){
+                            treeNode2.addChild(treeNode);
+                            removeKeyIds.add(treeNode.getId());
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        //remove
+        if(Collections3.isNotEmpty(removeKeyIds)){
+            keyIds.removeAll(removeKeyIds);
+        }
+
+        List<TreeNode> result = Lists.newArrayList();
+        keyIds = tempMap.keySet();
+        iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String _key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode4:tempTreeNodes){
+                if(treeNode4.getId().equals(_key)){
+                    treeNode = treeNode4;
+                    result.add(treeNode);
+                    break;
+                }
+            }
+
+        }
+        return result;
+    }
+
+
+    /**
+     * 快速查找方法2
+     *
+     * @param unionUsers
+     * @param rootId
+     * @return
+     */
+    public List<TreeNode> getOrganUserTreeDataFast2(Collection<User> unionUsers, String rootId) throws ServiceException {
+        int minGrade = 0;
+        int maxGrade = 0;
+        Map<Integer, Set<Organ>> organMap = Maps.newHashMap();// 树层级 机构
+        Map<String, List<User>> userMap = Maps.newHashMap();// 机构ID 用户
+        if (Collections3.isNotEmpty(unionUsers)) {
+            for (User user : unionUsers) {
+                OrganExtend userOrgan = OrganUtils.getOrganExtendByUserId(user.getId());
+                if (userOrgan == null) {
+                    throw new ServiceException(Result.ERROR, user.getName() + "未设置默认机构.", null);
+                }
+                //补全上级机构
+                OrganExtend _userOrgan = userOrgan;
+                while (_userOrgan != null) {
+                    Set<Organ> organs = organMap.get(_userOrgan.getLevel());
+                    if (Collections3.isEmpty(organs)) {
+                        organs = Sets.newHashSet();
+                    }
+                    Set<Organ> pSet = organMap.get(_userOrgan.getLevel()+1);
+                    if(Collections3.isEmpty(pSet) || !pSet.contains(_userOrgan)){
+                        organs.add(_userOrgan);
+                    }
+                    organMap.put(_userOrgan.getLevel(), organs);
+                    if(StringUtils.isNotBlank(rootId) && rootId.equals(_userOrgan.getId())){
+                        _userOrgan = null;
+                    }else{
+                        _userOrgan = OrganUtils.getOrganExtend(_userOrgan.getParentId());
+                    }
+
+                }
+
+                List<User> users = userMap.get(userOrgan.getId());
+                if (Collections3.isEmpty(users)) {
+                    users = Lists.newArrayList();
+                }
+                users.add(user);
+                userMap.put(userOrgan.getId(), users);
+                if (maxGrade < userOrgan.getLevel()) {
+                    maxGrade = userOrgan.getLevel();
+                }
+                if (minGrade > userOrgan.getLevel()) {
+                    minGrade = userOrgan.getLevel();
+                }
+
+            }
+        }
+        List<Integer> gradeKeys = Lists.newArrayList(organMap.keySet());
+        Collections.sort(gradeKeys);
+
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
+        Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();
+
+        gradeKeys = Lists.newArrayList(organMap.keySet());
+        Collections.sort(gradeKeys);
+        for (Integer grade : gradeKeys) {
+            Set<Organ> organs = organMap.get(grade);
+            for (Organ rs : organs) {
+                TreeNode organTreeNode = new TreeNode(rs.getId(), rs.getName());
+                organTreeNode.setpId(rs.get_parentId());
+                Map<String, Object> attributes = Maps.newHashMap();
+                attributes.put("nType", "o");
+                attributes.put("type", rs.getType());
+                attributes.put("code", rs.getCode());
+                attributes.put("sysCode", rs.getSysCode());
+                organTreeNode.setAttributes(attributes);
+                organTreeNode.setIconCls(ICON_GROUP);
+                organTreeNode.setNocheck(true);
+                List<User> userList = userMap.get(rs.getId());
+                if (Collections3.isNotEmpty(userList)) {
+                    Collections.sort(userList, new Comparator<User>() {
+
+                        @Override
+                        public int compare(User u1, User u2) {
+                            if (u1.getSort() > u2.getSort()) {
+                                return 1;
+                            } else if(u1.getSort() < u2.getSort()) {
+                                return -1;
+                            } else {
+                                return 0;
+                            }
+                        }
+
+                    });
+                    for (User user : userList) {
+                        TreeNode userNode = new TreeNode(user.getId(), user.getName());
+                        Map<String, Object> userAttributes = Maps.newHashMap();
+                        userAttributes.put("nType", "u");
+                        userNode.setAttributes(userAttributes);
+                        if (SexType.girl.getValue().equals(user.getSex())) {
+                            userNode.setIconCls(ICON_USER_RED);
+                        } else {
+                            userNode.setIconCls(ICON_USER);
+                        }
+                        organTreeNode.addChild(userNode);
+                    }
+                }
+                boolean flag = true;
+                for(TreeNode treeNode0:tempTreeNodes){
+                    if(treeNode0.getId().equals(organTreeNode.getId())){
+                        flag = false;
+                        break;
+                    }
+                }
+                if(flag){
+                    tempTreeNodes.add(organTreeNode);
+                }
+                tempMap.put(organTreeNode.getId(), organTreeNode);
+            }
+        }
+
+
+        Set<String> keyIds = tempMap.keySet();
+        Set<String> removeKeyIds = Sets.newHashSet();
+        Iterator<String> iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode1:tempTreeNodes){
+                if(treeNode1.getId().equals(key)){
+                    treeNode = treeNode1;
+                    break;
+                }
+            }
+
+            if(StringUtils.isNotBlank(treeNode.getpId())){
+                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), (String)treeNode.getAttributes().get("nType"),tempTreeNodes);
+                if(pTreeNode != null){
+                    for(TreeNode treeNode2:tempTreeNodes){
+                        if(treeNode2.getId().equals(pTreeNode.getId())){
+                            treeNode2.addChild(treeNode);
+                            removeKeyIds.add(treeNode.getId());
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        //remove
+        if(Collections3.isNotEmpty(removeKeyIds)){
+            keyIds.removeAll(removeKeyIds);
+        }
+
+        List<TreeNode> result = Lists.newArrayList();
+        keyIds = tempMap.keySet();
+        iteratorKey = keyIds.iterator();
+        while (iteratorKey.hasNext()){
+            String _key = iteratorKey.next();
+            TreeNode treeNode = null;
+            for(TreeNode treeNode4:tempTreeNodes){
+                if(treeNode4.getId().equals(_key)){
+                    treeNode = treeNode4;
+                    result.add(treeNode);
+                    break;
+                }
+            }
+
+        }
+        return result;
+    }
+    /**
+     * 迭代筛选机构用户树只剩下需要的用户
+     *
+     * @param organUserTree
+     * @param unionUsers
+     *            需要筛选的用户
+     * @return
+     */
+    private void iteratTree(List<TreeNode> newTree, List<TreeNode> organUserTree, Set<String> unionUsers) {
+        for (TreeNode treeNode : organUserTree) {
+            if ("u".equals(treeNode.getAttributes().get("nType"))) { // 判断当前节点是否为机构
+                if (unionUsers.contains(treeNode.getId())) { // 如果需要筛选的包含的ID
+                    newTree.add(treeNode); // 保留树结构
+                }
+            } else {// 子节点为用户
+                List<TreeNode> childrens = treeNode.getChildren();
+                if (Collections3.isNotEmpty(childrens)) { // 结构节点包含子节点
+                    List<TreeNode> newNode = Lists.newArrayList();
+                    iteratTree(newNode, childrens, unionUsers); // 迭代当前结构的子节点
+                    if (Collections3.isNotEmpty(newNode)) {
+                        treeNode.setChildren(newNode);
+                        newTree.add(treeNode); // 添加新结构
+                    }
+                }
+            }
+        }
+    }
+
+
     /*机构扩展表*/
 
     /**
@@ -871,6 +1302,19 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
         return dao.getCompanyByUserId(parameter);
+    }
+
+    /**
+     * 查找所有单位
+     * @return
+     */
+    public List<OrganExtend> findCompanyOrganExtends(){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        List<String> types = Lists.newArrayList();
+        types.add(OrganType.organ.getValue());
+        parameter.put("types",types);
+        return dao.findOrganExtends(parameter);
     }
 
 
