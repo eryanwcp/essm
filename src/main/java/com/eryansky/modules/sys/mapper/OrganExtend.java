@@ -18,9 +18,14 @@ public class OrganExtend extends Organ {
 
     private Integer level;
 
+    private String parentId;
+
     private String companyId;
     private String companyCode;
     private String companyName;
+
+    private String homeCompanyId;
+    private String homeCompanyCode;
 
     public Integer getLevel() {
         return level;
@@ -28,6 +33,15 @@ public class OrganExtend extends Organ {
 
     public void setLevel(Integer level) {
         this.level = level;
+    }
+
+    @Override
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
     }
 
     public String getCompanyId() {
@@ -52,5 +66,21 @@ public class OrganExtend extends Organ {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
+    }
+
+    public String getHomeCompanyId() {
+        return homeCompanyId;
+    }
+
+    public void setHomeCompanyId(String homeCompanyId) {
+        this.homeCompanyId = homeCompanyId;
+    }
+
+    public String getHomeCompanyCode() {
+        return homeCompanyCode;
+    }
+
+    public void setHomeCompanyCode(String homeCompanyCode) {
+        this.homeCompanyCode = homeCompanyCode;
     }
 }
