@@ -264,6 +264,7 @@ public class NoticeController extends SimpleController {
      * @param fileIds 页面文件ID集合
      * @return
      */
+    @RequiresPermissions("notice:publish")
     @RequestMapping(value = { "save" })
     @ResponseBody
     public Result save(@ModelAttribute("model")Notice model, OperateType operateType,
@@ -300,7 +301,7 @@ public class NoticeController extends SimpleController {
      * @param id 通知ID
      * @return
      */
-    @RequiresPermissions("model:publish")
+    @RequiresPermissions("notice:publish")
     @RequestMapping(value = { "publish/{id}" })
     @ResponseBody
     public Result publish(@PathVariable String id) {
@@ -313,6 +314,7 @@ public class NoticeController extends SimpleController {
      * @param id 通知ID
      * @return
      */
+    @RequiresPermissions("notice:publish")
     @RequestMapping(value = { "invalid/{id}" })
     @ResponseBody
     public Result invalid(@PathVariable String id) {
@@ -328,6 +330,7 @@ public class NoticeController extends SimpleController {
      * @param ids
      * @return
      */
+    @RequiresPermissions("notice:publish")
     @RequestMapping(value = { "remove" })
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
