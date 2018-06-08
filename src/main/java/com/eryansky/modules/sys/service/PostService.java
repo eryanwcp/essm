@@ -20,6 +20,7 @@ import com.eryansky.modules.sys.mapper.Post;
 import com.eryansky.modules.sys.dao.PostDao;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param ids
      */
     public void deleteByIds(List<String> ids) {
-        if(!Collections3.isEmpty(ids)){
+        if(Collections3.isNotEmpty(ids)){
             for(String id :ids){
                 deleteById(id);
             }
@@ -145,7 +146,7 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param ids 机构IDS
      */
     @Transactional(readOnly = false)
-    public void savePostOrgans(String id, Set<String> ids){
+    public void savePostOrgans(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
         parameter.put("ids",ids);
@@ -163,7 +164,7 @@ public class PostService extends CrudService<PostDao, Post> {
      */
     @Deprecated
     @Transactional(readOnly = false)
-    public void savePostUsers(String id, Set<String> ids){
+    public void savePostUsers(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
         parameter.put("ids",ids);
@@ -182,7 +183,7 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param ids 用户IDS
      */
     @Transactional(readOnly = false)
-    public void savePostOrganUsers(String id,String organId, Set<String> ids){
+    public void savePostOrganUsers(String id,String organId, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
         parameter.put("organId",organId);

@@ -90,8 +90,12 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
     @Transactional(readOnly = false)
     public void deleteByIds(Collection<String> ids) {
-        for(String id:ids){
-            deleteById(id);
+        if(Collections3.isNotEmpty(ids)){
+            for(String id :ids){
+                deleteById(id);
+            }
+        }else{
+            logger.warn("参数[ids]为空.");
         }
     }
 

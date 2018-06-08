@@ -34,10 +34,7 @@ import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.dao.ResourceDao;
 import org.springframework.util.Assert;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 资源表 service
@@ -107,17 +104,27 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE},allEntries = true)
     @Transactional(readOnly = false)
-    public void deleteByIds(List<String> ids){
-        logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
-                +","+CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
-                +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE);
-        if(!Collections3.isEmpty(ids)){
+    public void deleteByIds(Collection<String> ids){
+        if(Collections3.isNotEmpty(ids)){
             for(String id :ids){
-                this.delete(new Resource(id));
+                deleteById(id);
             }
         }else{
             logger.warn("参数[ids]为空.");
         }
+
+    }
+
+
+    @CacheEvict(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
+            CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
+            CacheConstants.RESOURCE_USER_MENU_TREE_CACHE},allEntries = true)
+    @Transactional(readOnly = false)
+    public void deleteById(String id){
+        logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
+                +","+CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
+                +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE);
+        this.delete(new Resource(id));
 
     }
 
@@ -148,7 +155,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findOwnerAndChilds(String id, List<String> resourceTypes){
+    public List<Resource> findOwnerAndChilds(String id, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
@@ -164,7 +171,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param id 父级ID
      * @return
      */
-    public List<Resource> findChilds(String id, List<String> resourceTypes){
+    public List<Resource> findChilds(String id, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put("id",id);
@@ -212,7 +219,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findResourcesByUserId(String userId, List<String> resourceTypes){
+    public List<Resource> findResourcesByUserId(String userId, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
@@ -235,7 +242,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<String> findResourceIdsByUserId(String userId, List<String> resourceTypes){
+    public List<String> findResourceIdsByUserId(String userId, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
@@ -259,7 +266,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findResourcesByRoleId(String roleId, List<String> resourceTypes){
+    public List<Resource> findResourcesByRoleId(String roleId, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
@@ -284,7 +291,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<String> findResourceIdsByRoleId(String roleId, List<String> resourceTypes){
+    public List<String> findResourceIdsByRoleId(String roleId, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("roleId",roleId);
@@ -344,7 +351,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findAuthorityResourcesByUserId(String userId, List<String> resourceTypes){
+    public List<Resource> findAuthorityResourcesByUserId(String userId, Collection<String> resourceTypes){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("userId",userId);
@@ -494,7 +501,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceTypes 资源类型 为null,则查询所有 {@link ResourceType}
      * @return
      */
-    public List<Resource> findResources(List<String> resourceTypes){
+    public List<Resource> findResources(Collection<String> resourceTypes){
         return  findResources(resourceTypes,null);
     }
 
@@ -504,7 +511,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param excludeResourceId 排除的资源ID
      * @return
      */
-    public List<Resource> findResources(List<String> resourceTypes, String excludeResourceId){
+    public List<Resource> findResources(Collection<String> resourceTypes, String excludeResourceId){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("excludeResourceId",excludeResourceId);
@@ -538,7 +545,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resources
      * @return
      */
-    private List<TreeNode> resourcesToTreeNode(List<Resource> resources){
+    private List<TreeNode> resourcesToTreeNode(Collection<Resource> resources){
         List<TreeNode> tempTreeNodes = Lists.newArrayList();
         if(Collections3.isEmpty(resources)){
             return tempTreeNodes;
@@ -617,7 +624,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resources
      * @return
      */
-    private List<Menu> resourcesToMenu(List<Resource> resources){
+    private List<Menu> resourcesToMenu(Collection<Resource> resources){
         List<Menu> tempMenus = Lists.newArrayList();
         if(Collections3.isEmpty(resources)){
             return tempMenus;
@@ -663,7 +670,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param treeNodes
      * @return
      */
-    private TreeNode getParentTreeNode(String parentId, List<TreeNode> treeNodes){
+    private TreeNode getParentTreeNode(String parentId, Collection<TreeNode> treeNodes){
         TreeNode t = null;
         for(TreeNode treeNode:treeNodes){
             if(parentId.equals(treeNode.getId())){
@@ -680,7 +687,7 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param menus
      * @return
      */
-    private Menu getParentMenu(String parentId, List<Menu> menus){
+    private Menu getParentMenu(String parentId, Collection<Menu> menus){
         Menu t = null;
         for(Menu menu : menus){
             if(parentId.equals(menu.getId())){

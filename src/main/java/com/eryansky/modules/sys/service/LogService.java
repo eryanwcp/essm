@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 尔演&Eryan eryanwcp@gmail.com
@@ -51,17 +48,27 @@ public class LogService extends CrudService<LogDao, Log> {
     }
 
     /**
-     * 删除 物理删除
+     * 删除
      * @param ids
      */
     @Transactional(readOnly = false)
-    public void deleteByIds(List<String> ids){
+    public void deleteByIds(Collection<String> ids){
         if(Collections3.isNotEmpty(ids)){
-            for(String id:ids){
-                dao.delete(new Log(id));
+            for(String id :ids){
+                deleteById(id);
             }
+        }else{
+            logger.warn("参数[ids]为空.");
         }
     }
+    /**
+     * 删除
+     * @param id
+     */
+    public void deleteById(String id){
+        dao.delete(new Log(id));
+    }
+
 
     @Transactional(readOnly = false)
     public int remove(String id){

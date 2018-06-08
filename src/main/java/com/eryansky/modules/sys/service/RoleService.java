@@ -44,15 +44,32 @@ public class RoleService extends CrudService<RoleDao, Role> {
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
             CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE},allEntries = true)
-    public void deleteByIds(List<String> ids) {
+    public void deleteByIds(Collection<String> ids) {
+        if(Collections3.isNotEmpty(ids)){
+            for(String id :ids){
+                deleteById(id);
+            }
+        }else{
+            logger.warn("参数[ids]为空.");
+        }
+    }
+
+    /**
+     * 删除角色.
+     * <br>删除角色的时候 会给角色重新授权菜单 更新导航菜单缓存.
+     */
+    @CacheEvict(value = {  CacheConstants.ROLE_ALL_CACHE,
+            CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
+            CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
+            CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE},allEntries = true)
+    public void deleteById(String id) {
         logger.debug("清空缓存:{}", CacheConstants.ROLE_ALL_CACHE
                 +","+CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
                 +","+CacheConstants.RESOURCE_USER_MENU_TREE_CACHE
                 +","+CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE);
-        for(String id:ids){
-            super.delete(new Role(id));
-        }
+        super.delete(new Role(id));
     }
+
     /**
      * 新增或修改角色.
      * <br>修改角色的时候 会给角色重新授权菜单 更新导航菜单缓存.

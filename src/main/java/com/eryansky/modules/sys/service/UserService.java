@@ -110,12 +110,8 @@ public class UserService extends CrudService<UserDao, User> {
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE,
             CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
-    public void deleteByIds(List<String> ids) {
-        logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
-                + "," + CacheConstants.RESOURCE_USER_MENU_TREE_CACHE
-                + "," + CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
-                + "," + CacheConstants.ORGAN_USER_TREE_CACHE);
-        if(!Collections3.isEmpty(ids)){
+    public void deleteByIds(Collection<String> ids) {
+        if(Collections3.isNotEmpty(ids)){
             for(String id :ids){
                 deleteById(id);
             }
