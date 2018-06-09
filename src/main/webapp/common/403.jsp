@@ -9,7 +9,7 @@
 <body>
 <div>
     <div><h1>你没有访问该页面的权限.</h1></div>
-    <div><a href="${ctx}">返回首页</a> <a href="<c:url value="${ctx}/login/logout"/>">退出登录</a></div>
+    <div><a href="${ctx}">返回首页</a> <a href="<c:url value="${ctxAdmin}/login/logout"/>">退出登录</a></div>
 </div>
 </body>
 </html>
