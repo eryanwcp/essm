@@ -1,4 +1,4 @@
-/*！
+/*!
  * 选择框
  * 部分内容已修改：
  * 1、数据结构变化
@@ -88,7 +88,7 @@
             var dlgContent = '';
             for (var i = 0; i < _this.level; i++) {
                 dlgContent += '<div></div>';
-            };
+            }
             var settings, buttons;
             if (_this.settings.position == "bottom") {
                 settings = {
@@ -96,7 +96,7 @@
                     width: "100%",
                     className: "ui-dialog-bottom",
                     animate: false
-                }
+                };
                 var buttons = [{
                     'no': '取消'
                 }, {
