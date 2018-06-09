@@ -1,0 +1,89 @@
+.shell #div1 a{
+    display:block;
+    line-height:36px;
+    text-decoration:none;
+    color:#ff6609;
+    font-size:16px;
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.shell{
+    padding:0 0 0 10px;
+    margin:10px;
+    background-color: #fff;
+    border-radius: 6px;
+    height: 36px;
+    position: relative;
+}
+
+.shell #div1{
+    height:36px;
+    text-indent: 2em;
+    overflow:hidden;
+    float: left;
+}
+
+.index_notice,.index_daiban,.index_mail,.index_news,.index_dc{
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.index_notice{
+    background:url("../img/notice.png");
+    background-size: cover;
+}
+
+.index_daiban{
+    background:url("../img/daiban.png");
+    background-size: cover;
+}
+
+.index_mail{
+    background:url("../img/mail.png");
+    background-size: cover;
+}
+
+.index_news{
+    background:url("../img/news.png");
+    background-size: cover;
+}
+
+.index_dc{
+    background:url("../img/ic_dc.png");
+    background-size: cover;
+}
+
+#index_list li div{
+    width: 54px;
+    height: 54px;
+    display: inline-block;
+    position: relative;
+}
+
+#index_list{
+    padding:0 10px;
+    background-color: #e6e6e6;
+}
+
+#index_list li{
+    padding:6px;
+    vertical-align: middle;
+    margin:10px;
+    background-color: #fff;
+    border:none;
+    border-radius: 6px;
+    box-shadow: 0 2px 0 #d8d8d8;
+}
+
+.index_list_text{
+    line-height:50px;
+    vertical-align:top;
+    text-indent:1em;
+    display:inline-block;
+    font-size:medium;
+    color: #395d7b;
+}

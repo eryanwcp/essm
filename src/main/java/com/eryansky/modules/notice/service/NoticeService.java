@@ -11,6 +11,7 @@ import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
+import com.eryansky.common.utils.Identities;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
@@ -31,6 +32,7 @@ import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
 import com.eryansky.modules.sys.mapper.User;
 import com.google.common.collect.Maps;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -238,6 +240,49 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 
 
 	}
+
+    /**
+     * 发布公告
+     * @param type
+     * @param title
+     * @param content
+     * @param sendTime
+     * @param userId
+     * @param organId
+     * @param organIds
+     */
+    @Transactional(readOnly = false)
+    public void sendToOrganNotice(String appId,String type,String title,String content,Date sendTime,String userId,String organId,List<String> organIds) {
+        //保存到notice表
+        Notice notice = new Notice();
+        notice.setId(Identities.uuid2());
+        notice.setAppId(appId);
+        notice.setType(type);
+        notice.setTitle(title);
+        notice.setContent(content);
+        notice.setPublishTime(sendTime);
+        notice.setReceiveScope(NoticeReceiveScope.CUSTOM.getValue());
+        notice.setUserId(userId);
+        notice.setOrganId(organId);
+        notice.setCreateTime(Calendar.getInstance().getTime());
+        dao.insert(notice);
+
+        if (CollectionUtils.isNotEmpty(organIds)) {
+            //去重
+            for (String _organId : organIds) {
+                //保存到notice send表
+                NoticeSendInfo noticeSendInfo = new NoticeSendInfo();
+                noticeSendInfo.setNoticeId(notice.getId());
+                noticeSendInfo.setReceiveObjectType(ReceiveObjectType.Organ.getValue());
+                noticeSendInfo.setReceiveObjectId(_organId);
+                noticeSendInfoService.save(noticeSendInfo);
+            }
+            //发布
+            publish(notice);
+        }
+
+    }
+    
 
 
     /**

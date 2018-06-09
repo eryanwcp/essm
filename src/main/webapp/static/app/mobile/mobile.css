@@ -1,0 +1,177 @@
+.view footer > a.mobile_icons.pressed:not(.button):before {
+    color: inherit;
+}
+
+.view footer .mobile_icons:not(.button):before {
+    display: block;
+    position: relative;
+    top: 2px;
+    left: 0;
+    font-size: 25px;
+    margin: auto;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+footer .mobile_icons{
+    top:0;
+    left:0;
+}
+
+li .mobile_icons:before {
+    width:24px;
+    height:100%;
+    line-height:0 !important;
+    margin-right:6px;
+}
+
+* {
+    font-family: 'Microsoft Yahei','微软雅黑','新宋体','宋体';
+    box-sizing: border-box;
+}
+
+.list>li>a{
+    padding:10px 25px 10px 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.getMore {
+    color: #545454;
+    position: relative;
+    text-align: center;
+    margin: 10px 60px;
+    height: 35px;
+    line-height: 35px;
+    border: 2px solid #cecece;
+    background-color: #e6e6e6;
+}
+
+.getMore .loading {
+    width: 30px;
+    height: 30px;
+    background: url("img/load.gif");
+    position: absolute;
+    left: 10px;
+    top: 0;
+}
+
+.getMore .hidden {
+    display: none;
+    width: 30px;
+    height: 30px;
+    background: url("img/load.gif");
+    position: absolute;
+    left: 10px;
+    top: 0;
+}
+
+.getMore .text{
+    position: static;
+}
+
+.getMore i{
+    font-style: normal;
+}
+
+.goTotop{
+    width: 19px;
+    height: 62px;
+    display: none;
+    position: fixed;
+    right:10px;
+    bottom: 20px;
+    z-index: 200;
+    background: url("img/gototop.png");
+}
+
+.af-badge{
+    top:0;
+    right:-3px;
+}
+
+.header_a_left{
+    float:left;
+    text-decoration:none;
+    vertical-align:middle;
+    color:#ffffff;
+    line-height:44px;
+    display: inline-block;
+    font-size: 40px;
+}
+
+.header_span_right{
+    float: right;
+    margin:3px 10px 4px 0;
+    border-radius: 10px;
+}
+
+/*通用表单样式*/
+.dinput-group{
+    width: 100%;
+    margin: 5px 0;
+    float: left;
+    line-height: 40px;
+}
+
+.dinput-group i{
+    font-style: normal;
+    float: left;
+    width: 30%;
+    text-align:right;
+}
+
+.dinput-group input,.dinput-group select{
+    width: 70%;
+    height: 40px;
+    float: left;
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+/*按钮边框与背景同色*/
+.button {
+    border: 1px solid #eee;
+}
+
+.button.gray {
+    border-color: #999;
+}
+.button.yellow {
+    border-color: #F1C222;
+}
+.button.red {
+    border-color: #B20000;
+}
+.button.green {
+    border-color: #009C0C;
+}
+.button.orange {
+    border-color: #FF8000;
+}
+.button.black {
+    border-color: #000;
+}
+.button.slate {
+    border-color: #171F28;
+}
+
+.mybadge{
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    display: inline-block;
+    background-color: red;
+    border-radius: 50%;
+    top:1px;
+    right: 26%;
+}
+
+.list>li>a.pressed,.flag>li>a.pressed,.list>li.pressed,.flag1 a.pressed{
+    background: #d4d4d4;
+}
+
+
+
+

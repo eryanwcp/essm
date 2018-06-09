@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.notice.dao.MessageSenderDao">
+    
+	<sql id="noticeMessageSenderColumns">
+		a.id AS "id",
+		a.message_id AS "messageId",
+		a.object_type AS "objectType",
+		a.object_id AS "objectId"
+	</sql>
+
+	<select id="get" resultType="MessageSender">
+		SELECT 
+			<include refid="noticeMessageSenderColumns"/>
+		FROM t_notice_message_sender a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MessageSender">
+		SELECT 
+			<include refid="noticeMessageSenderColumns"/>
+		FROM t_notice_message_sender a
+		<where>
+			<if test="messageId != null and messageId != ''">
+				a.message_id = #{messageId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MessageSender">
+		SELECT 
+			<include refid="noticeMessageSenderColumns"/>
+		FROM t_notice_message_sender a
+		<where>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_notice_message_sender(
+			id,
+			message_id,
+			object_type,
+			object_id
+		) VALUES (
+			#{id},
+			#{messageId},
+			#{objectType},
+			#{objectId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_notice_message_sender SET
+			message_id = #{messageId},
+			object_type = #{objectType},
+			object_id = #{objectId}
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delete">
+		DELETE t_notice_message_sender
+		WHERE id = #{id}
+	</delete>
+
+</mapper>

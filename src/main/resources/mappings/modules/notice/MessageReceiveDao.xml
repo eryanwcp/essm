@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.notice.dao.MessageReceiveDao">
+    
+	<sql id="noticeMessageReceiveColumns">
+		a.id AS "id",
+		a.message_id AS "messageId",
+		a.user_id AS "userId",
+		a.is_read AS "isRead",
+		a.read_time AS "readTime"
+	</sql>
+
+	<sql id="noticeMessageReceiveJoins">
+		LEFT JOIN t_notice_message m ON m.id = a.message_id
+	</sql>
+
+	<select id="get" resultType="MessageReceive">
+		SELECT 
+			<include refid="noticeMessageReceiveColumns"/>
+		FROM t_notice_message_receive a
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MessageReceive">
+		SELECT 
+			<include refid="noticeMessageReceiveColumns"/>
+		FROM t_notice_message_receive a
+		<where>
+			<if test="messageId != null and messageId != ''">
+				a.message_id = #{messageId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MessageReceive">
+		SELECT 
+			<include refid="noticeMessageReceiveColumns"/>
+		FROM t_notice_message_receive a
+		<where>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+		</choose>
+	</select>
+
+	<!--用户消息-->
+	<select id="findUserList" resultType="MessageReceive">
+		SELECT
+		<include refid="noticeMessageReceiveColumns"/>
+		FROM t_notice_message_receive a
+		<include refid="noticeMessageReceiveJoins"/>
+		<where>
+		  	m.status = #{status}
+			AND m.mode = #{mode}
+			AND a.user_id = #{userId}
+			<if test="isRead != null and isRead != ''">
+				AND a.is_read = #{isRead}
+			</if>
+		</where>
+		ORDER BY m.update_time DESC
+	</select>
+
+	<insert id="insert">
+		INSERT INTO t_notice_message_receive(
+			id,
+			message_id,
+			user_id,
+			is_read,
+			read_time
+		) VALUES (
+			#{id},
+			#{messageId},
+			#{userId},
+			#{isRead},
+			#{readTime}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_notice_message_receive SET
+			message_id = #{messageId},
+			user_id = #{userId},
+			is_read = #{isRead},
+			read_time = #{readTime}
+		WHERE id = #{id}
+	</update>
+
+	<update id="setUserMessageRead">
+		UPDATE t_notice_message_receive SET
+		is_read = #{isRead},
+		read_time = #{readTime}
+		WHERE user_id = #{userId}
+			AND is_read = '0'
+	</update>
+	
+	<delete id="delete">
+		DELETE t_notice_message_receive
+		WHERE id = #{id}
+	</delete>
+
+	<!--获取用户接受的信息-->
+	<select id="findListByCategoryAndUserId" resultType="MessageReceive">
+		SELECT
+		<include refid="noticeMessageReceiveColumns"/>
+		FROM t_notice_message_receive a
+		<include refid="noticeMessageReceiveJoins"/>
+		<where>
+			 m.CATEGORY=#{CATEGORY}
+			 and a.USER_ID=#{USER_ID}
+		</where>
+		ORDER BY m.update_time DESC
+	</select>
+
+
+</mapper>

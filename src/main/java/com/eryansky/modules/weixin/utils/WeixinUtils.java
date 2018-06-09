@@ -5,12 +5,15 @@
  */
 package com.eryansky.modules.weixin.utils;
 
+import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.fastweixin.company.api.QYMessageAPI;
 import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
 import com.eryansky.fastweixin.company.api.response.GetQYSendMessageResponse;
 import com.eryansky.fastweixin.company.message.QYTextMsg;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 微信工具类
@@ -19,6 +22,7 @@ import com.eryansky.common.utils.StringUtils;
  */
 public class WeixinUtils {
 
+    private static Logger logger = LoggerFactory.getLogger(WeixinUtils.class);
     private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
 
     private WeixinUtils(){}
@@ -70,6 +74,22 @@ public class WeixinUtils {
      * @return
      */
     public static boolean sendTextMsg(String loginName, String content,String linkUrl){
+        return sendTextMsg(null,loginName,content,linkUrl);
+    }
+
+    /**
+     * 发送文本消息
+     * @param agentId 微信应用ID
+     * @param loginName 用户账号
+     * @param content 消息
+     * @param linkUrl 消息链接地址
+     * @return
+     */
+    public static boolean sendTextMsg(String agentId,String loginName, String content,String linkUrl){
+        if(!WeixinConstants.isTipMessage()){
+//            logger.warn("消息未发送，未开启微信消息提醒！请在config.properties配置文件中配置参数[weixin.tipMessage=true]");
+            return false;
+        }
         QYMessageAPI qyMessageAPI = new QYMessageAPI(qyapiConfig);
         QYTextMsg qyTextMsg = new QYTextMsg();
         StringBuffer msg = new StringBuffer();
@@ -77,15 +97,22 @@ public class WeixinUtils {
             msg.append(StringUtils.replaceHtml(content));
         }else{
             msg.append("<a href=\"")
-                .append(linkUrl)
-                .append("\">")
-                .append(StringUtils.replaceHtml(content))
-                .append("</a>");
+                    .append(linkUrl)
+                    .append("\">")
+                    .append(StringUtils.replaceHtml(content))
+                    .append("</a>");
         }
         qyTextMsg.setConetnt(msg.toString());
-        qyTextMsg.setAgentId(WeixinConstants.getAgentId());
+        String _agentId = agentId;
+        if(StringUtils.isBlank(_agentId)){
+            _agentId = WeixinConstants.getAgentId();
+        }
+        qyTextMsg.setAgentId(_agentId);
         qyTextMsg.setToUser(loginName);
         GetQYSendMessageResponse qySendMessageResponse = qyMessageAPI.send(qyTextMsg);
+        if(logger.isDebugEnabled()){
+            logger.debug(JsonMapper.getInstance().toJson(qySendMessageResponse));
+        }
         return true;
     }
 }

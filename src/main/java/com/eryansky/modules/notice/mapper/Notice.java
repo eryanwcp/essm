@@ -35,6 +35,10 @@ public class Notice extends DataEntity<Notice> {
     public static final String DATE_TIME_SHORT_FORMAT = "yyyy-MM-dd HH:mm";
 
     /**
+     * 应用ID
+     */
+    private String appId;
+    /**
      * 通知公告标题
      */
     private String title;
@@ -110,6 +114,14 @@ public class Notice extends DataEntity<Notice> {
 
     public Notice(String id) {
         super(id);
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        this.appId = appId;
     }
 
     public void setTitle(String title) {

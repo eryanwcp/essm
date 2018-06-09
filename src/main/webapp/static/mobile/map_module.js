@@ -15,7 +15,7 @@ M.defaultPoint = function() {
         longitude: 115.890076,
         latitude: 28.658231
     };
-}
+};
 /**
  * 根据坐标获取两点距离
  */
@@ -63,7 +63,8 @@ M.toNavigation = function(conf) {
         var point = M.bdConverToGPS(config.longitude, config.latitude);
         $.getJSON(appURL + '/m/qyweixin/jssdk?callback=?&url=' + location.href, function(json) {
             wx.config({
-                debug: false,
+                beta: true,// 必须这么写，否则在微信插件有些jsapi会有问题
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                 appId: json.obj.appid,
                 timestamp: json.obj.timestamp,
                 nonceStr: json.obj.nonceStr,
@@ -80,7 +81,14 @@ M.toNavigation = function(conf) {
             });
         });
     } else {
-        location.href = 'http://api.map.baidu.com/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=weiba|weiweb';
+        try {
+            if(config['mapExtend']){
+                location.href = 'baidumap://map/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=江西省锦峰软件科技有限公司|MP_BROWSER';
+            }else{
+                location.href = 'http://api.map.baidu.com/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=江西省锦峰软件科技有限公司|MP_BROWSER';
+            }
+        } catch (e) {
+        }
     }
 };
 
@@ -119,7 +127,7 @@ M.getCurrentPosition = function(conf,success,error,notTip) {
             toastr.error(errorMessage);
         }
     }
-    _error = $.extend(_error, error);
+    _error = error ? error:_error;
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(success, _error, config);

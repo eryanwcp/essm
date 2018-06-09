@@ -97,4 +97,26 @@ public class WeixinConstants extends AppConstants {
         return getConfigValue(code);
     }
 
+    /**
+     * 微信消息应用ID
+     * @return
+     */
+    public static String getWeixinMessageAgentId() {
+        String code = "weixin.message.agentId";
+        return getConfigValue(code);
+    }
+
+
+
+
+    /**
+     * 是否提醒微信消息
+     * @return
+     */
+    public static boolean isTipMessage() {
+        String code = "weixin.tipMessage";
+        String value = getConfigValue(code);
+        return "true".equals(value) || "1".equals(value);
+    }
+
 }

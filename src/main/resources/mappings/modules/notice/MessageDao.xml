@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eryansky.modules.notice.dao.MessageDao">
+    
+	<sql id="noticeMessageColumns">
+		a.id AS "id",
+		a.status AS "status",
+		a.version AS "version",
+		a.create_user AS "createUser",
+		a.create_time AS "createTime",
+		a.update_user AS "updateUser",
+		a.update_time AS "updateTime",
+		a.app_id AS "appId",
+		a.category AS "category",
+		a.title AS "title",
+		a.url AS "url",
+		a.image AS "image",
+		a.content AS "content",
+		a.mode AS "mode",
+		a.sender AS "sender",
+		a.send_time AS "sendTime",
+		a.organ_id AS "organId",
+		a.tip_message AS "tipMessage"
+	</sql>
+	
+	<sql id="noticeMessageJoins">
+		LEFT JOIN t_sys_user u ON u.id = a.sender
+		LEFT JOIN t_sys_organ o ON o.id = a.organ_id
+	</sql>
+    
+	<select id="get" resultType="Message">
+		SELECT 
+			<include refid="noticeMessageColumns"/>
+		FROM t_notice_message a
+		<include refid="noticeMessageJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Message">
+		SELECT 
+			<include refid="noticeMessageColumns"/>
+		FROM t_notice_message a
+		<include refid="noticeMessageJoins"/>
+		<where>
+			a.status = #{status}
+			<if test="appId != null and appId != ''">
+				AND a.app_id = #{appId}
+			</if>
+			<if test="organId != null and organId != ''">
+				AND a.organ_id = #{organId}
+			</if>
+			
+			<if test="category != null and category != ''">
+				AND a.category = #{category}
+			</if>
+ 
+			<if test="query != null and query != ''">
+				AND (
+				a.title LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.url LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.content LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				OR a.app_id LIKE
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				)
+			</if>
+			${sqlMap.dsf}
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+
+	
+	
+	<select id="findAllList" resultType="Message">
+		SELECT 
+			<include refid="noticeMessageColumns"/>
+		FROM t_notice_message a
+		<include refid="noticeMessageJoins"/>
+		<where>
+			a.status = #{STATUS_NORMAL}
+			<if test="organId != null and organId != ''">
+				AND a.organ_id = #{organId}
+			</if>
+		</where>
+		<choose>
+			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
+				ORDER BY ${entityPage.orderBy} ${entityPage.order}
+			</when>
+			<otherwise>
+				ORDER BY a.update_time DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO t_notice_message(
+			id,
+			status,
+			version,
+			create_user,
+			create_time,
+			update_user,
+			update_time,
+			app_id,
+			category,
+			title,
+			url,
+			image,
+			content,
+			mode,
+			sender,
+			send_time,
+			organ_id,
+			tip_message
+		) VALUES (
+			#{id},
+			#{status},
+			0,
+			#{createUser},
+			#{createTime},
+			#{updateUser},
+			#{updateTime},
+			#{appId},
+			#{category},
+			#{title},
+			#{url},
+			#{image},
+			#{content},
+			#{mode},
+			#{sender},
+			#{sendTime},
+			#{organId},
+			#{tipMessage}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_notice_message SET
+			status = #{status},
+			version = version +1,
+			update_user = #{updateUser},
+			update_time = #{updateTime},
+			app_id = #{appId},
+			category = #{category},
+			title = #{title},
+			url = #{url},
+			image = #{image},
+			content = #{content},
+			sender = #{sender},
+			mode = #{mode},
+			send_time = #{sendTime},
+			organ_id = #{organId},
+			tip_message = #{tipMessage}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE t_notice_message SET
+		status = #{STATUS_DELETE}
+		WHERE id = #{id}
+	</update>
+
+</mapper>

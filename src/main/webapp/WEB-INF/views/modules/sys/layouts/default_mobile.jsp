@@ -12,10 +12,8 @@
     <title><sitemesh:title default="${fns:getAppName()}"/></title>
     <%@ include file="/WEB-INF/views/modules/sys/include/head.jsp" %>
     <%@ include file="/WEB-INF/views/include/dialog.jsp" %>
-    <script type="text/javascript" src="${ctxStatic}/js/fancyBox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
-    <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
-    <link href="${ctxStatic}/css/mobile${yuicompressor}.css?_=${sysInitTime}" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" charset="utf-8" src="${ctxStatic}/mobile/mobile.js"></script>
+    <script type="text/javascript" charset="utf-8" src="${ctxStatic}/mobile/map_module${yuicompressor}.js?_=${sysInitTime}"></script>
+    <link rel="stylesheet" type="text/css" href="${ctxStatic}/app/mobile/mobile${yuicompressor}.css?_=${sysInitTime}" />
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
     <sitemesh:head/>
 </head>
