@@ -1,7 +1,7 @@
 /**
- *  Copyright (c) 2012-2018 http://www.eryansky.com
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
+ * Copyright (c) 2012-2018 http://www.eryansky.com
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package com.eryansky.modules.sys.web;
 
@@ -10,7 +10,6 @@ import com.eryansky.common.model.Combobox;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
@@ -52,7 +51,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2015-01-09
  */
 @Controller
@@ -63,19 +62,22 @@ public class VersionLogController extends SimpleController {
     private VersionLogService versionLogService;
 
 
-    @RequiresPermissions("sys:versionLog:view")
-    @Logging(value = "版本更新",logType = LogType.access)
+    @RequiresPermissions("sys:model:view")
+    @Logging(value = "版本更新", logType = LogType.access)
     @RequestMapping(value = {""})
-    public String list() {return "modules/sys/versionLog";}
+    public String list() {
+        return "modules/sys/versionLog";
+    }
 
     @ModelAttribute("model")
-    public VersionLog get(@RequestParam(required=false) String id) {
-        if (StringUtils.isNotBlank(id)){
+    public VersionLog get(@RequestParam(required = false) String id) {
+        if (StringUtils.isNotBlank(id)) {
             return versionLogService.get(id);
-        }else{
+        } else {
             return new VersionLog();
         }
     }
+
     /**
      * 数据列表
      * @param request
@@ -85,21 +87,21 @@ public class VersionLogController extends SimpleController {
      */
     @RequestMapping(value = {"datagrid"})
     @ResponseBody
-    public Datagrid<VersionLog> datagrid(VersionLog versionLog,HttpServletRequest request,
-                                         @RequestParam(value = "startTime", required = false)Date startTIme,
-                                         @RequestParam(value = "endTime", required = false)Date endTime) {
+    public Datagrid<VersionLog> datagrid(VersionLog model, HttpServletRequest request,
+                                         @RequestParam(value = "startTime", required = false) Date startTIme,
+                                         @RequestParam(value = "endTime", required = false) Date endTime) {
         Page<VersionLog> page = new Page<VersionLog>(request);
         Parameter parameter = new Parameter();
-        if(startTIme != null){
+        if (startTIme != null) {
             parameter.put("startTime", DateUtils.format(startTIme, DateUtils.DATE_TIME_FORMAT));
         }
-        if(endTime != null){
+        if (endTime != null) {
             parameter.put("endTime", DateUtils.format(endTime, DateUtils.DATE_TIME_FORMAT));
         }
 
-        parameter.put("versionName",versionLog.getVersionName());
-        parameter.put("remark",versionLog.getRemark());
-        parameter.put("versionLogType",versionLog.getVersionLogType());
+        parameter.put("versionName", model.getVersionName());
+        parameter.put("remark", model.getRemark());
+        parameter.put("versionLogType", model.getVersionLogType());
 
         page = versionLogService.findPage(page, parameter);
 
@@ -108,25 +110,23 @@ public class VersionLogController extends SimpleController {
     }
 
     /**
-     * @param versionLog
+     * @param model
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = { "input" })
-    public ModelAndView input(@ModelAttribute("model") VersionLog versionLog) {
+    @RequestMapping(value = {"input"})
+    public ModelAndView input(@ModelAttribute("model") VersionLog model) {
         ModelAndView modelAndView = new ModelAndView("modules/sys/versionLog-input");
         File file = null;
 
-        String fileId=versionLog.getFileId();
+        String fileId = model.getFileId();
         if (StringUtils.isNotBlank(fileId)) {
-            file = DiskUtils.getFile(versionLog.getFileId());
+            file = DiskUtils.getFile(model.getFileId());
         }
         modelAndView.addObject("file", file);
-        modelAndView.addObject("model", versionLog);
+        modelAndView.addObject("model", model);
         return modelAndView;
     }
-
-
 
 
     /**
@@ -134,15 +134,15 @@ public class VersionLogController extends SimpleController {
      */
     @RequestMapping(value = {"versionLogTypeCombobox"})
     @ResponseBody
-    public List<Combobox> versionLogTypeCombobox(String selectType) throws Exception {
+    public List<Combobox> versionLogTypeCombobox(String selectType) {
         List<Combobox> cList = Lists.newArrayList();
         Combobox titleCombobox = SelectType.combobox(selectType);
-        if(titleCombobox != null){
+        if (titleCombobox != null) {
             cList.add(titleCombobox);
         }
 
         VersionLogType[] lts = VersionLogType.values();
-        for(int i = 0; i < lts.length; i++) {
+        for (int i = 0; i < lts.length; i++) {
             Combobox combobox = new Combobox();
             combobox.setValue(lts[i].getValue());
             combobox.setText(lts[i].getDescription());
@@ -151,21 +151,18 @@ public class VersionLogController extends SimpleController {
         return cList;
     }
 
-    public static final  String FOLDER_VERSIONLOG = "versionLog";
     /**
      * 文件上传
      */
-    @RequestMapping(value = { "upload" })
+    @RequestMapping(value = {"upload"})
     @ResponseBody
-    public static Result upload( @RequestParam(value = "uploadFile", required = false)MultipartFile multipartFile) {
+    public static Result upload(@RequestParam(value = "uploadFile", required = false) MultipartFile multipartFile) {
         Result result = null;
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         Exception exception = null;
         File file = null;
         try {
-            file = DiskUtils.saveSystemFile(FOLDER_VERSIONLOG, sessionInfo, multipartFile);
-            file.setStatus(StatusState.LOCK.getValue());
-            DiskUtils.saveFile(file);
+            file = DiskUtils.saveSystemFile(VersionLog.FOLDER_VERSIONLOG, sessionInfo, multipartFile);
             result = Result.successResult().setObj(file.getId()).setMsg("文件上传成功！");
         } catch (InvalidExtensionException e) {
             exception = e;
@@ -184,7 +181,7 @@ public class VersionLogController extends SimpleController {
             result = Result.errorResult().setMsg(DiskUtils.UPLOAD_FAIL_MSG + e.getMessage());
         } finally {
             if (exception != null) {
-                if(file != null){
+                if (file != null) {
                     DiskUtils.deleteFile(file.getId());
                 }
             }
@@ -195,29 +192,23 @@ public class VersionLogController extends SimpleController {
 
     /**
      * 保存
-     * @param versionLog
+     * @param model
      * @return
      */
-    @RequiresPermissions("sys:versionLog:edit")
-    @Logging(value = "版本更新-保存版本",logType = LogType.access)
-    @RequestMapping(value = { "save" })
+    @RequiresPermissions("sys:model:edit")
+    @Logging(value = "版本更新-保存版本", logType = LogType.access)
+    @RequestMapping(value = {"save"})
     @ResponseBody
-    public Result save(@ModelAttribute("model") VersionLog versionLog) {
+    public Result save(@ModelAttribute("model") VersionLog model) {
         Result result;
-        VersionLog checkEntity = versionLogService.getByVersionCode(versionLog.getVersionLogType(),versionLog.getVersionCode());
-        if(checkEntity !=null && !checkEntity.getId().equals(versionLog.getId())){
-            result=new Result(Result.WARN, "版本内部编号为[" + versionLog.getVersionCode()
+        VersionLog checkEntity = versionLogService.getByVersionCode(model.getVersionLogType(), model.getVersionCode());
+        if (checkEntity != null && !checkEntity.getId().equals(model.getId())) {
+            result = new Result(Result.WARN, "版本内部编号为[" + model.getVersionCode()
                     + "]已存在,请修正!", "versionCode");
             logger.debug(result.toString());
             return result;
         }
-        //更新文件为有效状态 上传的时候为lock状态
-        if (StringUtils.isNotBlank(versionLog.getFileId())) {
-            File vlFile = DiskUtils.getFile(versionLog.getFileId());
-            vlFile.setStatus(StatusState.NORMAL.getValue());
-            DiskUtils.saveFile(vlFile);
-        }
-        versionLogService.save(versionLog);
+        versionLogService.save(model);
         result = Result.successResult();
         return result;
     }
@@ -226,14 +217,14 @@ public class VersionLogController extends SimpleController {
      * 清空数据
      * @return
      */
-    @RequiresPermissions("sys:versionLog:edit")
-    @Logging(value = "版本管理-删除版本",logType = LogType.access)
+    @RequiresPermissions("sys:model:edit")
+    @Logging(value = "版本管理-删除版本", logType = LogType.access)
     @RequestMapping(value = {"remove"})
     @ResponseBody
     public Result remove(@RequestParam(value = "ids", required = false) List<String> ids) {
         Result result = null;
-        if(Collections3.isNotEmpty(ids)){
-            for(String id:ids){
+        if (Collections3.isNotEmpty(ids)) {
+            for (String id : ids) {
                 versionLogService.delete(new VersionLog(id));
             }
         }
@@ -245,15 +236,14 @@ public class VersionLogController extends SimpleController {
      * 清空所有数据
      * @return
      */
-    @Logging(value = "版本管理-清空所有数据",logType = LogType.access)
+    @Logging(value = "版本管理-清空所有数据", logType = LogType.access)
     @RequestMapping(value = {"removeAll"})
     @ResponseBody
-    public Result removeAll(){
+    public Result removeAll() {
         versionLogService.removeAll();
         Result result = Result.successResult();
         return result;
     }
-
 
 
     /**
@@ -263,12 +253,12 @@ public class VersionLogController extends SimpleController {
      * @throws Exception
      */
 
-    @RequestMapping(value = { "view/{id}" })
-    public ModelAndView view(@PathVariable String id){
+    @RequestMapping(value = {"view/{id}"})
+    public ModelAndView view(@PathVariable String id) {
         ModelAndView modelAndView = new ModelAndView("modules/sys/versionLog-view");
         File file = null;
         VersionLog model = versionLogService.get(id);
-        if(StringUtils.isNotBlank(model.getFileId())){
+        if (StringUtils.isNotBlank(model.getFileId())) {
             file = DiskUtils.getFile(model.getFileId());
         }
         modelAndView.addObject("file", file);
@@ -286,15 +276,15 @@ public class VersionLogController extends SimpleController {
      */
     @RequiresUser(required = false)
     @RequestMapping(value = {"downloadApp/{versionLogType}"})
-    public ModelAndView downloadApp(HttpServletRequest request,HttpServletResponse response,@PathVariable String versionLogType) throws Exception {
-        VersionLog versionLog = versionLogService.getLatestVersionLog(versionLogType);
-        if(versionLog != null && versionLog.getFileId() != null){
-            File file = DiskUtils.getFile(versionLog.getFileId());
+    public ModelAndView downloadApp(HttpServletRequest request, HttpServletResponse response, @PathVariable String versionLogType) throws Exception {
+        VersionLog model = versionLogService.getLatestVersionLog(versionLogType);
+        if (model != null && model.getFileId() != null) {
+            File file = DiskUtils.getFile(model.getFileId());
             WebUtils.setDownloadableHeader(request, response, file.getName());
             file.getDiskFile();
             java.io.File tempFile = file.getDiskFile();
             FileCopyUtils.copy(new FileInputStream(tempFile), response.getOutputStream());
-        }else {
+        } else {
             throw new ActionException("下载文件不存在！");
         }
         return null;

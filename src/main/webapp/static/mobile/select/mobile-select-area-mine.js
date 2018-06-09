@@ -1,5 +1,5 @@
 /*！
- * 选择框 适合直接用于锦峰软件
+ * 选择框
  * 部分内容已修改：
  * 1、数据结构变化
  * 2、回调函数支持添加选中节点参数
@@ -21,7 +21,7 @@
 	} else if (typeof exports === 'object') { //umd
 		module.exports = factory();
 	} else {
-		root.MobileSelectArea = factory(jQuery);
+		root.MobileSelectArea = factory(jQuery||Zepto);
 	}
 })(this, function($, Dialog) {
 	var MobileSelectArea = function() {
@@ -42,7 +42,8 @@
 	MobileSelectArea.prototype = {
 		init: function(settings) {
 			this.settings = $.extend({
-				eventName: 'click'
+				eventName: 'click',
+                autoHide:true
 			}, settings);
 			this.trigger = $(this.settings.trigger);
 			this.settings.default == undefined ? this.default = 1 : this.default = 0; //0为空,1时默认选中第一项
@@ -82,97 +83,107 @@
 			}
 			return dtd;
 		},
+        show: function () {
+            var _this = this;
+            var dlgContent = '';
+            for (var i = 0; i < _this.level; i++) {
+                dlgContent += '<div></div>';
+            };
+            var settings, buttons;
+            if (_this.settings.position == "bottom") {
+                settings = {
+                    position: "bottom",
+                    width: "100%",
+                    className: "ui-dialog-bottom",
+                    animate: false
+                }
+                var buttons = [{
+                    'no': '取消'
+                }, {
+                    'yes': '确定'
+                }];
+            }
+            $.confirm('<div class="ui-scroller-mask"><div id="' + _this.id + '" class="ui-scroller">' + dlgContent + '<p></p></div></div>', buttons, function(t, c) {
+                if (t == "yes") {
+                    _this.submit()
+                }
+                if (t == 'no') {
+                    _this.cancel();
+                }
+                this.dispose();
+            }, $.extend({
+                width: (document.documentElement.clientWidth || document.body.clientWidth) - 10 + "px",
+                height: 215
+            }, settings));
+            if(_this.settings.autoHide){
+                $('.ui-dialog-mask').on('click',function(){
+                    $('.ui-confirm-no').trigger('click');
+                })
+            }
+            _this.scroller = $('#' + _this.id);
+            _this.getData().done(function() {
+                _this.format();
+            });
+            $(".ui-scroller>div").css({width:100/_this.level+"%"});
+            var start = 0,
+                end = 0;
+            _this.scroller.children().bind('touchstart', function(e) {
+                start = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
+            });
+            _this.scroller.children().bind('touchmove', function(e) {
+                end = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
+                var diff = end - start;
+                var dl = $(e.target).parent();
+                if (dl[0].nodeName != "DL") {
+                    return;
+                }
+                var top = parseInt(dl.css('top') || 0) + diff;
+                dl.css('top', top);
+                start = end;
+                return false;
+            });
+            _this.scroller.children().bind('touchend', function(e) {
+                end = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
+                var diff = end - start;
+                var dl = $(e.target).parent();
+                if (dl[0].nodeName != "DL") {
+                    return;
+                }
+                var i = $(dl.parent()).index();
+                var top = parseInt(dl.css('top') || 0) + diff;
+                if (top > _this.mtop) {
+                    top = _this.mtop;
+                }
+                if (top < -$(dl).height() + 60) {
+                    top = -$(dl).height() + 60;
+                }
+                var mod = top / _this.mtop;
+                var mode = Math.round(mod);
+                var index = Math.abs(mode) + 1;
+                if (mode == 1) {
+                    index = 0;
+                }
+                _this.value[i] = $(dl.children().get(index)).attr('ref');
+                _this.value[i] == 0 ? _this.text[i] = "" : _this.text[i] = $(dl.children().get(index)).html();
+                if (!$(dl.children().get(index)).hasClass('focus')) {
+                    for (var j = _this.level - 1; j > i; j--) {
+                        _this.value[j] = 0;
+                        _this.text[j] = "";
+                    }
+                    _this.format();
+                }
+                $(dl.children().get(index)).addClass('focus').siblings().removeClass('focus');
+                dl.css('top', mode * _this.mtop);
+                return false;
+            });
+            return false;
+        },
 		bindEvent: function() {
-			var _this = this;
-			this.trigger[_this.settings.eventName](function(e) {
-				var dlgContent = '';
-				for (var i = 0; i < _this.level; i++) {
-					dlgContent += '<div></div>';
-				};
-				var settings, buttons;
-				if (_this.settings.position == "bottom") {
-					settings = {
-						position: "bottom",
-						width: "100%",
-						className: "ui-dialog-bottom",
-						animate: false
-					}
-					var buttons = [{
-						'no': '取消'
-					}, {
-						'yes': '确定'
-					}];
-				}
-				$.confirm('<div class="ui-scroller-mask"><div id="' + _this.id + '" class="ui-scroller">' + dlgContent + '<p></p></div></div>', buttons, function(t, c) {
-					if (t == "yes") {
-						_this.submit()
-					}
-					if (t == 'no') {
-						_this.cancel();
-					}
-					this.dispose();
-				}, $.extend({
-					width: (document.documentElement.clientWidth || document.body.clientWidth) - 10 + "px",
-					height: 215
-				}, settings));
-				_this.scroller = $('#' + _this.id);
-				_this.getData().done(function() {
-					_this.format();
-				});
-				$(".ui-scroller>div").css({width:100/_this.level+"%"});
-				var start = 0,
-					end = 0;
-				_this.scroller.children().bind('touchstart', function(e) {
-					start = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
-				});
-				_this.scroller.children().bind('touchmove', function(e) {
-					end = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
-					var diff = end - start;
-					var dl = $(e.target).parent();
-					if (dl[0].nodeName != "DL") {
-						return;
-					}
-					var top = parseInt(dl.css('top') || 0) + diff;
-					dl.css('top', top);
-					start = end;
-					return false;
-				});
-				_this.scroller.children().bind('touchend', function(e) {
-					end = (e.changedTouches || e.originalEvent.changedTouches)[0].pageY;
-					var diff = end - start;
-					var dl = $(e.target).parent();
-					if (dl[0].nodeName != "DL") {
-						return;
-					}
-					var i = $(dl.parent()).index();
-					var top = parseInt(dl.css('top') || 0) + diff;
-					if (top > _this.mtop) {
-						top = _this.mtop;
-					}
-					if (top < -$(dl).height() + 60) {
-						top = -$(dl).height() + 60;
-					}
-					var mod = top / _this.mtop;
-					var mode = Math.round(mod);
-					var index = Math.abs(mode) + 1;
-					if (mode == 1) {
-						index = 0;
-					}
-					_this.value[i] = $(dl.children().get(index)).attr('ref');
-					_this.value[i] == 0 ? _this.text[i] = "" : _this.text[i] = $(dl.children().get(index)).html();
-					if (!$(dl.children().get(index)).hasClass('focus')) {
-						for (var j = _this.level - 1; j > i; j--) {
-							_this.value[j] = 0;
-							_this.text[j] = "";
-						}
-						_this.format();
-					}
-					$(dl.children().get(index)).addClass('focus').siblings().removeClass('focus');
-					dl.css('top', mode * _this.mtop);
-					return false;
-				});
-				return false;
-			});
+            var _this = this;
+            this.trigger[_this.settings.eventName](function (e) {
+                _this.show();
+                return false;
+            });
 		},
 		format: function() {
 			var _this = this;
@@ -253,6 +264,7 @@
 		cancel: function() {
 			this.value = this.oldvalue.concat([]);
 			this.text = this.oldtext.concat([]);
+            this.settings.cancelCallback && this.settings.cancelCallback.call(this, this.scroller, this.text, this.value);
 		},
 		getValue: function() {
 			var _value = '';

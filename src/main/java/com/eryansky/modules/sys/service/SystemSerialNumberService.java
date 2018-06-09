@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-07-14 
  */
 @Service

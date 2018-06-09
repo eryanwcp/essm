@@ -4,7 +4,7 @@ import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 
 /**
  * 序列号service接口
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-07-14
  */
 public interface ISerialNumService {

@@ -9,7 +9,7 @@ import com.eryansky.core.orm.mybatis.entity.DataEntity;
 
 /**
  * 序列号生成器
- * @author 温春平@wencp wencp@jx.tobacco.gov.cn
+ * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2016-07-14 
  */
 public class SystemSerialNumber extends DataEntity<SystemSerialNumber> {
