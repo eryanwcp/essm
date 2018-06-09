@@ -80,24 +80,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
         save(folder);
     }
 
-    /**
-     * 查找默认文件夹,无则初始化---> 针对 我的云盘
-     *
-     * @param folderAuthorize
-     *            云盘类型Id
-     * @param userId
-     *             用户Id
-     */
-    @Transactional(readOnly = false)
-    public Folder initHideFolderAndSave(String folderAuthorize, String userId) {
-        Folder folder = null;
-        if (FolderAuthorize.User.getValue().equals(folderAuthorize)) {
-            folder = initHideFolderAndSaveForUser(userId);
-        }
-        return folder;
-
-    }
-
 
     /**
      * 判断和创建个人云盘的默认文件夹

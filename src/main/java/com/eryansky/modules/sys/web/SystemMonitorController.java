@@ -110,7 +110,9 @@ public class SystemMonitorController extends SimpleController {
     @Logging(value = "系统监控-系统日志",logType = LogType.access,logging = "!#isAjax")
     @RequiresPermissions("sys:systemMonitor:view")
     @RequestMapping("log")
-    public String log(@RequestParam(value = "download",defaultValue = "false") boolean download, HttpServletRequest request, HttpServletResponse response, Model uiModel){
+    public String log(@RequestParam(value = "download",defaultValue = "false") boolean download,
+                      Integer pageSize,
+                      HttpServletRequest request, HttpServletResponse response, Model uiModel){
         Result result = null;
         File file = null;
         if(download || WebUtils.isAjaxRequest(request)){
@@ -145,7 +147,7 @@ public class SystemMonitorController extends SimpleController {
                 StringBuffer log = new StringBuffer();
                 Collections.reverse(logs);
                 Page page = new Page(request,response);
-                page.setPageSize(1000);//最大读取行数
+                page.setPageSize(pageSize == null ? 1000:pageSize);//最大读取行数
                 if(page.getPageSize()!= Page.PAGESIZE_ALL){
                     showLogs = Collections3.getPagedList(logs,page.getPageNo(),page.getPageSize());
                     page.setResult(showLogs);

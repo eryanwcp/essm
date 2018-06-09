@@ -191,7 +191,7 @@ public class DiskController extends SimpleController {
     @ResponseBody
     public Result saveFolder(@ModelAttribute("model") Folder folder) {
         if (StringUtils.isBlank(folder.getUserId())) {
-            folder.setUserId(SecurityUtils.getCurrentSessionInfo().getUserId());
+            folder.setUserId(SecurityUtils.getCurrentUserId());
         }
         folderService.saveFolder(folder);
         return Result.successResult();
@@ -277,11 +277,7 @@ public class DiskController extends SimpleController {
             json = JsonMapper.getInstance().toJson(new Datagrid());
         } else {
             Page<File> page = new Page<File>(SpringMVCHolder.getRequest());
-            FolderAuthorize fa = FolderAuthorize.getByValue(folderAuthorize);
-            Folder _folder = new Folder(folderId);
-            if(fa != null){
-                _folder = folderService.initHideFolderAndSave(folderAuthorize,loginUserId);
-            }
+            Folder _folder = folderService.initHideFolderAndSaveForUser(loginUserId);
             File entity = new File();
             entity.setQuery(fileName);
             entity.setFolderId(_folder.getId());
@@ -302,7 +298,7 @@ public class DiskController extends SimpleController {
             json = JsonMapper.getInstance().toJson(
                     dg,
                     File.class,
-                    new String[] { "id", "fileId", "name", "prettyFileSize","createTime", "userName", "operate_all" });
+                    new String[] { "id", "fileId", "name", "prettyFileSize","createTime", "userName"});
         }
 
         return json;
@@ -357,7 +353,7 @@ public class DiskController extends SimpleController {
         Folder model = null;
         if(FolderAuthorize.User.getValue().equals(folderAuthorize)){
             String loginUserId = SecurityUtils.getCurrentUserId();
-            model = folderService.initHideFolderAndSave(folderAuthorize, loginUserId);
+            model = folderService.initHideFolderAndSaveForUser(loginUserId);
         }else if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
             model = folderService.get(folderId);
         }else {

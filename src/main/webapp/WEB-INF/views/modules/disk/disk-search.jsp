@@ -2,7 +2,6 @@
 <%@ include file="/common/taglibs.jsp"%>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/kendoui.jsp"%>
-<script src="${ctxStatic}/js/easyui-${ev}/datagridview/datagrid-bufferview.min.js?_=${sysInitTime}"></script>
 <script type="text/javascript">
 var file_search_form;
 var file_search_datagrid;

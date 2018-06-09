@@ -2,11 +2,7 @@
 <%@ include file="/common/taglibs.jsp"%>
 <%@ include file="/common/meta.jsp"%>
 <%@ include file="/common/uploadify.jsp"%>
-<%@ include file="/common/kendoui.jsp"%>
-<script src="${ctxStatic}/js/easyui-${ev}/datagridview/datagrid-bufferview.min.js?_=${sysInitTime}"></script>
 <script type="text/javascript" src="${ctxStatic}/app/modules/disk/disk${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
-
-
 <div id="folder_treeMenu_all" class="easyui-menu" style="width:120px;">
     <div name="addFolder" data-options="iconCls:'easyui-icon-add'">新建文件夹</div>
     <div name="editFolder" data-options="iconCls:'easyui-icon-edit'">编辑</div>
@@ -15,13 +11,7 @@
 <div id="folder_treeMenu_add" class="easyui-menu" style="width:120px;">
     <div name="addFolder" data-options="iconCls:'easyui-icon-add'">新建文件夹</div>
 </div>
-<div id="folder_treeMenu" class="easyui-menu" style="width:120px;">
-    <div name="editFolder" data-options="iconCls:'easyui-icon-edit'">编辑</div>
-    <div name="deleteFolder" data-options="iconCls:'easyui-icon-remove'">删除</div>
-</div>
-<%-- easyui-layout布局 --%>
 <div class="easyui-layout" fit="true" style="margin: 0px;border: 0px;overflow: hidden;width:100%;height:100%;">
-
     <%-- 左边部分 菜单树形 --%>
     <div data-options="region:'west',title:'我的云盘',split:true,collapsed:false,border:false"
          style="width:180px; text-align: left;padding:5px;">
@@ -39,7 +29,6 @@
       </div>
         <ul id="folder_tree"></ul>
     </div>
-
     <!-- 中间部分 列表 -->
     <div data-options="region:'center',split:true" style="overflow: hidden;">
         <div class="easyui-layout" fit="true" style="margin: 0px;border: 0px;overflow: hidden;width:100%;height:100%;">

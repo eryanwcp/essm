@@ -728,19 +728,29 @@ public class UserController extends SimpleController {
     }
 
 
+    /**
+     *
+     * @param organId 机构ID
+     * @param roleId 角色
+     * @param query 关键字
+     * @param excludeUserIds 排除的用户IDS
+     * @return
+     */
     @RequestMapping(value = {"datagridSelectUser"})
     @ResponseBody
-    public String datagridSelectUser(String organId, String loginNameOrName,
+    public String datagridSelectUser(String organId,
+                                     String roleId,
+                                     String query,
                                      @RequestParam(value = "excludeUserIds", required = false) List<String> excludeUserIds) {
         Page<User> page = new Page<User>(SpringMVCHolder.getRequest());
-        page = userService.findUsersByOrgan(page, organId, loginNameOrName, excludeUserIds);
+        page = userService.findUsersByOrgan(page, organId, query, excludeUserIds);
         Datagrid<User> dg = new Datagrid<User>(page.getTotalCount(), page.getResult());
         return JsonMapper.getInstance().toJson(dg, User.class, new String[]{"id", "name", "sexView", "defaultOrganName"});
     }
 
 
     /**
-     * 多Sheet Excel导出，获取的数据格式是List<Object[]>
+     * Excel导出，获取的数据格式是List<Object[]>
      *
      * @return
      * @throws Exception
@@ -761,7 +771,7 @@ public class UserController extends SimpleController {
 
         List<TableData> tds = new ArrayList<TableData>();
 
-        //Sheet2
+        //Sheet
         String[] hearders = new String[]{"单位", "部门", "账号", "姓名", "性别", "电话", "手机号码", "邮箱"};//表头数组
         TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders), null);
         td.setSheetTitle("普通表头示例");

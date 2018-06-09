@@ -274,32 +274,25 @@ public class UserService extends CrudService<UserDao, User> {
 
     /**
      * 根据机构查询用户信息
+     * @param page 机构Id
      * @param organId 机构Id
      * @param query 关键字
      * @param excludeUserIds 排除的用户IDS
      * @return
      */
-    public List<User> findUsersByOrgan(String organId, String query, Collection<String> excludeUserIds) {
-        if(StringUtils.isBlank(organId)){
-            return new ArrayList<User>(0);
-        }
-
-        Parameter parameter = new Parameter();
-        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
-        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
-        parameter.put("organId",organId);
-        parameter.put("query",query);
-        parameter.put("excludeUserIds",excludeUserIds);
-        return dao.findUsersByOrgan(parameter);
-    }
-
-    public Page<User> findUsersByOrgan(Page<User> page, String organId, String loginNameOrName, Collection<String> excludeUserIds) {
+    public Page<User> findUsersByOrgan(Page<User> page,String organId, String query, Collection<String> excludeUserIds) {
         if(StringUtils.isBlank(organId)){
             return page;
         }
-        return page.setResult(findUsersByOrgan(organId,loginNameOrName,excludeUserIds));
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
+        parameter.put(BaseInterceptor.PAGE,page);
+        parameter.put("organId",organId);
+        parameter.put("query",query);
+        parameter.put("excludeUserIds",excludeUserIds);
+        return page.setResult(dao.findUsersByOrgan(parameter));
     }
-
 
     /**
      * 获取机构用户

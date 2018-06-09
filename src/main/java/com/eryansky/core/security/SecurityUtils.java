@@ -80,7 +80,8 @@ public class SecurityUtils {
                 }
             }
             if (userId == null) {
-                throw new SystemException("用户[" + userId + "]不存在.");
+                logger.warn("用户不存在.");
+                return false;
             }
 
 //            flag = resourceService.isUserPermittedResourceCode(sessionInfo.getUserId(), resourceCode);
@@ -130,7 +131,8 @@ public class SecurityUtils {
                 }
             }
             if (userId == null) {
-                throw new SystemException("用户[" + userId + "]不存在.");
+                logger.warn("用户不存在.");
+                return false;
             }
 
             //是否需要拦截

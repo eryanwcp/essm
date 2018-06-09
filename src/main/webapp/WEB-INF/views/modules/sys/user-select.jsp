@@ -38,7 +38,7 @@
             <div data-options="region:'north',title:'',split:false,collapsed:false,border:false"
                  style="width: 100%;height:48px; overflow: hidden;">
                 <form id="select_user_search_form" style="padding: 10px;">
-                    <input class="easyui-textbox" id="loginNameOrName" name="loginNameOrName"
+                    <input class="easyui-textbox" id="query" name="query"
                            data-options="buttonText:' 查 询 ',buttonIcon:'easyui-icon-search',prompt:'登录名或姓名...',onClickButton:search"
                            onkeydown="if(event.keyCode==13)search()" maxLength="25"
                            style="width:250px;height:28px;">

@@ -225,6 +225,6 @@ function search() {
     }
     $select_user_datagrid.datagrid({
         url: ctxAdmin + "/sys/user/datagridSelectUser",
-        queryParams: {organId: organId, roleId: roleId,excludeUserIds: excludeUserIdStrs, loginNameOrName: $("#loginNameOrName").val()}
+        queryParams: {organId: organId, roleId: roleId,excludeUserIds: excludeUserIdStrs, query: $("#query").val()}
     });
 }
