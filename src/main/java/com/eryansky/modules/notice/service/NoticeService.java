@@ -19,8 +19,6 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.notice._enum.*;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
-import com.eryansky.modules.notice.web.NoticeController;
-import com.eryansky.modules.sys._enum.YesOrNo;
 import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.modules.sys.utils.UserUtils;
@@ -30,7 +28,6 @@ import com.eryansky.modules.notice.dao.NoticeDao;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
-import com.eryansky.modules.sys.mapper.User;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +49,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     @Autowired
 	private NoticeReceiveInfoService noticeReceiveInfoService;
     @Autowired
-	private OrganService organService;
-    @Autowired
 	private UserService userService;
 
 
@@ -66,6 +61,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param organIds
      * @param fileIds
      */
+    @Transactional(readOnly = false)
     public void saveNoticeAndFiles(Notice entity,Boolean isPub,Collection<String> userIds,Collection<String> organIds,List<String> fileIds) {
         List<String> oldFileIds = Collections.EMPTY_LIST;
         if(!entity.getIsNewRecord()){
@@ -109,6 +105,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * 删除通知
      * @param ids
      */
+    @Transactional(readOnly = false)
     public void deleteByIds(List<String> ids){
         if(Collections3.isNotEmpty(ids)){
             for(String id:ids){
@@ -175,6 +172,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param noticeId
      *            公告ID
      */
+    @Transactional(readOnly = false)
     public void publish(String noticeId) {
         Notice notice = this.get(noticeId);
         if (notice == null) {
@@ -197,6 +195,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 	 * 
 	 * @param notice 通知
 	 */
+    @Transactional(readOnly = false)
 	public void publish(Notice notice) {
         notice.setMode(NoticeMode.Effective.getValue());
         if(notice.getPublishTime() == null) {
@@ -310,18 +309,12 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     }
 
 
-    public void saveFromModel(Notice notice,boolean isPublish){
-        this.save(notice);
-        if(isPublish){
-            this.publish(notice.getId());
-        }
-    }
-
     /**
      * 标记为已读
      * @param userId 所属用户ID
      * @param noticeIds 通知ID集合
      */
+    @Transactional(readOnly = false)
     public void markReaded(String userId,List<String> noticeIds){
         if (Collections3.isNotEmpty(noticeIds)) {
             for (String id : noticeIds) {
@@ -396,6 +389,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     /**
      * 轮询通知 定时发布、到时失效、取消置顶
      */
+    @Transactional(readOnly = false)
     public void pollNotice() {
         // 查询到今天为止所有未删除的通知
         Date nowTime = Calendar.getInstance().getTime();

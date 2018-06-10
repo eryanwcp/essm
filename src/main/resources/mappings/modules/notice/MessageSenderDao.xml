@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.notice.dao.MessageSenderDao">
     
-	<sql id="noticeMessageSenderColumns">
+	<sql id="messageSenderColumns">
 		a.id AS "id",
 		a.message_id AS "messageId",
 		a.object_type AS "objectType",
@@ -11,14 +11,14 @@
 
 	<select id="get" resultType="MessageSender">
 		SELECT 
-			<include refid="noticeMessageSenderColumns"/>
+			<include refid="messageSenderColumns"/>
 		FROM t_notice_message_sender a
 		WHERE a.id = #{id}
 	</select>
 	
 	<select id="findList" resultType="MessageSender">
 		SELECT 
-			<include refid="noticeMessageSenderColumns"/>
+			<include refid="messageSenderColumns"/>
 		FROM t_notice_message_sender a
 		<where>
 			<if test="messageId != null and messageId != ''">
@@ -34,7 +34,7 @@
 	
 	<select id="findAllList" resultType="MessageSender">
 		SELECT 
-			<include refid="noticeMessageSenderColumns"/>
+			<include refid="messageSenderColumns"/>
 		FROM t_notice_message_sender a
 		<where>
 		</where>

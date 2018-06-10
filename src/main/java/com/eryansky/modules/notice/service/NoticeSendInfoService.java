@@ -86,6 +86,7 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
      * @param noticeId
      * @return
      */
+    @Transactional(readOnly = false)
     public int deleteByNoticeId(String noticeId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("noticeId",noticeId);

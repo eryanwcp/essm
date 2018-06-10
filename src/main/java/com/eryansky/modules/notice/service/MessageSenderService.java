@@ -28,6 +28,7 @@ public class MessageSenderService extends CrudService<MessageSenderDao, MessageS
      * @param messageId
      * @return
      */
+    @Transactional(readOnly = false)
     public int deleteByMessageId(String messageId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("messageId",messageId);

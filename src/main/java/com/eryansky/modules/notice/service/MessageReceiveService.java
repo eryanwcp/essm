@@ -36,6 +36,7 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
      * @param messageId
      * @return
      */
+    @Transactional(readOnly = false)
     public int deleteByMessageId(String messageId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("messageId",messageId);
@@ -55,12 +56,36 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
      * @param userId 用户ID
      * @return
      */
+    public Page<MessageReceive> findUserPage(Page<MessageReceive> page, String userId) {
+        return findUserPage(page,userId,null,null);
+    }
+
+    /**
+     * 用户消息
+     * @param page
+     * @param userId 用户ID
+     * @return
+     */
     public Page<MessageReceive> findUserPage(Page<MessageReceive> page, String userId, String isRead) {
+        return findUserPage(page,userId,null,isRead);
+    }
+
+
+    /**
+     * 用户消息
+     * @param page
+     * @param userId 用户ID
+     * @param category 分类
+     * @param isRead 是否已读 {@link YesOrNo}
+     * @return
+     */
+    public Page<MessageReceive> findUserPage(Page<MessageReceive> page, String userId,String category, String isRead) {
         Parameter parameter = new Parameter();
         parameter.put(BaseInterceptor.PAGE,page);
         parameter.put(Message.FIELD_STATUS,Message.STATUS_NORMAL);
         parameter.put("mode", MessageMode.Published.getValue());
         parameter.put("userId",userId);
+        parameter.put("category",category);
         parameter.put("isRead",isRead);
         page.setResult(dao.findUserList(parameter));
         return page;
@@ -89,14 +114,6 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
         receive.setIsRead(StringUtils.isBlank(isRead) ? YesOrNo.YES.getValue():isRead);
         receive.setReadTime(Calendar.getInstance().getTime());
         dao.setUserMessageRead(receive);
-    }
-
-    
-    public List<MessageReceive> findListByCategoryAndUserId(String category,String userId){
-        Parameter parameter = Parameter.newParameter();
-        parameter.put("category",category);
-        parameter.put("userId",userId);
-    	return dao.findListByCategoryAndUserId(parameter);
     }
 
 }

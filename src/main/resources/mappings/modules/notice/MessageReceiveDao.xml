@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.notice.dao.MessageReceiveDao">
     
-	<sql id="noticeMessageReceiveColumns">
+	<sql id="messageReceiveColumns">
 		a.id AS "id",
 		a.message_id AS "messageId",
 		a.user_id AS "userId",
@@ -10,20 +10,20 @@
 		a.read_time AS "readTime"
 	</sql>
 
-	<sql id="noticeMessageReceiveJoins">
+	<sql id="messageReceiveJoins">
 		LEFT JOIN t_notice_message m ON m.id = a.message_id
 	</sql>
 
 	<select id="get" resultType="MessageReceive">
 		SELECT 
-			<include refid="noticeMessageReceiveColumns"/>
+			<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		WHERE a.id = #{id}
 	</select>
 	
 	<select id="findList" resultType="MessageReceive">
 		SELECT 
-			<include refid="noticeMessageReceiveColumns"/>
+			<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		<where>
 			<if test="messageId != null and messageId != ''">
@@ -39,7 +39,7 @@
 	
 	<select id="findAllList" resultType="MessageReceive">
 		SELECT 
-			<include refid="noticeMessageReceiveColumns"/>
+			<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		<where>
 		</where>
@@ -53,13 +53,16 @@
 	<!--用户消息-->
 	<select id="findUserList" resultType="MessageReceive">
 		SELECT
-		<include refid="noticeMessageReceiveColumns"/>
+		<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
-		<include refid="noticeMessageReceiveJoins"/>
+		<include refid="messageReceiveJoins"/>
 		<where>
 		  	m.status = #{status}
 			AND m.mode = #{mode}
 			AND a.user_id = #{userId}
+			<if test="category != null and category != ''">
+				AND m.category = #{category}
+			</if>
 			<if test="isRead != null and isRead != ''">
 				AND a.is_read = #{isRead}
 			</if>
@@ -109,19 +112,4 @@
 		DELETE FROM t_notice_message_receive
 		WHERE message_id = #{id}
 	</delete>
-
-	<!--获取用户接受的信息-->
-	<select id="findListByCategoryAndUserId" resultType="MessageReceive">
-		SELECT
-		<include refid="noticeMessageReceiveColumns"/>
-		FROM t_notice_message_receive a
-		<include refid="noticeMessageReceiveJoins"/>
-		<where>
-			 m.category = #{category}
-			 and a.user_id = #{userId}
-		</where>
-		ORDER BY m.update_time DESC
-	</select>
-
-
 </mapper>
