@@ -83,9 +83,9 @@ M.toNavigation = function(conf) {
     } else {
         try {
             if(config['mapExtend']){
-                location.href = 'baidumap://map/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=江西省锦峰软件科技有限公司|MP_BROWSER';
+                location.href = 'baidumap://map/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=MP_BROWSER';
             }else{
-                location.href = 'http://api.map.baidu.com/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=江西省锦峰软件科技有限公司|MP_BROWSER';
+                location.href = 'http://api.map.baidu.com/marker?location=' + config.latitude + ',' + config.longitude + '&title=' + config.name + '&name=' + config.name + '&content=' + config.name + '&output=html&src=MP_BROWSER';
             }
         } catch (e) {
         }
