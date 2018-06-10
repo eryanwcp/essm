@@ -108,7 +108,7 @@ public class MessageUtils {
     public static void sendMessage(String appId,String sender,String content,
                               String linkUrl,
                               String receiveObjectType,List<String> receiveObjectIds) {
-        sendMessage(appId, sender, content,linkUrl,receiveObjectType,receiveObjectIds);
+        sendMessage(appId, sender, content,linkUrl,receiveObjectType,receiveObjectIds,null);
     }
 
     /**
@@ -122,20 +122,8 @@ public class MessageUtils {
     public static void sendMessage(String appId,String sender,String content,
                                    String linkUrl,
                                    String receiveObjectType,List<String> receiveObjectIds,Date date) {
-        Message model = new Message();
-        User user = UserUtils.getUser(sender);
-        if(user == null){
-            throw new SystemException("["+sender+"]用户不存在");
-        }
-
-        model.setAppId(appId);
-        model.setOrganId(user.getCompanyId());
-        model.setSender(user.getId());
-        model.setContent(content);
-        model.setUrl(linkUrl);
-        model.setSendTime(date);
-//        messageService.save(model);
-        messageTask.saveAndSend(model, receiveObjectType, receiveObjectIds);
+        MessageReceiveObjectType m = MessageReceiveObjectType.getByValue(receiveObjectType);
+        sendMessage(appId, sender,null, content,linkUrl,m,receiveObjectIds,date);
     }
 
 
@@ -151,7 +139,7 @@ public class MessageUtils {
     public static void sendMessage(String sender,String content,
                                    String linkUrl,
                                    MessageReceiveObjectType messageReceiveObjectType,List<String> receiveObjectIds) {
-        sendMessage(null,sender,null,content,linkUrl,messageReceiveObjectType,receiveObjectIds);
+        sendMessage(null,sender,null,content,linkUrl,messageReceiveObjectType,receiveObjectIds,null);
     }
 
     /**
@@ -166,7 +154,7 @@ public class MessageUtils {
      */
     public static void sendMessage(String appId,String sender,String category,String content,
                                    String linkUrl,
-                                   MessageReceiveObjectType messageReceiveObjectType,List<String> receiveObjectIds) {
+                                   MessageReceiveObjectType messageReceiveObjectType,List<String> receiveObjectIds,Date date) {
         Message model = new Message();
         User user = UserUtils.getUser(sender);
         if(user == null){
@@ -178,6 +166,7 @@ public class MessageUtils {
         model.setSender(user.getId());
         model.setContent(content);
         model.setUrl(linkUrl);
+        model.setSendTime(date);
 //        messageService.save(model);
         messageTask.saveAndSend(model, messageReceiveObjectType, receiveObjectIds);
     }
