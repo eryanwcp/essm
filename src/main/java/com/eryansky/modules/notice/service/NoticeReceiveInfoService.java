@@ -142,4 +142,15 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
         page.setResult(list);
         return page;
     }
+
+    /**
+     * 根据通知ID删除
+     * @param noticeId
+     * @return
+     */
+    public int deleteByNoticeId(String noticeId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("noticeId",noticeId);
+        return dao.deleteByNoticeId(parameter);
+    }
 }

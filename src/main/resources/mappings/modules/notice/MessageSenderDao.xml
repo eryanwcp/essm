@@ -68,8 +68,13 @@
 	</update>
 
 	<delete id="delete">
-		DELETE t_notice_message_sender
+		DELETE FROM t_notice_message_sender
 		WHERE id = #{id}
+	</delete>
+
+	<delete id="deleteByMessageId">
+		DELETE FROM t_notice_message_sender
+		WHERE message_id = #{id}
 	</delete>
 
 </mapper>

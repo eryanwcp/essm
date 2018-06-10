@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.notice.dao;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.modules.notice.mapper.MessageSender;
@@ -16,5 +17,8 @@ import com.eryansky.modules.notice.mapper.MessageSender;
  */
 @MyBatisDao
 public interface MessageSenderDao extends CrudDao<MessageSender> {
+
+    int deleteByMessageId(Parameter parameter);
+
 }
 

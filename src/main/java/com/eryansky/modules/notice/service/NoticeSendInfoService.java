@@ -6,6 +6,7 @@
 package com.eryansky.modules.notice.service;
 
 import com.eryansky.common.orm._enum.StatusState;
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.dao.NoticeSendInfoDao;
@@ -77,5 +78,17 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
         entity.setNoticeId(noticeId);
         entity.setReceiveObjectType(receiveObjectType);
         return dao.findObjectIdsByNoticeId(entity);
+    }
+
+
+    /**
+     * 根据通知ID删除
+     * @param noticeId
+     * @return
+     */
+    public int deleteByNoticeId(String noticeId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("noticeId",noticeId);
+        return dao.deleteByNoticeId(parameter);
     }
 }

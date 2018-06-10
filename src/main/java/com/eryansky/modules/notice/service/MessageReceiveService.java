@@ -31,9 +31,16 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class MessageReceiveService extends CrudService<MessageReceiveDao, MessageReceive> {
 
-    @Autowired
-    private MessageReceiveDao dao;
-
+    /**
+     * 根据消息ID删除
+     * @param messageId
+     * @return
+     */
+    public int deleteByMessageId(String messageId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("messageId",messageId);
+        return dao.deleteByMessageId(parameter);
+    }
 
     @Override
     public Page<MessageReceive> findPage(Page<MessageReceive> page, MessageReceive entity) {
@@ -85,8 +92,11 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
     }
 
     
-    public List<MessageReceive> findListByCategoryAndUserId(Map<String,Object> param){
-    	return dao.findListByCategoryAndUserId(param);
+    public List<MessageReceive> findListByCategoryAndUserId(String category,String userId){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("category",category);
+        parameter.put("userId",userId);
+    	return dao.findListByCategoryAndUserId(parameter);
     }
 
 }

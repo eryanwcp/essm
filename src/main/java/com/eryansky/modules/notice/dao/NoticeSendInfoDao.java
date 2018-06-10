@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.notice.dao;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
@@ -17,6 +18,8 @@ import java.util.List;
  */
 @MyBatisDao
 public interface NoticeSendInfoDao extends CrudDao<NoticeSendInfo> {
+
+    int deleteByNoticeId(Parameter parameter);
 
     List<NoticeSendInfo> findQueryList(NoticeSendInfo entity);
 

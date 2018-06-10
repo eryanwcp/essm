@@ -20,7 +20,7 @@ import java.util.Map;
 @MyBatisDao
 public interface NoticeReceiveInfoDao extends CrudDao<NoticeReceiveInfo> {
 
-
+    int deleteByNoticeId(Parameter parameter);
 
     List<NoticeReceiveInfo> findQueryList(Parameter parameter);
 

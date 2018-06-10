@@ -88,6 +88,11 @@ public class MessageService extends CrudService<MessageDao, Message> {
             message.setMode(MessageMode.Publishing.getValue());
             message.setSendTime(message.getSendTime() != null ? message.getSendTime():Calendar.getInstance().getTime());
             this.save(message);
+
+            //历史数据
+//            messageReceiveService.deleteByMessageId(message.getId());
+//            messageSenderService.deleteByMessageId(message.getId());
+
             for(String objectId: receiveObjectIds){
                 MessageSender messageSender = new MessageSender(message.getId());
                 messageSender.setObjectType(messageReceiveObjectType.getValue());

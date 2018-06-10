@@ -216,7 +216,10 @@
 
 	<update id="delete">
 		UPDATE t_notice SET
-		status = #{STATUS_DELETE}
+		status = #{STATUS_DELETE},
+		version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
 		WHERE id = #{id}
 	</update>
 

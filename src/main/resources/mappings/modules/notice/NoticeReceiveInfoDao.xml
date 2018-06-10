@@ -199,10 +199,14 @@
 		WHERE id = #{id}
 	</update>
 
-	<update id="delete">
-		UPDATE t_notice_receive_info SET
-		status = #{STATUS_DELETE}
+	<delete id="delete">
+		DELETE FROM t_notice_receive_info
 		WHERE id = #{id}
-	</update>
+	</delete>
+
+	<delete id="deleteByNoticeId">
+		DELETE FROM t_notice_receive_info
+		WHERE notice_id = #{id}
+	</delete>
 
 </mapper>

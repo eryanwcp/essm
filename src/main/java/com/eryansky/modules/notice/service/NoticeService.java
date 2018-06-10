@@ -80,6 +80,10 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
             DiskUtils.deleteFolderFiles(removeFileIds);
         }
 
+        //历史数据
+        noticeReceiveInfoService.deleteByNoticeId(entity.getId());
+        noticeSendInfoService.deleteByNoticeId(entity.getId());
+
         saveNoticeSendInfos(userIds, entity.getId(), ReceiveObjectType.User.getValue());
         saveNoticeSendInfos(organIds, entity.getId(),ReceiveObjectType.Organ.getValue());
 

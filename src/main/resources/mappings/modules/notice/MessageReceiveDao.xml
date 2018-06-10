@@ -101,8 +101,13 @@
 	</update>
 	
 	<delete id="delete">
-		DELETE t_notice_message_receive
+		DELETE FROM t_notice_message_receive
 		WHERE id = #{id}
+	</delete>
+
+	<delete id="deleteByMessageId">
+		DELETE FROM t_notice_message_receive
+		WHERE message_id = #{id}
 	</delete>
 
 	<!--获取用户接受的信息-->
@@ -112,8 +117,8 @@
 		FROM t_notice_message_receive a
 		<include refid="noticeMessageReceiveJoins"/>
 		<where>
-			 m.CATEGORY=#{CATEGORY}
-			 and a.USER_ID=#{USER_ID}
+			 m.category = #{category}
+			 and a.user_id = #{userId}
 		</where>
 		ORDER BY m.update_time DESC
 	</select>
