@@ -20,3 +20,4 @@ java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/s
 java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/easyui-1.5.5.2/portal/jquery.portal.js -o ../src/main/webapp/static/js/easyui-1.5.5.2/portal/jquery.portal.min.js
 java -jar yuicompressor-2.4.7.jar --type css --charset utf-8 ../src/main/webapp/static/js/easyui-1.5.5.2/portal/portal.css -o ../src/main/webapp/static/js/easyui-1.5.5.2/portal/portal.min.css
 java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/js/uploadify/scripts/jquery.uploadify.mine.js -o ../src/main/webapp/static/js/uploadify/scripts/jquery.uploadify.mine.min.js
+java -jar yuicompressor-2.4.7.jar --type js --charset utf-8 ../src/main/webapp/static/mobile/map_module.js -o ../src/main/webapp/static/mobile/map_module.min.js
