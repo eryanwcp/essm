@@ -6,7 +6,7 @@
 package com.eryansky.modules.notice._enum;
 
 /**
- * 邮件重要性
+ * 是否置顶
  */
 public enum IsTop {
     /**
