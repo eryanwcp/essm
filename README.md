@@ -3,7 +3,7 @@
     3.0版本完全去除Hibernate依赖
     2.3版本包含Hibernate实现
 
-EasyUI、SpringMVC、Spring、Mybatis、微信服务端API
+EasyUI/Bootstrap、SpringMVC、Spring、Mybatis、微信服务端API
 
     MySQL数据库脚本：
     src\main\resources\data\mysql\essm.sql 
