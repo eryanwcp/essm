@@ -15,6 +15,8 @@ import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.service.FolderService;
+import com.eryansky.modules.notice.mapper.Notice;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.web.upload.FileUploadUtils;
@@ -38,10 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.io.*;
 
 /**
@@ -341,7 +340,7 @@ public class DiskUtils {
      * @param folderId
      * @return
      */
-    public static List<File> getFolderFiles(String folderId,List<String> fileSuffixs) {
+    public static List<File> getFolderFiles(String folderId,Collection<String> fileSuffixs) {
         return fileService.findFolderFiles(folderId,fileSuffixs);
     }
 
@@ -350,7 +349,7 @@ public class DiskUtils {
      * @param fildIds 文件IDS
      * @return
      */
-    public static void deleteFolderFiles(List<String> fildIds){
+    public static void deleteFolderFiles(Collection<String> fildIds){
         fileService.deleteFileByFileIds(fildIds);
     }
 
@@ -359,8 +358,51 @@ public class DiskUtils {
      * @param fildIds 文件IDS
      * @return
      */
-    public static List<File> findFilesByIds(List<String> fildIds) {
+    public static List<File> findFilesByIds(Collection<String> fildIds) {
         return fileService.findFilesByIds(fildIds);
+    }
+
+
+    /**
+     * 复制文件
+     * @param userId 用户ID
+     * @param folderCode 文件夹编码
+     * @param fildIds 文件IDS
+     * @return
+     */
+    public static List<File> copyFiles(String userId,String folderCode,Collection<String> fildIds) {
+        List<File> sourceFiles = findFilesByIds(fildIds);
+        if(Collections3.isEmpty(sourceFiles)){
+            return Collections.emptyList();
+        }
+        List<File> newFiles = new ArrayList<File>(sourceFiles.size());
+        List<String> newFileIds = Lists.newArrayList();
+        for (File sourceFile : sourceFiles) {
+            File file = sourceFile.copy();
+            file.setFolderId(DiskUtils.checkAndSaveSystemFolderByCode(folderCode,userId).getId());
+            file.setUserId(userId);
+            DiskUtils.saveFile(file);
+            newFileIds.add(file.getId());
+            newFiles.add(file);
+            DiskUtils.saveFile(file);
+        }
+        return newFiles;
+    }
+
+    /**
+     * 提取文件IDS
+     * @param files 文件集合
+     * @return
+     */
+    public static List<String> toFileIds(Collection<File> files) {
+        if(Collections3.isEmpty(files)){
+            return Collections.emptyList();
+        }
+        List<String> newFileIds = Lists.newArrayList();
+        for (File file : files) {
+            newFileIds.add(file.getId());
+        }
+        return newFileIds;
     }
 
 

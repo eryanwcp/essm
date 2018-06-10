@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileIds
      * @return
      */
-    public List<File> findFilesByIds(List<String> fileIds){
+    public List<File> findFilesByIds(Collection<String> fileIds){
         if(Collections3.isEmpty(fileIds)){
             return Collections.EMPTY_LIST;
         }
@@ -144,7 +145,7 @@ public class FileService extends CrudService<FileDao, File> {
      */
     @Transactional(readOnly = false)
     public File fileUpload(SessionInfo sessionInfo, Folder folder,
-                           MultipartFile uploadFile) throws Exception {
+                           MultipartFile uploadFile) {
         File file = null;
 /*		Exception exception = null;
 */
@@ -264,7 +265,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileIds 文件集合
      */
     @Transactional(readOnly = false)
-    public void deleteFileByFileIds(List<String> fileIds) {
+    public void deleteFileByFileIds(Collection<String> fileIds) {
         if (Collections3.isNotEmpty(fileIds)) {
             for (String fileId : fileIds) {
                 deleteByFileId(fileId);
@@ -282,7 +283,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileCodes 文件编码集合
      */
     @Transactional(readOnly = false)
-    public void deleteFileByFolderCode(List<String> fileCodes){
+    public void deleteFileByFolderCode(Collection<String> fileCodes){
         if (Collections3.isNotEmpty(fileCodes)) {
             for (String code : fileCodes) {
                 List<File> fileList = findByCode(code, null);
@@ -314,7 +315,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileSuffixs 文件后缀名
      * @return
      */
-    public List<File> findFolderFiles(String folderId, List<String> fileSuffixs) {
+    public List<File> findFolderFiles(String folderId, Collection<String> fileSuffixs) {
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
@@ -359,7 +360,7 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileIds 文件ID集合
      * @return
      */
-    public long countFileSize(List<String> fileIds){
+    public long countFileSize(Collection<String> fileIds){
         Parameter parameter = Parameter.newParameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put("fileIds",fileIds);

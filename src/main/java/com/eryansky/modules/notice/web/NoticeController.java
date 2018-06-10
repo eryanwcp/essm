@@ -195,26 +195,11 @@ public class NoticeController extends SimpleController {
         List<String> receiveUserIds = Collections.EMPTY_LIST;
         List<String> receiveOrganIds = Collections.EMPTY_LIST;
         if (OperateType.Repeat.equals(operateType) ) {// 转发
-            List<String> newFileIds = Lists.newArrayList();
-            if (Collections3.isNotEmpty(model.getFileIds())) {// 文件拷贝
-                List<File> sourceFiles = DiskUtils.findFilesByIds(model.getFileIds());
-                List<File> newFiles = new ArrayList<File>(sourceFiles.size());
-                newFileIds = Lists.newArrayList();
-                for (File sourceFile : sourceFiles) {
-                    File file = sourceFile.copy();
-                    file.setFolderId(DiskUtils.checkAndSaveSystemFolderByCode(Notice.FOLDER_NOTICE,loginUserId).getId());
-                    file.setUserId(loginUserId);
-                    DiskUtils.saveFile(file);
-                    newFileIds.add(file.getId());
-                    newFiles.add(file);
-                    DiskUtils.saveFile(file);
-                }
-
-                files = newFiles;
-            }
+            List<String> sourceFileIds = noticeService.findFileIdsByNoticeId(model.getId());
+            files = DiskUtils.copyFiles(loginUserId,Notice.FOLDER_NOTICE,sourceFileIds);
             model = model.repeat();
-            fileIds = newFileIds;
-            model.setFileIds(newFileIds);
+            fileIds = DiskUtils.toFileIds(files);
+            model.setFileIds(fileIds);
         }else if(!model.getIsNewRecord()){//修改
             fileIds = noticeService.findFileIdsByNoticeId(model.getId());
             model.setFileIds(fileIds);
