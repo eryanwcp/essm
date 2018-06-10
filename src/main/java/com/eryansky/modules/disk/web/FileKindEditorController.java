@@ -183,7 +183,7 @@ public class FileKindEditorController extends SimpleController{
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //        Folder folder = DiskUtils.checkAndSaveSystemFolderByCode(FOLDER_KINDEDITOR);
         Folder folder = DiskUtils.checkAndSaveSystemFolderByCode(FOLDER_KINDEDITOR,sessionInfo.getUserId());
-        List<File> files = DiskUtils.getFolderFiles(folder.getId(),fileSuffixs);
+        List<File> files = DiskUtils.findFolderFiles(folder.getId(),fileSuffixs);
         for (File file : files) {
 
             Map<String, Object> fileMetaInfo = Maps.newHashMap();

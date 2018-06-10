@@ -15,7 +15,6 @@ import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.service.FolderService;
-import com.eryansky.modules.notice.mapper.Notice;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
@@ -113,7 +112,7 @@ public class DiskUtils {
      */
     public static String getDISKStoreDir(Folder folder, String userId) {
         String path = getRelativePath(folder, userId);
-        com.eryansky.common.utils.io.FileUtils.checkSaveDir(path);
+        FileUtils.checkSaveDir(path);
         return path;
     }
 
@@ -178,8 +177,6 @@ public class DiskUtils {
     public static Folder checkAndSaveSystemFolderByCode(String code, String userId) {
         return folderService.checkAndSaveSystemFolderByCode(code,userId);
     }
-
-
 
 
     /**
@@ -330,8 +327,8 @@ public class DiskUtils {
      * @param folderId
      * @return
      */
-    public static List<File> getFolderFiles(String folderId) {
-        return getFolderFiles(folderId,null);
+    public static List<File> findFolderFiles(String folderId) {
+        return findFolderFiles(folderId,null);
     }
 
 
@@ -340,7 +337,7 @@ public class DiskUtils {
      * @param folderId
      * @return
      */
-    public static List<File> getFolderFiles(String folderId,Collection<String> fileSuffixs) {
+    public static List<File> findFolderFiles(String folderId, Collection<String> fileSuffixs) {
         return fileService.findFolderFiles(folderId,fileSuffixs);
     }
 
@@ -408,7 +405,7 @@ public class DiskUtils {
      * @param fileIds 文件ID集合
      * @return
      */
-    public static long countFileSize(List<String> fileIds){
+    public static long countFileSize(Collection<String> fileIds){
         if(Collections3.isNotEmpty(fileIds)){
             return fileService.countFileSize(fileIds);
         }
