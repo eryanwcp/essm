@@ -63,7 +63,7 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
      * @param noticeId 通知ID
      * @return
      */
-    public List<String> findorganIdsByNoticeId(String noticeId){
+    public List<String> findOrganIdsByNoticeId(String noticeId){
         return findObjectIdsByNoticeId(noticeId,ReceiveObjectType.Organ.getValue());
     }
 

@@ -206,7 +206,7 @@ public class NoticeController extends SimpleController {
             files = DiskUtils.findFilesByIds(fileIds);
 
             receiveUserIds =  noticeSendInfoService.findUserIdsByNoticeId(model.getId());
-            receiveOrganIds =  noticeSendInfoService.findorganIdsByNoticeId(model.getId());
+            receiveOrganIds =  noticeSendInfoService.findOrganIdsByNoticeId(model.getId());
 
         }
         modelAndView.addObject("files", files);
