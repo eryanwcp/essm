@@ -376,15 +376,12 @@ public class DiskUtils {
             return Collections.emptyList();
         }
         List<File> newFiles = new ArrayList<File>(sourceFiles.size());
-        List<String> newFileIds = Lists.newArrayList();
         for (File sourceFile : sourceFiles) {
             File file = sourceFile.copy();
             file.setFolderId(DiskUtils.checkAndSaveSystemFolderByCode(folderCode,userId).getId());
             file.setUserId(userId);
             DiskUtils.saveFile(file);
-            newFileIds.add(file.getId());
             newFiles.add(file);
-            DiskUtils.saveFile(file);
         }
         return newFiles;
     }
