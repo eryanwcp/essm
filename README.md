@@ -1,4 +1,4 @@
-# essm
+# essm基础开发平台
     
     3.0版本完全去除Hibernate依赖
     2.3版本包含Hibernate实现
