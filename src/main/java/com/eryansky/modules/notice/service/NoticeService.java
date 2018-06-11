@@ -133,16 +133,8 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
         }
 
         if(noticeQueryVo != null){
-            if (noticeQueryVo.getIsTop() != null) {
-                parameter.put("isTop", noticeQueryVo.getIsTop());
-            }
-
-            if (StringUtils.isNotBlank(noticeQueryVo.getTitle())) {
-                parameter.put("title",noticeQueryVo.getTitle());
-            }
-            if (StringUtils.isNotBlank(noticeQueryVo.getContent())) {
-                parameter.put("content",noticeQueryVo.getContent());
-            }
+            parameter.put("isTop", noticeQueryVo.getIsTop());
+            parameter.put("query",noticeQueryVo.getQuery());
 
             if (noticeQueryVo.getStartTime() != null) {
                 parameter.put("startTime", DateUtils.format(noticeQueryVo.getStartTime(), DateUtils.DATE_TIME_FORMAT));

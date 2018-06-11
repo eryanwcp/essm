@@ -21,6 +21,10 @@ import java.util.List;
 public class NoticeQueryVo implements Serializable {
 
     /**
+     * 关键字
+     */
+    private String query;
+    /**
      * 通知标题
      */
     private String title;
@@ -37,17 +41,25 @@ public class NoticeQueryVo implements Serializable {
      */
     private Date endTime;
     /**
-     * 是否置顶 {@link IsTop}
+     * 是否置顶 {@link com.jfit.modules.notice._enum.IsTop}
      */
-    private String isTop;
+    private Integer isTop;
     /**
-     * 是否阅读 {@link NoticeReadMode}
+     * 是否阅读 {@link com.jfit.modules.notice._enum.NoticeReadMode}
      */
-    private String isRead;
+    private Integer isRead;
     /**
      * 通知发布人
      */
     private List<String> publishUserIds = new ArrayList<String>(0);
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
     public String getTitle() {
         return title;
@@ -81,19 +93,19 @@ public class NoticeQueryVo implements Serializable {
         this.endTime = endTime;
     }
 
-    public String getIsTop() {
+    public Integer getIsTop() {
         return isTop;
     }
 
-    public void setIsTop(String isTop) {
+    public void setIsTop(Integer isTop) {
         this.isTop = isTop;
     }
 
-    public String getIsRead() {
+    public Integer getIsRead() {
         return isRead;
     }
 
-    public void setIsRead(String isRead) {
+    public void setIsRead(Integer isRead) {
         this.isRead = isRead;
     }
 
