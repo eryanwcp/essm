@@ -6,23 +6,17 @@
 package com.eryansky.modules.notice.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
-import com.eryansky.common.utils.ConvertUtils;
 import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
-import com.eryansky.modules.notice._enum.ReceiveObjectType;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
-import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
 import com.eryansky.modules.notice.service.NoticeSendInfoService;
 import com.eryansky.modules.notice.service.NoticeService;
 import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.utils.AppConstants;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
