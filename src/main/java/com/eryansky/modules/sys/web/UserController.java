@@ -729,7 +729,7 @@ public class UserController extends SimpleController {
 
 
     /**
-     *
+     * 根据机构查询用户信息
      * @param organId 机构ID
      * @param roleId 角色
      * @param query 关键字
