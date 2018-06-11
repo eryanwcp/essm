@@ -239,7 +239,7 @@ public class Notice extends DataEntity<Notice> {
     @JsonIgnore
     public List<String> getFileIds() {
         if(Collections3.isEmpty(fileIds)){
-            this.fileIds = NoticeUtils.getNoticeFileIds(this.id);
+            this.fileIds = NoticeUtils.findFileIdsByNoticeId(this.id);
         }
         return fileIds;
     }
@@ -301,11 +301,11 @@ public class Notice extends DataEntity<Notice> {
     }
 
     public List<String> getNoticeReceiveUserIds(){
-        return NoticeUtils.getNoticeReceiveUserIds(this.id);
+        return NoticeUtils.findNoticeReceiveUserIds(this.id);
     }
 
     public List<String> getNoticeReceiveOrganIds(){
-        return NoticeUtils.getNoticeReceiveOrganIds(this.id);
+        return NoticeUtils.findNoticeReceiveOrganIds(this.id);
     }
     /**
      * 转发

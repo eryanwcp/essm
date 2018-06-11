@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.weixin.utils;
 
+import com.eryansky.common.utils.encode.EncodeUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.fastweixin.company.api.QYMessageAPI;
 import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
@@ -54,6 +55,38 @@ public class WeixinUtils {
                 .append("&redirect_uri=")
                 .append(toURL)
                 .append("&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
+        return url.toString();
+    }
+
+    /**
+     * 获取Oauth回调URL
+     * @param toURL 需要跳转的URL地址
+     * @param jsessionid
+     * @return
+     */
+    public static String getOauth2URLWithJSESSIONID(String toURL,String jsessionid){
+        return getOauth2URLWithJSESSIONID(WeixinConstants.getCropId(), toURL,jsessionid);
+    }
+
+    /**
+     * 获取Oauth回调URL
+     * @param cropID 企业号ID
+     * @param toURL 需要跳转的URL地址
+     * @param jsessionid
+     * @return
+     */
+    public static String getOauth2URLWithJSESSIONID(String cropID, String toURL,String jsessionid){
+        StringBuilder url = new StringBuilder();
+        String _toURL = toURL;
+        if(jsessionid != null){
+            _toURL += "?jsessionid="+jsessionid;
+        }
+        _toURL = EncodeUtils.urlEncode(_toURL);
+        url.append("https://open.weixin.qq.com/connect/oauth2/authorize?appid=")
+                .append(cropID)
+                .append("&redirect_uri=")
+                .append(_toURL);
+        url.append("&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
         return url.toString();
     }
 

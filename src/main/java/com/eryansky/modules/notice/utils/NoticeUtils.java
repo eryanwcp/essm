@@ -22,6 +22,8 @@ import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.utils.AppConstants;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -62,36 +64,25 @@ public class NoticeUtils {
     }
 
 
-    public static List<String> getNoticeFileIds(String noticeId) {
-        List<String> result = new ArrayList<String>(0);
+    public static List<String> findFileIdsByNoticeId(String noticeId) {
         if(StringUtils.isBlank(noticeId)){
-            return result;
+            return Collections.emptyList();
         }
         return noticeService.findFileIdsByNoticeId(noticeId);
     }
 
-    public static List<String> getNoticeReceiveUserIds(String noticeId) {
-        List<String> result = new ArrayList<String>(0);
+    public static List<String> findNoticeReceiveUserIds(String noticeId) {
         if(StringUtils.isBlank(noticeId)){
-            return result;
+            return Collections.emptyList();
         }
-        List<NoticeSendInfo> list = noticeSendInfoService.findNoticeSendInfos(noticeId, ReceiveObjectType.User.getValue());
-        if(Collections3.isNotEmpty(list)){
-            result = ConvertUtils.convertElementPropertyToList(list,"receiveObjectId");
-        }
-        return result;
+        return noticeSendInfoService.findUserIdsByNoticeId(noticeId);
     }
 
-    public static List<String> getNoticeReceiveOrganIds(String noticeId) {
-        List<String> result = new ArrayList<String>(0);
+    public static List<String> findNoticeReceiveOrganIds(String noticeId) {
         if(StringUtils.isBlank(noticeId)){
-            return result;
+            return Collections.emptyList();
         }
-        List<NoticeSendInfo> list = noticeSendInfoService.findNoticeSendInfos(noticeId, ReceiveObjectType.Organ.getValue());
-        if(Collections3.isNotEmpty(list)){
-            result = ConvertUtils.convertElementPropertyToList(list,"receiveObjectId");
-        }
-        return result;
+        return noticeSendInfoService.findOrganIdsByNoticeId(noticeId);
     }
 
 
