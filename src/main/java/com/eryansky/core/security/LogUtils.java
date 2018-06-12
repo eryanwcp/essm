@@ -5,7 +5,7 @@
  */
 package com.eryansky.core.security;
 
-import com.eryansky.common.utils.IpUtils;
+import com.eryansky.common.utils.net.IpUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

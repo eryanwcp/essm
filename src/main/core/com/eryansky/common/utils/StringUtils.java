@@ -9,10 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -761,6 +758,54 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
         }
         result.append(val.substring(1));
         return result.toString();
+    }
+
+
+    /**
+     * 高性能的Split，针对char的分隔符号，比JDK String自带的高效.
+     *
+     * copy from Commons Lange 3.5 StringUtils, 做如下优化:
+     *
+     * 1. 最后不做数组转换，直接返回List.
+     *
+     * 2. 可设定List初始大小.
+     *
+     * 3. preserveAllTokens 取默认值false
+     *
+     * @param expectParts 预估分割后的List大小，初始化数据更精准
+     *
+     * @return 如果为null返回null, 如果为""返回空数组
+     */
+    public static List<String> split(final String str, final char separatorChar, int expectParts) {
+        if (str == null) {
+            return null;
+        }
+
+        final int len = str.length();
+        if (len == 0) {
+            return Collections.emptyList();
+        }
+
+        final List<String> list = new ArrayList<String>(expectParts);
+        int i = 0;
+        int start = 0;
+        boolean match = false;
+        while (i < len) {
+            if (str.charAt(i) == separatorChar) {
+                if (match) {
+                    list.add(str.substring(start, i));
+                    match = false;
+                }
+                start = ++i;
+                continue;
+            }
+            match = true;
+            i++;
+        }
+        if (match) {
+            list.add(str.substring(start, i));
+        }
+        return list;
     }
 
 }

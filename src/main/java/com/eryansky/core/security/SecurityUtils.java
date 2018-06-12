@@ -8,7 +8,7 @@ package com.eryansky.core.security;
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.spring.SpringContextHolder;
-import com.eryansky.common.utils.IpUtils;
+import com.eryansky.common.utils.net.IpUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.collections.Collections3;
