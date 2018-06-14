@@ -93,6 +93,9 @@
             <if test="status != null and status !=''">
                 AND a.status = #{status}
             </if>
+            <if test="userType != null and userType !=''">
+                AND a.user_type = #{userType}
+            </if>
         </where>
         <choose>
             <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">

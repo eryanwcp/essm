@@ -214,13 +214,37 @@ public class UserService extends CrudService<UserDao, User> {
     }
 
     /**
-     * 获得所有可用用户
+     * 获得所有用户（正常）
+     * @return
+     */
+    public List<User> findAll(){
+        return findAll(DataEntity.STATUS_NORMAL,null);
+    }
+
+    /**
+     * 获得所有用户（正常）
      * @return
      */
     public List<User> findAllNormal(){
+        return findAll(DataEntity.STATUS_NORMAL,null);
+    }
+
+    /**
+     * 获得所有用户（包括已删除）
+     * @return
+     */
+    public List<User> findAllWidthDelete(){
+        return findAll(null,null);
+    }
+
+
+    public List<User> findAll(String status, String userType){
         User entity = new User();
+        entity.setStatus(status);
+        entity.setUserType(userType);
         return dao.findAllList(entity);
     }
+
 
     public List<String> findAllNormalUserIds(){
         Parameter parameter = new Parameter();
