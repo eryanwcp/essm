@@ -88,9 +88,25 @@ public class UserUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        OrganExtend organExtend = OrganUtils.getCompanyByUserId(userId);
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
         if(organExtend != null){
-            return organExtend.getId();
+            return organExtend.getCompanyId();
+        }
+        return null;
+    }
+
+    /**
+     * 根据userId查找用户所属单位ID
+     * @param userId 用户ID
+     * @return
+     */
+    public static String getHomeCompanyId(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getHomeCompanyId();
         }
         return null;
     }
@@ -104,9 +120,41 @@ public class UserUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        OrganExtend company = OrganUtils.getCompanyByUserId(userId);
-        if(company != null){
-            return company.getCode();
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getCompanyCode();
+        }
+        return null;
+    }
+
+    /**
+     * 根据userId查找用户所属单位编码
+     * @param userId 用户ID
+     * @return
+     */
+    public static String getHomeCompanyCode(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getHomeCompanyCode();
+        }
+        return null;
+    }
+
+    /**
+     * 根据userId查找用户所属单位编码
+     * @param userId 用户ID
+     * @return
+     */
+    public static String getOrganSysCode(String userId){
+        if(StringUtils.isBlank(userId)){
+            return null;
+        }
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(userId);
+        if(organExtend != null){
+            return organExtend.getSysCode();
         }
         return null;
     }

@@ -14,14 +14,12 @@ import com.eryansky.common.utils.UserAgentUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
-import com.eryansky.modules.sys.mapper.Post;
-import com.eryansky.modules.sys.mapper.Resource;
-import com.eryansky.modules.sys.mapper.Role;
-import com.eryansky.modules.sys.mapper.User;
+import com.eryansky.modules.sys.mapper.*;
 import com.eryansky.modules.sys.service.PostService;
 import com.eryansky.modules.sys.service.ResourceService;
 import com.eryansky.modules.sys.service.RoleService;
 import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.modules.sys.utils.OrganUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.security._enum.DeviceType;
 import com.eryansky.modules.sys._enum.DataScope;
@@ -335,10 +333,12 @@ public class SecurityUtils {
         sessionInfo.setLoginName(user.getLoginName());
         List<String> roleIds = roleService.findRoleIdsByUserId(user.getId());
         sessionInfo.setRoleIds(roleIds);
-        sessionInfo.setLoginOrganId(user.getDefaultOrganId());
-        sessionInfo.setLoginOrganName(UserUtils.getDefaultOrganName(user.getId()));
-        sessionInfo.setLoginCompanyCode(UserUtils.getCompanyCode(user.getId()));
-        sessionInfo.setLoginCompanyId(UserUtils.getCompanyId(user.getId()));
+        OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
+        sessionInfo.setLoginOrganId(organExtend.getId());
+        sessionInfo.setLoginOrganSysCode(organExtend.getSysCode());
+        sessionInfo.setLoginOrganName(organExtend.getName());
+        sessionInfo.setLoginCompanyId(organExtend.getCompanyId());
+        sessionInfo.setLoginCompanyCode(organExtend.getCompanyCode());
         return sessionInfo;
     }
 
