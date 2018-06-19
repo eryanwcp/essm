@@ -185,6 +185,17 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     }
 
     /**
+     * 查找所有（包括已删除）
+     * @return
+     */
+    public List<Organ> findAllWithDelete(){
+        Organ entity = new Organ();
+        entity.setStatus(null);
+        List<Organ> list = dao.findAllList(entity);
+        return list;
+    }
+
+    /**
      *
      * @param organIds 必须包含的机构ID
      * @param query 查询关键字
