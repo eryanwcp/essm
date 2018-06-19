@@ -351,7 +351,7 @@ public class DiskController extends SimpleController {
         ModelAndView modelAndView = new ModelAndView(
                 "modules/disk/disk-fileInput");
         Folder model = null;
-        if(FolderAuthorize.User.getValue().equals(folderAuthorize)){
+        if(FolderAuthorize.User.getValue().equals(folderId) || FolderAuthorize.User.getValue().equals(folderAuthorize)){
             String loginUserId = SecurityUtils.getCurrentUserId();
             model = folderService.initHideFolderAndSaveForUser(loginUserId);
         }else if (StringUtils.isNotBlank(folderId)) { // 选中文件夹
