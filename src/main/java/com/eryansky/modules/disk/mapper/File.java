@@ -7,6 +7,7 @@ import com.eryansky.core.web.upload.FileUploadUtils;
 import com.eryansky.modules.disk._enum.FileType;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.utils.AppConstants;
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 import java.io.Serializable;
@@ -208,6 +209,16 @@ public class File extends DataEntity<File> implements Serializable {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	/**
+	 * 文件下载路径
+	 */
+	public String getUrl() {
+		if(StringUtils.isNotBlank(id)){
+			return AppConstants.getAppURL() + AppConstants.getAdminPath() +"/disk/fileDownload/"+id;
+		}
+		return null;
 	}
 
 	/**
