@@ -24,7 +24,7 @@
         a.SUPER_MANAGER_USER_ID AS "superManagerUserId",
         a.sort AS "sort",
         a.parent_id AS "parent.id",
-		p.name AS "parent.name",
+        p.name AS "parent.name",
         a.PARENT_IDS AS "parentIds",
         a.AREA_ID AS "areaId",
         a.remark AS "remark"
@@ -101,6 +101,9 @@
         FROM t_sys_organ a
         <include refid="organJoins"/>
         <where>
+            <if test="status != null and status !=''">
+                AND a.status = #{status}
+            </if>
         </where>
         <choose>
             <when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
@@ -204,6 +207,12 @@
                     #{item}
                 </foreach>
             </if>
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
             <choose>
                 <when test="parentId != null and parentId !=''">
                     AND a.parent_id = #{parentId}
@@ -216,14 +225,39 @@
         ORDER BY a.sort ASC
     </select>
 
+
+    <select id="findChildCount" resultType="java.lang.Integer">
+        SELECT
+        count(*)
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            a.status = #{status}
+            AND a.parent_id = #{parentId}
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
     <select id="findChildIds" resultType="java.lang.String">
         SELECT
         a.id
         FROM t_sys_organ a
+        <include refid="organJoins"/>
         <where>
             <if test="status != null and status.size() !=0">
                 AND a.status IN
                 <foreach collection="status" open="(" separator="," close=")" item="item">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="types != null and types.size() !=0">
+                AND a.type IN
+                <foreach collection="types" open="(" separator="," close=")" item="item">
                     #{item}
                 </foreach>
             </if>
@@ -507,7 +541,7 @@
         PARENT_IDS = #{parentIds},
         AREA_ID = #{areaId},
         remark = #{remark}
-         WHERE id = #{id}
+        WHERE id = #{id}
     </update>
 
     <update id="updateParentIds">

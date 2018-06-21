@@ -90,12 +90,8 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
     @Transactional(readOnly = false)
     public void deleteByIds(Collection<String> ids) {
-        if(Collections3.isNotEmpty(ids)){
-            for(String id :ids){
-                deleteById(id);
-            }
-        }else{
-            logger.warn("参数[ids]为空.");
+        for(String id:ids){
+            deleteById(id);
         }
     }
 
@@ -223,7 +219,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         return findWithInclude(organIds,query,organTypes);
     }
 
-
     /**
      * 查找所有单位
      * @return
@@ -245,7 +240,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         Iterator<Organ> iterator = organs.iterator();
         while (iterator.hasNext()){
             Organ organ = iterator.next();
-            TreeNode treeNode = this.organToTreeNode(organ,null);
+            TreeNode treeNode = this.organToTreeNode(organ,false,true);
             tempTreeNodes.add(treeNode);
         }
         List<TreeNode> result = AppUtils.toTreeTreeNodes(tempTreeNodes);
@@ -435,22 +430,36 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @return
      */
     public TreeNode organToTreeNode(Organ organ, Boolean addUser){
+        return organToTreeNode(organ,addUser,null);
+    }
+
+
+    /**
+     * 机构转TreeNode
+     * @param organ 机构
+     * @param addUser 状态栏考虑用户
+     * @return
+     */
+    public TreeNode organToTreeNode(Organ organ, Boolean addUser,Boolean onlyCompany){
         TreeNode treeNode = new TreeNode(organ.getId(),organ.getName());
-        if(StringUtils.isBlank(organ.getParentId())){
+        if(StringUtils.isBlank(organ.getParentId()) || "0".equals(organ.getParentId())){
             treeNode.setIconCls(ICON_ORGAN_ROOT);
         }else{
             treeNode.setIconCls(ICON_GROUP);
         }
-        List<String> childOrganIds = findChildIds(organ.getId());
         if(addUser != null && addUser){
+            List<Organ> childOrgans = findChild(organ.getId());
             List<User> childUsers = userService.findOrganUsers(organ.getId());
-            treeNode.setState((Collections3.isNotEmpty(childOrganIds) || Collections3.isNotEmpty(childUsers)) ? TreeNode.STATE_CLOASED:TreeNode.STATE_OPEN);
+            treeNode.setState((Collections3.isNotEmpty(childOrgans) || Collections3.isNotEmpty(childUsers)) ? TreeNode.STATE_CLOASED:TreeNode.STATE_OPEN);
+        }else if(onlyCompany != null && onlyCompany){
+            List<Organ> childCompanys = findChildCompany(organ.getId());
+            treeNode.setState(Collections3.isNotEmpty(childCompanys)? TreeNode.STATE_CLOASED:TreeNode.STATE_OPEN);
         }else{
             treeNode.setState(organ.getState());
         }
         treeNode.setpId(organ.getParentId());
         treeNode.addAttribute("code", organ.getCode());
-        treeNode.addAttribute("sysCode", organ.getSysCode());
+//        treeNode.addAttribute("sysCode", organ.getSysCode());
         treeNode.addAttribute("type", organ.getType());
         treeNode.addAttribute("nType", "o");//节点类型 机构
         return treeNode;
@@ -522,9 +531,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         return t;
     }
 
-
-
-
     /**
      * 查找根节点
      * @return
@@ -552,7 +558,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @param parentId
      *            父节点ID(当该参数为null的时候查询顶级机构列表)
      * @param status
-     *            数据状态 @see com.eryansky.common.orm.entity.StatusState
+     *            数据状态 @see com.eryansky.common.orm._enum.StatusState
      *            <br>status传null则使用默认值 默认值:StatusState.NORMAL.getValue()
      * @return
      */
@@ -581,11 +587,63 @@ public class OrganService extends TreeService<OrganDao, Organ> {
             status.add(StatusState.LOCK.getValue());
             status.add(StatusState.AUDIT.getValue());
         }
+        return findChild(parentId,status,null);
+    }
+
+
+    public List<Organ> findChild(String parentId){
+        //默认值 正常
+        List<String> status = Lists.newArrayList();
+        status.add(StatusState.NORMAL.getValue());
+        return findChild(parentId,status,null);
+    }
+
+    public List<Organ> findChildCompany(String parentId){
+        //默认值 正常
+        List<String> status = Lists.newArrayList();
+        status.add(StatusState.NORMAL.getValue());
+        List<String> types = Lists.newArrayList();
+        types.add(OrganType.organ.getValue());
+        return findChild(parentId,status,types);
+    }
+
+
+
+    public List<Organ> findChild(String parentId,Collection<String> types){
+        //默认值 正常
+        List<String> list = Lists.newArrayList();
+        list.add(StatusState.NORMAL.getValue());
+        return findChild(parentId,list,types);
+    }
+
+
+    /**
+     * 数据列表
+     * @param parentId
+     * @param status
+     * @param types
+     * @return
+     */
+    public List<Organ> findChild(String parentId,Collection<String> status,Collection<String> types){
         Parameter parameter = new Parameter();
-        parameter.put(DataEntity.FIELD_STATUS,status);
         parameter.put("parentId",parentId);
+        parameter.put(DataEntity.FIELD_STATUS,status);
+        parameter.put("types",types);
         return dao.findChild(parameter);
     }
+
+    /**
+     * 查找子节点数量
+     * @param parentId
+     * @return
+     */
+    public Integer findChildCount(String parentId){
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("parentId",parentId);
+        return dao.findChildCount(parameter);
+    }
+
 
 
     public List<String> findChildIds(String parentId){
@@ -705,7 +763,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @param types 机构类型
      * @return
      */
-    public List<Organ> findChilds(String id,List<String> types){
+    public List<Organ> findChilds(String id,Collection<String> types){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME, AppConstants.getJdbcType());
@@ -800,7 +858,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * @param types 机构类型
      * @return
      */
-    public List<Organ> findOwnerAndChilds(String id,Collection<String> types){
+    public List<Organ> findOwnerAndChilds(String id,List<String> types){
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
         parameter.put(BaseInterceptor.DB_NAME,AppConstants.getJdbcType());
@@ -810,8 +868,10 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     }
 
 
+
+
     /**
-     * 查找下级所有单位
+     * 查找本机以及下级所有单位
      * @param id 机构ID
      * @return
      */
@@ -838,7 +898,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
 
         return AppUtils.toTreeTreeNodes(tempTreeNodes);
     }
-
 
     /**
      * 查找下级所有部门
@@ -898,7 +957,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         types.add(OrganType.department.getValue());
         return findOwnerAndChildsIds(id,types);
     }
-
 
     /**
      * 快速查找方法

@@ -34,7 +34,11 @@ public interface OrganDao extends TreeDao<Organ> {
 
     List<String> findOwnerAndChildsIds(Parameter parameter);
 
+    Integer findChildCount(Parameter parameter);
+
     List<Organ> findChild(Parameter parameter);
+
+
     List<String> findChildIds(Parameter parameter);
 
     List<Organ> findChilds(Parameter parameter);
@@ -70,6 +74,7 @@ public interface OrganDao extends TreeDao<Organ> {
     Organ getByCode(Parameter parameter);
 
     Organ getDeleteByIdOrCode(Parameter parameter);
+
 
     Organ getBySysCode(Parameter parameter);
 

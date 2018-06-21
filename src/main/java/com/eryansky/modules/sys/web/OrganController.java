@@ -17,6 +17,7 @@ import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.core.security.annotation.RequiresPermissions;
+import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.modules.sys._enum.DataScope;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.modules.sys._enum.OrganType;
@@ -265,13 +266,13 @@ public class OrganController extends SimpleController {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         String _parentId = parentId;
         if(StringUtils.isBlank(parentId)){
-            String organId = sessionInfo.getLoginOrganId();
+            String organId = sessionInfo != null ? sessionInfo.getLoginOrganId():null;
             if(SecurityUtils.isCurrentUserAdmin() || (StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.ALL.getValue()))){
                 organId = null;
-            }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY_AND_CHILD.getValue()))){
+            }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.COMPANY_AND_CHILD.getValue())) && sessionInfo != null){
                 organId = UserUtils.getCompanyId(sessionInfo.getUserId());
 
-            }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.OFFICE_AND_CHILD.getValue()))){
+            }else if((StringUtils.isNotBlank(dataScope)  && dataScope.equals(DataScope.OFFICE_AND_CHILD.getValue())) && sessionInfo != null){
                 organId = UserUtils.getDefaultOrganId(sessionInfo.getUserId());
             }
             _parentId = organId;
@@ -339,14 +340,51 @@ public class OrganController extends SimpleController {
      * @param response
      * @return
      */
+    @RequiresUser(required = false)
     @ResponseBody
     @RequestMapping(value = "treeData")
     public List<TreeNode> treeData(@RequestParam(required = false) String extId,
-                                              @RequestParam(required = false) Integer type,
-                                              @RequestParam(required = false) Integer grade,
-                                              HttpServletResponse response) {
+                                   @RequestParam(required = false) Integer type,
+                                   @RequestParam(required = false) Integer grade,
+                                   HttpServletResponse response) {
         response.setContentType("application/json; charset=UTF-8");
         List<TreeNode> mapList = organService.findOrganTree(null, extId);
+        return mapList;
+    }
+
+    /**
+     * 查找所有机构类型机构 {@link OrganType#organ}
+     *
+     * @param response
+     * @return
+     */
+    @RequiresUser(required = false)
+    @ResponseBody
+    @RequestMapping(value = "treeCompanyData")
+    public List<TreeNode> treeCompanyData(
+            HttpServletResponse response) {
+        response.setContentType("application/json; charset=UTF-8");
+        List<TreeNode> mapList = organService.findCompanysTree();
+        return mapList;
+    }
+
+    /**
+     * 查找自己和子机构机构类型机构 {@link OrganType#organ}
+     * @param parentId
+     * @param response
+     * @return
+     */
+    @RequiresUser(required = false)
+    @ResponseBody
+    @RequestMapping(value = "ownerAndChildsCompanysData")
+    public List<TreeNode> ownerAndChildsCompanysData(String parentId, HttpServletResponse response) {
+        response.setContentType("application/json; charset=UTF-8");
+        String _parentId = parentId;
+        if(StringUtils.isBlank(_parentId)){
+            SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
+            _parentId = SecurityUtils.isPermittedMaxRoleDataScope() ? null:sessionInfo.getLoginCompanyId();
+        }
+        List<TreeNode> mapList = organService.findOwnerAndChildsCompanysTree(_parentId);
         return mapList;
     }
 
