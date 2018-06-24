@@ -62,7 +62,7 @@ public class DiskUtils {
     /**
      * 文件虚拟路径 用于文件转发
      */
-    public static final String FILE_VIRTUAL_PATH = "disk/file/";
+    public static final String FILE_VIRTUAL_PATH = "disk/fileDownload/";
 
 
     /**
@@ -626,6 +626,12 @@ public class DiskUtils {
                 contentType = "image/bmp";
             }else if(displayName.endsWith(".mp4")){
                 contentType = "video/mp4";
+            }else if(displayName.endsWith(".m4v")){
+                contentType = "video/m4v";
+            }else if(displayName.endsWith(".webm")){
+                contentType = "video/webm";
+            }else if(displayName.endsWith(".ogg")){
+                contentType = "video/ogg";
             }
         }
 

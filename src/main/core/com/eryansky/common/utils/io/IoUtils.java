@@ -106,4 +106,42 @@ public class IoUtils extends IOUtils {
             // Exception is silently ignored
         }
     }
+
+    /**
+     * 流拷贝（指定位置）
+     * @param input
+     * @param output
+     * @param start
+     * @param end
+     * @throws IOException
+     */
+    public static void copy(InputStream input, OutputStream output, long start, long end) throws IOException {
+        long skipped = 0;
+        skipped = input.skip(start);
+
+        if (skipped < start) {
+            throw new IOException("skip fail: skipped=" + Long.valueOf(skipped)+ ", start=" + Long.valueOf(start));
+        }
+        long bytesToRead = end - start + 1;
+        byte buffer[] = new byte[2048];
+        int len = buffer.length;
+        while ((bytesToRead > 0) && (len >= buffer.length)) {
+            try {
+                len = input.read(buffer);
+                if (bytesToRead >= len) {
+                    output.write(buffer, 0, len);
+                    bytesToRead -= len;
+                } else {
+                    output.write(buffer, 0, (int) bytesToRead);
+                    bytesToRead = 0;
+                }
+            } catch (IOException e) {
+                len = -1;
+                throw e;
+            }
+            if (len < buffer.length)
+                break;
+        }
+
+    }
 }
