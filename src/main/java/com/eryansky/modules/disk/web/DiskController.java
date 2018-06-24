@@ -563,8 +563,7 @@ public class DiskController extends SimpleController {
 
     private ModelAndView downloadSingleFileUtil(HttpServletResponse response,
                                         HttpServletRequest request, File file) {
-        ActionException fileNotFoldException = new ActionException(
-                "文件不存在，已被删除或移除。");
+        ActionException fileNotFoldException = new ActionException("文件不存在，已被删除或移除。");
         if (file == null) {
             throw fileNotFoldException;
         }

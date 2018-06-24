@@ -624,6 +624,8 @@ public class DiskUtils {
                 contentType = "image/gif";
             }else if(displayName.endsWith(".bmp")){
                 contentType = "image/bmp";
+            }else if(displayName.endsWith(".mp4")){
+                contentType = "video/mp4";
             }
         }
 
