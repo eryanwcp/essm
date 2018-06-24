@@ -590,14 +590,14 @@ public class DiskController extends SimpleController {
         response.setHeader("Accept-Ranges", "bytes");
         // 必须先设置content-length再设置header
         response.addHeader("Content-Range", "bytes " + pastLength + "-" + toLength + "/" + fileLength);
-
-        response.setBufferSize(2048);
+        int bufferSize = 2048;
+        response.setBufferSize(bufferSize);
 
         InputStream istream = null;
         OutputStream os = null;
         try {
             os = response.getOutputStream();
-            istream = new BufferedInputStream(new FileInputStream(diskFile), 2048);
+            istream = new BufferedInputStream(new FileInputStream(diskFile), bufferSize);
             try {
                 IoUtils.copy(istream, os, pastLength, toLength);
             } catch (IOException ie) {
@@ -614,13 +614,7 @@ public class DiskController extends SimpleController {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
-            if (istream != null) {
-                try {
-                    istream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
+            IoUtils.closeSilently(istream);
         }
         return null;
     }
