@@ -34,7 +34,7 @@
     <!--自定义登录用户Session信息-->
     <cache name="sessionCache" maxEntriesLocalHeap="10000" overflowToDisk="true"
            eternal="true" timeToLiveSeconds="0" timeToIdleSeconds="0"
-           diskPersistent="true" diskExpiryThreadIntervalSeconds="600">
+           diskExpiryThreadIntervalSeconds="600">
         <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
            properties="replicateAsynchronously=true, replicatePuts=true, replicateUpdates=true,replicateUpdatesViaCopy=false, replicateRemovals=true"/>
     </cache>
