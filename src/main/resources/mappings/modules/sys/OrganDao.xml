@@ -673,4 +673,25 @@
         ORDER BY a.sort ASC
     </select>
 
+
+    <select id="findByWhereSQL" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        <where>
+            ${whereSQL}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+
+    <select id="findBySql" resultType="Organ">
+        SELECT
+        <include refid="organColumns"/>
+        FROM t_sys_organ a
+        <include refid="organJoins"/>
+        ${sql}
+    </select>
+
 </mapper>

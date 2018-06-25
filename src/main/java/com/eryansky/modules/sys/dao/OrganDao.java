@@ -11,6 +11,7 @@ import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.core.orm.mybatis.dao.TreeDao;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.mapper.User;
 
 import java.util.List;
 
@@ -115,5 +116,16 @@ public interface OrganDao extends TreeDao<Organ> {
      */
     List<String> findDepartmentAndGroupOrganIdsByCompanyId(Parameter parameter);
 
-
+    /**
+     * 自定义SQL查询
+     * @param parameter
+     * @return
+     */
+    List<Organ> findByWhereSQL(Parameter parameter);
+    /**
+     * 自定义SQL查询
+     * @param parameter
+     * @return
+     */
+    List<Organ> findBySql(Parameter parameter);
 }

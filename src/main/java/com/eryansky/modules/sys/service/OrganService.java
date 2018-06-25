@@ -1227,4 +1227,26 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     }
 
     /*机构扩展表*/
+
+
+    /**
+     * 自定义SQL查询
+     * @param whereSQL
+     * @return
+     */
+    public List<Organ> findByWhereSQL(String whereSQL){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("whereSQL",whereSQL);
+        return dao.findByWhereSQL(parameter);
+    }
+    /**
+     * 自定义SQL查询
+     * @param sql
+     * @return
+     */
+    public List<Organ> findBySql(String sql){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("sql",sql);
+        return dao.findBySql(parameter);
+    }
 }

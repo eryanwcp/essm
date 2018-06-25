@@ -517,6 +517,26 @@
     </select>
 
 
+
+    <select id="findByWhereSQL" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        <where>
+            ${whereSQL}
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
+
+    <select id="findBySql" resultType="User">
+        SELECT
+        <include refid="userColumns"/>
+        FROM t_sys_user a
+        ${sql}
+    </select>
+
+
     <insert id="insert">
         INSERT INTO t_sys_user(
         id,

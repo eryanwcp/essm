@@ -861,4 +861,25 @@ public class UserService extends CrudService<UserDao, User> {
         }
     }
 
+    /**
+     * 自定义SQL查询
+     * @param whereSQL
+     * @return
+     */
+    public List<User> findByWhereSQL(String whereSQL){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("whereSQL",whereSQL);
+        return dao.findByWhereSQL(parameter);
+    }
+    /**
+     * 自定义SQL查询
+     * @param sql
+     * @return
+     */
+    public List<User> findBySql(String sql){
+        Parameter parameter = Parameter.newParameter();
+        parameter.put("sql",sql);
+        return dao.findBySql(parameter);
+    }
+
 }
