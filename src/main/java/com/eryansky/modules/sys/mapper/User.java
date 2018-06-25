@@ -11,6 +11,7 @@ import com.eryansky.common.utils.Pinyin4js;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -179,6 +180,10 @@ public class User extends DataEntity<User> implements IUser {
 
     public String getPhoto() {
         return this.photo;
+    }
+
+    public String getPhotoUrl() {
+        return DiskUtils.getFileUrl(photo);
     }
 
     public void setEmail(String email) {

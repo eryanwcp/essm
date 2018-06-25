@@ -7,11 +7,6 @@ $(function() {
     loadOrgan();
     loadSex();
     uploadify();
-    if($('#photo').val()){
-        $('#photo_pre').attr("src",ctx + $('#photo').val());
-    }
-
-    $('#photo_pre').show();
     $(".uploadify").css({'display': 'inline-block', 'height': '24px', 'padding-right': '18px', 'outline': 'none'});
     if(modelId == ""){  //新增
         setSortValue();
@@ -68,10 +63,10 @@ function uploadify() {
         //上传到服务器，服务器返回相应信息到data里
         onUploadSuccess: function (file, data, response) {
             data = eval("(" + data + ")");
-            if(data.code != undefined && data.code == 1){
-                $('#photo_pre').attr("src",ctx + data.obj);
+            if(data.code == 1){
+                $('#photo_pre').attr("src",data['obj']['url']);
                 $('#photo_pre').show();
-                $("#photo").val(data.obj);
+                $("#photo").val(data['obj']['id']);
             }
             $('#' + file.id).find('.data').html(data.msg);
 
@@ -79,7 +74,7 @@ function uploadify() {
             var uploadify = this;
             var cancel = $('#file-queue .uploadify-queue-item[id="' + file.id + '"]').find(".cancel a");
             if (cancel) {
-                cancel.attr("rel", data.obj);
+                cancel.attr("rel", data['obj']['id']);
                 cancel.click(function() {
                     $('#' + file.id).empty();
                     delete uploadify.queueData.files[file.id]; //删除上传组件中的附件队列

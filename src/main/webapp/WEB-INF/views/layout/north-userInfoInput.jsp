@@ -5,7 +5,7 @@
 <script type="text/javascript">
     var userJson = ${userJson};
     var userinfo_form;
-    var jsessionid = "${sessionInfo.sessionId}";
+    var jsessionid = '${sessionInfo.sessionId}';
     $(function () {
         up();
         userinfo_form = $('#userinfo_form').form({
@@ -38,10 +38,7 @@
                 }
             }
         }).form('load', userJson);
-        var path = userJson.photo;
-        if (path) {
-            $('#photo_pre').attr("src", ctx + path);
-        }
+        $('#photo_pre').attr("src", userJson['photoUrl']);
         $('#photo_pre').show();
         $(".uploadify").css({'display': 'inline-block', 'height': '24px', 'padding-right': '18px', 'outline': 'none'});
         loadSex();
@@ -73,9 +70,9 @@
             onUploadSuccess: function (file, data, response) {
                 data = eval("(" + data + ")");
                 if(data.code != undefined && data.code == 1){
-                    $('#photo_pre').attr("src","${_ctx}" + data.obj);
+                    $('#photo_pre').attr("src",data['obj']['url']);
                     $('#photo_pre').show();
-                    $("#photo").val(data.obj);
+                    $("#photo").val(data['obj']['id']);
                 }
                 $('#' + file.id).find('.data').html(data.msg);
 
@@ -83,7 +80,7 @@
                 var uploadify = this;
                 var cancel = $('#file-queue .uploadify-queue-item[id="' + file.id + '"]').find(".cancel a");
                 if (cancel) {
-                    cancel.attr("rel", data.obj);
+                    cancel.attr("rel", data['obj']['id']);
                     cancel.click(function() {
                         $('#' + file.id).empty();
                         delete uploadify.queueData.files[file.id]; //删除上传组件中的附件队列

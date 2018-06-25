@@ -60,7 +60,7 @@
         <div>
             <label>头像:</label>
             <input id="photo" name="photo" readonly="readonly" value="${model.photo}" style="display: none" />
-            <img id="photo_pre" class="img-rounded" src="" alt="头像" style="width: 64px; height: 64px;">
+            <img id="photo_pre" class="img-rounded" src="${model.photoUrl}" alt="头像" style="width: 64px; height: 64px;">
             <input id="file" name="file"  multiple="true" >
         </div>
         <div>

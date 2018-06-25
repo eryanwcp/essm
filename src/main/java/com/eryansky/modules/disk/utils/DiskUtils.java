@@ -461,6 +461,20 @@ public class DiskUtils {
         return AppConstants.getAdminPath() + "/" + FILE_VIRTUAL_PATH + file.getId()+ "."+file.getFileSuffix();
     }
 
+    /**
+     * 获取文件路径
+     * @param fileId
+     * @return
+     */
+    public static String getFileUrl(String fileId){
+        File file = getFile(fileId);
+        if(file != null){
+            return file.getUrl();
+        }
+        return null;
+    }
+
+
 
     public static java.io.File getDiskFile(String fileId){
         if(fileId == null){
