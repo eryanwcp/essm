@@ -102,6 +102,10 @@ public class Notice extends DataEntity<Notice> {
      */
     private String receiveScope;
 
+    /**
+     * 查询条件
+     */
+    private String query;
 
     public Notice() {
         super();
@@ -307,6 +311,15 @@ public class Notice extends DataEntity<Notice> {
     public List<String> getNoticeReceiveOrganIds(){
         return NoticeUtils.findNoticeReceiveOrganIds(this.id);
     }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
     /**
      * 转发
      * @return
