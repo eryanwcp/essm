@@ -226,6 +226,7 @@ public class RoleController extends SimpleController {
     public ModelAndView selectPage(String roleId) {
         ModelAndView modelAndView = new ModelAndView("modules/sys/user-select");
         List<User> users = null;
+//        List<User> users = userService.findUsersByRoleId(roleId);
         List<String> excludeUserIds = userService.findUserIdsByRoleId(roleId);
         modelAndView.addObject("users", users);
         modelAndView.addObject("excludeUserIds", excludeUserIds);

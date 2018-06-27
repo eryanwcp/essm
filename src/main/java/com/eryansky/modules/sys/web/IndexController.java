@@ -47,7 +47,7 @@ public class IndexController extends SimpleController {
         modelAnView.addObject("user", sessionUser);
         String userPhoto = null;
         if(StringUtils.isNotBlank(sessionUser.getPhoto())){
-            userPhoto = SpringMVCHolder.getRequest().getContextPath()+ sessionUser.getPhoto();
+            userPhoto = sessionUser.getPhotoUrl();
         }else{
             userPhoto = SpringMVCHolder.getRequest().getContextPath()+"/static/img/icon_boy.png";
         }

@@ -234,7 +234,7 @@
                 )
             </if>
             <if test="excludeUserIds != null and excludeUserIds.size() != 0">
-                AND o.id NOT IN
+                AND a.id NOT IN
                 <foreach collection="excludeUserIds" item="item" open="(" separator="," close=")">
                     #{item}
                 </foreach>
@@ -413,7 +413,7 @@
         LEFT JOIN t_sys_role r ON r.id = ur.role_id
         <where>
             a.status = #{status}
-            AND r.id = #{roleId}}
+            AND r.id = #{roleId}
         </where>
         ORDER BY a.sort ASC
     </select>

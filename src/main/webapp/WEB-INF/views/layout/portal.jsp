@@ -11,7 +11,7 @@
 	border-bottom:1px solid #ccc;
 }
 </style>
-<script src="${ctxStatic}/js/easyui-${ev}/datagridview/datagrid-bufferview.js"></script>
+<script src="${ctxStatic}/js/easyui/datagridview/datagrid-bufferview.js"></script>
 <link href="${ctxStatic}/js/bootstrap/2.3.2/custom/bootstrap.css" rel="stylesheet">
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jplayer/jquery.jplayer.min.js?_=${sysInitTime}" charset="utf-8"></script>
 <script type="text/javascript" src="${ctxStatic}/app/layout/portal${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>

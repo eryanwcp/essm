@@ -972,6 +972,10 @@ function move(up){
             }
 
         }
+        if(!upUserId || !downUserId){
+            $.messager.progress('close');
+            return false;
+        }
         $.ajax({
             url: ctxAdmin+'/sys/user/changeOrderNo',
             type: 'post',

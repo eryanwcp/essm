@@ -5,10 +5,10 @@
 <head>
 <title>essm桌面版</title>
 <%@ include file="/common/meta.jsp"%>
-    <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/app/app.css?_=${sysInitTime}" />
-    <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/app/jquery.app.js?_=${sysInitTime}" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui/extend/app/app.css?_=${sysInitTime}" />
+    <script type="text/javascript" src="${ctxStatic}/js/easyui/extend/app/jquery.app.js?_=${sysInitTime}" charset="utf-8"></script>
     <script type="text/javascript" src="${ctxStatic}/js/session-keep.js?_=${sysInitTime}" charset="utf-8"></script>
-    <script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/app/initApp.js?_=${sysInitTime}" charset="utf-8"></script>
+    <script type="text/javascript" src="${ctxStatic}/js/easyui/extend/app/initApp.js?_=${sysInitTime}" charset="utf-8"></script>
     <%--<script type="text/javascript">--%>
         <%--$(function(){--%>
             <%--$.parser.parse();--%>
