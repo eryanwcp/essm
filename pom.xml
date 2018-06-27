@@ -22,12 +22,12 @@
         <log4j.version>1.2.17</log4j.version>
         <commons-lang2.version>2.5</commons-lang2.version>
         <commons-lang3.version>3.5</commons-lang3.version>
-        <commons-io.version>2.4</commons-io.version>
-        <commons-codec.version>1.9</commons-codec.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-codec.version>1.10</commons-codec.version>
         <commons-fileupload.version>1.3.1</commons-fileupload.version>
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
         <httpcomponents.version>4.5.3</httpcomponents.version>
-        <jackson.version>2.8.6</jackson.version>
+        <jackson.version>2.9.6</jackson.version>
         <xstream.version>1.4.8</xstream.version>
         <guava.version>17.0</guava.version>
         <dozer.version>5.4.0</dozer.version>
@@ -37,7 +37,6 @@
         <quartz.version>2.2.1</quartz.version>
         <aspectj.version>1.7.4</aspectj.version>
 
-        <ckfinder.version>2.3</ckfinder.version>
         <sitemesh.version>2.4.2</sitemesh.version>
 
         <!-- jdbc driver setting -->
@@ -55,6 +54,18 @@
 
     <repositories>
         <!-- 如有Nexus私服, 取消注释并指向正确的服务器地址.-->
+        <repository>
+            <id>jfit-nexus</id>
+            <name>Team Nexus Repository</name>
+            <!--<url>http://www.jfit.com.cn/nexus/content/groups/public</url>-->
+            <url>http://10.36.98.231:8081/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>spring</id>
             <name>Team spring Nexus Repository</name>
@@ -471,11 +482,6 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-scratchpad</artifactId>
             <version>${poi.version}</version>
         </dependency>
         <!--<dependency>-->
