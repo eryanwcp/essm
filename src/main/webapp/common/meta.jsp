@@ -21,19 +21,19 @@
 <%--<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/themes/icon.css" />--%>
 <link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/easyui-icon${yuicompressor}.css" />
 <script type="text/javascript" src="${ctxStatic}/js/My97DatePicker/WdatePicker.js" charset="utf-8"></script>
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/jquery.easyui.mine${yuicompressor}.js" charset="utf-8"></script>
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
+<script type="text/javascript" src="${ctxStatic}/js/easyui/jquery.easyui.mine${yuicompressor}.js" charset="utf-8"></script>
+<script type="text/javascript" src="${ctxStatic}/js/easyui/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
 
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/my97/my97${yuicompressor}.css" />
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/my97/jquery.easyui.my97${yuicompressor}.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui/extend/my97/my97${yuicompressor}.css" />
+<script type="text/javascript" src="${ctxStatic}/js/easyui/extend/my97/jquery.easyui.my97${yuicompressor}.js" charset="utf-8"></script>
 
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/portal/portal${yuicompressor}.css">
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/portal/jquery.portal${yuicompressor}.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui/portal/portal${yuicompressor}.css">
+<script type="text/javascript" src="${ctxStatic}/js/easyui/portal/jquery.portal${yuicompressor}.js" charset="utf-8"></script>
 
-<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui-${ev}/extend/icon/eu-icon${yuicompressor}.css?_=${sysInitTime}" />
+<link rel="stylesheet" type="text/css" href="${ctxStatic}/js/easyui/extend/icon/eu-icon${yuicompressor}.css?_=${sysInitTime}" />
 <%-- jQuery方法扩展 --%>
 <script type="text/javascript" src="${ctxStatic}/js/jquery/jquery-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <%-- easyui扩展 --%>
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/js/easyui-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
+<script type="text/javascript" src="${ctxStatic}/js/easyui/extend/js/easyui-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
 <%-- easyui自定义表单校验扩展 --%>
-<script type="text/javascript" src="${ctxStatic}/js/easyui-${ev}/extend/js/validatebox-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
+<script type="text/javascript" src="${ctxStatic}/js/easyui/extend/js/validatebox-extend${yuicompressor}.js?_=${sysInitTime}" charset="utf-8"></script>
