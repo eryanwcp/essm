@@ -20,12 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 import com.eryansky.common.excel.annotation.Excel;
 
@@ -310,16 +305,16 @@ public class ExportExcel<T> {
 	public static HSSFCellStyle getTitleStyle(HSSFWorkbook workbook){
 		// 产生Excel表头
 				 HSSFCellStyle titleStyle = workbook.createCellStyle();
-		 titleStyle.setBorderBottom(HSSFCellStyle.BORDER_DOUBLE);    //设置边框样式
-        titleStyle.setBorderLeft((short)2);     //左边框
-        titleStyle.setBorderRight((short)2);    //右边框
-        titleStyle.setBorderTop((short)2);     //左边框
-        titleStyle.setBorderBottom((short)2);    //右边框
-        titleStyle.setBorderTop(HSSFCellStyle.BORDER_DOUBLE);    //顶边框
+		 titleStyle.setBorderBottom(BorderStyle.DOUBLE);    //设置边框样式
+        titleStyle.setBorderLeft(BorderStyle.MEDIUM);     //左边框
+        titleStyle.setBorderRight(BorderStyle.MEDIUM);    //右边框
+        titleStyle.setBorderTop(BorderStyle.MEDIUM);     //左边框
+        titleStyle.setBorderBottom(BorderStyle.MEDIUM);    //右边框
+        titleStyle.setBorderTop(BorderStyle.DOUBLE);    //顶边框
         titleStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);    //填充的背景颜色
-        titleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+        titleStyle.setAlignment(HorizontalAlignment.CENTER);
         
-        titleStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);    //填充图案
+        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);    //填充图案
 	     
 		return titleStyle;
 	}
@@ -327,12 +322,12 @@ public class ExportExcel<T> {
 	public static HSSFCellStyle getTwoStyle(HSSFWorkbook workbook){
 		// 产生Excel表头
 		 HSSFCellStyle style = workbook.createCellStyle();
-		 style.setBorderLeft((short)1);     //左边框
-		 style.setBorderRight((short)1);    //右边框
-		 style.setBorderBottom((short)1);
-		 style.setBorderTop((short)1);
+		 style.setBorderLeft(BorderStyle.THIN);     //左边框
+		 style.setBorderRight(BorderStyle.THIN);    //右边框
+		 style.setBorderBottom(BorderStyle.THIN);
+		 style.setBorderTop(BorderStyle.THIN);
 		 style.setFillForegroundColor(HSSFColor.LIGHT_TURQUOISE.index);    //填充的背景颜色
-		 style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);    //填充图案
+		 style.setFillPattern(FillPatternType.SOLID_FOREGROUND);    //填充图案
 		return style;
 	}
 	
@@ -340,10 +335,10 @@ public class ExportExcel<T> {
 		// 产生Excel表头
 		// 产生Excel表头
 		 HSSFCellStyle style = workbook.createCellStyle(); 
-		 style.setBorderLeft((short)1);     //左边框
-		 style.setBorderRight((short)1);    //右边框
-		 style.setBorderBottom((short)1);
-		 style.setBorderTop((short)1); 
+		 style.setBorderLeft(BorderStyle.THIN);     //左边框
+		 style.setBorderRight(BorderStyle.THIN);    //右边框
+		 style.setBorderBottom(BorderStyle.THIN);
+		 style.setBorderTop(BorderStyle.THIN);
 		return style;
 	}
 	
