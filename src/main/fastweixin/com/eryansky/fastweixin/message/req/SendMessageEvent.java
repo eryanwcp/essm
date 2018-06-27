@@ -1,9 +1,11 @@
 package com.eryansky.fastweixin.message.req;
 
 /**
- * Created by jileilei on 15/8/10.
+ * 发生消息事件
+ * @author 尔演&Eryan eryanwcp@gmail.com
+ * @date 2016-03-15
  */
-public class SendMessageEvent extends  BaseEvent{
+public class SendMessageEvent extends BaseEvent {
     private String msgId;//群发的消息ID
     private String status;//群发消息状态
     private Integer totalCount;//发送总数
@@ -11,14 +13,18 @@ public class SendMessageEvent extends  BaseEvent{
     private Integer sentCount;//发送成功数量
     private Integer errorCount;//发送失败数量
 
-    public SendMessageEvent(String msgId, String status, Integer totalCount, Integer filterCount, Integer sentCount, Integer errorCount){
-    super();
-    this.msgId=msgId;
-    this.status=status;
-    this.totalCount=totalCount;
-    this.filterCount=filterCount;
-    this.sentCount=sentCount;
-    this.errorCount=errorCount;
+    public SendMessageEvent() {
+        super();
+    }
+
+    public SendMessageEvent(String msgId, String status, Integer totalCount, Integer filterCount, Integer sentCount, Integer errorCount) {
+        super();
+        this.msgId = msgId;
+        this.status = status;
+        this.totalCount = totalCount;
+        this.filterCount = filterCount;
+        this.sentCount = sentCount;
+        this.errorCount = errorCount;
     }
 
     public String getMsgId() {
@@ -38,6 +44,7 @@ public class SendMessageEvent extends  BaseEvent{
         this.status = status;
         return this;
     }
+
     public Integer getTotalCount() {
         return totalCount;
     }
