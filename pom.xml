@@ -600,10 +600,10 @@
                         userfiles/**,
                         static/js/bootstrap/2.3.2/docs/**,
                         static/js/bootstrap/3.2.0/**,
-                        static/js/easyui-1.5.5.2/src/**,
-                        static/js/easyui-1.5.5.2/**/*.html,
-                        static/js/easyui-1.5.5.2/**/*.json,
-                        static/js/easyui-1.5.5.2/**/*.txt,
+                        static/js/easyui/src/**,
+                        static/js/easyui/**/*.html,
+                        static/js/easyui/**/*.json,
+                        static/js/easyui/**/*.txt,
                         static/js/jquery-ztree/3.5.12/api/**,
                         static/js/jquery-ztree/3.5.12/demo/**,
                         static/js/My97DatePicker/docs/**,
@@ -614,6 +614,8 @@
                         static/js/jquery-jbox/2.3/docs/**,
                         static/js/jquery-jbox/2.3/Skins2/**,
                         static/js/treeTable/demo/**,
+                        static/js/vue/examples/**,
+                        static/js/vue/src/**,
                     </warSourceExcludes>
                     <webappDirectory>${project.build.directory}/${project.artifactId}</webappDirectory>
                     <!--
