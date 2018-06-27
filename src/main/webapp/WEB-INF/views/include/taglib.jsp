@@ -11,4 +11,3 @@
 <c:set var="ctxStatic" value="${pageContext.request.contextPath}/static"/>
 <c:set var="urlSuffix" value="${fns:getUrlSuffix()}"/>
 <c:set var="appURL" value="${fns:getAppURL()}"/>
-<c:set var="ev" value="1.5.5.2"/>
