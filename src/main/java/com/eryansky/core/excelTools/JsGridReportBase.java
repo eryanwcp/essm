@@ -12,6 +12,7 @@ import com.eryansky.common.utils.io.IoUtils;
 import com.eryansky.common.web.utils.WebUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class JsGridReportBase {
 	/**
 	 * 大数据量导出静态变量
 	 */
-	public static int EXCEL_MAX_CNT = 100000; //每个excel文件多少条数据
-	public static int SHEET_MAX_CNT = 20000; //每个sheet多少条数据
+	public static final int EXCEL_MAX_CNT = 100000; //每个excel文件多少条数据
+	public static final int SHEET_MAX_CNT = 20000; //每个sheet多少条数据
 
 	public JsGridReportBase() {
 	}
@@ -130,8 +131,8 @@ public class JsGridReportBase {
 	 * @return void
 	 */
 	private void stopGrouping(HSSFSheet sheet, HashMap<Integer, String> word,
-							  HashMap<Integer, Integer> counter, int i, int size, int rownum,
-							  HSSFCellStyle style) {
+                              HashMap<Integer, Integer> counter, int i, int size, int rownum,
+                              HSSFCellStyle style) {
 		String w = word.get(i);
 		if (w != null) {
 			int len = counter.get(i);
@@ -153,7 +154,7 @@ public class JsGridReportBase {
 	 * @return void
 	 */
 	private void generateColumn(HSSFSheet sheet, TableColumn tc, int maxlevel,
-								int rownum, int colnum, HSSFCellStyle headerstyle) {
+                                int rownum, int colnum, HSSFCellStyle headerstyle) {
 		HSSFRow row = sheet.getRow(rownum);
 		if (row == null)
 			row = sheet.createRow(rownum);
@@ -178,10 +179,12 @@ public class JsGridReportBase {
 						rownum + 1, cn, headerstyle);
 			}
 		} else {
-			CellRangeAddress address = new CellRangeAddress(rownum, rownum
-					+ maxlevel - tc.level, colnum, colnum);
-			sheet.addMergedRegion(address);
-			fillMergedRegion(sheet, address, headerstyle);
+			int lastRow = rownum + maxlevel - tc.level;
+			if(rownum != lastRow){
+				CellRangeAddress address = new CellRangeAddress(rownum, rownum + maxlevel - tc.level, colnum, colnum);
+				sheet.addMergedRegion(address);
+				fillMergedRegion(sheet, address, headerstyle);
+			}
 		}
 		sheet.autoSizeColumn(colnum, true);
 	}
@@ -192,7 +195,7 @@ public class JsGridReportBase {
 	 * @return void
 	 */
 	private void fillMergedRegion(HSSFSheet sheet, CellRangeAddress address,
-								  HSSFCellStyle style) {
+                                  HSSFCellStyle style) {
 		for (int i = address.getFirstRow(); i <= address.getLastRow(); i++) {
 			HSSFRow row = sheet.getRow(i);
 			if (row == null)
@@ -275,8 +278,7 @@ public class JsGridReportBase {
 				colnum += headerMetaData.getOriginColumns().get(i - 1)
 						.getLength();
 			}
-			generateColumn(sheet, tc, headerMetaData.maxlevel, rownum, colnum,
-					headerstyle);
+			generateColumn(sheet, tc, headerMetaData.maxlevel, rownum, colnum,headerstyle);
 		}
 		rownum += headerMetaData.maxlevel;
 
@@ -332,7 +334,7 @@ public class JsGridReportBase {
 
 						//HSSFClientAnchor控制图片的大小和位置
 						HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 0, 255, 255,(short) index, m+4, (short) (index+1) ,m+4+1);
-						clientAnchor.setAnchorType(0);
+						clientAnchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
 
 						clientAnchor.setCol1(index);
 						clientAnchor.setRow1(m +4);
@@ -600,9 +602,9 @@ public class JsGridReportBase {
 				System.out.println("正在导出第"+j+"个sheet：第"+(start+_start+1)+"~"+(start+_start+_end+1)+"条记录");
 				List sheetLst = sublist.subList(_start, _end);
 				if(bean.getChildren()!=null && bean.getChildren().length>0)
-					td = ExcelUtils.createTableData(sheetLst, ExcelUtils.createTableHeader(bean.getHearders(),bean.getChildren()),bean.getFields());
+					td = ExcelUtils.createTableData(sheetLst, ExcelUtils.createTableHeader(bean.getHearders(), bean.getChildren()), bean.getFields());
 				else
-					td = ExcelUtils.createTableData(sheetLst, ExcelUtils.createTableHeader(bean.getHearders()),bean.getFields());
+					td = ExcelUtils.createTableData(sheetLst, ExcelUtils.createTableHeader(bean.getHearders()), bean.getFields());
 				td.setSheetTitle("第"+(start+_start+1)+"~"+(start+_start+_end+1)+"条记录");
 				tds.add(td);
 			}
@@ -666,8 +668,8 @@ public class JsGridReportBase {
 	 * @return void
 	 */
 	private void createCell(HSSFRow row, TableColumn tc,
-							List<TableDataCell> data, int i, int index,
-							HashMap<String, HSSFCellStyle> styles) {
+                            List<TableDataCell> data, int i, int index,
+                            HashMap<String, HSSFCellStyle> styles) {
 		TableDataCell dc = data.get(i);
 		HSSFCell cell = row.createCell(index);
 		switch (tc.getColumnType()) {
@@ -771,7 +773,7 @@ public class JsGridReportBase {
 	 * @return void
 	 */
 	private void buildStyle(HSSFWorkbook wb, HSSFWorkbook src, HSSFSheet sheet,
-							int index, HashMap<String, HSSFCellStyle> ret, String key) {
+                            int index, HashMap<String, HSSFCellStyle> ret, String key) {
 		HSSFRow row = sheet.getRow(index);
 		HSSFCell cell = row.getCell(1);
 		HSSFCellStyle nstyle = wb.createCellStyle();

@@ -44,7 +44,7 @@
 
 		<div>
 		<label>机构选择：</label><tags:treeselect id="organId" name="organId" value="${paramMap.organId}" labelName="organName" labelValue="${paramMap.organName}"
-											 title="机构" url="${ctxAdmin}/sys/organ/treeChirldCompanyData" allowClear="true" />
+											 title="机构" url="${ctxAdmin}/sys/organ/ownerAndChildsCompanysData" allowClear="true" />
 			<label><input type="checkbox" id="onlyCompany" name="onlyCompany" value="true" <c:if test="${paramMap.onlyCompany}">checked</c:if>>本级</label>
 
 			<label>人员选择：</label><tags:treeselect id="userId" name="userId" value="${paramMap.userId}" labelName="userName" labelValue="${paramMap.userName}"

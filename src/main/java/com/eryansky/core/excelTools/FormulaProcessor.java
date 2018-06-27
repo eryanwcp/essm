@@ -26,7 +26,7 @@ public class FormulaProcessor {
 	
 	public void fillValue(TableDataRow row){
 		HashSet<Integer> computed = new HashSet<Integer>();
-		for (TableDataCell cell:row.getCells()){			
+		for (TableDataCell cell:row.getCells()){
 			TableColumn thc = row.getTable().getTableHeader().getColumnAt(cell.getColumnIndex());
 			int type = thc.getColumnType();
 			if (type == TableColumn.COLUMN_TYPE_FORMULA && thc.getAggregateRule() != null){
