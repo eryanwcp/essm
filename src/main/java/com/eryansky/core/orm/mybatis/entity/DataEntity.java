@@ -36,7 +36,7 @@ public abstract class DataEntity<T> extends BaseEntity<T>  implements IDataEntit
 	/**
 	 * 记录状态标志位 {@link StatusState}
 	 */
-	protected String status = StatusState.NORMAL.getValue();
+	protected String status;
 
 	/**
 	 * 操作版本(乐观锁,用于并发控制)
@@ -63,10 +63,12 @@ public abstract class DataEntity<T> extends BaseEntity<T>  implements IDataEntit
 
 	public DataEntity(){
 		super();
+		this.status = StatusState.NORMAL.getValue();
 	}
 
 	public DataEntity(String id){
 		super(id);
+		this.status = StatusState.NORMAL.getValue();
 	}
 
 	/**
