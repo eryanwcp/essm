@@ -204,7 +204,8 @@ public class OrganController extends SimpleController {
     @RequestMapping(value = {"delete/{id}"})
     @ResponseBody
     public Result delete(@PathVariable String id) {
-        organService.deleteById(id);
+//        organService.deleteById(id);
+        organService.deleteOwnerAndChilds(id);
         return Result.successResult();
     }
 

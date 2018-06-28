@@ -123,7 +123,7 @@ public class LogController extends SimpleController {
         String title = "审计日志-"+DateUtils.getCurrentDate();
         //Sheet2
         String[] hearders = new String[] {"日志类型","标题","单位","部门", "姓名", "IP地址", "模块","操作时间","操作耗时(ms)"};//表头数组
-        TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders),null);
+        TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders,0),null);
         td.setSheetTitle(title);
         tds.add(td);
 

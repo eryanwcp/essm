@@ -47,4 +47,6 @@ public interface ResourceDao extends TreeDao<Resource> {
     List<String> findResourceIdsByRoleId(Parameter parameter);
 
     List<Resource> findAuthorityResourcesByUserId(Parameter parameter);
+
+    int deleteOwnerAndChilds(Resource entity);
 }

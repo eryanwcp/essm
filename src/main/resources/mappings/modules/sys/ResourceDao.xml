@@ -396,4 +396,16 @@
         WHERE id = #{id}
     </delete>
 
+
+    <delete id="deleteOwnerAndChilds">
+        UPDATE t_sys_resource SET
+        status = #{STATUS_DELETE},
+        version = version +1,
+        update_user = #{updateUser},
+        update_time = #{updateTime}
+        WHERE id = #{id} OR parent_id = #{parentId} OR parent_ids LIKE
+        <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+        <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+    </delete>
+
 </mapper>

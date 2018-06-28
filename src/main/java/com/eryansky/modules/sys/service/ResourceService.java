@@ -46,9 +46,6 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class ResourceService extends TreeService<ResourceDao, Resource> {
 
-    @Autowired
-    private ResourceDao dao;
-
     @Override
     public Page<Resource> findPage(Page<Resource> page, Resource entity) {
         return page.setResult(dao.findList(entity));
@@ -123,12 +120,27 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE}, allEntries = true)
     @Transactional(readOnly = false)
     public void deleteById(String id) {
+        this.delete(new Resource(id));
         logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
                 + "," + CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
                 + "," + CacheConstants.RESOURCE_USER_MENU_TREE_CACHE);
-        this.delete(new Resource(id));
 
     }
+
+    /**
+     * 自定义删除方法.
+     */
+    @CacheEvict(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
+            CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
+            CacheConstants.RESOURCE_USER_MENU_TREE_CACHE},allEntries = true)
+    @Transactional(readOnly = false)
+    public void deleteOwnerAndChilds(String id){
+        dao.deleteOwnerAndChilds(new Resource(id));
+        logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
+                + "," + CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
+                + "," + CacheConstants.RESOURCE_USER_MENU_TREE_CACHE);
+    }
+
 
     /**
      * 根据资源编码获取对象

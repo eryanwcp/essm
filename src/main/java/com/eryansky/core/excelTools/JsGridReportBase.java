@@ -55,7 +55,7 @@ public class JsGridReportBase {
 	}
 
 	public JsGridReportBase(HttpServletRequest request,
-							HttpServletResponse response) throws Exception {
+                            HttpServletResponse response) throws Exception {
 		this.request = request;
 		this.response = response;
 		session = request.getSession();
@@ -136,10 +136,14 @@ public class JsGridReportBase {
 		String w = word.get(i);
 		if (w != null) {
 			int len = counter.get(i);
-			CellRangeAddress address = new CellRangeAddress(rownum - len,
-					rownum - 1, i, i);
-			sheet.addMergedRegion(address);
-			fillMergedRegion(sheet, address, style);
+			int firstRow = rownum - len;
+			int lastRow = rownum - 1;
+			if(firstRow != lastRow){
+				CellRangeAddress address = new CellRangeAddress(firstRow,lastRow, i, i);
+				sheet.addMergedRegion(address);
+				fillMergedRegion(sheet, address, style);
+			}
+
 			word.remove(i);
 			counter.remove(i);
 		}

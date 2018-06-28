@@ -127,20 +127,9 @@ public class ResourceController extends SimpleController {
     @RequestMapping(value = {"delete/{id}"})
     @ResponseBody
     public Result delete(@PathVariable String id) {
-        Result result;
-        if(StringUtils.isNotBlank(id)){
-            List<String> ids = Lists.newArrayList();
-            ids.add(id);
-            resourceService.deleteByIds(ids);
-            result = Result.successResult();
-        }else{
-            result = new Result().setCode(Result.WARN).setMsg("参数[id]为空.");
-        }
-
-        if(logger.isDebugEnabled()){
-            logger.debug(result.toString());
-        }
-        return result;
+//        resourceService.deleteById(id);
+        resourceService.deleteOwnerAndChilds(id);
+        return Result.successResult();
     }
 
 

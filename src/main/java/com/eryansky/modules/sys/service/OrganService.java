@@ -18,6 +18,7 @@ import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.mapper.OrganExtend;
+import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.utils.AppConstants;
@@ -53,9 +54,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     private static final String ICON_GROUP = "eu-icon-group";
 
     @Autowired
-    private OrganDao dao;
-
-    @Autowired
     private UserService userService;
 
 
@@ -81,6 +79,7 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     @Transactional(readOnly = false)
     public String deleteById(final String id){
         dao.delete(new Organ(id));
+        logger.debug("清空缓存:{}", CacheConstants.ORGAN_USER_TREE_CACHE);
         return id;
     }
 
@@ -93,6 +92,16 @@ public class OrganService extends TreeService<OrganDao, Organ> {
         for(String id:ids){
             deleteById(id);
         }
+    }
+
+    /**
+     * 自定义删除方法.
+     */
+    @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
+    @Transactional(readOnly = false)
+    public void deleteOwnerAndChilds(String id){
+        dao.deleteOwnerAndChilds(new Organ(id));
+        logger.debug("清空缓存:{}", CacheConstants.ORGAN_USER_TREE_CACHE);
     }
 
     /**
