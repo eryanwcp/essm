@@ -772,7 +772,7 @@ public class UserController extends SimpleController {
 
         //Sheet
         String[] hearders = new String[]{"单位", "部门", "账号", "姓名", "性别", "电话", "手机号码", "邮箱"};//表头数组
-        TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders), null);
+        TableData td = ExcelUtils.createTableData(list, ExcelUtils.createTableHeader(hearders,0), null);
         td.setSheetTitle("普通表头示例");
         tds.add(td);
 

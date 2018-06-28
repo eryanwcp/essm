@@ -74,7 +74,7 @@ public class LogReportController {
         List<Map<String, Object>> result = pageMap.getResult();
         String[] hearders = {"单位/部门", "部门", "姓名", "账号", "登录次数"};//表头数组
         String[] fields = new String[]{"company", "department", "name", "userName", "count"};//People对象属性数组
-        TableData td = ExcelUtils.createTableData(result, ExcelUtils.createTableHeader(hearders), fields);
+        TableData td = ExcelUtils.createTableData(result, ExcelUtils.createTableHeader(hearders,0), fields);
         JsGridReportBase report = new JsGridReportBase(request, response);
         report.exportToExcel(fileName, sessionInfo.getName(), td);
     }
@@ -173,7 +173,7 @@ public class LogReportController {
         List<Map<String, Object>> result = page.getResult();
         String[] hearders = new String[]{"模块", "访问次数"};//表头数组
         String[] fields = new String[]{"module", "moduleCount"};
-        TableData td = ExcelUtils.createTableData(result, ExcelUtils.createTableHeader(hearders), fields);
+        TableData td = ExcelUtils.createTableData(result, ExcelUtils.createTableHeader(hearders,0), fields);
         JsGridReportBase report = new JsGridReportBase(request, response);
         report.exportToExcel(fileName, sessionInfo.getName(), td);
     }
