@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import java.util.List;
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  */
-public class Page<T> {
+public class Page<T> implements Serializable{
 	//-- 公共变量 --//
 	public static final String ASC = "asc";
 	public static final String DESC = "desc";
