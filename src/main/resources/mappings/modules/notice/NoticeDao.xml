@@ -48,11 +48,11 @@
 			a.status = #{STATUS_NORMAL}
 			<if test="query != null and query != ''">
 				AND (a.title LIKE
-				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				OR a.content LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>)
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>)
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
