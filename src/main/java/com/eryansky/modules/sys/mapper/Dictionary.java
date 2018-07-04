@@ -5,7 +5,6 @@
  */
 package com.eryansky.modules.sys.mapper;
 
-import com.eryansky.common.excel.annotation.Excel;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,12 +22,10 @@ public class Dictionary extends DataEntity<Dictionary> {
     /**
      * 类型名称
      */
-    @Excel(exportName = "类型名称", exportFieldWidth = 30)
     private String name;
     /**
      * 类型编码
      */
-    @Excel(exportName = "类型编码", exportFieldWidth = 20)
     private String code;
 
     /**
@@ -43,7 +40,6 @@ public class Dictionary extends DataEntity<Dictionary> {
     /**
      * 排序
      */
-    @Excel(exportName = "排序", exportFieldWidth = 10)
     private Integer orderNo;
 
     public Dictionary() {
