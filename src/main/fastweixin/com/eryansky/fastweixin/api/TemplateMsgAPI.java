@@ -42,7 +42,7 @@ public class TemplateMsgAPI extends BaseAPI {
     }
 
     /**
-     * 添加模版
+     * 获得模板ID
      *
      * @param shortTemplateId 模版短id
      * @return 操作结果
