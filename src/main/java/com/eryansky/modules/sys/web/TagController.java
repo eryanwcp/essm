@@ -34,7 +34,7 @@ public class TagController extends SimpleController {
 		model.addAttribute("checked", request.getParameter("checked")); // 是否可复选
 		model.addAttribute("selectIds", request.getParameter("selectIds")); // 指定默认选中的ID
 		model.addAttribute("module", request.getParameter("module"));	// 过滤栏目模型（仅针对CMS的Category树）
-		return "modules/cms/tagTreeselect";
+		return "modules/sys/tagTreeselect";
 	}
 	
 	/**
@@ -44,7 +44,7 @@ public class TagController extends SimpleController {
 	@RequestMapping(value = "iconselect")
 	public String iconselect(HttpServletRequest request, Model model) {
 		model.addAttribute("value", request.getParameter("value"));
-		return "modules/cms/tagIconselect";
+		return "modules/sys/tagIconselect";
 	}
 	
 }
