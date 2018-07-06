@@ -7,6 +7,7 @@ package com.eryansky.core.excelTools;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.beanutils.PropertyUtilsBean;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -99,7 +100,7 @@ public class ExcelUtils {
 	 * 		如该值大于表头名称数组，则为全列合并
 	 * @return
 	 */
-	public static TableHeaderMetaData createTableHeader(String[] titls,int spanCount){
+	public static TableHeaderMetaData createTableHeader(String[] titls, int spanCount){
 		if(spanCount>titls.length)
 			spanCount = titls.length;
 		TableHeaderMetaData headMeta = new TableHeaderMetaData();
@@ -119,7 +120,7 @@ public class ExcelUtils {
 	 * @param children 子表头数组
 	 * @return
 	 */
-	public static TableHeaderMetaData createTableHeader(String[] parents,String[][] children){
+	public static TableHeaderMetaData createTableHeader(String[] parents, String[][] children){
 		TableHeaderMetaData headMeta = new TableHeaderMetaData();
 		TableColumn parentColumn = null;
 		TableColumn sonColumn = null;
@@ -147,7 +148,7 @@ public class ExcelUtils {
 	 * @return TableData
 	 */
 	@SuppressWarnings("unchecked")
-	public static TableData createTableData(List list,TableHeaderMetaData headMeta,String[] fields){
+	public static TableData createTableData(List list, TableHeaderMetaData headMeta, String[] fields){
 
 		TableData td = new TableData(headMeta);
 		TableDataRow row = null;
@@ -619,7 +620,7 @@ public class ExcelUtils {
 		if (cell!= null) {
 			switch (cell.getCellType()) {
 				case Cell.CELL_TYPE_STRING:
-					cellDouble =Double.valueOf(cell.getStringCellValue());
+					cellDouble = Double.valueOf(cell.getStringCellValue());
 					break;
 				case Cell.CELL_TYPE_NUMERIC:
 					// 先看是否是日期格式
@@ -891,22 +892,27 @@ public class ExcelUtils {
 	 * @return
 	 */
 	public static List<List<Object>> readExcel(String filePath) throws Exception {
+		return readExcel(new FileInputStream(new File(filePath)), FilenameUtils.getExtension(filePath));
+	}
+
+
+	/**
+	 * excel导入
+	 * @param inputStream 输入流
+	 * @param type 文件类型 xls或者xlsx
+	 * @return
+	 */
+	public static List<List<Object>> readExcel(InputStream inputStream, String type) throws Exception {
 		List<List<Object>> list = Lists.newArrayList();
 		List<Object> rowData;
-		if (!filePath.endsWith(".xls") && !filePath.endsWith(".xlsx")) {
-			throw new Exception("The file is not excel document!");
-		}
 
 		// 读取文件
-		FileInputStream fis = null;
 		Workbook wookbook = null;
 		try {
-
-			fis = new FileInputStream(filePath);
-			if(filePath.endsWith(".xls")) {
-				wookbook = new HSSFWorkbook(fis);
-			} else if(filePath.endsWith(".xlsx")) {
-				wookbook = new XSSFWorkbook(fis);
+			if("xlsx".equalsIgnoreCase(type)) {
+				wookbook = new XSSFWorkbook(inputStream);
+			}else {
+				wookbook = new HSSFWorkbook(inputStream);
 			}
 
 			// 获取第一个工作表信息
@@ -965,8 +971,8 @@ public class ExcelUtils {
 		} catch (Exception e) {
 			throw new Exception("analysis excel exception!", e);
 		} finally {
-			if(null != fis) {
-				fis.close();
+			if(null != inputStream) {
+				inputStream.close();
 			}
 		}
 
@@ -987,7 +993,7 @@ public class ExcelUtils {
 	 * @date 2017年5月6日 下午3:53:47
 	 */
 	public static <T> File export(String fileNamePath, String sheetName, List<T> list,
-								  String[] titles, String[] fieldNames) throws Exception {
+                                  String[] titles, String[] fieldNames) throws Exception {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = null;

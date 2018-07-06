@@ -33,7 +33,7 @@ public class FormulaProcessor {
 				String f = convertFormula(thc.getAggregateRule());
 				try{
 					Interpreter process = new Interpreter();
-					process.getNameSpace().importCommands("com.eryansky.core.excelTools");
+					process.getNameSpace().importCommands("com.jfit.core.excelTools");
 					process.set("row", row);
 					process.set("computed", computed);
 					
