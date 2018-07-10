@@ -83,11 +83,10 @@ public class JdkZipUtils {
 	}
 
 	public static void unZip(File zipFile, String storePath) throws IOException {
-		if (new File(storePath).exists()) {
-			new File(storePath).delete();
+		File storeDir = new File(storePath);
+		if (!storeDir.exists()) {
+			storeDir.mkdir();
 		}
-		new File(storePath).mkdirs();
-
 		ZipFile zip = new ZipFile(zipFile);
 		Enumeration<? extends ZipEntry> entries = zip.entries();
 		while (entries.hasMoreElements()) {
@@ -120,15 +119,5 @@ public class JdkZipUtils {
 				is.close();
 			}
 		}
-	}
-
-	public static void main(String[] args) throws Exception {
-		String rootDir = "D:\\chenfeng";
-		File[] inFiles = new File(rootDir).listFiles();
-		String zipPath = "D:\\ZipDemo.zip";
-
-		makeZip(inFiles, zipPath);
-
-		unZip(zipPath, "D:\\chenfeng_zip");
 	}
 }
