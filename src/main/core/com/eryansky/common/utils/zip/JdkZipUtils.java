@@ -86,6 +86,7 @@ public class JdkZipUtils {
 		File storeDir = new File(storePath);
 		if (!storeDir.exists()) {
 			storeDir.mkdir();
+			storeDir.mkdirs();
 		}
 		ZipFile zip = new ZipFile(zipFile);
 		Enumeration<? extends ZipEntry> entries = zip.entries();

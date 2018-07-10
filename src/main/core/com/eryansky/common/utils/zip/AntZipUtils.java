@@ -91,11 +91,11 @@ public class AntZipUtils {
         File storeDir = new File(storePath);
         if (!storeDir.exists()) {
             storeDir.mkdir();
+            storeDir.mkdirs();
         }
   
         ZipFile zip = new ZipFile(zipFile);  
-        Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip  
-                .getEntries();  
+        Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zip.getEntries();
         while (entries.hasMoreElements()) {  
             ZipEntry zipEntry = entries.nextElement();  
             if (zipEntry.isDirectory()) {  
