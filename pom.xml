@@ -14,6 +14,7 @@
         <!-- version setting -->
         <spring.version>4.3.18.RELEASE</spring.version>
         <hibernate-validator.version>4.3.2.Final</hibernate-validator.version>
+        <aspectj.version>1.8.13</aspectj.version>
         <mybatis.version>3.4.6</mybatis.version>
         <mybatis-spring.version>1.3.2</mybatis-spring.version>
         <ehcache.version>2.10.5</ehcache.version>
@@ -38,7 +39,6 @@
         <freemarker.version>2.3.19</freemarker.version>
         <velocity.version>1.6.4</velocity.version>
         <quartz.version>2.2.1</quartz.version>
-        <aspectj.version>1.7.4</aspectj.version>
 
         <sitemesh.version>2.4.2</sitemesh.version>
 
