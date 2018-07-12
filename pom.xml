@@ -6,7 +6,7 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>3.0.20180605-SNAPSHOT</version>
+    <version>3.0.201807012-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -33,6 +33,8 @@
         <guava.version>17.0</guava.version>
         <dozer.version>5.4.0</dozer.version>
         <poi.version>3.17</poi.version>
+        <xwpf.version>2.0.1</xwpf.version>
+        <bsh.version>2.0b6</bsh.version>
         <freemarker.version>2.3.19</freemarker.version>
         <velocity.version>1.6.4</velocity.version>
         <quartz.version>2.2.1</quartz.version>
@@ -54,19 +56,6 @@
     </properties>
 
     <repositories>
-        <!-- 如有Nexus私服, 取消注释并指向正确的服务器地址.-->
-        <repository>
-            <id>jfit-nexus</id>
-            <name>Team Nexus Repository</name>
-            <!--<url>http://www.jfit.com.cn/nexus/content/groups/public</url>-->
-            <url>http://10.36.98.231:8081/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
         <repository>
             <id>spring</id>
             <name>Team spring Nexus Repository</name>
@@ -491,13 +480,13 @@
         </dependency>
         <dependency>
             <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
-            <version>1.0.5</version>
+            <artifactId>fr.opensagres.poi.xwpf.converter.xhtml</artifactId>
+            <version>${xwpf.version}</version>
         </dependency>
         <dependency>
-            <groupId>bsh</groupId>
+            <groupId>org.apache-extras.beanshell</groupId>
             <artifactId>bsh</artifactId>
-            <version>2.0b4</version>
+            <version>${bsh.version}</version>
         </dependency>
 
         <dependency>

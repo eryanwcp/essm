@@ -136,14 +136,10 @@ public class JsGridReportBase {
 		String w = word.get(i);
 		if (w != null) {
 			int len = counter.get(i);
-			int firstRow = rownum - len;
-			int lastRow = rownum - 1;
-			if(firstRow != lastRow){
-				CellRangeAddress address = new CellRangeAddress(firstRow,lastRow, i, i);
-				sheet.addMergedRegion(address);
-				fillMergedRegion(sheet, address, style);
-			}
-
+			CellRangeAddress address = new CellRangeAddress(rownum - len,
+					rownum - 1, i, i);
+			sheet.addMergedRegion(address);
+			fillMergedRegion(sheet, address, style);
 			word.remove(i);
 			counter.remove(i);
 		}
@@ -169,10 +165,12 @@ public class JsGridReportBase {
 		if (headerstyle != null)
 			cell.setCellStyle(headerstyle);
 		if (tc.isComplex()) {
-			CellRangeAddress address = new CellRangeAddress(rownum, rownum,
-					colnum, colnum + tc.getLength() - 1);
-			sheet.addMergedRegion(address);
-			fillMergedRegion(sheet, address, headerstyle);
+			int lastCol = colnum + tc.getLength() - 1;
+			if(colnum != lastCol){
+				CellRangeAddress address = new CellRangeAddress(rownum, rownum,colnum, colnum + tc.getLength() - 1);
+				sheet.addMergedRegion(address);
+				fillMergedRegion(sheet, address, headerstyle);
+			}
 
 			int cn = colnum;
 			for (int i = 0; i < tc.getChildren().size(); i++) {
@@ -371,6 +369,163 @@ public class JsGridReportBase {
 
 		return wb;
 	}
+	/**
+	 * 写入工作表（有冻结功能）
+	 * @param wb Excel工作簿
+	 * @param title Sheet工作表名称
+	 * @param styles 表头样式
+	 * @param creator 创建人
+	 * @param tableData 表格数据
+	 * @throws Exception
+	 */
+	public HSSFWorkbook writeSheet(HSSFWorkbook wb, String title, HashMap<String, HSSFCellStyle> styles,
+                                   String creator, TableData tableData , int[] num) throws Exception {
+
+		TableHeaderMetaData headerMetaData = tableData.getTableHeader();// 获得HTML的表头元素
+
+		SimpleDateFormat formater = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分");
+		String create_time = formater.format(new Date());
+
+		HSSFSheet sheet = wb.createSheet(title);// 在Excel工作簿中建一工作表
+		sheet.setDisplayGridlines(false);// 设置表标题是否有表格边框
+
+		//创建标题
+		HSSFRow row = sheet.createRow(0);// 创建新行
+		HSSFCell cell = row.createCell(0);// 创建新列
+		int rownum = 0;
+		cell.setCellValue(new HSSFRichTextString(title));
+		HSSFCellStyle style = styles.get("TITLE");//设置标题样式
+		if (style != null)
+			cell.setCellStyle(style);
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headerMetaData
+				.getColumnCount() - 1));//合并标题行：起始行号，终止行号， 起始列号，终止列号
+
+		//创建副标题
+		row = sheet.createRow(1);
+		cell = row.createCell(0);
+		cell.setCellValue(new HSSFRichTextString("创建人:"));
+		style = styles.get("SUB_TITLE");
+		if (style != null)
+			cell.setCellStyle(style);
+
+		cell = row.createCell(1);
+		cell.setCellValue(new HSSFRichTextString(creator));
+		style = styles.get("SUB_TITLE2");
+		if (style != null)
+			cell.setCellStyle(style);
+
+		cell = row.createCell(2);
+		cell.setCellValue(new HSSFRichTextString("创建时间:"));
+		style = styles.get("SUB_TITLE");
+		if (style != null)
+			cell.setCellStyle(style);
+
+		cell = row.createCell(3);
+		style = styles.get("SUB_TITLE2");
+		cell.setCellValue(new HSSFRichTextString(create_time));
+		if (style != null)
+			cell.setCellStyle(style);
+
+		rownum = 3;// 如果rownum = 1，则去掉创建人、创建时间等副标题；如果rownum = 0， 则把标题也去掉
+
+		HSSFCellStyle headerstyle = styles.get("TABLE_HEADER");
+
+		int colnum = 0;
+		for (int i = 0; i < headerMetaData.getOriginColumns().size(); i++) {
+			TableColumn tc = headerMetaData.getOriginColumns().get(i);
+			if (i != 0) {
+				colnum += headerMetaData.getOriginColumns().get(i - 1).getLength();
+			}
+			generateColumn(sheet, tc, headerMetaData.maxlevel, rownum, colnum,headerstyle);
+		}
+		rownum += headerMetaData.maxlevel;
+
+		List<TableDataRow> dataRows = tableData.getRows();
+
+		HashMap<Integer, Integer> counter = new HashMap<Integer, Integer>();
+		HashMap<Integer, String> word = new HashMap<Integer, String>();
+		int index = 0;
+		for (int m=0;m<dataRows.size();m++) {
+			TableDataRow dataRow = dataRows.get(m);
+			row = sheet.createRow(rownum);
+
+			List<TableDataCell> dataCells = dataRow.getCells();
+			int size = headerMetaData.getColumns().size();
+			index = -1;
+			for (int i = 0; i < size; i++) {
+				TableColumn tc = headerMetaData.getColumns().get(i);
+				if (!tc.isVisible())
+					continue;
+				index++;
+
+				String value = dataCells.get(i).getValue();
+				if (tc.isGrouped()) {
+					String w = word.get(index);
+					if (w == null) {
+						word.put(index, value);
+						counter.put(index, 1);
+						createCell(row, tc, dataCells, i, index, styles);
+					} else {
+						if (w.equals(value)) {
+							counter.put(index, counter.get(index) + 1);
+						} else {
+							stopGrouping(sheet, word, counter, index, size,
+									rownum, styles.get("STRING"));
+
+							word.put(index, value);
+							counter.put(index, 1);
+							createCell(row, tc, dataCells, i, index, styles);
+						}
+					}
+				} else {
+					if(TableColumn.COLUMN_TYPE_STRING_NETWORK_IMAGE == tc.getColumnType()){
+						BufferedImage bufferImg = ImageIO.read(new URL(dataCells.get(i).getValue()));
+
+						ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+						ImageIO.write(bufferImg, "jpg", byteArrayOut);
+//
+						int pictureIndex = wb.addPicture(byteArrayOut.toByteArray(), HSSFWorkbook.PICTURE_TYPE_JPEG);
+						HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
+//						HSSFCreationHelper helper = (HSSFCreationHelper) wb.getCreationHelper();
+//						HSSFClientAnchor clientAnchor = helper.createClientAnchor();
+
+
+						//HSSFClientAnchor控制图片的大小和位置
+						HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 0, 255, 255,(short) index, m+4, (short) (index+1) ,m+4+1);
+						clientAnchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+
+						clientAnchor.setCol1(index);
+						clientAnchor.setRow1(m +4);
+
+						HSSFPicture picture = patriarch.createPicture(clientAnchor, pictureIndex);
+						picture.resize();
+
+					}else{
+						createCell(row, tc, dataCells, i, index, styles);
+					}
+//					createCell(row, tc, dataCells, i, index, styles);
+
+
+				}
+			}
+			rownum++;
+		}
+
+		stopGrouping(sheet, word, counter, 0, index, rownum, styles
+				.get("STRING"));
+		// 设置前两列根据数据自动列宽
+		for (int c = 0; c < headerMetaData.getColumns().size(); c++) {
+//			sheet.autoSizeColumn((short) c,true);
+			sheet.autoSizeColumn((short) c);
+			String t = headerMetaData.getColumns().get(c).getDisplay();
+			if(sheet.getColumnWidth(c)<t.length()*256*3)
+				sheet.setColumnWidth(c, t.length()*256*3);
+		}
+		sheet.setGridsPrinted(true);
+		sheet.createFreezePane(num[0],num[1]);
+
+		return wb;
+	}
 
 	/**
 	 * 写入工作表
@@ -501,6 +656,37 @@ public class JsGridReportBase {
 		HashMap<String, HSSFCellStyle> styles = initStyles(wb);// 根据模板文件，初始化表头样式
 
 		wb = writeSheet(wb,title,styles,creator,tableData);//写入工作表
+
+		String sFileName = title + ".xls";
+		WebUtils.setDownloadableHeader(request, response, sFileName);
+		response.setHeader("Connection", "close");
+		response.setHeader("Content-Type", "application/vnd.ms-excel");
+
+		wb.write(response.getOutputStream());
+	}
+
+	/**
+	 * 导出Excel(单工作表有冻结功能)
+	 *
+	 * @param title
+	 *            文件名
+	 * @param creator
+	 *            创建人
+	 * @param tableData
+	 *            表格数据
+	 * @return void <style name="dataset"> case SYSROWNUM%2==0?#row0:#row1;
+	 *         fontsize:9px; </style> <style name="row0"> import(parent);
+	 *         bgcolor:#FFFFFF; </style> <style name="row1"> import(parent);
+	 *         bgcolor:#CAEAFE; </style>
+	 */
+	public void exportToExcel(String title, String creator, TableData tableData , int[] num)
+			throws Exception {
+
+		HSSFWorkbook wb = new HSSFWorkbook();// 创建新的Excel 工作簿
+
+		HashMap<String, HSSFCellStyle> styles = initStyles(wb);// 根据模板文件，初始化表头样式
+
+		wb = writeSheet(wb,title,styles,creator,tableData,num);//写入工作表
 
 		String sFileName = title + ".xls";
 		WebUtils.setDownloadableHeader(request, response, sFileName);
