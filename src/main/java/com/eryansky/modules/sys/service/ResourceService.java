@@ -19,6 +19,7 @@ import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.sys._enum.ResourceType;
 import com.eryansky.utils.AppConstants;
+import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -588,78 +589,18 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resources
      * @return
      */
-    private List<TreeNode> resourcesToTreeNode(Collection<Resource> resources) {
-        List<TreeNode> tempTreeNodes = Lists.newArrayList();
-        if (Collections3.isEmpty(resources)) {
-            return tempTreeNodes;
+    private List<TreeNode> resourcesToTreeNode(Collection<Resource> resources){
+        if(Collections3.isEmpty(resources)){
+            return Collections.EMPTY_LIST;
         }
-
-        Map<String, TreeNode> tempMap = Maps.newLinkedHashMap();
+        List<TreeNode> tempTreeNodes = Lists.newArrayList();
         Iterator<Resource> iterator = resources.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext()){
             Resource resource = iterator.next();
             TreeNode treeNode = this.resourceToTreeNode(resource);
-            boolean flag = true;
-            for (TreeNode treeNode0 : tempTreeNodes) {
-                if (treeNode0.getId().equals(treeNode.getId())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                tempTreeNodes.add(treeNode);
-            }
-            tempMap.put(resource.getId(), treeNode);
+            tempTreeNodes.add(treeNode);
         }
-
-        Set<String> keyIds = tempMap.keySet();
-        Set<String> removeKeyIds = Sets.newHashSet();
-        Iterator<String> iteratorKey = keyIds.iterator();
-        while (iteratorKey.hasNext()) {
-            String key = iteratorKey.next();
-            TreeNode treeNode = null;
-            for (TreeNode treeNode1 : tempTreeNodes) {
-                if (treeNode1.getId().equals(key)) {
-                    treeNode = treeNode1;
-                    break;
-                }
-            }
-            if (StringUtils.isNotBlank(treeNode.getpId())) {
-                TreeNode pTreeNode = getParentTreeNode(treeNode.getpId(), tempTreeNodes);
-                if (pTreeNode != null) {
-                    for (TreeNode treeNode2 : tempTreeNodes) {
-                        if (treeNode2.getId().equals(pTreeNode.getId())) {
-                            treeNode2.addChild(treeNode);
-                            removeKeyIds.add(treeNode.getId());
-                            break;
-                        }
-                    }
-                }
-            }
-
-        }
-
-        //remove
-        if (Collections3.isNotEmpty(removeKeyIds)) {
-            keyIds.removeAll(removeKeyIds);
-        }
-
-        List<TreeNode> result = Lists.newArrayList();
-        keyIds = tempMap.keySet();
-        iteratorKey = keyIds.iterator();
-        while (iteratorKey.hasNext()) {
-            String _key = iteratorKey.next();
-            TreeNode treeNode = null;
-            for (TreeNode treeNode4 : tempTreeNodes) {
-                if (treeNode4.getId().equals(_key)) {
-                    treeNode = treeNode4;
-                    result.add(treeNode);
-                    break;
-                }
-            }
-
-        }
-        return result;
+        return AppUtils.toTreeTreeNodes(tempTreeNodes);
     }
 
     /**
@@ -703,25 +644,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
 
         }
         return result;
-    }
-
-
-    /**
-     * 查找父级节点
-     *
-     * @param parentId
-     * @param treeNodes
-     * @return
-     */
-    private TreeNode getParentTreeNode(String parentId, Collection<TreeNode> treeNodes) {
-        TreeNode t = null;
-        for (TreeNode treeNode : treeNodes) {
-            if (parentId.equals(treeNode.getId())) {
-                t = treeNode;
-                break;
-            }
-        }
-        return t;
     }
 
     /**
