@@ -8,10 +8,13 @@ public class Resources {
 	public static final String CATALOG = "";
 	public static final String SCHEMA = "essm";
 
-    /**
-     * 模块名称
-     */
+	/**
+	 * 模块名称 子模块可以设置为“package1.package2”
+	 */
     public static final String MODULE = "sys";
+	public static final String AUTHOR = "尔演&Eryan eryanwcp@gmail.com";
+	public static final String PRODUCT_NAME = "尔演";
+	public static final String PRODUCT_URL = "http://www.github.com/eryanwcp";
 	
 
 	/************ 模板配置 ************/

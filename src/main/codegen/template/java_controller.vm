@@ -1,5 +1,5 @@
 /**
-*  Copyright (c) 2012-2018 http://www.eryansky.com
+*  Copyright (c) ${productName} 2012-${year} ${productUrl}
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 */
@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 #set( $J = '$' )
 /**
  * $tableComment
- * @author 尔演&Eryan eryanwcp@gmail.com
+ * @author ${author}
  * @date ${date}
  */
 @Controller

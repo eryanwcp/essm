@@ -1,6 +1,8 @@
 package com.eryansky.codegen.generate;
 
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.velocity.Template;
@@ -25,7 +27,7 @@ public class JspGenerate implements Generate {
 			throw new Exception(JspGenerate.class.getName() + ": JspFileType 为null");
 		/* get the Template */
 		Template t = new VelocityUtil().getTemplate(Resources.TEMPLATE_PATH+"/"+jspFileType.getTemplate());
-		
+
 		VelocityContext context = new VelocityContext();
 
 		// context.put("daoPackage", Resources.getPackage(JavaFileType.DAO));
@@ -39,7 +41,11 @@ public class JspGenerate implements Generate {
 		context.put("modulePermission", Resources.MODULE.replace(".",":"));//权限
 		context.put("requestMapping", Resources.REQUEST_MAPPING);
 		context.put("tableComment", table.getRemark());
-
+		context.put("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+		context.put("year", new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime()));
+		context.put("author", Resources.AUTHOR);
+		context.put("productName", Resources.PRODUCT_NAME);
+		context.put("productUrl", Resources.PRODUCT_URL);
 		StringWriter writer = new StringWriter();
 		t.merge(context, writer);
 		FileUtil.create(Resources.JSP_STORE_PATH +"/modules/"+Resources.MODULE.replace(".","/"),entityInstance + jspFileType.getFileNameExtension(), writer.toString());

@@ -42,7 +42,11 @@ public class JavaGenerate implements Generate {
 		context.put("module", Resources.MODULE);//模块名
 		context.put("modulePath", Resources.MODULE.replace(".","/"));//路径
 		context.put("modulePermission", Resources.MODULE.replace(".",":"));//权限
-		context.put("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));//模块名
+		context.put("date", new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+		context.put("year", new SimpleDateFormat("yyyy").format(Calendar.getInstance().getTime()));
+		context.put("author", Resources.AUTHOR);
+		context.put("productName", Resources.PRODUCT_NAME);
+		context.put("productUrl", Resources.PRODUCT_URL);
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();
 		t.merge(context, writer);
