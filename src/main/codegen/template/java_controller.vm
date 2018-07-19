@@ -22,8 +22,8 @@ import ${servicePackage}.${entityName}Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-/**#set( $J = '$' )
+#set( $J = '$' )
+/**
  * $tableComment
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date ${date}
