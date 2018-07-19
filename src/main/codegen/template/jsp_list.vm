@@ -5,6 +5,7 @@
     <title>$tableComment</title>
     <meta name="decorator" content="default_sys"/>
     <script type="text/javascript">
+            #set( $J = '$' )
         function page(n,s){
             $("#pageNo").val(n);
             $("#pageSize").val(s);
@@ -28,13 +29,13 @@
     <thead>
     <tr>
         #foreach ($column in $columns)#if($column.comment)<th>$column.comment</th>#end#end
- <e:hasPermission name="${modulePermission}:${entityInstance}:edit"><th>操作</th></e:hasPermission></tr>
+        <e:hasPermission name="${modulePermission}:${entityInstance}:edit"><th>操作</th></e:hasPermission></tr>
     </thead>
     <tbody>
     <c:forEach items="${page.result}" var="model">
         <tr>
-            #foreach ($column in $columns)#if($column.comment)<td>{model.$columnName}</td>#end#end
- <e:hasPermission name="${module}:${entityInstance}:edit"><td>
+            #foreach ($column in $columns)#if($column.comment)<td>${J}{model.$column.fieldName}</td>#end#end
+            <e:hasPermission name="${module}:${entityInstance}:edit"><td>
                 <a href="${ctxAdmin}/${modulePath}/${entityInstance}/form?id=${model.id}">修改</a>
                 <a href="${ctxAdmin}/${modulePath}/${entityInstance}/delete?id=${model.id}${ model.status ne 0?'&isRe=true':''}" onclick="return confirmx('确认要${ model.status ne 0?'恢复':''}删除该数据吗？', this.href)" >${ site.model ne 0?'恢复':''}删除</a>
             </td></e:hasPermission>
