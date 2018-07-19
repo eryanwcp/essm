@@ -23,13 +23,13 @@ import ${servicePackage}.${entityName}Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
+/**#set( $J = '$' )
  * $tableComment
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date ${date}
  */
 @Controller
-@RequestMapping(value = "${adminPath}/${modulePath}/${entityInstance}")
+@RequestMapping(value = "${J}{adminPath}/${modulePath}/${entityInstance}")
 public class ${entityName}Controller extends SimpleController {
 
     @Autowired
