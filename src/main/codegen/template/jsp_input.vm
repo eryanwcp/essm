@@ -26,7 +26,7 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li><a href="${ctxAdmin}/${modulePath}/${entityInstance}/">$tableComment列表</a></li>
+    <li><a href="${ctxAdmin}/${modulePath}/${entityInstance}">$tableComment列表</a></li>
     <li class="active"><a href="${ctxAdmin}/${modulePath}/${entityInstance}/form?id=${model.id}">$tableComment<e:hasPermission name="${module}:${entityInstance}:edit">${ not empty model.id?'修改':'添加'}</e:hasPermission><shiro:lacksPermission name="${module}:${entityInstance}:edit">查看</shiro:lacksPermission></a></li>
 </ul><br/>
 <form:form id="inputForm" modelAttribute="model" action="${ctxAdmin}/${modulePath}/${entityInstance}/save" method="post" class="form-horizontal">
@@ -37,7 +37,7 @@
         <div class="control-group">
             <label class="control-label">$column.comment:</label>
             <div class="controls">
-                <form:input path="$column.fieldName" htmlEscape="false" maxlength="200" class="input-xlarge required"/>
+                <form:input path="$column.fieldName" htmlEscape="false" maxlength="200" class="input-xlarge"/>
             </div>
         </div>
     #end

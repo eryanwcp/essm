@@ -16,10 +16,10 @@
 </head>
 <body>
 <ul class="nav nav-tabs">
-    <li class="active"><a href="${ctxAdmin}/${modulePath}/${entityInstance}/">$tableComment列表</a></li>
+    <li class="active"><a href="${ctxAdmin}/${modulePath}/${entityInstance}">$tableComment列表</a></li>
     <e:hasPermission name="${modulePermission}:${entityInstance}:edit"><li><a href="${ctxAdmin}/${modulePath}/${entityInstance}/form">$tableComment添加</a></li></e:hasPermission>
 </ul>
-<form:form id="searchForm" modelAttribute="model" action="${ctxAdmin}/${modulePath}/${entityInstance}/" method="post" class="breadcrumb form-search">
+<form:form id="searchForm" modelAttribute="model" action="${ctxAdmin}/${modulePath}/${entityInstance}" method="post" class="breadcrumb form-search">
     <input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
     <input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
     <input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/>&nbsp;&nbsp;
@@ -37,7 +37,7 @@
             #foreach ($column in $columns)#if($column.comment)<td>${J}{model.$column.fieldName}</td>#end#end
             <e:hasPermission name="${module}:${entityInstance}:edit"><td>
                 <a href="${ctxAdmin}/${modulePath}/${entityInstance}/form?id=${model.id}">修改</a>
-                <a href="${ctxAdmin}/${modulePath}/${entityInstance}/delete?id=${model.id}${ model.status ne 0?'&isRe=true':''}" onclick="return confirmx('确认要${ model.status ne 0?'恢复':''}删除该数据吗？', this.href)" >${ site.model ne 0?'恢复':''}删除</a>
+                <a href="${ctxAdmin}/${modulePath}/${entityInstance}/delete?id=${model.id}${ model.status ne 0?'&isRe=true':''}" onclick="return confirmx('确认要${ model.status ne 0?'恢复':''}删除该数据吗？', this.href)" >${ model.status ne 0?'恢复':''}删除</a>
             </td></e:hasPermission>
         </tr>
     </c:forEach>
