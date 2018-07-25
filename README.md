@@ -5,7 +5,7 @@
 
 EasyUI/Bootstrap、SpringMVC、Spring、Mybatis、微信服务端API
 
-集成J2cache支持集群部署
+支持集群部署
 
     MySQL数据库脚本：
     src\main\resources\data\mysql\essm.sql 
