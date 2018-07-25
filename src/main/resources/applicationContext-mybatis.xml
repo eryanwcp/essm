@@ -4,7 +4,7 @@
        xsi:schemaLocation="
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
-       default-lazy-init="true">
+       default-lazy-init="false">
 
     <description>Spring Mybatis Configuration</description>
 
@@ -30,6 +30,6 @@
     </bean>
     <!-- MyBatis end -->
 
-    <bean class="com.eryansky.common.orm.persistence.MapperLoader"></bean>
+    <bean class="com.eryansky.common.orm.mybatis.MapperLoader"></bean>
 
 </beans>

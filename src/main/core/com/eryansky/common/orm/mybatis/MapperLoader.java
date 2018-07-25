@@ -3,7 +3,7 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  */
-package com.eryansky.common.orm.persistence;
+package com.eryansky.common.orm.mybatis;
 
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.executor.ErrorContext;
@@ -78,8 +78,7 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 	class Task implements Runnable {
 		@Override
 		public void run() {
-			try {
-				if (scanner.isChanged()) {
+			try { if (scanner.isChanged()) {
 					System.out.println("*Mapper.xml文件改变,重新加载.");
 					scanner.reloadXML();
 					System.out.println("加载完毕.");
@@ -95,7 +94,7 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 	class Scanner {
 		
 		private String[] basePackages;
-		private static final String XML_RESOURCE_PATTERN = "**/*.xml";
+		private static final String XML_RESOURCE_PATTERN = "*.xml";
 		private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
 		public Scanner() {
@@ -118,6 +117,7 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 			removeConfig(configuration);
 			// 重新扫描加载
 			for (String basePackage : basePackages) {
+
 				Resource[] resources = getResource(basePackage, XML_RESOURCE_PATTERN);
 				if (resources != null) {
 					for (int i = 0; i < resources.length; i++) {
