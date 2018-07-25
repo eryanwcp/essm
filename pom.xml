@@ -34,7 +34,7 @@
         <httpcomponents.version>4.5.5</httpcomponents.version>
         <jackson.version>2.9.6</jackson.version>
         <xstream.version>1.4.10</xstream.version>
-        <guava.version>17.0</guava.version>
+        <guava.version>19.0</guava.version>
         <dozer.version>5.4.0</dozer.version>
         <poi.version>3.17</poi.version>
         <xwpf.version>2.0.1</xwpf.version>
