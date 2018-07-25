@@ -5,13 +5,9 @@
  */
 package com.eryansky.common.web.servlet;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import com.eryansky.utils.CacheUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.eryansky.common.web.utils.WebUtils;
 
@@ -50,20 +46,13 @@ public class StaticContentServlet extends HttpServlet {
 	private static final int GZIP_MINI_LENGTH = 512;
 
 	private MimetypesFileTypeMap mimetypesFileTypeMap;
+	private String cacheKey;
 
-    /**
-     * Content基本信息缓存.
-     */
-    private Cache contentInfoCache;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-        String cacheManager = config.getInitParameter("CacheManager");
-        CacheManager ehcacheManager = (CacheManager) context.getBean(cacheManager);
-        String cacheKey = config.getInitParameter("cacheKey");
-        contentInfoCache = ehcacheManager.getCache(cacheKey);
+        cacheKey = config.getInitParameter("cacheKey");
 
         //初始化mimeTypes, 默认缺少css的定义,添加之.
         mimetypesFileTypeMap = new MimetypesFileTypeMap();
@@ -132,13 +121,12 @@ public class StaticContentServlet extends HttpServlet {
      * 从缓存中获取Content基本信息, 如不存在则进行创建.
      */
     private ContentInfo getContentInfoFromCache(String path) {
-        Element element = contentInfoCache.get(path);
+        Object element = CacheUtils.get(cacheKey,path);
         if (element == null) {
             ContentInfo content = createContentInfo(path);
-            element = new Element(content.contentPath, content);
-            contentInfoCache.put(element);
+            CacheUtils.put(cacheKey,content.contentPath,content);
         }
-        return (ContentInfo) element.getObjectValue();
+        return (ContentInfo) element;
     }
 
     /**

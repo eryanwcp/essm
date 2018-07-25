@@ -8,6 +8,7 @@ package com.eryansky.modules.sys.web;
 import com.eryansky.common.exception.ActionException;
 import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Result;
+import com.eryansky.common.orm.Page;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -44,8 +46,11 @@ public class SessionController extends SimpleController {
      */
     @RequestMapping(value = {"onLineSessions"})
     @ResponseBody
-    public Datagrid<SessionInfo> onLineSessions(){
-        return  SecurityUtils.getSessionUser();
+    public Datagrid<SessionInfo> onlineDatagrid(HttpServletRequest request) throws Exception {
+        Page<SessionInfo> page = new Page<>(request);
+        page = SecurityUtils.findSessionUserPage(page);
+        Datagrid<SessionInfo> dg = new Datagrid<>(page.getTotalCount(),page.getResult());
+        return dg;
     }
 
 

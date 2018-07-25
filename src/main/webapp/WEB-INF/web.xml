@@ -259,10 +259,6 @@
         <servlet-name>StaticContentServlet</servlet-name>
         <servlet-class>com.eryansky.common.web.servlet.StaticContentServlet</servlet-class>
         <init-param>
-            <param-name>CacheManager</param-name>
-            <param-value>ehCacheManagerFactory</param-value>
-        </init-param>
-        <init-param>
             <param-name>cacheKey</param-name>
             <param-value>contentInfoCache</param-value>
         </init-param>

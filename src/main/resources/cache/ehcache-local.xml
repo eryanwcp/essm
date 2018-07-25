@@ -5,8 +5,7 @@
     <diskStore path="java.io.tmpdir/essm/ehcache"/>
 
     <!-- 默认缓存配置. -->
-    <defaultCache maxEntriesLocalHeap="100" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600"
-                  overflowToDisk="true" maxEntriesLocalDisk="100000">
+    <defaultCache maxElementsInMemory="10" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600" overflowToDisk="true" >
     </defaultCache>
 
     <!--
@@ -16,37 +15,35 @@
     <!-- Special objects setting. -->
     <!-- Refresh ContentInfoCache every hour. -->
     <cache name="contentInfoCache" overflowToDisk="true" eternal="false"
-           timeToLiveSeconds="3600" timeToIdleSeconds="3600"
-           maxElementsInMemory="10000" memoryStoreEvictionPolicy="LRU">
+           timeToLiveSeconds="3600" timeToIdleSeconds="3600" maxElementsInMemory="10000" >
     </cache>
 
     <!--自定义登录用户Session信息-->
-    <cache name="sessionCache" maxEntriesLocalHeap="10000" overflowToDisk="true"
-           eternal="true" timeToLiveSeconds="0" timeToIdleSeconds="0"
-           diskExpiryThreadIntervalSeconds="600">
+    <cache name="sessionCache" maxElementsInMemory="10000" eternal="false" overflowToDisk="true" timeToLiveSeconds="1800" timeToIdleSeconds="1800"
+           diskExpiryThreadIntervalSeconds="120">
     </cache>
 
     <!-- menu -->
     <!-- 导航菜单(所有) 每24小时 -->
-    <cache name="resource_tree_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="resource_tree_cache" maxElementsInMemory="1000" eternal="false" overflowToDisk="true" >
     </cache>
 
     <!-- 用户资源树(根据用户权限) 每24小时 -->
-    <cache name="resource_user_resource_Tree_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="resource_user_resource_Tree_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!-- 导航菜单(根据用户权限) 每24小时 -->
-    <cache name="resource_user_menu_Tree_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="resource_user_menu_Tree_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!--某个url对应的是否授权给某个用户 每24小时-->
-    <cache name="resource_user_authority_urls_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="resource_user_authority_urls_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
 
     <!--role-->
     <!--  角色 每24小时 -->
-    <cache name="role_all_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="role_all_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
 

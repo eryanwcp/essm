@@ -5,7 +5,6 @@ $(function() {
         fit : true,
         nowarp : false,
         border : false,
-        view:bufferview,
 //        autoRowHeight:false,
         idField : 'id',
         pagination: true,

@@ -17,7 +17,6 @@ $(function() {
 		fitColumns : true,
 		nowarp : false,
 		border : false,
-        view:bufferview,
         autoRowHeight:false,
 		idField : 'loginName',
 		columns : [ [ {
@@ -61,7 +60,12 @@ $(function() {
 			handler : function() {
 				$('#layout_east_onlineDatagrid').datagrid('load');
 			}
-		} ]
+		}, {
+            iconCls : 'eu-icon-more',
+            handler : function() {
+                eu.addTab(window.parent.layout_center_tabs,"在线用户",ctxAdmin +'/sys/session',true);
+            }
+        } ]
 	});
 
 	/* window.setInterval(function() {

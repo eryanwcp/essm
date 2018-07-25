@@ -10,6 +10,7 @@ import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.model.Menu;
 import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
+import com.eryansky.common.orm.Page;
 import com.eryansky.common.orm._enum.StatusState;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.UserAgentUtils;
@@ -22,6 +23,7 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.sys.service.ResourceService;
 import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.utils.AppUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityConstants;
@@ -273,8 +275,11 @@ public class LoginController extends SimpleController {
     @RequiresUser(required = true)
     @RequestMapping(value = {"onlineDatagrid"})
     @ResponseBody
-    public Datagrid<SessionInfo> onlineDatagrid() throws Exception {
-        return SecurityUtils.getSessionUser();
+    public Datagrid<SessionInfo> onlineDatagrid(HttpServletRequest request) throws Exception {
+        Page<SessionInfo> page = new Page<>(request);
+        page = SecurityUtils.findSessionUserPage(page);
+        Datagrid<SessionInfo> dg = new Datagrid<>(page.getTotalCount(),page.getResult());
+        return dg;
     }
 
 

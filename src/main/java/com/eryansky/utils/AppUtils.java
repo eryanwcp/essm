@@ -356,4 +356,26 @@ public class AppUtils {
         }
         return result;
     }
+
+
+    /**
+     * 得到分页后的数据
+     *
+     * @param a
+     * @param pageNo 页码
+     * @param pageSize 页大小
+     * @return 分页后结果
+     */
+    public static <T> List<T> getPagedList(List<T> a,int pageNo,int pageSize) {
+        int fromIndex = (pageNo - 1) * pageSize;
+        if (fromIndex >= a.size()) {
+            return Collections.emptyList();
+        }
+
+        int toIndex = pageNo * pageSize;
+        if (toIndex >= a.size()) {
+            toIndex = a.size();
+        }
+        return a.subList(fromIndex, toIndex);
+    }
 }

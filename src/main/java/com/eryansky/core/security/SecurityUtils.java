@@ -7,6 +7,7 @@ package com.eryansky.core.security;
 
 import com.eryansky.common.exception.SystemException;
 import com.eryansky.common.model.Datagrid;
+import com.eryansky.common.orm.Page;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.net.IpUtils;
 import com.eryansky.common.utils.StringUtils;
@@ -415,6 +416,52 @@ public class SecurityUtils {
         return sessionInfo;
     }
 
+
+    /**
+     * 将用户放入session中.
+     *
+     * @param user
+     */
+    public static SessionInfo putUserToSession(String sessionId,User user) {
+        if(logger.isDebugEnabled()){
+            logger.debug("putUserToSession:{}", sessionId);
+        }
+        SessionInfo sessionInfo = userToSessionInfo(user);
+        sessionInfo.setSessionId(sessionId);
+        sessionInfo.setId(sessionId);
+
+        sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
+
+        List<Resource> resources = resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
+        if (Collections3.isNotEmpty(resources)) {
+            for(Resource resource:resources){
+                if(StringUtils.isNotBlank(resource.getCode()) || StringUtils.isNotBlank(resource.getMarkUrl())){
+                    sessionInfo.addPermissons(new Permisson(resource.getCode(),resource.getMarkUrl()));
+                }
+            }
+        }
+        List<Role> roles = roleService.findRolesByUserId(user.getId());
+        if (Collections3.isNotEmpty(roles)) {
+            for(Role role:roles){
+                if(StringUtils.isNotBlank(role.getCode())){
+                    sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
+                }
+            }
+        }
+
+        List<Post> posts = postService.findPostsByUserId(user.getId());
+        if (Collections3.isNotEmpty(posts)) {
+            for(Post post:posts){
+                if(StringUtils.isNotBlank(post.getCode())){
+                    sessionInfo.getPostCodes().add(post.getCode());
+                }
+            }
+        }
+
+        applicationSessionContext.addSession(sessionInfo);
+        return sessionInfo;
+    }
+
     /**
      * 获取当前用户session信息.
      */
@@ -548,6 +595,37 @@ public class SecurityUtils {
         } catch (Exception e) {
         }
 
+    }
+
+    /**
+     * 查看当前登录用户信息
+     * @return
+     */
+    public static List<SessionInfo> findSessionUserList() {
+        List<SessionInfo> sessionInfoData= applicationSessionContext.getSessionInfoData();
+        //排序
+        Collections.sort(sessionInfoData, new Comparator<SessionInfo>() {
+            @Override
+            public int compare(SessionInfo o1, SessionInfo o2) {
+                return o2.getLoginTime().compareTo(o1.getLoginTime());
+            }
+        });
+
+        return sessionInfoData;
+    }
+
+
+    /**
+     * 查看当前登录用户信息
+     * @return
+     */
+    public static Page<SessionInfo> findSessionUserPage(Page<SessionInfo> page) {
+        List<SessionInfo> list = findSessionUserList();
+        page.setTotalCount(list.size());
+        if(Page.PAGESIZE_ALL == page.getPageSize()){
+           return page.setResult(findSessionUserList());
+        }
+        return page.setResult(AppUtils.getPagedList(list,page.getPageNo(),page.getPageSize()));
     }
 
     /**

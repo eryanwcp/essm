@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -80,11 +81,10 @@ public class SystemMonitorController extends SimpleController {
             if(StringUtils.isNotBlank(cacheName)){
                 CacheUtils.removeCache(cacheName);
             }else{
-                String[] cacheNames = CacheUtils.getCacheManager().getCacheNames();
+                Collection<String> cacheNames = CacheUtils.cacheNames();
                 for (String _cacheName : cacheNames) {
                     if(!ApplicationSessionContext.CACHE_SESSION.equals(_cacheName)){//黑名单
-                        Ehcache cache = CacheUtils.getCacheManager().getEhcache(_cacheName);
-                        cache.removeAll();
+                        CacheUtils.removeCache(_cacheName);
                     }
                 }
             }

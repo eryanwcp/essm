@@ -6,9 +6,15 @@
 package com.eryansky.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
+import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.j2cache.CacheChannel;
+import com.eryansky.j2cache.CacheObject;
+import com.eryansky.j2cache.spring.J2CacheCacheManger;
+import com.eryansky.listener.SystemInitListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 /**
  * Cache工具类
@@ -16,8 +22,10 @@ import net.sf.ehcache.Element;
  * @version 2013-5-29
  */
 public class CacheUtils {
+
+	private static final Logger logger = LoggerFactory.getLogger(SystemInitListener.class);
 	
-	private static CacheManager cacheManager = SpringContextHolder.getBean("ehCacheManagerFactory");
+	private static J2CacheCacheManger cacheManager = SpringContextHolder.getBean("j2CacheCacheManger");
 
 	private static final String SYS_CACHE = "sysCache";
 
@@ -34,48 +42,33 @@ public class CacheUtils {
 	}
 	
 	public static Object get(String cacheName, String key) {
-		Element element = getCache(cacheName).get(key);
-		return element==null?null:element.getObjectValue();
+		CacheObject cacheObject = cacheManager.getCacheChannel().get(cacheName,key);
+		if(cacheObject != null && logger.isDebugEnabled()){
+			logger.info(key+":"+cacheObject.getLevel());
+		}
+		return cacheObject==null?null:cacheObject.getValue();
 	}
 
 	public static void put(String cacheName, String key, Object value) {
-		Element element = new Element(key, value);
-		Cache cache = getCache(cacheName);
-		cache.put(element);
-//		cache.flush();
+		cacheManager.getCacheChannel().set(cacheName,key,value);
 	}
 
 	public static void remove(String cacheName, String key) {
-		Cache cache = getCache(cacheName);
-		cache.remove(key);
-//		cache.flush();
+		cacheManager.getCacheChannel().evict(cacheName,key);
 	}
 
 	public static void removeCache(String cacheName) {
-		Cache cache = getCache(cacheName);
-		cache.removeAll();
-//		cache.flush();
-		cacheManager.removeCache(cacheName);
-	}
-	
-	/**
-	 * 获得一个Cache，没有则创建一个。
-	 * @param cacheName
-	 * @return
-	 */
-	public static Cache getCache(String cacheName){
-
-		Cache cache = cacheManager.getCache(cacheName);
-		if (cache == null){
-			cacheManager.addCache(cacheName);
-			cache = cacheManager.getCache(cacheName);
-			cache.getCacheConfiguration().setEternal(true);
-		}
-		return cache;
+		cacheManager.getCacheChannel().clear(cacheName);
 	}
 
-	public static CacheManager getCacheManager() {
-		return cacheManager;
+	public static Collection<String> keys(String cacheName) {
+		return cacheManager.getCacheChannel().keys(cacheName);
 	}
-	
+
+	public static Collection<String> cacheNames() {
+		Collection<CacheChannel.Region> regions = cacheManager.getCacheChannel().regions();
+		return Collections3.extractToList(regions,"name");
+	}
+
+
 }

@@ -56,6 +56,12 @@ function initMenuTree(){
                 }
                 eu.addTab(layout_center_tabs,node.text,url,true,node.iconCls);
             }
+        },
+        onLoadSuccess: function (node, data) {
+            var rootNode = $(this).tree("getRoot");
+            if(rootNode){//展开第一级
+                $(this).tree("expand",rootNode.target);
+            }
         }
     });
 }
