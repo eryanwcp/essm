@@ -10,6 +10,8 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -39,6 +41,8 @@ import java.util.concurrent.TimeUnit;
 //@Lazy(false)
 public class MapperLoader implements DisposableBean, InitializingBean, ApplicationContextAware {
 
+    private static Logger logger = LoggerFactory.getLogger(MapperLoader.class);
+
 	private ConfigurableApplicationContext context = null;
 	private HashMap<String, String> fileMapping = new HashMap<String, String>();
 	private Scanner scanner = null;
@@ -61,9 +65,12 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 			Field sqlSessionFactoryBeanField = sqlSessionFactoryBean.getClass().getDeclaredField("mapperLocations");
 			sqlSessionFactoryBeanField.setAccessible(true);
 			mapperLocationResources =  (Resource[]) sqlSessionFactoryBeanField.get(sqlSessionFactoryBean);
-			for(Resource resource: mapperLocationResources){
-				System.out.println(resource.getFile().getAbsolutePath());
-			}
+			if(logger.isDebugEnabled() && mapperLocationResources != null){
+                for(Resource resource: mapperLocationResources){
+                    logger.debug(resource.getFile().getAbsolutePath());
+                }
+            }
+
 			// 触发文件监听事件
 			scanner = new Scanner();
 			scanner.scan();
