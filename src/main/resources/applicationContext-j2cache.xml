@@ -10,21 +10,7 @@
 		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"
         default-autowire="byName" default-lazy-init="false">
 
-    <description>Spring3.1原生EhCache缓存</description>
-
-    <!--<context:property-placeholder ignore-unresolvable="true" location="classpath*:/appconfig.properties" />-->
-
-
-    <!-- 启用缓存注解功能 -->
-    <!--<cache:annotation-driven cache-manager="ehCacheManager" />-->
-
-
-    <!--<bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager"-->
-          <!--p:cacheManager-ref="ehCacheManagerFactory" />-->
-    <!--&lt;!&ndash; cacheManagerFactory工厂类 &ndash;&gt;-->
-    <!--<bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">-->
-        <!--<property name="configLocation" value="classpath:${ehcache.configLocation}" />-->
-    <!--</bean>-->
+    <description>Spring缓存</description>
 
     <cache:annotation-driven cache-manager="j2CacheCacheManger" />
 

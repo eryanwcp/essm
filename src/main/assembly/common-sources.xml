@@ -1,0 +1,27 @@
+<assembly>
+    <id>common-sources-3.1</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>target/classes/</directory>
+            <includes>
+                <include>update_log.txt</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <outputDirectory>/com/eryansky/common/</outputDirectory>
+            <directory>src/main/core/com/eryansky/common/</directory>
+            <includes>
+                <include>*.java</include>
+                <include>*/*.java</include>
+                <include>/**/*.java</include>
+            </includes>
+        </fileSet>
+
+    </fileSets>
+</assembly>

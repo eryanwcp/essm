@@ -1,0 +1,25 @@
+<assembly>
+    <id>common-3.1</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>target/classes/</directory>
+            <includes>
+                <include>update_log.txt</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/com/eryansky/common/</outputDirectory>
+            <directory>target/classes/com/eryansky/common/</directory>
+            <includes>
+                <include>*.class</include>
+                <include>*/*.class</include>
+                <include>/**/*.class</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>

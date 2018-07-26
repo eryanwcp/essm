@@ -5,11 +5,13 @@
  */
 package com.eryansky.common.web.servlet;
 
-import com.eryansky.utils.CacheUtils;
+import com.eryansky.j2cache.CacheChannel;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.eryansky.common.web.utils.WebUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 
 import javax.activation.MimetypesFileTypeMap;
@@ -47,12 +49,16 @@ public class StaticContentServlet extends HttpServlet {
 
 	private MimetypesFileTypeMap mimetypesFileTypeMap;
 	private String cacheKey;
+	private CacheChannel cacheChannel;
 
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cacheKey = config.getInitParameter("cacheKey");
+        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
+        String cacheManager = config.getInitParameter("cacheChannel");
+        cacheChannel = (CacheChannel) context.getBean(cacheManager);
 
         //初始化mimeTypes, 默认缺少css的定义,添加之.
         mimetypesFileTypeMap = new MimetypesFileTypeMap();
@@ -121,10 +127,10 @@ public class StaticContentServlet extends HttpServlet {
      * 从缓存中获取Content基本信息, 如不存在则进行创建.
      */
     private ContentInfo getContentInfoFromCache(String path) {
-        Object element = CacheUtils.get(cacheKey,path);
+        Object element = cacheChannel.get(cacheKey,path);
         if (element == null) {
             ContentInfo content = createContentInfo(path);
-            CacheUtils.put(cacheKey,content.contentPath,content);
+            cacheChannel.set(cacheKey,content.contentPath,content);
         }
         return (ContentInfo) element;
     }

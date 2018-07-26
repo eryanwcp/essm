@@ -1,0 +1,26 @@
+<assembly>
+    <id>j2cache-sources-2.3</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>target/classes/</directory>
+            <includes>
+                <include>update_log.txt</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/com/eryansky/j2cache/</outputDirectory>
+            <directory>src/main/j2cache/com/eryansky/j2cache/</directory>
+            <includes>
+                <include>*.java</include>
+                <include>*/*.java</include>
+                <include>/**/*.java</include>
+            </includes>
+        </fileSet>
+
+    </fileSets>
+</assembly>
