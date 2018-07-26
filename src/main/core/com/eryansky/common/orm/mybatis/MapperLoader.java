@@ -101,7 +101,6 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 	@SuppressWarnings({ "rawtypes" })
 	class Scanner {
 		
-		private static final String XML_RESOURCE_PATTERN = "*.xml";
 		private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
 		public Scanner() {
