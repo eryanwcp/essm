@@ -9,7 +9,7 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,7 +21,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -41,10 +40,10 @@ import java.util.concurrent.TimeUnit;
 public class MapperLoader implements DisposableBean, InitializingBean, ApplicationContextAware {
 
 	private ConfigurableApplicationContext context = null;
-	private transient String basePackage = null;
 	private HashMap<String, String> fileMapping = new HashMap<String, String>();
 	private Scanner scanner = null;
 	private ScheduledExecutorService service = null;
+	private Resource[] mapperLocationResources = null;
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -58,11 +57,13 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 			service = Executors.newScheduledThreadPool(1);
 			
 			// 获取xml所在包
-			MapperScannerConfigurer config = context.getBean(MapperScannerConfigurer.class);
-			Field field = config.getClass().getDeclaredField("basePackage");
-			field.setAccessible(true);
-			basePackage = (String) field.get(config);
-			
+			SqlSessionFactoryBean sqlSessionFactoryBean = context.getBean(SqlSessionFactoryBean.class);
+			Field sqlSessionFactoryBeanField = sqlSessionFactoryBean.getClass().getDeclaredField("mapperLocations");
+			sqlSessionFactoryBeanField.setAccessible(true);
+			mapperLocationResources =  (Resource[]) sqlSessionFactoryBeanField.get(sqlSessionFactoryBean);
+			for(Resource resource: mapperLocationResources){
+				System.out.println(resource.getFile().getAbsolutePath());
+			}
 			// 触发文件监听事件
 			scanner = new Scanner();
 			scanner.scan();
@@ -93,13 +94,10 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 	@SuppressWarnings({ "rawtypes" })
 	class Scanner {
 		
-		private String[] basePackages;
 		private static final String XML_RESOURCE_PATTERN = "*.xml";
 		private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
 		public Scanner() {
-			basePackages = StringUtils.tokenizeToStringArray(MapperLoader.this.basePackage,
-					ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 		}
 
 		public Resource[] getResource(String basePackage, String pattern) throws IOException {
@@ -115,24 +113,19 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 			Configuration configuration = factory.getConfiguration();
 			// 移除加载项
 			removeConfig(configuration);
-			// 重新扫描加载
-			for (String basePackage : basePackages) {
-
-				Resource[] resources = getResource(basePackage, XML_RESOURCE_PATTERN);
-				if (resources != null) {
-					for (int i = 0; i < resources.length; i++) {
-						if (resources[i] == null) {
-							continue;
-						}
-						try {
-							XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resources[i].getInputStream(),
-									configuration, resources[i].toString(), configuration.getSqlFragments());
-							xmlMapperBuilder.parse();
-						} catch (Exception e) {
-							throw new NestedIOException("Failed to parse mapping resource: '" + resources[i] + "'", e);
-						} finally {
-							ErrorContext.instance().reset();
-						}
+			if (mapperLocationResources != null) {
+				for (int i = 0; i < mapperLocationResources.length; i++) {
+					if (mapperLocationResources[i] == null) {
+						continue;
+					}
+					try {
+						XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocationResources[i].getInputStream(),
+								configuration, mapperLocationResources[i].toString(), configuration.getSqlFragments());
+						xmlMapperBuilder.parse();
+					} catch (Exception e) {
+						throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocationResources[i] + "'", e);
+					} finally {
+						ErrorContext.instance().reset();
 					}
 				}
 			}
@@ -170,13 +163,10 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 			if (!fileMapping.isEmpty()) {
 				return;
 			}
-			for (String basePackage : basePackages) {
-				Resource[] resources = getResource(basePackage, XML_RESOURCE_PATTERN);
-				if (resources != null) {
-					for (int i = 0; i < resources.length; i++) {
-						String multi_key = getValue(resources[i]);
-						fileMapping.put(resources[i].getFilename(), multi_key);
-					}
+			if (mapperLocationResources != null) {
+				for (int i = 0; i < mapperLocationResources.length; i++) {
+					String multi_key = getValue(mapperLocationResources[i]);
+					fileMapping.put(mapperLocationResources[i].getFilename(), multi_key);
 				}
 			}
 		}
@@ -189,17 +179,14 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 
 		public boolean isChanged() throws IOException {
 			boolean isChanged = false;
-			for (String basePackage : basePackages) {
-				Resource[] resources = getResource(basePackage, XML_RESOURCE_PATTERN);
-				if (resources != null) {
-					for (int i = 0; i < resources.length; i++) {
-						String name = resources[i].getFilename();
-						String value = fileMapping.get(name);
-						String multi_key = getValue(resources[i]);
-						if (!multi_key.equals(value)) {
-							isChanged = true;
-							fileMapping.put(name, multi_key);
-						}
+			if (mapperLocationResources != null) {
+				for (int i = 0; i < mapperLocationResources.length; i++) {
+					String name = mapperLocationResources[i].getFilename();
+					String value = fileMapping.get(name);
+					String multi_key = getValue(mapperLocationResources[i]);
+					if (!multi_key.equals(value)) {
+						isChanged = true;
+						fileMapping.put(name, multi_key);
 					}
 				}
 			}
