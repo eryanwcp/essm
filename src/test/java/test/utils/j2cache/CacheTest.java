@@ -37,7 +37,7 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml",
         "classpath:applicationContext-mybatis.xml",
-        "classpath:applicationContext-ehcache.xml" })
+        "classpath:applicationContext-j2cache.xml" })
 public class CacheTest {
 
     private static Logger logger = LoggerFactory.getLogger(CacheTest.class);

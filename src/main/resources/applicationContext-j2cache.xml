@@ -16,7 +16,7 @@
 
     <bean id="cacheChannel" class="com.eryansky.j2cache.J2Cache" factory-method="getChannel" destroy-method="close">
     </bean>
-    <bean id="j2CacheCacheManger" class="com.eryansky.j2cache.spring.J2CacheCacheManger" depends-on="cacheChannel" >
+    <bean id="j2CacheCacheManger" class="com.eryansky.j2cache.spring.J2CacheCacheManger">
         <constructor-arg ref="cacheChannel"/>
         <property name="allowNullValues" value="false"></property>
     </bean>
