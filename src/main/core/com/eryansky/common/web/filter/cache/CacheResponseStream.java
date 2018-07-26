@@ -6,6 +6,7 @@
 package com.eryansky.common.web.filter.cache;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -63,5 +64,15 @@ public class CacheResponseStream extends ServletOutputStream {
 
 	public void reset() {
 		// noop
+	}
+
+	@Override
+	public boolean isReady() {
+		return output.isReady();
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
+		output.setWriteListener(writeListener);
 	}
 }

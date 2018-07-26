@@ -95,29 +95,27 @@
 
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <version>2.0</version>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+            <version>2.3.2-b02</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <!--<version>1.1.2</version>-->
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>
             <artifactId>sitemesh</artifactId>
             <version>${sitemesh.version}</version>
         </dependency>
-
-
-        <!--用于JAX-WS jdk版本小于1.6.22添加-->
-        <!--<dependency>-->
-            <!--<groupId>com.sun.xml.ws</groupId>-->
-            <!--<artifactId>jaxws-rt</artifactId>-->
-            <!--<version>2.1.7</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -374,12 +372,7 @@
             <artifactId>jsr305</artifactId>
             <version>1.3.7</version>
         </dependency>
-        <dependency>
-            <groupId>jstl</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.1.2</version>
-            <!--<version>1.2</version>-->
-        </dependency>
+
 
         <dependency>
             <groupId>eu.bitwalker</groupId>
