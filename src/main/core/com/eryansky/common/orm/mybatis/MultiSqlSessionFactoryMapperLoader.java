@@ -217,6 +217,7 @@ public class MultiSqlSessionFactoryMapperLoader implements DisposableBean, Initi
 					String value = fileMapping.get(name);
 					String multi_key = getValue(resource);
 					if (!multi_key.equals(value)) {
+						logger.debug("文件【"+name+"】改变");
 						isChanged = true;
 						fileMapping.put(name, multi_key);
 					}

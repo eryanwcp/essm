@@ -193,6 +193,7 @@ public class MapperLoader implements DisposableBean, InitializingBean, Applicati
 					String multi_key = getValue(mapperLocationResources[i]);
 					if (!multi_key.equals(value)) {
 						isChanged = true;
+						logger.debug("文件【"+name+"】改变");
 						fileMapping.put(name, multi_key);
 					}
 				}
