@@ -301,9 +301,10 @@ function ImageUploader($parent, options) {
         //显示遮罩层
         wrap.show(function() {
 
-            $(".J_Slider_Close").on("click", function() {
+            $(".J_Slider_Close").on("click", function(e) {
                 $slider.remove();
                 wrap.close();
+                e.preventDefault();
             });
 
             $(".J_Image_Del").on("click", function() {
@@ -312,6 +313,7 @@ function ImageUploader($parent, options) {
                 $slider.remove();
                 wrap.close();
                 context.config.afterDeleteImageComplete.call(context);
+                e.preventDefault();
             });
 
         });
