@@ -5,7 +5,7 @@
     <diskStore path="java.io.tmpdir/essm/ehcache"/>
 
     <!-- 默认缓存配置. -->
-    <defaultCache maxElementsInMemory="1000" eternal="false" timeToIdleSeconds="3600" timeToLiveSeconds="3600" overflowToDisk="true" >
+    <defaultCache maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true" timeToIdleSeconds="3600" timeToLiveSeconds="3600" >
     </defaultCache>
 
     <!--
@@ -14,18 +14,17 @@
         -->
     <!-- Special objects setting. -->
     <!-- Refresh ContentInfoCache every hour. -->
-    <cache name="contentInfoCache" overflowToDisk="true" eternal="false"
-           timeToLiveSeconds="3600" timeToIdleSeconds="3600" maxElementsInMemory="10000" >
+    <cache name="contentInfoCache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true" timeToLiveSeconds="3600" timeToIdleSeconds="3600" >
     </cache>
 
     <!--自定义登录用户Session信息-->
-    <cache name="sessionCache" maxElementsInMemory="10000" eternal="false" overflowToDisk="true" timeToLiveSeconds="1800" timeToIdleSeconds="1800"
+    <cache name="sessionCache" maxEntriesLocalHeap="10000" eternal="false" overflowToDisk="true" timeToLiveSeconds="1800" timeToIdleSeconds="1800"
            diskExpiryThreadIntervalSeconds="120">
     </cache>
 
     <!-- menu -->
     <!-- 导航菜单(所有) 每24小时 -->
-    <cache name="resource_tree_cache" maxElementsInMemory="1000" eternal="false" overflowToDisk="true" >
+    <cache name="resource_tree_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true" >
     </cache>
 
     <!-- 用户资源树(根据用户权限) 每24小时 -->
@@ -49,26 +48,26 @@
 
     <!--dictionaryItem-->
     <!--数据字典项目数据 每24小时 -->
-    <cache name="dictionaryItem_byDictionaryCode_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="dictionaryItem_byDictionaryCode_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!-- 数据字典项目数据conbotree 每24小时 -->
-    <cache name="dictionaryItem_combotree_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="dictionaryItem_combotree_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!-- 数据字典项目数据conbobox 每24小时 -->
-    <cache name="dictionaryItem_combobox_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="dictionaryItem_combobox_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!--组织机构树缓存-->
-    <cache name="organ_user_tree_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="organ_user_tree_cache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
-    <cache name="sysCache" maxElementsInMemory="100" eternal="true" overflowToDisk="true">
+    <cache name="sysCache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
     <!--区域缓存-->
-    <cache name="sys_area_list" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true">
+    <cache name="sys_area_list" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
 </ehcache>
