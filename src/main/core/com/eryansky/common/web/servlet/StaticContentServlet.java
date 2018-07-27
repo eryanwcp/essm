@@ -6,6 +6,7 @@
 package com.eryansky.common.web.servlet;
 
 import com.eryansky.j2cache.CacheChannel;
+import com.eryansky.j2cache.CacheObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -20,10 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * 本地静态内容展示与下载的Servlet.
@@ -127,12 +125,13 @@ public class StaticContentServlet extends HttpServlet {
      * 从缓存中获取Content基本信息, 如不存在则进行创建.
      */
     private ContentInfo getContentInfoFromCache(String path) {
-        Object element = cacheChannel.get(cacheKey,path);
-        if (element == null) {
+        CacheObject cacheObject = cacheChannel.get(cacheKey,path);
+        if (cacheObject == null || cacheObject.getValue() == null) {
             ContentInfo content = createContentInfo(path);
             cacheChannel.set(cacheKey,content.contentPath,content);
+            return content;
         }
-        return (ContentInfo) element;
+        return (ContentInfo) cacheObject.getValue();
     }
 
     /**
@@ -170,7 +169,7 @@ public class StaticContentServlet extends HttpServlet {
     /**
      * 定义Content的基本信息.
      */
-    static class ContentInfo {
+    static class ContentInfo implements Serializable{
     	protected String contentPath;
     	protected File file;
     	protected String fileName;
