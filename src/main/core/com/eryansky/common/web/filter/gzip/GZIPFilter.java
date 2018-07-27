@@ -25,7 +25,6 @@ public class GZIPFilter extends BaseFilter{
 
 	@Override
 	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		WebUtils.checkAccetptGzip(request);
 		if (WebUtils.checkAccetptGzip(request)) {
 			GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(
 					response);
