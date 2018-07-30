@@ -293,14 +293,14 @@
     </servlet-mapping>
 
     <!--hightcharts导出下载功能-->
-    <!--<servlet>-->
-        <!--<servlet-name>DownloadChartServlet</servlet-name>-->
-        <!--<servlet-class>com.eryansky.common.web.servlet.DownloadChartServlet</servlet-class>-->
-    <!--</servlet>-->
-    <!--<servlet-mapping>-->
-        <!--<servlet-name>DownloadChartServlet</servlet-name>-->
-        <!--<url-pattern>/servlet/DownloadChartServlet</url-pattern>-->
-    <!--</servlet-mapping>-->
+    <servlet>
+        <servlet-name>DownloadChartServlet</servlet-name>
+        <servlet-class>com.eryansky.common.web.servlet.DownloadChartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DownloadChartServlet</servlet-name>
+        <url-pattern>/servlet/DownloadChartServlet</url-pattern>
+    </servlet-mapping>
 
     <!-- 配置静态资源不经过spring mvc -->
     <servlet-mapping>

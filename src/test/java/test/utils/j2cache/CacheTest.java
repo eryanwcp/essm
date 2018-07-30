@@ -7,9 +7,11 @@ package test.utils.j2cache;
 
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.Identities;
+import com.eryansky.common.utils.ThreadUtils;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.j2cache.CacheChannel;
+import com.eryansky.j2cache.J2Cache;
 import com.eryansky.j2cache.util.FSTSerializer;
 import com.eryansky.j2cache.util.FstSnappySerializer;
 import com.eryansky.j2cache.util.JSONSerializer;
@@ -29,6 +31,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author : 尔演&Eryan eryanwcp@gmail.com
@@ -116,6 +120,41 @@ public class CacheTest {
         System.out.println(r.length);
         Date d2 = Calendar.getInstance().getTime();
         System.out.println(d2.getTime() - d1.getTime());
+    }
+
+
+    @Test
+    public void cache10() throws Exception{
+        User user = userService.get("1");
+
+        ExecutorService executorService = Executors.newScheduledThreadPool(8);
+        String region = "cache1";
+        CacheChannel channel = J2Cache.getChannel();
+
+        channel.clear(region);
+        Date d1 = Calendar.getInstance().getTime();
+        for(int i=0;i<10000;i++){
+            int finalI = i;
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    channel.set(region,"i"+ finalI, user,false);
+                }
+            });
+
+        }
+
+        executorService.shutdown();
+        while (true) {
+            if (executorService.isTerminated()) {
+                Date d2 = Calendar.getInstance().getTime();
+                System.out.println("执行完毕！");
+                System.out.println(d2.getTime() - d1.getTime());
+                channel.close();
+                break;
+            }
+            ThreadUtils.sleep(200);
+        }
     }
 
 
