@@ -40,7 +40,7 @@
         <xwpf.version>2.0.1</xwpf.version>
         <bsh.version>2.0b6</bsh.version>
         <freemarker.version>2.3.19</freemarker.version>
-        <velocity.version>1.6.4</velocity.version>
+        <velocity.version>1.7</velocity.version>
         <quartz.version>2.2.1</quartz.version>
 
         <sitemesh.version>2.4.2</sitemesh.version>
