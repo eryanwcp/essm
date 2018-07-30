@@ -177,14 +177,6 @@
             <artifactId>batik-codec</artifactId>
             <version>1.7</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>batik</groupId>-->
-        <!--<artifactId>batik</artifactId>-->
-        <!--<version>1.5</version>-->
-        <!--<groupId>org.codeartisans.thirdparties.swing</groupId>-->
-        <!--<artifactId>batik-all</artifactId>-->
-        <!--<version>1.8pre-r1084380</version>-->
-        <!--</dependency>-->
 
 
         <dependency>
@@ -218,11 +210,6 @@
             <version>${druid-version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-dbutils</groupId>
-            <artifactId>commons-dbutils</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>${commons-fileupload.version}</version>
@@ -230,7 +217,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>${commons-io.version}</version>
         </dependency>
         <!--<dependency>-->
         <!--<groupId>commons-lang</groupId>-->
@@ -258,11 +245,7 @@
             <artifactId>commons-pool</artifactId>
             <version>1.6</version>
         </dependency>
-        <dependency>
-            <groupId>jaxen</groupId>
-            <artifactId>jaxen</artifactId>
-            <version>1.1.4</version>
-        </dependency>
+
 
         <dependency>
             <groupId>net.sf.dozer</groupId>
@@ -355,21 +338,6 @@
         <!--<version>1.0.0</version>-->
         <!--</dependency>-->
 
-        <dependency>
-            <groupId>oro</groupId>
-            <artifactId>oro</artifactId>
-            <version>2.0.8</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-            <version>1.3.7</version>
-        </dependency>
 
 
         <dependency>
