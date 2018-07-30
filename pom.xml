@@ -34,6 +34,7 @@
         <jackson.version>2.9.6</jackson.version>
         <xstream.version>1.4.10</xstream.version>
         <guava.version>20.0</guava.version>
+        <joda.version>2.9.9</joda.version>
         <dozer.version>5.4.0</dozer.version>
         <poi.version>3.17</poi.version>
         <xwpf.version>2.0.1</xwpf.version>
@@ -89,6 +90,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -341,6 +348,16 @@
 
 
         <dependency>
+            <groupId>oro</groupId>
+            <artifactId>oro</artifactId>
+            <version>2.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda.version}</version>
+        </dependency>
+        <dependency>
             <groupId>eu.bitwalker</groupId>
             <artifactId>UserAgentUtils</artifactId>
             <version>1.15</version>
@@ -517,11 +534,6 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
             <version>1.0.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>${velocity.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
