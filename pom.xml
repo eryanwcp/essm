@@ -14,6 +14,7 @@
         <!-- version setting -->
         <spring.version>4.3.18.RELEASE</spring.version>
         <hibernate-validator.version>4.3.2.Final</hibernate-validator.version>
+        <asm.version>3.3</asm.version>
         <aspectj.version>1.8.13</aspectj.version>
         <mybatis.version>3.4.6</mybatis.version>
         <mybatis-spring.version>1.3.2</mybatis-spring.version>
@@ -138,17 +139,17 @@
         <dependency>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
-            <version>3.3</version>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>asm</groupId>
             <artifactId>asm-commons</artifactId>
-            <version>3.3</version>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>asm</groupId>
             <artifactId>asm-tree</artifactId>
-            <version>3.3</version>
+            <version>${asm.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
