@@ -276,9 +276,9 @@ public class LoginController extends SimpleController {
     @RequestMapping(value = {"onlineDatagrid"})
     @ResponseBody
     public Datagrid<SessionInfo> onlineDatagrid(HttpServletRequest request) throws Exception {
-        Page<SessionInfo> page = new Page<>(request);
+        Page<SessionInfo> page = new Page<SessionInfo>(request);
         page = SecurityUtils.findSessionUserPage(page);
-        Datagrid<SessionInfo> dg = new Datagrid<>(page.getTotalCount(),page.getResult());
+        Datagrid<SessionInfo> dg = new Datagrid<SessionInfo>(page.getTotalCount(),page.getResult());
         return dg;
     }
 
