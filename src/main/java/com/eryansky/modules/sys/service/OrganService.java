@@ -83,7 +83,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * 自定义删除方法.
      */
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteByIds(Collection<String> ids) {
         for(String id:ids){
             deleteById(id);
@@ -94,7 +93,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * 自定义删除方法.
      */
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteOwnerAndChilds(String id){
         dao.deleteOwnerAndChilds(new Organ(id));
         logger.debug("清空缓存:{}", CacheConstants.ORGAN_USER_TREE_CACHE);

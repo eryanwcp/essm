@@ -778,7 +778,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param id 用户ID
      * @param ids 机构IDS
      */
-    @Transactional(readOnly = false)
     public void saveUserOrgans(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -795,7 +794,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param id 用户ID
      * @param ids 岗位IDS
      */
-    @Transactional(readOnly = false)
     public void saveUserOrganPosts(String id,String organId, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -813,7 +811,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param id 用户ID
      * @param ids 机构IDS
      */
-    @Transactional(readOnly = false)
     public void deleteNotInUserOrgansPostsByUserId(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -830,7 +827,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param id 用户ID
      * @param ids 角色IDS
      */
-    @Transactional(readOnly = false)
     public void saveUserRoles(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -848,7 +844,6 @@ public class UserService extends CrudService<UserDao, User> {
      * @param id 用户ID
      * @param ids 资源IDS
      */
-    @Transactional(readOnly = false)
     public void saveUserResources(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
