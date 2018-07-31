@@ -9,7 +9,6 @@ import com.eryansky.core.orm.mybatis.service.BaseService;
 import com.eryansky.modules.sys.dao.SystemDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 系统任务
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2017-09-19 
  */
 @Service
-@Transactional(readOnly = true)
 public class SystemService extends BaseService {
 
     @Autowired

@@ -14,7 +14,6 @@ import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.UserPassword;
 import com.eryansky.modules.sys.dao.UserPasswordDao;
@@ -28,7 +27,6 @@ import java.util.List;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class UserPasswordService extends CrudService<UserPasswordDao, UserPassword> {
 
     @Autowired

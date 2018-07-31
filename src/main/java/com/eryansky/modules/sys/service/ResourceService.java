@@ -27,7 +27,6 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.dao.ResourceDao;
@@ -42,10 +41,8 @@ import java.util.*;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class ResourceService extends TreeService<ResourceDao, Resource> {
 
-    @Override
     public Page<Resource> findPage(Page<Resource> page, Resource entity) {
         return page.setResult(dao.findList(entity));
     }
@@ -56,7 +53,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     @CacheEvict(value = {CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     public void save(Resource entity) {
         logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
                 + "," + CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
@@ -74,7 +70,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     @CacheEvict(value = {CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     public void saveResource(Resource entity) {
         logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
                 + "," + CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE
@@ -101,7 +96,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     @CacheEvict(value = {CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteByIds(Collection<String> ids) {
         if (Collections3.isNotEmpty(ids)) {
             for (String id : ids) {
@@ -117,7 +111,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     @CacheEvict(value = {CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteById(String id) {
         this.delete(new Resource(id));
         logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
@@ -132,7 +125,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
     @CacheEvict(value = { CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,
             CacheConstants.RESOURCE_USER_AUTHORITY_URLS_CACHE,
             CacheConstants.RESOURCE_USER_MENU_TREE_CACHE},allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteOwnerAndChilds(String id){
         dao.deleteOwnerAndChilds(new Resource(id));
         logger.debug("清空缓存:{}", CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE
@@ -860,7 +852,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param status     是否启用 默认值：启用 {@link StatusState}
      * @return
      */
-    @Transactional(readOnly = false)
     public void iSynchronous(String resourceType, String code, String name, String parentCode, String status) {
         Validate.notNull(code, "参数[code]不能为null");
         if (status == null) {
@@ -897,7 +888,6 @@ public class ResourceService extends TreeService<ResourceDao, Resource> {
      * @param resourceType 资源类型
      * @param code         资源编码
      */
-    @Transactional(readOnly = false)
     public void iDeleteResource(String resourceType, String code) {
         Resource resource = iGetReource(resourceType, code, null);
         if (resource == null) {

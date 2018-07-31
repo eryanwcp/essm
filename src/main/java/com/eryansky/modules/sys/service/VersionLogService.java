@@ -15,7 +15,6 @@ import com.eryansky.modules.sys.dao.VersionLogDao;
 import com.eryansky.modules.sys.mapper.VersionLog;
 import com.eryansky.utils.AppConstants;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 版本更新日志
@@ -23,14 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2015-09-29
  */
 @Service
-@Transactional(readOnly = true)
 public class VersionLogService extends CrudService<VersionLogDao,VersionLog>{
 
     /**
      * 删除
      * @param id
      */
-    @Transactional(readOnly = false)
     public void delete(String id) {
         dao.delete(new VersionLog(id));
     }
@@ -46,7 +43,6 @@ public class VersionLogService extends CrudService<VersionLogDao,VersionLog>{
     /**
      * 清空所有更新日志数据
      */
-    @Transactional(readOnly = false)
     public void removeAll(){
         int reslutCount = dao.removeAll();
         logger.debug("清空版本更新日志：{}",reslutCount);

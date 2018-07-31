@@ -24,7 +24,6 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.dao.UserDao;
@@ -39,7 +38,6 @@ import java.util.*;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class UserService extends CrudService<UserDao, User> {
 
     @Autowired

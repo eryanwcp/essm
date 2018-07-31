@@ -12,7 +12,6 @@ import com.eryansky.modules.sys.mapper.Config;
 import com.eryansky.utils.AppConstants;
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +22,6 @@ import java.util.Properties;
  * @date 2014-12-18
  */
 @Service
-@Transactional(readOnly = true)
 public class ConfigService extends CrudService<ConfigDao,Config>{
 
     public Page<Config> findPage(Page<Config> page, String query) {
@@ -62,7 +60,6 @@ public class ConfigService extends CrudService<ConfigDao,Config>{
      * 从配置文件同步
      * @param overrideFromProperties
      */
-    @Transactional(readOnly = false)
     public void syncFromProperties(Boolean overrideFromProperties){
         PropertiesLoader propertiesLoader = AppConstants.getConfig();
         Properties properties = propertiesLoader.getProperties();
@@ -85,7 +82,6 @@ public class ConfigService extends CrudService<ConfigDao,Config>{
      * 删除 物理删除
      * @param ids
      */
-    @Transactional(readOnly = false)
     public void deleteByIds(List<String> ids){
         if(Collections3.isNotEmpty(ids)){
             for(String id:ids){

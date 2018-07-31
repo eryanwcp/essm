@@ -14,7 +14,6 @@ import com.eryansky.utils.AppConstants;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.Post;
 import com.eryansky.modules.sys.dao.PostDao;
@@ -30,7 +29,6 @@ import java.util.Set;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class PostService extends CrudService<PostDao, Post> {
 
     @Autowired
@@ -145,7 +143,6 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param id 岗位ID
      * @param ids 机构IDS
      */
-    @Transactional(readOnly = false)
     public void savePostOrgans(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -163,7 +160,6 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param ids 用户IDS
      */
     @Deprecated
-    @Transactional(readOnly = false)
     public void savePostUsers(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -182,7 +178,6 @@ public class PostService extends CrudService<PostDao, Post> {
      * @param organId 机构ID
      * @param ids 用户IDS
      */
-    @Transactional(readOnly = false)
     public void savePostOrganUsers(String id,String organId, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);

@@ -20,6 +20,8 @@ import java.util.List;
 @MyBatisDao
 public interface AreaDao extends TreeDao<Area> {
 
+    int deleteOwnerAndChilds(Area entity);
+
     Area getByCode(String code);
 
     List<Area> findAreaUp(Area area);

@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -30,7 +29,6 @@ import java.util.List;
  * @date 2015-09-27 
  */
 @Service
-@Transactional(readOnly = true)
 public class DictionaryItemService extends CrudService<DictionaryItemDao,DictionaryItem> {
 
     @Autowired
@@ -39,7 +37,6 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
     @CacheEvict(value = {CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOTREE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOBOX_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     @Override
     public void save(DictionaryItem entity) {
         logger.debug("清空缓存:{}", CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE
@@ -51,7 +48,6 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
     @CacheEvict(value = {CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOTREE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOBOX_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     @Override
     public void delete(DictionaryItem entity) {
         logger.debug("清空缓存:{}", CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE
@@ -64,7 +60,6 @@ public class DictionaryItemService extends CrudService<DictionaryItemDao,Diction
     @CacheEvict(value = {CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOTREE_CACHE,
             CacheConstants.DICTIONARYITEM_CONBOBOX_CACHE}, allEntries = true)
-    @Transactional(readOnly = false)
     public void deleteByIds(List<String> ids) {
         logger.debug("清空缓存:{}", CacheConstants.DICTIONARYITEM_BY_DICTIONARYCODE_CACHE
                 + "," + CacheConstants.DICTIONARYITEM_CONBOTREE_CACHE

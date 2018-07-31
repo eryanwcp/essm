@@ -12,7 +12,6 @@ import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.sys.dao.DictionaryDao;
 import com.eryansky.modules.sys.mapper.Dictionary;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,22 +21,18 @@ import java.util.List;
  * @date 2015-09-27 
  */
 @Service
-@Transactional(readOnly = true)
 public class DictionaryService extends CrudService<DictionaryDao,Dictionary> {
 
-    @Transactional(readOnly = false)
     @Override
     public void save(Dictionary entity) {
         super.save(entity);
     }
 
-    @Transactional(readOnly = false)
     @Override
     public void delete(Dictionary entity) {
         super.delete(entity);
     }
 
-    @Transactional(readOnly = false)
     public void deleteByIds(List<String> ids) {
         if(Collections3.isNotEmpty(ids)){
             for(String id:ids){

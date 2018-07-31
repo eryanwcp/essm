@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.Role;
 import com.eryansky.modules.sys.dao.RoleDao;
@@ -30,7 +29,6 @@ import java.util.List;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class RoleService extends CrudService<RoleDao, Role> {
 
     @Autowired
@@ -181,7 +179,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * @param id 角色ID
      * @param ids 机构IDS
      */
-    @Transactional(readOnly = false)
     public void saveRoleOrgans(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -211,7 +208,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * @param id 角色ID
      * @param ids 用户IDS
      */
-    @Transactional(readOnly = false)
     public void saveRoleUsers(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -227,7 +223,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * @param id 角色ID
      * @param ids 用户IDS
      */
-    @Transactional(readOnly = false)
     public void insertRoleUsers(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -242,7 +237,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * @param id 角色ID
      * @param ids 用户IDS
      */
-    @Transactional(readOnly = false)
     public void deleteRoleUsersByRoleIdANDUserIds(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -260,7 +254,6 @@ public class RoleService extends CrudService<RoleDao, Role> {
      * @param id 岗位ID
      * @param ids 资源IDS
      */
-    @Transactional(readOnly = false)
     public void saveRoleResources(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);

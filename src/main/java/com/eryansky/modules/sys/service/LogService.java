@@ -23,7 +23,6 @@ import com.eryansky.utils.AppConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 
 import java.util.*;
@@ -33,7 +32,6 @@ import java.util.*;
  * @date 2015-09-26
  */
 @Service
-@Transactional(readOnly = true)
 public class LogService extends CrudService<LogDao, Log> {
 
     @Autowired
@@ -51,7 +49,6 @@ public class LogService extends CrudService<LogDao, Log> {
      * 删除
      * @param ids
      */
-    @Transactional(readOnly = false)
     public void deleteByIds(Collection<String> ids){
         if(Collections3.isNotEmpty(ids)){
             for(String id :ids){
@@ -70,7 +67,6 @@ public class LogService extends CrudService<LogDao, Log> {
     }
 
 
-    @Transactional(readOnly = false)
     public int remove(String id){
         int reslutCount = dao.remove(id);
         logger.debug("清除日志：{}",reslutCount);
@@ -81,7 +77,6 @@ public class LogService extends CrudService<LogDao, Log> {
      * 清空所有日志
      * @return
      */
-    @Transactional(readOnly = false)
     public int removeAll(){
         int reslutCount = dao.removeAll();
         logger.debug("清空日志：{}",reslutCount);
@@ -94,7 +89,6 @@ public class LogService extends CrudService<LogDao, Log> {
      * @throws DaoException
      * @throws SystemException
      */
-    @Transactional(readOnly = false)
     public int clearInvalidLog(int day){
         if(day <0){
             throw new SystemException("参数[day]不合法，需要大于0.输入为："+day);
@@ -119,7 +113,6 @@ public class LogService extends CrudService<LogDao, Log> {
      * @throws DaoException
      * @throws SystemException
      */
-    @Transactional(readOnly = false)
     public void insertToHistoryAndClear(int day){
         if(day <0){
             throw new SystemException("参数[day]不合法，需要大于0.输入为："+day);

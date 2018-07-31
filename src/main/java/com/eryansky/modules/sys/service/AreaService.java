@@ -10,6 +10,7 @@ import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys.dao.AreaDao;
 import com.eryansky.modules.sys.mapper.Area;
+import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import java.util.List;
  * @date 2016-05-12
  */
 @Service
-@Transactional(readOnly = true)
 public class AreaService extends TreeService<AreaDao, Area> {
 
 	@Autowired
@@ -39,17 +39,19 @@ public class AreaService extends TreeService<AreaDao, Area> {
 	}
 
 	@CacheEvict(value = {CacheConstants.AREA_LIST_CACHE},allEntries = true)
-	@Transactional(readOnly = false)
 	public void save(Area area) {
 		super.save(area);
 	}
 
 	@CacheEvict(value = {CacheConstants.AREA_LIST_CACHE},allEntries = true)
-	@Transactional(readOnly = false)
 	public void delete(Area area) {
 		super.delete(area);
 	}
 
+	@CacheEvict(value = {CacheConstants.AREA_LIST_CACHE},allEntries = true)
+	public void deleteOwnerAndChilds(String id){
+		dao.deleteOwnerAndChilds(new Area(id));
+	}
 	/**
 	 * 根据编码查找
 	 * @param code 编码

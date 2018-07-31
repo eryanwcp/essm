@@ -46,7 +46,7 @@ public class AreaController extends SimpleController {
 	@Autowired
 	private AreaService areaService;
 	
-	@ModelAttribute()
+	@ModelAttribute("model")
 	public Area get(@RequestParam(required=false) String id) {
 		if (StringUtils.isNotBlank(id)){
 			return areaService.get(id);
@@ -75,7 +75,7 @@ public class AreaController extends SimpleController {
 
 	@RequiresPermissions("sys:area:view")
 	@RequestMapping(value = "form")
-	public String form(Area area, Model model) {
+	public String form(@ModelAttribute("model")Area area, Model model) {
 		if (area.getParent()==null||area.getParent().getId()==null){
 			area.setParent(new Area(OrganUtils.getOrganExtendByUserId(SecurityUtils.getCurrentUserId()).getId()));
 		}
@@ -104,7 +104,7 @@ public class AreaController extends SimpleController {
 	@Logging(value = "区域管理-保存区域",logType = LogType.access)
 	@RequiresPermissions("sys:area:edit")
 	@RequestMapping(value = "save")
-	public String save(Area area, Model model, RedirectAttributes redirectAttributes) {
+	public String save(@ModelAttribute("model")Area area, Model model, RedirectAttributes redirectAttributes) {
 		if (!beanValidator(model, area)){
 			return form(area, model);
 		}
@@ -116,11 +116,12 @@ public class AreaController extends SimpleController {
 	@Logging(value = "区域管理-删除区域",logType = LogType.access)
 	@RequiresPermissions("sys:area:edit")
 	@RequestMapping(value = "delete")
-	public String delete(Area area, RedirectAttributes redirectAttributes) {
+	public String delete(@ModelAttribute("model")Area area, RedirectAttributes redirectAttributes) {
 //		if (Area.isRoot(id)){
 //			addMessage(redirectAttributes, "删除区域失败, 不允许删除顶级区域或编号为空");
 //		}else{
-			areaService.delete(area);
+//			areaService.delete(area);
+			areaService.deleteOwnerAndChilds(area.getId());
 			addMessage(redirectAttributes, "删除区域成功");
 //		}
 		return "redirect:" + AppConstants.getAdminPath() + "/sys/area/";

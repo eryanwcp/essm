@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.dao.OrganDao;
@@ -45,7 +44,6 @@ import java.util.*;
  * @date 2018-05-08
  */
 @Service
-@Transactional(readOnly = true)
 public class OrganService extends TreeService<OrganDao, Organ> {
 
     private static final String ICON_ORGAN_ROOT = "eu-icon-organ-root";
@@ -61,7 +59,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * 保存或修改.
      */
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
-    @Transactional(readOnly = false)
     public Organ saveOrgan(Organ entity) {
         logger.debug("清空缓存:{}");
         Assert.notNull(entity, "参数[entity]为空!");
@@ -76,7 +73,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      *            主键ID
      */
     @CacheEvict(value = { CacheConstants.ORGAN_USER_TREE_CACHE},allEntries = true)
-    @Transactional(readOnly = false)
     public String deleteById(final String id){
         dao.delete(new Organ(id));
         logger.debug("清空缓存:{}", CacheConstants.ORGAN_USER_TREE_CACHE);
@@ -108,7 +104,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
      * 递归
      * @param organs
      */
-    @Transactional(readOnly = false)
     public void updateParentIds(Collection<Organ> organs){
         for(Organ organ:organs){
             dao.updateParentIds(organ);
@@ -118,7 +113,6 @@ public class OrganService extends TreeService<OrganDao, Organ> {
     /**
      * 同步所有机构ID
      */
-    @Transactional(readOnly = false)
     public void syncAllParentIds() {
         List<Organ> rootOrgans = this.findRoots();
         updateParentIds(rootOrgans);

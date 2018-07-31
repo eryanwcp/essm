@@ -202,10 +202,22 @@
 
 	<update id="delete">
 		UPDATE t_sys_area SET
-		status = #{STATUS_DELETE}
-		WHERE id = #{id} OR parent_ids LIKE
-		<if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
-		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+		status = #{STATUS_DELETE},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime}
+		WHERE id = #{id}
 	</update>
+
+	<delete id="deleteOwnerAndChilds">
+		UPDATE t_sys_area SET
+		status = #{STATUS_DELETE},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime}
+		WHERE id = #{id} OR parent_id = #{id} OR parent_ids LIKE
+		<if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+	</delete>
 
 </mapper>

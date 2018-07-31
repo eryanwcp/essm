@@ -15,7 +15,6 @@ import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +27,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2016-07-14 
  */
 @Service
-@Transactional(readOnly = true)
 public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao, SystemSerialNumber> implements ISerialNumService{
 
     @Autowired
