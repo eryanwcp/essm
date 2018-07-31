@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.disk.mapper.Folder;
 import com.eryansky.modules.disk.dao.FolderDao;
@@ -33,7 +32,6 @@ import java.util.List;
  * @date 2018-05-04
  */
 @Service
-@Transactional(readOnly = true)
 public class FolderService extends TreeService<FolderDao, Folder> {
 
     @Autowired
@@ -45,7 +43,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
      * @param code 系统文件夹编码
      * @return
      */
-    @Transactional(readOnly = false)
     public Folder checkAndSaveSystemFolderByCode(String code){
         return checkAndSaveSystemFolderByCode(code,null);
     }
@@ -58,7 +55,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
      * @param userId 用户ID
      * @return
      */
-    @Transactional(readOnly = false)
     public Folder checkAndSaveSystemFolderByCode(String code, String userId){
         Validate.notBlank(code, "参数[code]不能为null.");
         List<Folder> list =  findFoldersByUserId(userId,null,FolderAuthorize.SysTem.getValue(),code);
@@ -75,7 +71,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
         return folder;
     }
 
-    @Transactional(readOnly = false)
     public void saveFolder(Folder folder) {
         save(folder);
     }
@@ -84,7 +79,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
     /**
      * 判断和创建个人云盘的默认文件夹
      */
-    @Transactional(readOnly = false)
     public Folder initHideFolderAndSaveForUser(String userId) {
         List<Folder> list = findFoldersByUserId(userId,FolderType.HIDE.getValue(),FolderAuthorize.User.getValue(),null);
         Folder folder = Collections3.isEmpty(list) ? null:list.get(0);
@@ -104,7 +98,6 @@ public class FolderService extends TreeService<FolderDao, Folder> {
      * 删除文件夹 包含子级文件夹以及文件
      * @param folderId
      */
-    @Transactional(readOnly = false)
     public void deleteFolderAndFiles(String folderId) {
         Validate.notNull(folderId,"参数[folderId]不能为null.");
         dao.deleteCascadeByFolderId(new Folder(folderId));

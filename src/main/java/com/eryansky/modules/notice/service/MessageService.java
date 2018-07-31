@@ -26,7 +26,6 @@ import com.eryansky.modules.weixin.utils.WeixinConstants;
 import com.eryansky.modules.weixin.utils.WeixinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.List;
@@ -36,7 +35,6 @@ import java.util.List;
  * @date 2016-03-14 
  */
 @Service
-@Transactional(readOnly = true)
 public class MessageService extends CrudService<MessageDao, Message> {
 
     @Autowired
@@ -65,7 +63,6 @@ public class MessageService extends CrudService<MessageDao, Message> {
      * @param entity
      * @param isRe 是否恢复删除
      */
-    @Transactional(readOnly = false)
     public void delete(Message entity, Boolean isRe) {
         if(isRe != null && isRe){
             entity.setStatus(Message.STATUS_NORMAL);
@@ -82,7 +79,6 @@ public class MessageService extends CrudService<MessageDao, Message> {
      * @param receiveObjectIds
      * @param sendWeixin
      */
-    @Transactional(readOnly = false)
     public void saveAndSend(Message message, MessageReceiveObjectType messageReceiveObjectType, List<String> receiveObjectIds,Boolean sendWeixin){
         if(Collections3.isNotEmpty(receiveObjectIds)){
             message.setMode(MessageMode.Publishing.getValue());

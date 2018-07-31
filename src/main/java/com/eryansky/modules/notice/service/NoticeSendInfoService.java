@@ -13,7 +13,6 @@ import com.eryansky.modules.notice.dao.NoticeSendInfoDao;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import java.util.List;
  * @date 2015-10-16 
  */
 @Service
-@Transactional(readOnly = false)
 public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeSendInfo> {
 
     /**
@@ -86,7 +84,6 @@ public class NoticeSendInfoService extends CrudService<NoticeSendInfoDao,NoticeS
      * @param noticeId
      * @return
      */
-    @Transactional(readOnly = false)
     public int deleteByNoticeId(String noticeId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("noticeId",noticeId);

@@ -25,7 +25,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.disk.dao.FileDao;
@@ -45,7 +44,6 @@ import java.util.List;
  * @date 2018-05-04
  */
 @Service
-@Transactional(readOnly = true)
 public class FileService extends CrudService<FileDao, File> {
 
     @Autowired
@@ -125,7 +123,6 @@ public class FileService extends CrudService<FileDao, File> {
      * @param file
      * @return
      */
-    @Transactional(readOnly = false)
     public File saveSystemFile(String folderCode,File file){
         Validate.notBlank(folderCode, "参数[folderCode]不能为null.");
         Validate.notNull(file, "参数[file]不能为null.");
@@ -143,7 +140,6 @@ public class FileService extends CrudService<FileDao, File> {
      * @param uploadFile
      * @throws Exception
      */
-    @Transactional(readOnly = false)
     public File fileUpload(SessionInfo sessionInfo, Folder folder,
                            MultipartFile uploadFile) {
         File file = null;
@@ -193,7 +189,6 @@ public class FileService extends CrudService<FileDao, File> {
      * 删除磁盘文件
      * @param fileId 文件ID
      */
-    @Transactional(readOnly = false)
     public void deleteByFileId(String fileId){
         deleteByFileId(fileId,false);
     }
@@ -204,7 +199,6 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileId 文件ID
      * @param deleteDiskFile 删除磁盘文件
      */
-    @Transactional(readOnly = false)
     public void deleteByFileId(String fileId, boolean deleteDiskFile){
         File file = dao.get(fileId);
         try {
@@ -227,7 +221,6 @@ public class FileService extends CrudService<FileDao, File> {
      * @param fileId 文件ID
      * @return
      */
-    @Transactional(readOnly = false)
     public void deleteCascadeByFolderId(String fileId){
         deleteCascadeByFolderId(fileId,false);
     }
@@ -238,7 +231,6 @@ public class FileService extends CrudService<FileDao, File> {
      * @param deleteDiskFile 删除磁盘文件
      * @return
      */
-    @Transactional(readOnly = false)
     public void deleteCascadeByFolderId(String fileId,boolean deleteDiskFile){
         File file = dao.get(fileId);
         try {
@@ -264,7 +256,6 @@ public class FileService extends CrudService<FileDao, File> {
      * 文件删除
      * @param fileIds 文件集合
      */
-    @Transactional(readOnly = false)
     public void deleteFileByFileIds(Collection<String> fileIds) {
         if (Collections3.isNotEmpty(fileIds)) {
             for (String fileId : fileIds) {
@@ -282,7 +273,6 @@ public class FileService extends CrudService<FileDao, File> {
      *
      * @param fileCodes 文件编码集合
      */
-    @Transactional(readOnly = false)
     public void deleteFileByFolderCode(Collection<String> fileCodes){
         if (Collections3.isNotEmpty(fileCodes)) {
             for (String code : fileCodes) {

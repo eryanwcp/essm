@@ -23,7 +23,6 @@ import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
 import com.eryansky.modules.notice.vo.NoticeQueryVo;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -34,7 +33,6 @@ import java.util.List;
  * @date 2015-10-15 
  */
 @Service
-@Transactional(readOnly =  true)
 public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,NoticeReceiveInfo> {
 
     public NoticeReceiveInfo getUserNotice(String userId,String noticeId){
@@ -148,7 +146,6 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
      * @param noticeId
      * @return
      */
-    @Transactional(readOnly = false)
     public int deleteByNoticeId(String noticeId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("noticeId",noticeId);

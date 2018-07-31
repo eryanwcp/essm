@@ -10,16 +10,13 @@ import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.modules.notice.dao.MessageSenderDao;
 import com.eryansky.modules.notice.mapper.MessageSender;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author 尔演@Eryan eryanwcp@gmail.com
  * @date 2016-03-14 
  */
 @Service
-@Transactional(readOnly = true)
 public class MessageSenderService extends CrudService<MessageSenderDao, MessageSender> {
 
 
@@ -28,7 +25,6 @@ public class MessageSenderService extends CrudService<MessageSenderDao, MessageS
      * @param messageId
      * @return
      */
-    @Transactional(readOnly = false)
     public int deleteByMessageId(String messageId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("messageId",messageId);

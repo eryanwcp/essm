@@ -33,7 +33,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -41,7 +40,6 @@ import java.util.*;
  * 通知管理
  */
 @Service
-@Transactional(readOnly =  true)
 public class NoticeService extends CrudService<NoticeDao,Notice> {
 
 	@Autowired
@@ -61,7 +59,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param organIds
      * @param fileIds
      */
-    @Transactional(readOnly = false)
     public void saveNoticeAndFiles(Notice entity,Boolean isPub,Collection<String> userIds,Collection<String> organIds,List<String> fileIds) {
         List<String> oldFileIds = Collections.EMPTY_LIST;
         if(!entity.getIsNewRecord()){
@@ -105,7 +102,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * 删除通知
      * @param ids
      */
-    @Transactional(readOnly = false)
     public void deleteByIds(List<String> ids){
         if(Collections3.isNotEmpty(ids)){
             for(String id:ids){
@@ -164,7 +160,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param noticeId
      *            公告ID
      */
-    @Transactional(readOnly = false)
     public void publish(String noticeId) {
         Notice notice = this.get(noticeId);
         if (notice == null) {
@@ -187,7 +182,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 	 * 
 	 * @param notice 通知
 	 */
-    @Transactional(readOnly = false)
 	public void publish(Notice notice) {
         notice.setMode(NoticeMode.Effective.getValue());
         if(notice.getPublishTime() == null) {
@@ -246,7 +240,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param organId
      * @param organIds
      */
-    @Transactional(readOnly = false)
     public void sendToOrganNotice(String appId,String type,String title,String content,Date sendTime,String userId,String organId,List<String> organIds) {
         //保存到notice表
         Notice notice = new Notice();
@@ -306,7 +299,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param userId 所属用户ID
      * @param noticeIds 通知ID集合
      */
-    @Transactional(readOnly = false)
     public void markReaded(String userId,List<String> noticeIds){
         if (Collections3.isNotEmpty(noticeIds)) {
             for (String id : noticeIds) {
@@ -325,7 +317,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param id 通知ID
      * @param ids 文件IDS
      */
-    @Transactional(readOnly = false)
     public void insertNoticeFiles(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -340,7 +331,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param id 通知ID
      * @param ids 文件IDS
      */
-    @Transactional(readOnly = false)
     public void deleteNoticeFiles(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -355,7 +345,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
      * @param id 通知ID
      * @param ids 文件IDS
      */
-    @Transactional(readOnly = false)
     public void saveNoticeFiles(String id, Collection<String> ids){
         Parameter parameter = Parameter.newParameter();
         parameter.put("id",id);
@@ -381,7 +370,6 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
     /**
      * 轮询通知 定时发布、到时失效、取消置顶
      */
-    @Transactional(readOnly = false)
     public void pollNotice() {
         // 查询到今天为止所有未删除的通知
         Date nowTime = Calendar.getInstance().getTime();

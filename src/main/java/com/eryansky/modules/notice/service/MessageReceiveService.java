@@ -15,9 +15,7 @@ import com.eryansky.modules.notice.dao.MessageReceiveDao;
 import com.eryansky.modules.notice.mapper.Message;
 import com.eryansky.modules.notice.mapper.MessageReceive;
 import com.eryansky.modules.sys._enum.YesOrNo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.List;
@@ -28,7 +26,6 @@ import java.util.Map;
  * @date 2016-03-14 
  */
 @Service
-@Transactional(readOnly = true)
 public class MessageReceiveService extends CrudService<MessageReceiveDao, MessageReceive> {
 
     /**
@@ -36,7 +33,6 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
      * @param messageId
      * @return
      */
-    @Transactional(readOnly = false)
     public int deleteByMessageId(String messageId){
         Parameter parameter = Parameter.newParameter();
         parameter.put("messageId",messageId);
@@ -95,7 +91,6 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
      * 设置通知已读状态
      * @param receive
      */
-    @Transactional(readOnly = false)
     public void setRead(MessageReceive receive){
         receive.setIsRead(YesOrNo.YES.getValue());
         receive.setReadTime(Calendar.getInstance().getTime());
@@ -107,7 +102,6 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
      * @param userId
      * @param isRead
      */
-    @Transactional(readOnly = false)
     public void setReadAll(String userId,String isRead){
         MessageReceive receive = new MessageReceive();
         receive.setUserId(userId);
