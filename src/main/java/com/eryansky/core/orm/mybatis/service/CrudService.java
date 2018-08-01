@@ -10,7 +10,6 @@ import com.eryansky.common.orm.persistence.CrudDao;
 import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @version 2014-05-16
  */
-@Transactional(readOnly = true)
 public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>> extends BaseService {
 
 	/**
@@ -72,7 +70,6 @@ public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>>
 	 * 保存数据（插入或更新）
 	 * @param entity
 	 */
-	@Transactional(readOnly = false)
 	public void save(T entity) {
 		if (entity.getIsNewRecord()){
 			entity.prePersist();
@@ -87,7 +84,6 @@ public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>>
 	 * 删除数据
 	 * @param entity
 	 */
-	@Transactional(readOnly = false)
 	public void delete(T entity) {
 		dao.delete(entity);
 	}
@@ -97,7 +93,6 @@ public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>>
 	 * 删除数据
 	 * @param id
 	 */
-	@Transactional(readOnly = false)
 	public void delete(String id) {
 		dao.delete(id);
 	}
@@ -107,7 +102,6 @@ public abstract class CrudService<D extends CrudDao<T>, T extends BaseEntity<T>>
 	 * @param entity
 	 * @param isRe 是否还原
 	 */
-	@Transactional(readOnly = false)
 	public void delete(T entity, Boolean isRe) {
 		if(isRe != null && isRe){
 			if(entity instanceof DataEntity){

@@ -17,7 +17,6 @@ import com.eryansky.modules.sys.utils.RoleUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ import java.util.List;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @version 2014-05-16
  */
-@Transactional(readOnly = true)
 public abstract class BaseService {
 
     /**
