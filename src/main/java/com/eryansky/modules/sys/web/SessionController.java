@@ -79,4 +79,17 @@ public class SessionController extends SimpleController {
 
         return Result.successResult();
     }
+
+
+    /**
+     * 详细信息
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = {"detail"})
+    @ResponseBody
+    public Result detail(String id){
+        SessionInfo sessionInfo = SecurityUtils.getSessionInfo(id);
+        return Result.successResult().setObj(sessionInfo);
+    }
 }

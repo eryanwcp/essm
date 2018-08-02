@@ -5,7 +5,6 @@ $(function() {
         fit : true,
         nowarp : false,
         border : false,
-//        autoRowHeight:false,
         idField : 'id',
         pagination: true,
         rownumbers: true,
@@ -16,18 +15,22 @@ $(function() {
             {field: 'ck', checkbox: true}
         ]],
         columns : [ [{
-            title : 'SessionID',
+            title : 'ID',
             field : 'id',
             width : 360,
-            hidden:true
+            hidden:true,formatter: function (value, rowData, rowIndex) {
+                return "<a target='_blank' href='"+ctxAdmin+"/sys/session/detail?id="+rowData['id']+"'>"+value+"</a>";
+            }
         },{
             title : 'SessionID',
             field : 'sessionId',
             width : 360,
-            hidden:false
+            hidden:false,formatter: function (value, rowData, rowIndex) {
+                return "<a target='_blank' href='"+ctxAdmin+"/sys/session/detail?id="+rowData['id']+"'>"+value+"</a>";
+            }
         },{
             title : '员工类型',
-            field : 'bizUserType',
+            field : 'userType',
             width : 120,
             hidden:true
         },{
