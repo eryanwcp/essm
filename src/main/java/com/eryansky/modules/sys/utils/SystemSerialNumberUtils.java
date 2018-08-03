@@ -7,8 +7,13 @@ package com.eryansky.modules.sys.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.service.SystemSerialNumberService;
+import com.eryansky.utils.CacheConstants;
+import com.eryansky.utils.CacheUtils;
+
+import java.util.List;
 
 /**
  * @author 尔演&Eryan eryanwcp@gmail.com
@@ -35,9 +40,7 @@ public class SystemSerialNumberUtils {
      */
     public static SystemSerialNumber getByModuleCode(String moduleCode){
         if(StringUtils.isNotBlank(moduleCode)){
-            SystemSerialNumber systemSerialNumber = new SystemSerialNumber();
-            systemSerialNumber.setModuleCode(moduleCode);
-            return systemSerialNumberService.find(systemSerialNumber);
+            return systemSerialNumberService.getByCode(moduleCode);
         }
         return null;
     }
@@ -56,13 +59,23 @@ public class SystemSerialNumberUtils {
     }
 
     /**
-     * 生成序列号
-     * @param moduleCode 模块编码
-     * @return
+     * 根据模块code生成序列号
+     * @param moduleCode  模块code
+     * @return  序列号
      */
     public static String generateSerialNumberByModelCode(String moduleCode){
-        return systemSerialNumberService.generateSerialNumberByModelCode(moduleCode);
+        synchronized (moduleCode.intern()){
+            List<String> preData = (List<String>)CacheUtils.get(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode);
+            if(Collections3.isNotEmpty(preData)){
+                String result = preData.remove(0);
+                CacheUtils.put(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode,preData);
+                return result;
+            }
+            preData = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
+            String result = preData.remove(0);
+            CacheUtils.put(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode,preData);
+            return result;
+        }
     }
-
 
 }

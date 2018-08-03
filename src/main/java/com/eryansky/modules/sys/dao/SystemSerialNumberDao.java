@@ -17,6 +17,6 @@ import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 @MyBatisDao
 public interface SystemSerialNumberDao extends CrudDao<SystemSerialNumber> {
 
-    SystemSerialNumber find(SystemSerialNumber systemSerialNumber);
+    SystemSerialNumber getByCode(SystemSerialNumber entity);
 }
 

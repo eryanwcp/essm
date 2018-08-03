@@ -26,20 +26,21 @@
 		FROM t_sys_serial_number a
 		WHERE a.id = #{id}
 	</select>
+
+
+	<select id="getByCode" resultType="SystemSerialNumber">
+		SELECT
+		<include refid="systemSerialNumberColumns"/>
+		FROM t_sys_serial_number a
+		WHERE a.status = #{STATUS_NORMAL}
+		AND a.module_code = #{moduleCode}
+	</select>
 	
 	<select id="findList" resultType="SystemSerialNumber">
 		SELECT
 			<include refid="systemSerialNumberColumns"/>
 		FROM t_sys_serial_number a
 		WHERE a.status = #{STATUS_NORMAL}
-	</select>
-
-	<select id="find" resultType="SystemSerialNumber">
-		SELECT
-		<include refid="systemSerialNumberColumns"/>
-		FROM t_sys_serial_number a
-		WHERE a.status = #{STATUS_NORMAL}
-		AND a.module_code = #{moduleCode}
 	</select>
 
 
