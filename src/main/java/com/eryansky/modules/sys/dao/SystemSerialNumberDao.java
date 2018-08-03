@@ -17,6 +17,13 @@ import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 @MyBatisDao
 public interface SystemSerialNumberDao extends CrudDao<SystemSerialNumber> {
 
+    /**
+     * 乐观锁更新方式
+     * @param entity
+     * @return 返回更新数 0：更新失败 1：更新成功
+     */
+    int updateByVersion(SystemSerialNumber entity);
+
     SystemSerialNumber getByCode(SystemSerialNumber entity);
 }
 

@@ -103,6 +103,23 @@
 			remark = #{remark}
 		WHERE id = #{id}
 	</update>
+
+	<update id="updateByVersion">
+		UPDATE t_sys_serial_number SET
+		status = #{status},
+		version = version +1,
+		update_user = #{updateUser},
+		update_time = #{updateTime},
+		module_name = #{moduleName},
+		module_code = #{moduleCode},
+		config_template = #{configTemplate},
+		max_serial = #{maxSerial},
+		year_clear = #{yearClear},
+		is_auto_increment = #{isAutoIncrement},
+		pre_max_num = #{preMaxNum},
+		remark = #{remark}
+		WHERE id = #{id} AND version = #{version}
+	</update>
 	
 	<update id="delete">
 		UPDATE t_sys_serial_number SET

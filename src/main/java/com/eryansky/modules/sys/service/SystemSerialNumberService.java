@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.sys.service;
 
+import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.service.CrudService;
@@ -41,6 +42,17 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
         return page;
     }
 
+    /**
+     * 乐观锁更新方式
+     * @param entity
+     * @return 返回更新数 0：更新失败 1：更新成功
+     */
+    public void updateByVersion(SystemSerialNumber entity){
+        int result = dao.updateByVersion(entity);
+        if(result == 0){
+            throw new ServiceException("乐观锁更新失败,"+entity.toString());
+        }
+    }
 
 
 
@@ -71,6 +83,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
     @CachePut(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE,key="#moduleCode")
     public List<String> generatePrepareSerialNumbers(String moduleCode){
         SystemSerialNumber entity = getByCode(moduleCode);
+        int version = entity.getVersion();
         /** 预生成数量 */
         int prepare = StringUtils.isNotBlank(entity.getPreMaxNum()) ? Integer.valueOf(entity.getPreMaxNum()):0;
         /** 数据库存储的当前最大序列号 **/
@@ -86,7 +99,9 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
             maxSerialInt ++;
             //更新数据
             entity.setMaxSerial(maxSerialInt + "");
-            this.save(entity);
+            updateByVersion(entity);
+            version++;
+            entity.setVersion(version);
             resultList.add(formatSerialNum);
         }
         return resultList;
