@@ -62,7 +62,6 @@
         <label class="control-label">当前最大值:</label>
         <div class="controls">
             <form:input path="maxSerial" htmlEscape="false" maxlength="20" class="input-large digits"/>
-            是否年度重置：<form:checkbox path="yearClear" htmlEscape="false" value="1"/>
         </div>
     </div>
     <div class="control-group">
@@ -70,6 +69,16 @@
         <div class="controls">
             <form:input path="preMaxNum" htmlEscape="false" maxlength="11" class="input-large digits"/>
             <span class="help-inline">预生成流水号数量</span>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label">重置类型:</label>
+        <div class="controls">
+            <form:select path="resetType">
+                <form:option value="">请选择...</form:option>
+                <form:options items="${resetTypes}" itemValue="value" itemLabel="description"></form:options>
+            </form:select>
         </div>
     </div>
 

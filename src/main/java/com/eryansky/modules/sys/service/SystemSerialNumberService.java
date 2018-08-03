@@ -7,22 +7,23 @@ package com.eryansky.modules.sys.service;
 
 import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.orm.Page;
+import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.core.orm.mybatis.service.CrudService;
+import com.eryansky.modules.sys._enum.ResetType;
 import com.eryansky.modules.sys.dao.SystemSerialNumberDao;
 import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.sn.GeneratorConstants;
 import com.eryansky.modules.sys.sn.SNGenerateApp;
+import com.eryansky.utils.AppDateUtils;
 import com.eryansky.utils.CacheConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * @author 尔演&Eryan eryanwcp@gmail.com
@@ -111,11 +112,28 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
     /**
      * 年度重置序列号
      */
-    public void clearSerialNumber(){
+    public void resetSerialNumber(){
         List<SystemSerialNumber> numberList = this.findAll();
+        Date now = null;
+        try {
+            now = DateUtils.parseDate(DateUtils.getDate(),DateUtils.DATE_FORMAT);
+        } catch (ParseException e) {
+            logger.error(e.getMessage());
+        }
         for (SystemSerialNumber systemSerialNumber : numberList) {
-            if (SystemSerialNumber.YES.equals(systemSerialNumber.getYearClear())) {
+            boolean flag = false;
+            if(ResetType.Day.getValue().equals(systemSerialNumber.getResetType())){
+                flag = true;
+            }else if(ResetType.Month.getValue().equals(systemSerialNumber.getResetType())){
+                flag = AppDateUtils.getCurrentMonthStartTime().equals(now);
+            }else if(ResetType.Quarter.getValue().equals(systemSerialNumber.getResetType())){
+                flag = AppDateUtils.getCurrentQuarterStartTime().equals(now);
+            }else if(ResetType.Year.getValue().equals(systemSerialNumber.getResetType())){
+                flag = AppDateUtils.getCurrentYearStartTime().equals(now);
+            }
+            if(flag){
                 systemSerialNumber.setMaxSerial("0");
+                systemSerialNumber.setVersion(0);
                 this.save(systemSerialNumber);
             }
         }

@@ -15,9 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 /**
- * 年度重置序列号
+ * 序列号管理 重置最大值定时任务
+ * 每天凌晨执行
  */
-@QuartzJob(name = "SystemSerialNumerJob", cronExp = "0 0 0 1 1 ?")
+@QuartzJob(name = "SystemSerialNumerJob", cronExp = "0 0 0 * * ?")
 public class SystemSerialNumerJob extends QuartzJobBean {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
@@ -25,13 +26,10 @@ public class SystemSerialNumerJob extends QuartzJobBean {
     @Autowired
     private SystemSerialNumberService systemSerialNumberService;
 
-    /**
-     * 年度重置序列号
-     */
     public void execute(){
-        logger.debug("定时任务...开始：年度重置序列号");
-        systemSerialNumberService.clearSerialNumber();
-        logger.debug("定时任务...结束：年度重置序列号");
+        logger.debug("定时任务...开始：序列号管理 定时任务");
+        systemSerialNumberService.resetSerialNumber();
+        logger.debug("定时任务...结束：序列号管理 定时任务");
     }
 
 

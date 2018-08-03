@@ -9,6 +9,7 @@ import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.core.security.annotation.RequiresPermissions;
+import com.eryansky.modules.sys._enum.ResetType;
 import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.service.SystemSerialNumberService;
 import com.eryansky.utils.AppConstants;
@@ -57,6 +58,7 @@ public class SystemSerialNumberController extends SimpleController {
     @RequestMapping(value = "form")
     public String form(SystemSerialNumber model, Model uiModel) {
         uiModel.addAttribute("model", model);
+        uiModel.addAttribute("resetTypes", ResetType.values());
         return "modules/sys/systemSerialNumberForm";
     }
 

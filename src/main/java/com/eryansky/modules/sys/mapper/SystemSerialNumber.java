@@ -6,6 +6,7 @@
 package com.eryansky.modules.sys.mapper;
 
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.modules.sys._enum.ResetType;
 
 /**
  * 序列号生成器
@@ -30,9 +31,9 @@ public class SystemSerialNumber extends DataEntity<SystemSerialNumber> {
      */
     private String maxSerial;
     /**
-     * 是否年度重置(1是，0否)
+     * 重置类型 {@link ResetType}
      */
-    private String yearClear;
+    private String resetType;
     /**
      * 是否自动增长标识
      */
@@ -96,9 +97,13 @@ public class SystemSerialNumber extends DataEntity<SystemSerialNumber> {
         this.isAutoIncrement = isAutoIncrement;
     }
 
-    public String getYearClear(){return yearClear;}
+    public String getResetType() {
+        return resetType;
+    }
 
-    public void  setYearClear(String yearClear){this.yearClear=yearClear;}
+    public void setResetType(String resetType) {
+        this.resetType = resetType;
+    }
 
     public String getPreMaxNum() {
         return preMaxNum;
