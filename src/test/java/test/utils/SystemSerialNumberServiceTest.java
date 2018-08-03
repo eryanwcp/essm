@@ -53,7 +53,13 @@ public class SystemSerialNumberServiceTest {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(SystemSerialNumberUtils.generateSerialNumberByModelCode("test"));
+                    String result = null;
+                    try {
+                        result = SystemSerialNumberUtils.generateSerialNumberByModelCode("test");
+                        System.out.println(result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
