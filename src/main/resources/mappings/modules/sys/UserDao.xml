@@ -270,6 +270,19 @@
         ORDER BY a.sort ASC
     </select>
 
+    <select id="findUsersLoginNamesByOrganIds" resultType="java.lang.String">
+        SELECT
+        a.login_name
+        FROM t_sys_user a
+        LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id
+        LEFT JOIN t_sys_organ o ON o.id = uo.organ_id
+        <where>
+            a.status = #{status}
+            AND o.id IN <foreach collection="organIds" item="item" open="(" separator="," close=")">#{item}</foreach>
+        </where>
+        ORDER BY a.sort ASC
+    </select>
+
     <select id="findOwnerAndChildsUsers" resultType="User">
         SELECT
         <include refid="userColumns"/>

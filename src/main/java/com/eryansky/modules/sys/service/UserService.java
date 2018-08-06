@@ -637,7 +637,32 @@ public class UserService extends CrudService<UserDao, User> {
         return dao.findUsersIdsByOrganIds(parameter);
     }
 
+    /**
+     * 查询指定结构用户ID
+     * @param organId 机构ID
+     * @return
+     */
+    public List<String> findUsersLoginNamesByOrganId(String organId) {
+        List<String> list = new ArrayList<String>(1);
+        list.add(organId);
+        return findUsersLoginNamesByOrganIds(list);
+    }
 
+
+    /**
+     * 查询指定结构用户账号
+     * @param organIds 机构IDS
+     * @return
+     */
+    public List<String> findUsersLoginNamesByOrganIds(Collection<String> organIds) {
+        if(Collections3.isEmpty(organIds)){
+            return Collections.emptyList();
+        }
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
+        parameter.put("organIds",organIds);
+        return dao.findUsersLoginNamesByOrganIds(parameter);
+    }
 
 
     /**

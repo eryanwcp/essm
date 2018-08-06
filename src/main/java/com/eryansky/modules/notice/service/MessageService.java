@@ -6,9 +6,9 @@
 package com.eryansky.modules.notice.service;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.modules.weixin.utils.QYWeixinUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.core.security.SecurityUtils;
@@ -19,11 +19,7 @@ import com.eryansky.modules.notice.mapper.Message;
 import com.eryansky.modules.notice.mapper.MessageReceive;
 import com.eryansky.modules.notice.mapper.MessageSender;
 import com.eryansky.modules.sys._enum.YesOrNo;
-import com.eryansky.modules.sys.mapper.User;
-import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
-import com.eryansky.modules.weixin.utils.WeixinConstants;
-import com.eryansky.modules.weixin.utils.WeixinUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,13 +34,9 @@ import java.util.List;
 public class MessageService extends CrudService<MessageDao, Message> {
 
     @Autowired
-    private MessageDao messageDao;
-    @Autowired
     private MessageSenderService messageSenderService;
     @Autowired
     private MessageReceiveService messageReceiveService;
-    @Autowired
-    private OrganService organService;
     @Autowired
     private UserService userService;
 
@@ -95,33 +87,35 @@ public class MessageService extends CrudService<MessageDao, Message> {
                 messageSender.setObjectId(objectId);
                 messageSenderService.save(messageSender);
 
-                List<String> userIds = Lists.newArrayList();
+                List<String> targetIds = Lists.newArrayList();
                 if(MessageReceiveObjectType.User.equals(messageReceiveObjectType)){
-                    userIds.add(objectId);
+                    targetIds.add(UserUtils.getLoginName(objectId));
                 }else if(MessageReceiveObjectType.Organ.equals(messageReceiveObjectType)){
-                    userIds = userService.findUserIdsByOrganId(objectId);
+                    targetIds = userService.findUsersLoginNamesByOrganId(objectId);
                 }
-                for(String memberId:userIds){
+//                else if(MessageReceiveObjectType.Member.equals(messageReceiveObjectType)){
+//                    String openid = MemberUtils.getOpenIdById(objectId);
+//                    targetIds.add(openid);
+//                }
+                for(String targetId:targetIds){
                     MessageReceive messageReceive = new MessageReceive(message.getId());
-                    messageReceive.setUserId(memberId);
+                    messageReceive.setUserId(targetId);
                     messageReceive.setIsRead(YesOrNo.NO.getValue());
                     messageReceiveService.save(messageReceive);
 
 
                     //通过微信发送消息
                     if(sendWeixin != null && sendWeixin){
-                        User user = UserUtils.getUser(objectId);
-                        if(user != null){
-                            String agentId = StringUtils.isBlank(message.getAppId()) ? WeixinConstants.getAgentId():WeixinConstants.getWeixinMessageAgentId();
-                            WeixinUtils.sendTextMsg(agentId,user.getLoginName(), message.getContent(), message.getUrl());
-                        }
+                        QYWeixinUtils.sendTextMsg(null,targetId, message.getContent(), message.getUrl());
+//                        WeixinUtils.sendTextMsg(targetId,message.getContent(),message.getUrl());
                     }
                 }
 
 
             }
+
+            }
             message.setMode(MessageMode.Published.getValue());
             this.save(message);
         }
-    }
 }
