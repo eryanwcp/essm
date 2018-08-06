@@ -217,7 +217,7 @@ public class CustomAPI extends BaseAPI {
      */
     public ResultType createSession(String accountName,String openid) {
         LOG.debug("获取所有客服帐号信息....");
-        String url = BASE_API_URL + "cgi-bin/customservice/kfsession/create?access_token=#";
+        String url = BASE_API_URL + "customservice/kfsession/create?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", accountName);
         params.put("openid", openid);
@@ -235,7 +235,7 @@ public class CustomAPI extends BaseAPI {
      */
     public ResultType closeSession(String accountName,String openid) {
         LOG.debug("创建会话....");
-        String url = BASE_API_URL + "cgi-bin/customservice/kfsession/close?access_token=#";
+        String url = BASE_API_URL + "customservice/kfsession/close?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", accountName);
         params.put("openid", openid);
@@ -252,7 +252,7 @@ public class CustomAPI extends BaseAPI {
      */
     public GetCustomSessionStateResponse getSession(String openid) {
         LOG.debug("获取客户会话状态....");
-        String url = BASE_API_URL + "cgi-bin/customservice/kfsession/getsession?access_token=#&openid"+openid;
+        String url = BASE_API_URL + "customservice/kfsession/getsession?access_token=#&openid"+openid;
         BaseResponse r = executeGet(url);
         String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
         GetCustomSessionStateResponse response = JSONUtil.toBean(resultJson, GetCustomSessionStateResponse.class);
@@ -268,7 +268,7 @@ public class CustomAPI extends BaseAPI {
     public GetCustomSessionResponse getSessionList(String accountName) {
         LOG.debug("获取客服会话列表....");
         BeanUtil.requireNonNull(accountName, "客服帐号必填");
-        String url = BASE_API_URL + "cgi-bin/customservice/kfsession/getsessionlist?access_token=#&kf_account="+accountName;
+        String url = BASE_API_URL + "customservice/kfsession/getsessionlist?access_token=#&kf_account="+accountName;
         BaseResponse r = executeGet(url);
         String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
         GetCustomSessionResponse response = JSONUtil.toBean(resultJson, GetCustomSessionResponse.class);
@@ -282,7 +282,7 @@ public class CustomAPI extends BaseAPI {
      */
     public GetCustomWaitSessionResponse getWaitCase() {
         LOG.debug("获取未接入会话列表....");
-        String url = BASE_API_URL + "cgi-bin/customservice/kfsession/getwaitcase?access_token=#";
+        String url = BASE_API_URL + "customservice/kfsession/getwaitcase?access_token=#";
         BaseResponse r = executeGet(url);
         String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
         GetCustomWaitSessionResponse response = JSONUtil.toBean(resultJson, GetCustomWaitSessionResponse.class);
