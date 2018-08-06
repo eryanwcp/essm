@@ -17,6 +17,7 @@ import com.eryansky.modules.sys.sn.GeneratorConstants;
 import com.eryansky.modules.sys.sn.SNGenerateApp;
 import com.eryansky.utils.AppDateUtils;
 import com.eryansky.utils.CacheConstants;
+import com.eryansky.utils.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -126,25 +127,37 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
                 flag = true;
             }else if(ResetType.Month.getValue().equals(systemSerialNumber.getResetType())){
                 flag = AppDateUtils.getCurrentMonthStartTime().equals(now);
-            }else if(ResetType.Quarter.getValue().equals(systemSerialNumber.getResetType())){
-                flag = AppDateUtils.getCurrentQuarterStartTime().equals(now);
-            }else if(ResetType.Year.getValue().equals(systemSerialNumber.getResetType())){
+            }
+//            else if(ResetType.Quarter.getValue().equals(systemSerialNumber.getResetType())){
+//                flag = AppDateUtils.getCurrentQuarterStartTime().equals(now);
+//            }
+            else if(ResetType.Year.getValue().equals(systemSerialNumber.getResetType())){
                 flag = AppDateUtils.getCurrentYearStartTime().equals(now);
             }
             if(flag){
                 systemSerialNumber.setMaxSerial("0");
                 systemSerialNumber.setVersion(0);
                 this.save(systemSerialNumber);
+                //清空缓存
+                CacheUtils.remove(CacheConstants.SYS_SERIAL_NUMBER_CACHE,systemSerialNumber.getModuleCode());
             }
         }
     }
 
 
     /**
-     * 清空缓存
+     * 清空缓存(指定key)
      */
     @CacheEvict(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE,key="#moduleCode")
     public void clearCacheByModuleCode(String moduleCode){
+        logger.debug("清空缓存:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE);
+    }
 
+    /**
+     * 清空缓存
+     */
+    @CacheEvict(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE)
+    public void clearCache(){
+        logger.debug("清空缓存:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE);
     }
 }
