@@ -41,10 +41,6 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
     private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
 
     /**
-     * 登录验证地址
-     */
-    private String redirectURL = "/";
-    /**
      * 需要拦截的资源
      */
     private List<String> includeUrls = Lists.newArrayList();
@@ -103,14 +99,6 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
         if (e != null) {
 
         }
-    }
-
-    public String getRedirectURL() {
-        return redirectURL;
-    }
-
-    public void setRedirectURL(String redirectURL) {
-        this.redirectURL = redirectURL;
     }
 
     public List<String> getIncludeUrls() {
