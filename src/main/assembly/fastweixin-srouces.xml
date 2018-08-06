@@ -1,0 +1,25 @@
+<assembly>
+    <id>fastweixin-sources-1.4</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>/</outputDirectory>
+            <directory>target/classes/</directory>
+            <includes>
+                <include>update_log.txt</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>/com/eryansky/fastweixin/</outputDirectory>
+            <directory>src/main/fastweixin/com/eryansky/fastweixin/</directory>
+            <includes>
+                <include>*.java</include>
+                <include>*/*.java</include>
+                <include>/**/*.java</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
