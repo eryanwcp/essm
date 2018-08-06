@@ -146,7 +146,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
      */
     @CacheEvict(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE,key="#moduleCode")
     public void clearCacheByModuleCode(String moduleCode){
-        logger.debug("清空缓存:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE);
+        logger.debug("清空缓存:{},key:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode);
     }
 
     /**
