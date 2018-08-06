@@ -625,6 +625,8 @@
                         <descriptor>src/main/assembly/common-sources.xml</descriptor>
                         <descriptor>src/main/assembly/j2cache.xml</descriptor>
                         <descriptor>src/main/assembly/j2cache-sources.xml</descriptor>
+                        <descriptor>src/main/assembly/fastweixin.xml</descriptor>
+                        <descriptor>src/main/assembly/fastweixin-sources.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
