@@ -216,7 +216,7 @@ public class CustomAPI extends BaseAPI {
      * @return
      */
     public ResultType createSession(String accountName,String openid) {
-        LOG.debug("获取所有客服帐号信息....");
+        LOG.debug("创建会话....");
         String url = BASE_API_URL + "customservice/kfsession/create?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", accountName);
@@ -227,14 +227,13 @@ public class CustomAPI extends BaseAPI {
 
 
     /**
-     * 创建会话
-     * 此接口在客服和用户之间创建一个会话，如果该客服和用户会话已存在，则直接返回0。指定的客服帐号必须已经绑定微信号且在线。
+     * 关闭会话
      * @param accountName 完整客服帐号，格式为：帐号前缀@公众号微信号
      * @param openid 粉丝的openid
      * @return
      */
     public ResultType closeSession(String accountName,String openid) {
-        LOG.debug("创建会话....");
+        LOG.debug("关闭会话....");
         String url = BASE_API_URL + "customservice/kfsession/close?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", accountName);
