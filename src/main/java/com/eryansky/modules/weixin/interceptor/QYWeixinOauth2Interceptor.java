@@ -17,6 +17,7 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.modules.weixin.utils.WeixinUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,10 +51,14 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
+        if(!WeixinUtils.isWeixinBrowser(request)){//非微信客户端
+            return true;
+        }
         SessionInfo sessionInfo = SecurityUtils.getSessionInfo(SecurityUtils.getNoSuffixSessionId(request.getSession()));
         if (sessionInfo != null) {
             return true;
         }
+
         String code = request.getParameter("code");
         String state = request.getParameter("state");
         if (StringUtils.isNotBlank(code) && StringUtils.isNotBlank(state)) {

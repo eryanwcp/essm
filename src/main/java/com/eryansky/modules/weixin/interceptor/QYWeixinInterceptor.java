@@ -31,17 +31,16 @@ public class QYWeixinInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        //登录用户
+        if(!WeixinUtils.isWeixinBrowser(request)){//非微信客户端
+            return true;
+        }
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
             return true;
         }
+
         String requestUrl = request.getRequestURI();
         requestUrl = requestUrl.substring(request.getContextPath().length()).replaceAll("//","/");
-        if(!WeixinUtils.isWeixinBrowser(request)){//非微信客户端
-            return true;
-        }
-
 
         String resultURL = QYWeixinUtils.getOauth2URL(AppConstants.getAppURL()+requestUrl);
         logger.warn("[{}]自动跳转[{}]",new Object[]{request.getSession().getId(),requestUrl});
