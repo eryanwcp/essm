@@ -18,7 +18,6 @@ import com.eryansky.modules.sys.sn.SNGenerateApp;
 import com.eryansky.utils.AppDateUtils;
 import com.eryansky.utils.CacheConstants;
 import com.eryansky.utils.CacheUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
@@ -32,9 +31,6 @@ import java.util.*;
  */
 @Service
 public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao, SystemSerialNumber> {
-
-    @Autowired
-    private SystemSerialNumberDao dao;
 
 
     @Override
