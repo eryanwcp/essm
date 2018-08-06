@@ -121,7 +121,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("添加客服帐号.....");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/add?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/add?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -142,7 +142,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("修改客服帐号信息......");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/update?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/update?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -162,7 +162,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("删除客服帐号信息......");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/del?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/del?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -189,7 +189,7 @@ public class CustomAPI extends BaseAPI {
         if (!fileName.endsWith("jpg")) {
             throw new WeixinException("头像必须是jpg格式");
         }
-        String url = BASE_API_URL + "customservice/kfaccount/uploadheadimg?access_token=#&kf_account=" + accountName;
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/uploadheadimg?access_token=#&kf_account=" + accountName;
         BaseResponse response = executePost(url, null, file);
         return ResultType.get(response.getErrcode());
     }
@@ -201,7 +201,7 @@ public class CustomAPI extends BaseAPI {
     public GetCustomAccountsResponse getCustomAccountList() {
         LOG.debug("获取所有客服帐号信息....");
         GetCustomAccountsResponse response;
-        String url = BASE_API_URL + "customservice/getkflist?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/getkflist?access_token=#";
         BaseResponse r = executeGet(url);
         String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
         response = JSONUtil.toBean(resultJson, GetCustomAccountsResponse.class);
