@@ -3,26 +3,33 @@
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  */
-package com.eryansky.common.web.servlet;
+package test.utils;
 
+import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.ThreadUtils;
 import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.common.utils.io.IoUtils;
+import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.CacheObject;
+import com.eryansky.modules.sys.utils.SystemSerialNumberUtils;
+import com.eryansky.utils.AppUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.eryansky.common.web.utils.WebUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-
-import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 本地静态内容展示与下载的Servlet.
@@ -35,7 +42,12 @@ import java.io.*;
  *
  * @author 尔演&Eryan eryanwcp@gmail.com
  */
-public class StaticContentServlet extends HttpServlet {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:applicationContext.xml",
+        "classpath:applicationContext-mybatis.xml",
+        "classpath:applicationContext-quartz.xml",
+        "classpath:applicationContext-j2cache.xml" })
+public class StaticContentTest {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,74 +58,50 @@ public class StaticContentServlet extends HttpServlet {
 	/** 需要被Gzip压缩的最小文件大小. */
 	private static final int GZIP_MINI_LENGTH = 512;
 
-	private MimetypesFileTypeMap mimetypesFileTypeMap;
-	private String cacheKey;
-    /**
-     * 是否将文件内容缓存
-     */
-	private boolean cacheFileData;
+	private String cacheKey = "contentInfoCache";
+	private boolean cacheFileData = true;
+	@Autowired
 	private CacheChannel cacheChannel;
+	private static final String  PATH = "E:\\MyProject\\GitHub\\essm\\target\\essm";
+    private ExecutorService executorService = Executors.newFixedThreadPool(100);
 
+	@Test
+	public void test(){
+        String contentPath = "/static/js/jquery/jquery-2.1.4.js";
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        cacheKey = config.getInitParameter("cacheKey");
-        cacheFileData = Boolean.valueOf(config.getInitParameter("cacheFileData"));
-        ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-        String cacheManager = config.getInitParameter("cacheChannel");
-        cacheChannel = (CacheChannel) context.getBean(cacheManager);
+        Date d1 = Calendar.getInstance().getTime();
 
-        //初始化mimeTypes, 默认缺少css的定义,添加之.
-        mimetypesFileTypeMap = new MimetypesFileTypeMap();
-        mimetypesFileTypeMap.addMimeTypes("text/css css");
+        for(int i=0;i<10000;i++){
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        doGet(contentPath);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        executorService.shutdown();
+        while (true) {
+            if (executorService.isTerminated()) {
+                System.out.println("执行完毕！");
+                Date d2 = Calendar.getInstance().getTime();
+                System.out.println(d2.getTime() - d1.getTime());
+                break;
+            }
+            ThreadUtils.sleep(200);
+        }
     }
 
 
-    /**
-     * 在初始化函数中创建内容信息缓存.
-     */
-    @Override
-    public void init() throws ServletException {
-
-    }
-    
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(String contentPath) throws Exception {
         //获取请求内容的基本信息.
-        String contentPath = request.getParameter("contentPath");
         ContentInfo contentInfo = getContentInfoFromCache(contentPath);
 
-        //根据Etag或ModifiedSince Header判断客户端的缓存文件是否有效, 如仍有效则设置返回码为304,直接返回.
-        if (!WebUtils.checkIfModifiedSince(request, response, contentInfo.lastModified)
-                || !WebUtils.checkIfNoneMatchEtag(request, response, contentInfo.etag)) {
-            return;
-        }
 
-        //设置Etag/过期时间
-        WebUtils.setExpiresHeader(response, WebUtils.ONE_YEAR_SECONDS);
-        WebUtils.setLastModifiedHeader(response, contentInfo.lastModified);
-        WebUtils.setEtag(response, contentInfo.etag);
-
-        //设置MIME类型
-        response.setContentType(contentInfo.mimeType);
-
-        //如果是下载请求,设置下载Header
-        if (request.getParameter("download") != null) {
-            WebUtils.setDownloadableHeader(response, contentInfo.fileName);
-        }
-
-        //构造OutputStream
-        OutputStream output;
-        if (WebUtils.checkAccetptGzip(request) && contentInfo.needGzip) {
-            //使用压缩传输的outputstream, 使用http1.1 trunked编码不设置content-length.
-            output = WebUtils.buildGzipOutputStream(response);
-        } else {
-            //使用普通outputstream, 设置content-length.
-            response.setContentLength(contentInfo.length);
-            output = response.getOutputStream();
-        }
-
+        OutputStream output = new FileOutputStream("D:\\temp\\"+ StringUtils.substringAfterLast(contentPath,"/"));
         //高效读取文件内容并输出.
         FileInputStream input = null;
         try {
@@ -151,7 +139,7 @@ public class StaticContentServlet extends HttpServlet {
     private ContentInfo createContentInfo(String contentPath) {
         ContentInfo contentInfo = new ContentInfo();
 
-        String realFilePath = getServletContext().getRealPath(contentPath);
+        String realFilePath = PATH + contentPath;
         File file = new File(realFilePath);
 
         contentInfo.contentPath = contentPath;
@@ -161,7 +149,7 @@ public class StaticContentServlet extends HttpServlet {
                 contentInfo.fileData = FileUtils.readFileToByteArray(file);
             }
         } catch (IOException e) {
-            log(e.getMessage());
+            e.printStackTrace();
         }
         contentInfo.fileName = file.getName();
         contentInfo.length = (int) file.length();
@@ -169,7 +157,7 @@ public class StaticContentServlet extends HttpServlet {
         contentInfo.lastModified = file.lastModified();
         contentInfo.etag = "W/\"" + contentInfo.lastModified + "\"";
 
-        String mimeType = getServletContext().getMimeType(realFilePath);
+        String mimeType = "application/javascript";
         if (mimeType == null) {
             mimeType = "application/octet-stream";
         }
