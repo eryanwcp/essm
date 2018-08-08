@@ -5,6 +5,7 @@
  */
 package com.eryansky.common.web.servlet;
 
+import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.CacheObject;
 import org.apache.commons.io.IOUtils;
@@ -47,6 +48,7 @@ public class StaticContentServlet extends HttpServlet {
 
 	private MimetypesFileTypeMap mimetypesFileTypeMap;
 	private String cacheKey;
+	private boolean cacheFileData;
 	private CacheChannel cacheChannel;
 
 
@@ -54,6 +56,7 @@ public class StaticContentServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cacheKey = config.getInitParameter("cacheKey");
+        cacheFileData = Boolean.valueOf(config.getInitParameter("cacheFileData"));
         ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         String cacheManager = config.getInitParameter("cacheChannel");
         cacheChannel = (CacheChannel) context.getBean(cacheManager);
@@ -145,6 +148,13 @@ public class StaticContentServlet extends HttpServlet {
 
         contentInfo.contentPath = contentPath;
         contentInfo.file = file;
+        try {
+            if(cacheFileData){
+                contentInfo.fileData = FileUtils.readFileToByteArray(file);
+            }
+        } catch (IOException e) {
+            log(e.getMessage());
+        }
         contentInfo.fileName = file.getName();
         contentInfo.length = (int) file.length();
 
@@ -172,6 +182,7 @@ public class StaticContentServlet extends HttpServlet {
     static class ContentInfo implements Serializable{
     	protected String contentPath;
     	protected File file;
+    	protected byte[] fileData;
     	protected String fileName;
     	protected int length;
     	protected String mimeType;
