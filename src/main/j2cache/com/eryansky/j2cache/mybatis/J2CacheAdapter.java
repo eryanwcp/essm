@@ -21,7 +21,7 @@ public class J2CacheAdapter implements Cache {
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private CacheChannel cache = J2Cache.getChannel();
     private String id;
-    private boolean keyMd5;
+    private boolean encodeKey;
 
     public J2CacheAdapter(String id) {
         if (id == null)
@@ -42,19 +42,19 @@ public class J2CacheAdapter implements Cache {
 
     @Override
     public void putObject(Object key, Object value) {
-        String _key = keyMd5 ? Encrypt.md5(key.toString()):key.toString();
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
         this.cache.set(this.id, _key, value);
     }
 
     @Override
     public Object getObject(Object key) {
-        String _key = keyMd5 ? Encrypt.md5(key.toString()):key.toString();
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
         return this.cache.get(this.id, _key).getValue();
     }
 
     @Override
     public Object removeObject(Object key) {
-        String _key = keyMd5 ? Encrypt.md5(key.toString()):key.toString();
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
         Object obj = this.cache.get(this.id, _key).getValue();
         if (obj != null)
             this.cache.evict(this.id, _key);
@@ -77,11 +77,11 @@ public class J2CacheAdapter implements Cache {
         return this.readWriteLock;
     }
 
-    public Boolean getKeyMd5() {
-        return keyMd5;
+    public Boolean getEncodeKey() {
+        return encodeKey;
     }
 
-    public void setKeyMd5(Boolean keyMd5) {
-        this.keyMd5 = keyMd5;
+    public void setEncodeKey(Boolean encodeKey) {
+        this.encodeKey = encodeKey;
     }
 }
