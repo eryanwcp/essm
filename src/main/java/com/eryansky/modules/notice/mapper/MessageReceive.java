@@ -29,6 +29,10 @@ public class MessageReceive extends BaseEntity<MessageReceive> {
      */
     private String userId;
     /**
+     * 是否发送成功 ${@link YesOrNo}
+     */
+    private String isSend;
+    /**
      * 是否读取 ${@link YesOrNo}
      */
     private String isRead;
@@ -38,9 +42,11 @@ public class MessageReceive extends BaseEntity<MessageReceive> {
     private Date readTime;
 
     public MessageReceive() {
+        this.isSend = YesOrNo.YES.getValue();
     }
 
     public MessageReceive(String messageId) {
+        this();
         this.messageId = messageId;
     }
 
@@ -65,6 +71,14 @@ public class MessageReceive extends BaseEntity<MessageReceive> {
         this.userId = userId;
     }
 
+    public String getIsSend() {
+        return isSend;
+    }
+
+    public void setIsSend(String isSend) {
+        this.isSend = isSend;
+    }
+
     public String getIsRead() {
         return isRead;
     }
@@ -82,7 +96,7 @@ public class MessageReceive extends BaseEntity<MessageReceive> {
         this.readTime = readTime;
     }
 
-//    @JsonIgnore
+    //    @JsonIgnore
     public Message getMessage() {
         return MessageUtils.get(messageId);
     }

@@ -96,7 +96,8 @@ public class WeixinUtils {
         textMsg.setToUserName(openid);
         ResultType resultType = customAPI.sendCustomMessage(openid,textMsg);
         if(!ResultType.SUCCESS.equals(resultType)){
-            logger.error(JsonMapper.getInstance().toJson(resultType));
+            logger.error(resultType.toString());
+            return false;
         }
         return true;
     }
