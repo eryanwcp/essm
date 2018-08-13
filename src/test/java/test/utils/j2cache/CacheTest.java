@@ -13,8 +13,8 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.J2Cache;
 import com.eryansky.j2cache.util.FSTSerializer;
+import com.eryansky.j2cache.util.FstJSONSerializer;
 import com.eryansky.j2cache.util.FstSnappySerializer;
-import com.eryansky.j2cache.util.JSONSerializer;
 import com.eryansky.j2cache.util.JavaSerializer;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.service.*;
@@ -103,7 +103,7 @@ public class CacheTest {
         User user = userService.get("1");
 
         Date d1 = Calendar.getInstance().getTime();
-        JSONSerializer serializer =new JSONSerializer();
+        FstJSONSerializer serializer =new FstJSONSerializer(null);
         byte[] r = serializer.serialize(user);
         System.out.println(r.length);
         Date d2 = Calendar.getInstance().getTime();
