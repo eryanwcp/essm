@@ -191,7 +191,8 @@ public class MessageUtils {
     public static Page<MessageReceive> findUserMessages(int pageNo, int pageSize, String userId, String isRead) {
         String _userId = userId;
         if(StringUtils.isBlank(_userId)){
-            _userId = SecurityUtils.getCurrentUserId();
+//            _userId = SecurityUtils.getCurrentUserId();
+            _userId = SecurityUtils.getCurrentUserLoginName();
         }
         Page<MessageReceive> page = new Page<MessageReceive>(pageNo,pageSize);
         return messageReceiveService.findUserPage(page, _userId,isRead);

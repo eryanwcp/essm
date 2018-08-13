@@ -1,11 +1,10 @@
 package com.eryansky.fastweixin.api;
 
 import com.eryansky.fastweixin.api.enums.ResultType;
-import com.eryansky.fastweixin.api.response.BaseResponse;
+import com.eryansky.fastweixin.api.response.*;
 import com.eryansky.fastweixin.message.*;
 import com.eryansky.fastweixin.api.config.ApiConfig;
 import com.eryansky.fastweixin.api.entity.CustomAccount;
-import com.eryansky.fastweixin.api.response.GetCustomAccountsResponse;
 import com.eryansky.fastweixin.exception.WeixinException;
 import com.eryansky.fastweixin.util.BeanUtil;
 import com.eryansky.fastweixin.util.JSONUtil;
@@ -121,7 +120,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("添加客服帐号.....");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/add?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/add?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -142,7 +141,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("修改客服帐号信息......");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/update?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/update?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -162,7 +161,7 @@ public class CustomAPI extends BaseAPI {
         LOG.debug("删除客服帐号信息......");
         BeanUtil.requireNonNull(customAccount.getAccountName(), "帐号必填");
         BeanUtil.requireNonNull(customAccount.getNickName(), "昵称必填");
-        String url = BASE_API_URL + "customservice/kfaccount/del?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/del?access_token=#";
         Map<String, String> params = new HashMap<String, String>();
         params.put("kf_account", customAccount.getAccountName());
         params.put("nickname", customAccount.getNickName());
@@ -189,7 +188,7 @@ public class CustomAPI extends BaseAPI {
         if (!fileName.endsWith("jpg")) {
             throw new WeixinException("头像必须是jpg格式");
         }
-        String url = BASE_API_URL + "customservice/kfaccount/uploadheadimg?access_token=#&kf_account=" + accountName;
+        String url = BASE_API_URL + "cgi-bin/customservice/kfaccount/uploadheadimg?access_token=#&kf_account=" + accountName;
         BaseResponse response = executePost(url, null, file);
         return ResultType.get(response.getErrcode());
     }
@@ -201,10 +200,91 @@ public class CustomAPI extends BaseAPI {
     public GetCustomAccountsResponse getCustomAccountList() {
         LOG.debug("获取所有客服帐号信息....");
         GetCustomAccountsResponse response;
-        String url = BASE_API_URL + "customservice/getkflist?access_token=#";
+        String url = BASE_API_URL + "cgi-bin/customservice/getkflist?access_token=#";
         BaseResponse r = executeGet(url);
         String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
         response = JSONUtil.toBean(resultJson, GetCustomAccountsResponse.class);
+        return response;
+    }
+
+
+    /**
+     * 创建会话
+     * 此接口在客服和用户之间创建一个会话，如果该客服和用户会话已存在，则直接返回0。指定的客服帐号必须已经绑定微信号且在线。
+     * @param accountName 完整客服帐号，格式为：帐号前缀@公众号微信号
+     * @param openid 粉丝的openid
+     * @return
+     */
+    public ResultType createSession(String accountName,String openid) {
+        LOG.debug("创建会话....");
+        String url = BASE_API_URL + "customservice/kfsession/create?access_token=#";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("kf_account", accountName);
+        params.put("openid", openid);
+        BaseResponse response = executePost(url, JSONUtil.toJson(params));
+        return ResultType.get(response.getErrcode());
+    }
+
+
+    /**
+     * 关闭会话
+     * @param accountName 完整客服帐号，格式为：帐号前缀@公众号微信号
+     * @param openid 粉丝的openid
+     * @return
+     */
+    public ResultType closeSession(String accountName,String openid) {
+        LOG.debug("关闭会话....");
+        String url = BASE_API_URL + "customservice/kfsession/close?access_token=#";
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("kf_account", accountName);
+        params.put("openid", openid);
+        BaseResponse response = executePost(url, JSONUtil.toJson(params));
+        return ResultType.get(response.getErrcode());
+    }
+
+
+    /**
+     * 获取客户会话状态
+     * 此接口获取一个客户的会话，如果不存在，则kf_account为空。
+     * @param openid 粉丝的openid
+     * @return
+     */
+    public GetCustomSessionStateResponse getSession(String openid) {
+        LOG.debug("获取客户会话状态....");
+        String url = BASE_API_URL + "customservice/kfsession/getsession?access_token=#&openid"+openid;
+        BaseResponse r = executeGet(url);
+        String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
+        GetCustomSessionStateResponse response = JSONUtil.toBean(resultJson, GetCustomSessionStateResponse.class);
+        return response;
+    }
+
+
+    /**
+     * 获取客服会话列表
+     * @param accountName 完整客服帐号，格式为：帐号前缀@公众号微信号
+     * @return
+     */
+    public GetCustomSessionResponse getSessionList(String accountName) {
+        LOG.debug("获取客服会话列表....");
+        BeanUtil.requireNonNull(accountName, "客服帐号必填");
+        String url = BASE_API_URL + "customservice/kfsession/getsessionlist?access_token=#&kf_account="+accountName;
+        BaseResponse r = executeGet(url);
+        String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
+        GetCustomSessionResponse response = JSONUtil.toBean(resultJson, GetCustomSessionResponse.class);
+        return response;
+    }
+
+
+    /**
+     * 获取未接入会话列表
+     * @return
+     */
+    public GetCustomWaitSessionResponse getWaitCase() {
+        LOG.debug("获取未接入会话列表....");
+        String url = BASE_API_URL + "customservice/kfsession/getwaitcase?access_token=#";
+        BaseResponse r = executeGet(url);
+        String resultJson = isSuccess(r.getErrcode()) ? r.getErrmsg() : r.toJsonString();
+        GetCustomWaitSessionResponse response = JSONUtil.toBean(resultJson, GetCustomWaitSessionResponse.class);
         return response;
     }
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.notice.dao.MessageReceiveDao">
-    
+
 	<sql id="messageReceiveColumns">
 		a.id AS "id",
 		a.message_id AS "messageId",
 		a.user_id AS "userId",
+		a.is_send AS "isSend",
 		a.is_read AS "isRead",
 		a.read_time AS "readTime"
 	</sql>
@@ -15,15 +16,15 @@
 	</sql>
 
 	<select id="get" resultType="MessageReceive">
-		SELECT 
-			<include refid="messageReceiveColumns"/>
+		SELECT
+		<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		WHERE a.id = #{id}
 	</select>
-	
+
 	<select id="findList" resultType="MessageReceive">
-		SELECT 
-			<include refid="messageReceiveColumns"/>
+		SELECT
+		<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		<where>
 			<if test="messageId != null and messageId != ''">
@@ -36,10 +37,10 @@
 			</when>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="MessageReceive">
-		SELECT 
-			<include refid="messageReceiveColumns"/>
+		SELECT
+		<include refid="messageReceiveColumns"/>
 		FROM t_notice_message_receive a
 		<where>
 		</where>
@@ -57,7 +58,7 @@
 		FROM t_notice_message_receive a
 		<include refid="messageReceiveJoins"/>
 		<where>
-		  	m.status = #{status}
+			m.status = #{status}
 			AND m.mode = #{mode}
 			AND a.user_id = #{userId}
 			<if test="category != null and category != ''">
@@ -66,43 +67,50 @@
 			<if test="isRead != null and isRead != ''">
 				AND a.is_read = #{isRead}
 			</if>
+			<if test="isSend != null and isSend != ''">
+				AND a.is_send = #{isSend}
+			</if>
 		</where>
 		ORDER BY m.update_time DESC
 	</select>
 
 	<insert id="insert">
 		INSERT INTO t_notice_message_receive(
-			id,
-			message_id,
-			user_id,
-			is_read,
-			read_time
+		id,
+		message_id,
+		user_id,
+		is_send,
+		is_read,
+		read_time
 		) VALUES (
-			#{id},
-			#{messageId},
-			#{userId},
-			#{isRead},
-			#{readTime}
+		#{id},
+		#{messageId},
+		#{userId},
+		#{isSend},
+		#{isRead},
+		#{readTime}
 		)
 	</insert>
-	
+
 	<update id="update">
 		UPDATE t_notice_message_receive SET
-			message_id = #{messageId},
-			user_id = #{userId},
-			is_read = #{isRead},
-			read_time = #{readTime}
+		message_id = #{messageId},
+		user_id = #{userId},
+		is_send = #{isSend},
+		is_read = #{isRead},
+		read_time = #{readTime}
 		WHERE id = #{id}
 	</update>
 
 	<update id="setUserMessageRead">
 		UPDATE t_notice_message_receive SET
+		is_send = #{isSend},
 		is_read = #{isRead},
 		read_time = #{readTime}
 		WHERE user_id = #{userId}
 			AND is_read = '0'
 	</update>
-	
+
 	<delete id="delete">
 		DELETE FROM t_notice_message_receive
 		WHERE id = #{id}

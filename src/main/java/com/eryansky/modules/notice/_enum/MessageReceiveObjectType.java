@@ -11,6 +11,7 @@ package com.eryansky.modules.notice._enum;
 public enum MessageReceiveObjectType {
 
     Organ("organ", "单位/部门"),
+    Member("member", "会员"),
     User("user", "用户");
 
     /**

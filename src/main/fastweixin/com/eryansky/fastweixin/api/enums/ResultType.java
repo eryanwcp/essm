@@ -509,6 +509,34 @@ public enum ResultType {
      */
     ACCOUNT_TOO_MANY(61456, "客服帐号个数超过限制(10个客服账号)(kf_account count exceeded)"),
 
+
+    /**
+     * API不可用，即没有开通/升级到新版客服功能
+     */
+    API_LIMIT(65400, "API不可用，即没有开通/升级到新版客服功能"),
+    /**
+     * 无效的客服帐号
+     */
+    INVALID_ACCOUNT_SESSION(65401, "无效的客服帐号"),
+    /**
+     * 帐号尚未绑定微信号，不能投入使用
+     */
+    ACCOUNT_UN_BOUND(65402, "帐号尚未绑定微信号，不能投入使用"),
+    /**
+     * 指定的客服不在线
+     */
+    ACCOUNT_UN_ONLINE(65415, "指定的客服不在线"),
+
+
+    /**
+     * 不存在对应用户的会话信息
+     */
+    ACCOUNT_NO_SESSION(65413, "不存在对应用户的会话信息"),
+    /**
+     * 客户正在被其他客服接待
+     */
+    ACCOUNT_RECEPTION_OTHER(65414, "客户正在被其他客服接待"),
+
     /**
      * 无效头像文件类型(invalid file type)
      */

@@ -97,14 +97,8 @@
         </mvc:interceptor>
         <!--微信Oauth2认证-->
         <mvc:interceptor>
-            <mvc:mapping path="/**" />
-            <mvc:exclude-mapping path="/static/**" />
-            <bean class="com.eryansky.modules.weixin.interceptor.WeixinOauth2Interceptor" >
-                <property name="includeUrls">
-                    <list>
-                        <value>${mobilePath}**</value>
-                    </list>
-                </property>
+            <mvc:mapping path="${mobilePath}/**" />
+            <bean class="com.eryansky.modules.weixin.interceptor.QYWeixinOauth2Interceptor" >
             </bean>
         </mvc:interceptor>
 
@@ -123,6 +117,11 @@
                         <value>${frontPath}**</value><!-- 网站前台 -->
                     </list>
                 </property>
+            </bean>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="${mobilePath}/**" />
+            <bean class="com.eryansky.modules.weixin.interceptor.QYWeixinInterceptor" >
             </bean>
         </mvc:interceptor>
         <mvc:interceptor>

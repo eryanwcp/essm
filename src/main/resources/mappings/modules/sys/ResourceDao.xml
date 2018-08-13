@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.sys.dao.ResourceDao">
 
+    <cache type="com.eryansky.j2cache.mybatis.J2CacheAdapter"></cache>
     <sql id="resourceColumns">
         a.id AS "id",
         a.create_user AS "createUser",

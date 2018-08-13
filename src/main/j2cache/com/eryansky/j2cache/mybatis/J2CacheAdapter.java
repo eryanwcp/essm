@@ -2,6 +2,7 @@ package com.eryansky.j2cache.mybatis;
 
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.J2Cache;
+import com.eryansky.j2cache.util.Encrypt;
 import org.apache.ibatis.cache.Cache;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ public class J2CacheAdapter implements Cache {
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private CacheChannel cache = J2Cache.getChannel();
     private String id;
+    private boolean encodeKey;
 
     public J2CacheAdapter(String id) {
         if (id == null)
@@ -39,20 +41,23 @@ public class J2CacheAdapter implements Cache {
     }
 
     @Override
-    public void putObject(Object o, Object o1) {
-        this.cache.set(this.id, o.toString(), o1);
+    public void putObject(Object key, Object value) {
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        this.cache.set(this.id, _key, value);
     }
 
     @Override
     public Object getObject(Object key) {
-        return this.cache.get(this.id, key.toString()).getValue();
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        return this.cache.get(this.id, _key).getValue();
     }
 
     @Override
-    public Object removeObject(Object o) {
-        Object obj = this.cache.get(this.id, o.toString()).getValue();
+    public Object removeObject(Object key) {
+        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        Object obj = this.cache.get(this.id, _key).getValue();
         if (obj != null)
-            this.cache.evict(this.id, o.toString());
+            this.cache.evict(this.id, _key);
         return obj;
     }
 
@@ -70,5 +75,13 @@ public class J2CacheAdapter implements Cache {
     @Override
     public ReadWriteLock getReadWriteLock() {
         return this.readWriteLock;
+    }
+
+    public Boolean getEncodeKey() {
+        return encodeKey;
+    }
+
+    public void setEncodeKey(Boolean encodeKey) {
+        this.encodeKey = encodeKey;
     }
 }

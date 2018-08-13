@@ -16,15 +16,36 @@
 package com.eryansky.j2cache.util;
 
 import org.nustaq.serialization.FSTConfiguration;
+import org.nustaq.serialization.coders.FSTJsonFieldNames;
+
+import java.util.Properties;
 
 /**
- * 为了实现跨语言的支持，有必要支持 JSON 的序列化
+ * 使用 FST 的 JSON 对象序列化
+ * 用法：
+ *
+ * j2cache.serialization = json
+ * json.map.list = java.util.Arrays$ArrayList
+ * json.map.person = net.oschina.j2cache.demo.Person
  *
  * @author Winter Lau(javayou@gmail.com)
  */
-public class JSONSerializer implements Serializer {
+public class FstJSONSerializer implements Serializer {
 
     private static final FSTConfiguration conf = FSTConfiguration.createJsonConfiguration();
+    private static final String PREFIX = "map.";
+
+    public FstJSONSerializer(Properties props) {
+        conf.setJsonFieldNames(new FSTJsonFieldNames("@type", "@object", "@stype", "@seq", "@enum", "@value", "@ref"));
+        conf.registerCrossPlatformClassMapping("list", "java.util.Arrays$ArrayList");
+        if(props != null)
+            props.forEach((k,v) -> {
+                String key = (String)k;
+                String value = (String)v;
+                if(key.startsWith(PREFIX) && value != null && value.trim().length() > 0)
+                    conf.registerCrossPlatformClassMapping(key.substring(PREFIX.length()), value.trim());
+            });
+    }
 
     @Override
     public String name() {

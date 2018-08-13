@@ -79,6 +79,23 @@ public class IoUtils extends IOUtils {
         }
     }
 
+
+    /**
+     * 将字节数据输出到输出流
+     * @param data
+     * @param outputStream
+     */
+    public static void copy(byte[] data, OutputStream outputStream) {
+        try {
+            outputStream.write(data);
+            outputStream.flush();
+        } catch (Exception e) {
+//      throw new ServiceException("Couldn't write file " + filePath, e);
+        } finally {
+            IoUtils.closeSilently(outputStream);
+        }
+    }
+
     /**
      * Closes the given stream. The same as calling {@link java.io.InputStream#close()}, but
      * errors while closing are silently ignored.

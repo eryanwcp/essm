@@ -5,9 +5,10 @@
  */
 package com.eryansky.common.web.servlet;
 
+import com.eryansky.common.utils.io.FileUtils;
+import com.eryansky.common.utils.io.IoUtils;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.CacheObject;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.eryansky.common.web.utils.WebUtils;
@@ -26,7 +27,7 @@ import java.io.*;
 /**
  * 本地静态内容展示与下载的Servlet.
  * <p/>
- * 使用EhCache缓存静态内容基本信息, 演示文件高效读取,客户端缓存控制及Gzip压缩传输.
+ * 使用J2Cache缓存静态内容基本信息（可支持数据信息）, 演示文件高效读取,客户端缓存控制及Gzip压缩传输.
  * <p/>
  * 演示访问地址为：
  * static-content?contentPath=img/logo.jpg
@@ -47,6 +48,10 @@ public class StaticContentServlet extends HttpServlet {
 
 	private MimetypesFileTypeMap mimetypesFileTypeMap;
 	private String cacheKey;
+    /**
+     * 是否将文件内容缓存
+     */
+	private boolean cacheFileData;
 	private CacheChannel cacheChannel;
 
 
@@ -54,6 +59,7 @@ public class StaticContentServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         cacheKey = config.getInitParameter("cacheKey");
+        cacheFileData = Boolean.valueOf(config.getInitParameter("cacheFileData"));
         ApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
         String cacheManager = config.getInitParameter("cacheChannel");
         cacheChannel = (CacheChannel) context.getBean(cacheManager);
@@ -109,15 +115,20 @@ public class StaticContentServlet extends HttpServlet {
         }
 
         //高效读取文件内容并输出.
-        FileInputStream input = new FileInputStream(contentInfo.file);
+        FileInputStream input = null;
         try {
             //基于byte数组读取文件并直接写入OutputStream, 数组默认大小为4k.
-            IOUtils.copy(input, output);
+            if(cacheFileData && contentInfo.fileData != null && contentInfo.fileData.length >0 ){
+                output.write(contentInfo.fileData);
+            }else{
+                input = new FileInputStream(contentInfo.file);
+                IoUtils.copy(input, output);
+            }
             output.flush();
         } finally {
             //保证Input/Output Stream的关闭.
-            IOUtils.closeQuietly(input);
-            IOUtils.closeQuietly(output);
+            IoUtils.closeQuietly(input);
+            IoUtils.closeQuietly(output);
         }
     }
 
@@ -145,6 +156,13 @@ public class StaticContentServlet extends HttpServlet {
 
         contentInfo.contentPath = contentPath;
         contentInfo.file = file;
+        try {
+            if(cacheFileData){
+                contentInfo.fileData = FileUtils.readFileToByteArray(file);
+            }
+        } catch (IOException e) {
+            log(e.getMessage());
+        }
         contentInfo.fileName = file.getName();
         contentInfo.length = (int) file.length();
 
@@ -172,6 +190,7 @@ public class StaticContentServlet extends HttpServlet {
     static class ContentInfo implements Serializable{
     	protected String contentPath;
     	protected File file;
+    	protected byte[] fileData;
     	protected String fileName;
     	protected int length;
     	protected String mimeType;

@@ -1,47 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.sys.dao.ConfigDao">
-    
+
+	<cache type="com.eryansky.j2cache.mybatis.J2CacheAdapter"></cache>
+
 	<sql id="sysConfigColumns">
 		a.id AS "id",
 		a.code AS "code",
 		a.value AS "value",
 		a.remark AS "remark"
 	</sql>
-	
-	<sql id="sysConfigJoins">
-	</sql>
-    
+
 	<select id="get" resultType="Config">
-		SELECT 
-			<include refid="sysConfigColumns"/>
+		SELECT
+		<include refid="sysConfigColumns"/>
 		FROM t_sys_config a
-		<include refid="sysConfigJoins"/>
 		WHERE a.id = #{id}
 	</select>
 
 	<select id="getBy" resultType="Config">
+		SELECT <include refid="sysConfigColumns"/>
+		FROM t_sys_config a
+		<where>a.code = #{code}</where>
+	</select>
+
+	<select id="findList" resultType="Config">
 		SELECT
 		<include refid="sysConfigColumns"/>
 		FROM t_sys_config a
-		<include refid="sysConfigJoins"/>
-		WHERE 1=1
-		<if test="code != null and code != ''">
-			AND a.code = #{code}
-		</if>
-	</select>
-	
-	<select id="findList" resultType="Config">
-		SELECT 
-			<include refid="sysConfigColumns"/>
-		FROM t_sys_config a
-		<include refid="sysConfigJoins"/>
 		<where>
-			1=1
 			<if test="code != null and code != ''">
 				AND a.code LIKE
-					<if test="dbName == 'db2'">'%'||#{code}||'%'</if>
-					<if test="dbName == 'mysql'">CONCAT('%', #{code}, '%')</if>
+				<if test="dbName == 'db2'">'%'||#{code}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{code}, '%')</if>
 			</if>
 		</where>
 		<choose>
@@ -49,7 +40,7 @@
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				ORDER BY a.code ASC
 			</otherwise>
 		</choose>
 	</select>
@@ -58,16 +49,14 @@
 		SELECT
 		<include refid="sysConfigColumns"/>
 		FROM t_sys_config a
-		<include refid="sysConfigJoins"/>
 		<where>
-			1=1
 			<if test="query != null and query != ''">
 				AND (a.code LIKE
-					<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-					<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				OR a.value LIKE
-					<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-					<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
 				)
 			</if>
 		</where>
@@ -80,25 +69,23 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findAllList" resultType="Config">
-		SELECT 
-			<include refid="sysConfigColumns"/>
+		SELECT
+		<include refid="sysConfigColumns"/>
 		FROM t_sys_config a
-		<include refid="sysConfigJoins"/>
 		<where>
-			1=1
-		</where>		
+		</where>
 		<choose>
 			<when test="entityPage !=null and entityPage.orderBy != null and entityPage.orderBy != ''">
 				ORDER BY ${entityPage.orderBy} ${entityPage.order}
 			</when>
 			<otherwise>
-				ORDER BY a.update_time DESC
+				ORDER BY a.code ASC
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<insert id="insert">
 		INSERT INTO t_sys_config(
 			id,
@@ -112,7 +99,7 @@
 			#{remark}
 		)
 	</insert>
-	
+
 	<update id="update">
 		UPDATE t_sys_config SET
 			code = #{code},

@@ -102,4 +102,12 @@ public class MessageTask {
         messageReceiveService.setReadAll(userId, null);
     }
 
+    /**
+     * 重新推送用户消息到微信端
+     * @param userId
+     */
+    @Async
+    public void reSendToWeixinByUserId(String userId){
+        messageReceiveService.reSendByUserId(userId);
+    }
 }

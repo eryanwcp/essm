@@ -16,4 +16,5 @@ public class GeneratorConstants {
     public static final String NUMBER_SEQUENCE = "NumSeq";
     
     public static final String PARAM_MODULE_CODE = "moduleCode";
+    public static final String PARAM_MAX_SERIAL= "maxSerial";
 }

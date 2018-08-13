@@ -6,9 +6,10 @@
 package com.eryansky.modules.notice.service;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.utils.UserUtils;
+import com.eryansky.modules.weixin.utils.QYWeixinUtils;
+import com.eryansky.modules.weixin.utils.WeixinUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
 import com.eryansky.core.security.SecurityUtils;
@@ -19,11 +20,8 @@ import com.eryansky.modules.notice.mapper.Message;
 import com.eryansky.modules.notice.mapper.MessageReceive;
 import com.eryansky.modules.notice.mapper.MessageSender;
 import com.eryansky.modules.sys._enum.YesOrNo;
-import com.eryansky.modules.sys.mapper.User;
-import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
-import com.eryansky.modules.weixin.utils.WeixinConstants;
-import com.eryansky.modules.weixin.utils.WeixinUtils;
+import org.aspectj.weaver.MemberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,13 +36,9 @@ import java.util.List;
 public class MessageService extends CrudService<MessageDao, Message> {
 
     @Autowired
-    private MessageDao messageDao;
-    @Autowired
     private MessageSenderService messageSenderService;
     @Autowired
     private MessageReceiveService messageReceiveService;
-    @Autowired
-    private OrganService organService;
     @Autowired
     private UserService userService;
 
@@ -82,40 +76,37 @@ public class MessageService extends CrudService<MessageDao, Message> {
     public void saveAndSend(Message message, MessageReceiveObjectType messageReceiveObjectType, List<String> receiveObjectIds,Boolean sendWeixin){
         if(Collections3.isNotEmpty(receiveObjectIds)){
             message.setMode(MessageMode.Publishing.getValue());
-            message.setSendTime(message.getSendTime() != null ? message.getSendTime():Calendar.getInstance().getTime());
+            message.setSendTime(Calendar.getInstance().getTime());
             this.save(message);
-
-            //历史数据
-//            messageReceiveService.deleteByMessageId(message.getId());
-//            messageSenderService.deleteByMessageId(message.getId());
-
             for(String objectId: receiveObjectIds){
                 MessageSender messageSender = new MessageSender(message.getId());
                 messageSender.setObjectType(messageReceiveObjectType.getValue());
                 messageSender.setObjectId(objectId);
                 messageSenderService.save(messageSender);
 
-                List<String> userIds = Lists.newArrayList();
+                List<String> targetIds = Lists.newArrayList();
                 if(MessageReceiveObjectType.User.equals(messageReceiveObjectType)){
-                    userIds.add(objectId);
+                    targetIds.add(UserUtils.getLoginName(objectId));
                 }else if(MessageReceiveObjectType.Organ.equals(messageReceiveObjectType)){
-                    userIds = userService.findUserIdsByOrganId(objectId);
+                    targetIds = userService.findUsersLoginNamesByOrganId(objectId);
+                }else if(MessageReceiveObjectType.Member.equals(messageReceiveObjectType)){
+                    String openid = objectId;//TODO 获取openid
+                    targetIds.add(openid);
                 }
-                for(String memberId:userIds){
+                for(String targetId:targetIds){
                     MessageReceive messageReceive = new MessageReceive(message.getId());
-                    messageReceive.setUserId(memberId);
+                    messageReceive.setUserId(targetId);
                     messageReceive.setIsRead(YesOrNo.NO.getValue());
-                    messageReceiveService.save(messageReceive);
-
 
                     //通过微信发送消息
                     if(sendWeixin != null && sendWeixin){
-                        User user = UserUtils.getUser(objectId);
-                        if(user != null){
-                            String agentId = StringUtils.isBlank(message.getAppId()) ? WeixinConstants.getAgentId():WeixinConstants.getWeixinMessageAgentId();
-                            WeixinUtils.sendTextMsg(agentId,user.getLoginName(), message.getContent(), message.getUrl());
+//                        QYWeixinUtils.sendTextMsg(null,targetId, message.getContent(), message.getUrl());
+                        boolean flag = WeixinUtils.sendTextMsg(targetId,message.getContent(),message.getUrl());
+                        if(!flag){
+                            messageReceive.setIsSend(YesOrNo.NO.getValue());
                         }
                     }
+                    messageReceiveService.save(messageReceive);
                 }
 
 
