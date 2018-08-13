@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eryansky.modules.sys.dao.DictionaryItemDao">
-    
+
+	<cache type="com.eryansky.j2cache.mybatis.J2CacheAdapter"></cache>
+
 	<sql id="sysDictionaryItemColumns">
 		a.id AS "id",
 		a.status AS "status",

@@ -66,10 +66,6 @@
     <cache name="sysCache" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
     </cache>
 
-    <!--区域缓存-->
-    <cache name="sys_area_list" maxEntriesLocalHeap="1000" eternal="false" overflowToDisk="true">
-    </cache>
-
     <!--序列号-->
     <cache name="sys_serial_number_cache" maxEntriesLocalHeap="1000" eternal="true" overflowToDisk="true" timeToLiveSeconds="0" timeToIdleSeconds="0">
     </cache>

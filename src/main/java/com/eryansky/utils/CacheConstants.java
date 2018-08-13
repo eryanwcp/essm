@@ -45,10 +45,6 @@ public class CacheConstants {
      * 数据字典项combobox的数据(根据数据字典编码缓存).
      */
     public static final String DICTIONARYITEM_CONBOBOX_CACHE = "dictionaryItem_combobox_cache";
-    /**
-     * 区域缓存
-     */
-    public static final String AREA_LIST_CACHE = "sys_area_list";
 
 
     public static final String ORGAN_USER_TREE_CACHE = "organ_user_tree_cache";
