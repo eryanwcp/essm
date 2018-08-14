@@ -125,7 +125,7 @@ public class MessageReceiveController extends SimpleController {
     public Result setReadAll() {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
 //        messageTask.setReadAll(sessionInfo.getUserId());
-        messageReceiveService.setReadAll(sessionInfo.getUserId(), null);
+        messageReceiveService.setReadAll(sessionInfo.getLoginName(), null);
         return Result.successResult();
     }
 

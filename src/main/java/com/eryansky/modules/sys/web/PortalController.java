@@ -81,7 +81,7 @@ public class PortalController extends SimpleController {
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         long noticeReceiveInfos = 0;
         Page<NoticeReceiveInfo> page = new Page<NoticeReceiveInfo>(request);
-        page = noticeReceiveInfoService.findUserUnreadNotices(page,sessionInfo.getUserId());
+        page = noticeReceiveInfoService.findUserUnreadNotices(page,sessionInfo.getLoginName());
         if(Collections3.isNotEmpty(page.getResult())){
             noticeReceiveInfos = page.getTotalCount();
         }
