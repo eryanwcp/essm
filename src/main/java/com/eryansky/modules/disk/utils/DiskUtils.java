@@ -15,6 +15,7 @@ import com.eryansky.modules.disk._enum.FolderType;
 import com.eryansky.modules.disk.extend.IFileManager;
 import com.eryansky.modules.disk.service.FileService;
 import com.eryansky.modules.disk.service.FolderService;
+import com.eryansky.modules.sys.mapper.User;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SessionInfo;
@@ -184,8 +185,7 @@ public class DiskUtils {
      *
      * @param folderCode
      *            系统文件夹编码
-     * @param sessionInfo
-     *            session信息 允允许为null
+     * @param userId 用户ID 允允许为null
      * @param multipartFile
      *            上传文件对象 SpringMVC
      * @return
@@ -194,22 +194,18 @@ public class DiskUtils {
      * @throws FileNameLengthLimitExceededException
      * @throws IOException
      */
-    public static File saveSystemFile(String folderCode, SessionInfo sessionInfo,
+    public static File saveSystemFile(String folderCode, String userId,
                                       MultipartFile multipartFile) throws InvalidExtensionException,
             FileUploadBase.FileSizeLimitExceededException,
             FileNameLengthLimitExceededException, IOException {
-        String userId = null;
-        if (sessionInfo != null && sessionInfo.getUserId() != null) {
-            userId = sessionInfo.getUserId();
-        }
-
-        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",multipartFile.getOriginalFilename());
-        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
-        String storeFilePath = iFileManager.getStorePath(folder,userId,multipartFile.getOriginalFilename());
+        String _userId = StringUtils.isBlank(userId) ? User.SUPERUSER_ID:userId;
+        String code = FileUploadUtils.encodingFilenamePrefix(_userId + "",multipartFile.getOriginalFilename());
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, _userId);
+        String storeFilePath = iFileManager.getStorePath(folder,_userId,multipartFile.getOriginalFilename());
         File file = new File();
         file.setFolderId(folder.getId());
         file.setCode(code);
-        file.setUserId(userId);
+        file.setUserId(_userId);
         file.setName(multipartFile.getOriginalFilename());
         file.setFilePath(storeFilePath);
         file.setFileSize(multipartFile.getSize());
@@ -224,8 +220,7 @@ public class DiskUtils {
      *
      * @param folderCode
      *            系统文件夹编码
-     * @param sessionInfo
-     *            session信息 允允许为null
+     * @param userId 用户ID 允允许为null
      * @param inputStream 文件输入流
      * @param fileName
      *            文件名称
@@ -235,52 +230,18 @@ public class DiskUtils {
      * @throws FileNameLengthLimitExceededException
      * @throws IOException
      */
-    public static File saveSystemFile(String folderCode, SessionInfo sessionInfo,
+    public static File saveSystemFile(String folderCode, String userId,
                                       InputStream inputStream,String fileName) throws InvalidExtensionException,
             FileUploadBase.FileSizeLimitExceededException,
             FileNameLengthLimitExceededException, IOException {
-        String userId = null;
-        if (sessionInfo != null && sessionInfo.getUserId() != null) {
-            userId = sessionInfo.getUserId();
-        }
-
-        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
-        String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
+        String _userId = StringUtils.isBlank(userId) ? User.SUPERUSER_ID:userId;
+        String code = FileUploadUtils.encodingFilenamePrefix(_userId + "",fileName);
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, _userId);
+        String storeFilePath = iFileManager.getStorePath(folder,_userId,fileName);
         File file = new File();
         file.setFolderId(folder.getId());
         file.setCode(code);
-        file.setUserId(userId);
-        file.setName(fileName);
-        file.setFilePath(storeFilePath);
-        file.setFileSize(Long.valueOf(inputStream.available()));
-        file.setFileSuffix(FilenameUtils.getExtension(fileName));
-        iFileManager.saveFile(file.getFilePath(),inputStream, true);
-        fileService.save(file);
-        return file;
-    }
-
-    /**
-     * 保持用户邮件 外部邮件系统
-     * @param userId
-     * @param inputStream
-     * @param fileName
-     * @return
-     * @throws InvalidExtensionException
-     * @throws FileUploadBase.FileSizeLimitExceededException
-     * @throws FileNameLengthLimitExceededException
-     * @throws IOException
-     */
-    public static File saveUserFile(String userId,String folderCode, InputStream inputStream, String fileName) throws InvalidExtensionException,
-            FileUploadBase.FileSizeLimitExceededException,
-            FileNameLengthLimitExceededException, IOException {
-        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
-        String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
-        File file = new File();
-        file.setFolderId(folder.getId());
-        file.setCode(code);
-        file.setUserId(userId);
+        file.setUserId(_userId);
         file.setName(fileName);
         file.setFilePath(storeFilePath);
         file.setFileSize(Long.valueOf(inputStream.available()));
@@ -295,8 +256,7 @@ public class DiskUtils {
      *
      * @param folderCode
      *            系统文件夹编码
-     * @param sessionInfo
-     *            session信息 允允许为null
+     * @param userId 用户ID 允允许为null
      *
      * @param workbook
      * @param fileName
@@ -307,21 +267,17 @@ public class DiskUtils {
      * @throws FileNameLengthLimitExceededException
      * @throws IOException
      */
-    public static File saveExcelFile(String folderCode, SessionInfo sessionInfo,HSSFWorkbook workbook, String fileName) throws InvalidExtensionException,
+    public static File saveSystemFile(String folderCode, String userId,HSSFWorkbook workbook, String fileName) throws InvalidExtensionException,
             FileUploadBase.FileSizeLimitExceededException,
             FileNameLengthLimitExceededException, IOException {
-        String userId = null;
-        if (sessionInfo != null && sessionInfo.getUserId() != null) {
-            userId = sessionInfo.getUserId();
-        }
-
-        String code = FileUploadUtils.encodingFilenamePrefix(userId + "",fileName);
-        Folder folder = checkAndSaveSystemFolderByCode(folderCode, userId);
-        String storeFilePath = iFileManager.getStorePath(folder,userId,fileName);
+        String _userId = StringUtils.isBlank(userId) ? User.SUPERUSER_ID:userId;
+        String code = FileUploadUtils.encodingFilenamePrefix(_userId + "",fileName);
+        Folder folder = checkAndSaveSystemFolderByCode(folderCode, _userId);
+        String storeFilePath = iFileManager.getStorePath(folder,_userId,fileName);
         File file = new File();
         file.setFolderId(folder.getId());
         file.setCode(code);
-        file.setUserId(userId);
+        file.setUserId(_userId);
         file.setName(fileName);
         file.setFilePath(storeFilePath);
         file.setFileSize(Long.valueOf(workbook.getBytes().length));

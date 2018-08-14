@@ -106,7 +106,7 @@ public class FileKindEditorController extends SimpleController{
 //            basePath +=  File.separator + FileUploadUtils.datePath();//添加日期目录
 //            String url = FileUploadUtils.upload(request, AppConstants.getDiskBaseDir() + File.separator + basePath, multipartFile, allowedExtension, maxSize, false, null);
 
-            File file = DiskUtils.saveSystemFile(FOLDER_KINDEDITOR, sessionInfo, multipartFile);
+            File file = DiskUtils.saveSystemFile(FOLDER_KINDEDITOR, sessionInfo.getUserId(), multipartFile);
             String filename =  DiskUtils.getVirtualFilePath(file);
 
             return successResponse(request, file.getName(), filename);

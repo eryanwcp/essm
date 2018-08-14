@@ -223,7 +223,7 @@ public class MobileIndexController extends SimpleController {
 //            byte[] bs = EncodeUtils.base64Decode(data);
             byte[] bs = Base64Utils.decodeFromString(data);
 
-            file = DiskUtils.saveSystemFile("IMAGE",sessionInfo,new ByteArrayInputStream(bs), tempFileName);
+            file = DiskUtils.saveSystemFile("IMAGE",sessionInfo.getUserId(),new ByteArrayInputStream(bs), tempFileName);
             file.setStatus(StatusState.LOCK.getValue());
             DiskUtils.saveFile(file);
             result = Result.successResult().setObj(file).setMsg("文件上传成功！");
@@ -264,7 +264,7 @@ public class MobileIndexController extends SimpleController {
         Exception exception = null;
         File file = null;
         try {
-            file = DiskUtils.saveSystemFile("IMAGE",sessionInfo, multipartFile);
+            file = DiskUtils.saveSystemFile("IMAGE",sessionInfo.getUserId(), multipartFile);
             file.setStatus(StatusState.LOCK.getValue());
             DiskUtils.saveFile(file);
             Map<String,Object> _data = Maps.newHashMap();

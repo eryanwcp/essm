@@ -334,7 +334,7 @@ public class NoticeController extends SimpleController {
         Exception exception = null;
         File file = null;
         try {
-            file = DiskUtils.saveSystemFile(Notice.FOLDER_NOTICE,sessionInfo,multipartFile);
+            file = DiskUtils.saveSystemFile(Notice.FOLDER_NOTICE,sessionInfo.getUserId(),multipartFile);
             result = Result.successResult().setObj(file.getId()).setMsg("文件上传成功！");
         } catch (InvalidExtensionException e) {
             exception = e;
