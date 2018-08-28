@@ -116,11 +116,18 @@ public class SystemMonitorController extends SimpleController {
         Result result = null;
         File file = null;
         if(download || WebUtils.isAjaxRequest(request)){
-            PropertiesLoader propertiesLoader =AppConstants.getPropertiesLoader("log4j");
+            PropertiesLoader propertiesLoader = AppConstants.getPropertiesLoader("log4j");
             String appDir = AppUtils.getAppAbsolutePath();
-            String servletContextName = AppUtils.getServletContext().getServletContextName();
+            String servletContextName = AppUtils.getServletContext().getContextPath();
             String logConfigPath = StringUtils.substringAfter(propertiesLoader.getProperty("log4j.appender.RollingFile.File"),"/");
-            String logPath = StringUtils.substringBefore(appDir,servletContextName).replace("webapps","").replace(File.separator+File.separator,File.separator) + logConfigPath;
+            String logPath = null;
+            if ("/".equals(servletContextName)) {
+                logPath = appDir.replace("webapps", "") + logConfigPath;
+            } else {
+                logPath = StringUtils.substringBefore(appDir, servletContextName.replace("/", "")).replace("webapps", "") + logConfigPath;
+
+            }
+            logPath = logPath.replace("/", File.separator).replace(File.separator + File.separator, File.separator);
             String _logPath = AppConstants.getLogPath(logPath);//读取配置文件配置的路径
             file = new File(_logPath);
         }
