@@ -17,6 +17,12 @@
         a.ORGAN_ID AS "organId"
     </sql>
 
+    <select id="get" resultType="Post">
+        SELECT
+        <include refid="postColumns"/>
+        FROM t_sys_post a
+        WHERE a.id = #{id}
+    </select>
 
     <select id="getByCode" resultType="Role">
         SELECT
