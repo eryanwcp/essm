@@ -17,32 +17,26 @@
         a.ORGAN_ID AS "organId"
     </sql>
 
-    <select id="get" resultType="Post">
-        SELECT
-        <include refid="postColumns"/>
-        FROM t_sys_post a
-        WHERE a.id = #{id}
-    </select>
 
     <select id="getByCode" resultType="Role">
         SELECT
         <include refid="postColumns"/>
-        FROM t_sys_role a
+        FROM t_sys_post a
         WHERE a.status = '0' AND a.code = #{code}
     </select>
 
     <select id="findPost" resultType="Role">
         SELECT DISTINCT
         <include refid="postColumns"/>
-        FROM t_sys_role a
-        LEFT JOIN t_sys_role_organ ro ON ro.role_id = a.id
+        FROM t_sys_post a
+        LEFT JOIN t_sys_post_organ po ON po.post_id = a.id
         LEFT JOIN t_sys_organ o ON o.id = a.organ_id
         <where>
             a.status = '0'
             AND a.code = #{code}
             <if test="organId != null and organId !=''">
                 AND (a.organ_id = #{organId}
-                  OR o.id = #{organId}
+                OR o.id = #{organId}
                 )
             </if>
         </where>
