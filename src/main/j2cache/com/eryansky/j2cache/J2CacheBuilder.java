@@ -15,6 +15,8 @@
  */
 package com.eryansky.j2cache;
 
+import com.eryansky.j2cache.cluster.ClusterPolicy;
+import com.eryansky.j2cache.cluster.ClusterPolicyFactory;
 import com.eryansky.j2cache.util.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

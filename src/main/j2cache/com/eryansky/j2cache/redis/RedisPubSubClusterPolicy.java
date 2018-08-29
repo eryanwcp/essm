@@ -16,7 +16,7 @@
 package com.eryansky.j2cache.redis;
 
 import com.eryansky.j2cache.Command;
-import com.eryansky.j2cache.ClusterPolicy;
+import com.eryansky.j2cache.cluster.ClusterPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
