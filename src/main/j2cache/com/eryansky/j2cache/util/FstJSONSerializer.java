@@ -19,8 +19,8 @@ import org.nustaq.serialization.FSTConfiguration;
 import org.nustaq.serialization.coders.FSTJsonFieldNames;
 import org.nustaq.serialization.serializers.FSTDateSerializer;
 
+import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Properties;
 
 /**
