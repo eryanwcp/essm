@@ -66,6 +66,37 @@ $.serializeFullObject = function(form,radio) {
 	return o;
 };
 
+/**
+ * 表单加载
+ * @param form 表单
+ * @param data json 数据
+ * @returns {{}}
+ */
+$.formLoadData = function(form,data) {
+    $.each(data,function(key,value){
+        var formField = form.find("[name='"+key+"']");
+        if($.type(formField[0]) === "undefined"){
+        } else {
+            var fieldTagName = formField[0].tagName.toLowerCase();
+            if(fieldTagName == "input"){
+                if(formField.attr("type") == "radio"){
+                    $("input:radio[name='"+key+"'][value='"+value+"']").prop("checked","checked");
+                } else {
+                    formField.val(value);
+                }
+            } else if(fieldTagName == "select"){
+                //do something special
+                formField.val(value);
+            } else if(fieldTagName == "textarea"){
+                //do something special
+                formField.val(value);
+            } else {
+                formField.val(value);
+            }
+        }
+    })
+};
+
 function isValidDate(d) {
     if ( Object.prototype.toString.call(d) !== "[object Date]" )
         return false;
