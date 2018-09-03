@@ -15,6 +15,8 @@
  */
 package com.eryansky.j2cache.cluster;
 
+import com.eryansky.j2cache.Command;
+
 import java.util.Properties;
 
 /**
@@ -29,17 +31,12 @@ public class NoneClusterPolicy implements ClusterPolicy {
     }
 
     @Override
-    public void sendEvictCmd(String region, String... keys) {
-
-    }
-
-    @Override
-    public void sendClearCmd(String region) {
-
-    }
-
-    @Override
     public void disconnect() {
+
+    }
+
+    @Override
+    public void publish(Command cmd) {
 
     }
 
