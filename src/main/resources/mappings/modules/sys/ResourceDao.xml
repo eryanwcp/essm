@@ -103,7 +103,8 @@
         <if test="id != null and id !=''">
             AND (a.id = #{id} OR a.parent_ids LIKE
             <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>)
         </if>
         <if test="types != null and types.size() !=0">
             AND a.type IN
@@ -407,6 +408,7 @@
         WHERE id = #{id} OR parent_id = #{id} OR parent_ids LIKE
         <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
         <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+        <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
     </delete>
 
 </mapper>

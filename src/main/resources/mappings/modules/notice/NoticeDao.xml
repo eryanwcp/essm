@@ -50,9 +50,11 @@
 				AND (a.title LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
 				OR a.content LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>)
+				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>)
 			</if>
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
@@ -105,11 +107,13 @@
 				AND a.title LIKE
 				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 			</if>
 			<if test="content != null and content != ''">
 				AND a.content LIKE
 				<if test="dbName == 'db2'">'%'||#{content}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{content}||'%'</if>
 			</if>
 			<if test="isTop != null">
 				AND a.is_top = #{isTop}

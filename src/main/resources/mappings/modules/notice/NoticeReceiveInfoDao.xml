@@ -90,11 +90,13 @@
 				AND n.title LIKE
 				<if test="dbName == 'db2'">'%'||#{title}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{title}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
 			</if>
 			<if test="content != null and content != ''">
 				AND n.content LIKE
 				<if test="dbName == 'db2'">'%'||#{content}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{content}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{content}||'%'</if>
 			</if>
 
 			<!--<if test="publishUserIds != null and publishUserIds.size() !=0">-->

@@ -74,6 +74,7 @@
                 AND a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                <if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
             </if>
         </where>
         <choose>
@@ -105,6 +106,7 @@
                 AND a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                <if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
             </if>
             <if test="fileSizeType != null and fileSizeType !=''">
                 <choose>
@@ -168,6 +170,7 @@
                 f.id = #{folderId} OR f.parent_ids LIKE
                 <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>
+                <if test="dbName == 'oracle'">'%,'||#{folderId}||',%'</if>
             )
             <if test="fileSuffixs != null and fileIds.size() !=0">
                 AND a.file_suffix IN
@@ -190,6 +193,7 @@
                 f.id = #{folderId} OR f.parent_ids LIKE
                 <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>
+                <if test="dbName == 'oracle'">'%,'||#{folderId}||',%'</if>
             )
             <if test="fileSuffixs != null and fileIds.size() !=0">
                 AND a.file_suffix IN
@@ -317,7 +321,8 @@
         a.update_time = #{updateTime}
         WHERE (f.id = #{folderId} OR f.parent_ids LIKE
         <if test="dbName == 'db2'">'%,'||#{folderId}||',%'</if>
-        <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>)
+        <if test="dbName == 'mysql'">CONCAT('%,', #{folderId}, ',%')</if>
+        <if test="dbName == 'oracle'">'%,'||#{folderId}||',%'</if>)
     </delete>
 
 </mapper>

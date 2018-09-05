@@ -164,7 +164,8 @@
         <if test="id != null and id !=''">
             AND (a.id = #{id} OR a.parent_ids LIKE
             <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>)
         </if>
         <if test="types != null and types.size() !=0">
             AND a.type IN
@@ -184,7 +185,8 @@
         <if test="id != null and id !=''">
             AND (a.id = #{id} OR a.parent_ids LIKE
             <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+            <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+            <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>)
         </if>
         <if test="types != null and types.size() !=0">
             AND a.type IN
@@ -283,7 +285,8 @@
             <if test="id != null and id !=''">
                 AND (a.parent_id = #{id} OR a.parent_ids LIKE
                 <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
-                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>)
+                <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+                <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>)
             </if>
             <if test="types != null and types.size() !=0">
                 AND a.type IN
@@ -305,6 +308,7 @@
                 AND a.parent_ids LIKE
                 <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+                <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
             </if>
             <if test="types != null and types.size() !=0">
                 AND a.type IN
@@ -352,9 +356,11 @@
                 a.name LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                <if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
                 OR a.code LIKE
                 <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
                 <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                <if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
                 )
             </if>
             <if test="ids != null and ids.size() !=0">
@@ -569,6 +575,7 @@
         WHERE id = #{id} OR parent_id = #{id} OR parent_ids LIKE
         <if test="dbName == 'db2'">'%,'||#{id}||',%'</if>
         <if test="dbName == 'mysql'">CONCAT('%,', #{id}, ',%')</if>
+        <if test="dbName == 'oracle'">'%,'||#{id}||',%'</if>
     </delete>
 
     <!--t_sys_organ_extend-->

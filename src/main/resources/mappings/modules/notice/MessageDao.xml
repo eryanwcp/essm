@@ -59,15 +59,19 @@
 				a.title LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
 				OR a.url LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
 				OR a.content LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
 				OR a.app_id LIKE
 				<if test="dbName == 'db2'">'%'||#{query}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{query}||'%'</if>
 				)
 			</if>
 			${sqlMap.dsf}

@@ -103,15 +103,18 @@
 				AND (a.version_name LIKE
 				<if test="dbName == 'db2'">'%'||#{versionName}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{versionName}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{versionName}||'%'</if>
 				OR a.version_code LIKE
 				<if test="dbName == 'db2'">'%'||#{versionName}||'%'</if>
-				<if test="dbName == 'mysql'">CONCAT('%', #{versionName}, '%')</if>)
+				<if test="dbName == 'mysql'">CONCAT('%', #{versionName}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{versionName}||'%'</if>)
 			</if>
 
 			<if test="remark != null and remark != ''">
 				AND a.remark LIKE
 				<if test="dbName == 'db2'">'%'||#{remark}||'%'</if>
 				<if test="dbName == 'mysql'">CONCAT('%', #{remark}, '%')</if>
+				<if test="dbName == 'oracle'">'%'||#{remark}||'%'</if>
 			</if>
 
 			<choose>
