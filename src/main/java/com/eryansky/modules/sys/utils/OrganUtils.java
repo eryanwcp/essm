@@ -8,6 +8,7 @@ package com.eryansky.modules.sys.utils;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
+import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.service.OrganService;
@@ -142,5 +143,95 @@ public class OrganUtils {
             return organ.getAreaId();
         }
         return null;
+    }
+
+//    递归方法
+
+    /**
+     * 根据机构ID查找单位 (递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static Organ getCompanyByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ currentOrgan = getOrgan(organId);
+        while (currentOrgan != null && !OrganType.organ.getValue().equals(currentOrgan.getType())) {
+            currentOrgan = getOrgan(currentOrgan.getParentId());
+        }
+        return currentOrgan;
+    }
+
+
+    /**
+     * 根据机构ID查找单位ID (递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getCompanyIdByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ organ = getCompanyByRecursive(organId);
+        return organ.getId();
+    }
+
+    /**
+     * 根据机构ID查找单位CODE (递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getCompanyCodeByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ organ = getCompanyByRecursive(organId);
+        return organ.getCode();
+    }
+
+
+    /**
+     * 根据机构ID查找上级单位(递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static Organ getHomeCompanyByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ company = getCompanyByRecursive(organId);
+        if(StringUtils.isNotBlank(company.getParentIds()) && company.getParentIds().split(",").length >= 3){//区县
+            Organ homeCompanyOrgan = getCompanyByRecursive(company.getParentId());
+            return homeCompanyOrgan;
+        }
+        return company;
+    }
+
+
+    /**
+     * 根据机构ID查找上级单位ID (递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getHomeCompanyIdByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ organ = getHomeCompanyByRecursive(organId);
+        return organ.getId();
+    }
+
+    /**
+     * 根据机构ID查找上级单位CODE (递归)
+     * @param organId 机构ID
+     * @return
+     */
+    public static String getHomeCompanyCodeByRecursive(String organId){
+        if(StringUtils.isBlank(organId)){
+            return null;
+        }
+        Organ organ = getHomeCompanyByRecursive(organId);
+        return organ.getCode();
     }
 }

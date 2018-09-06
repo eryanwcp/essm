@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.sys.dao;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.MyBatisDao;
 import com.eryansky.common.orm.persistence.BaseDao;
 import org.apache.ibatis.annotations.Param;
@@ -16,24 +17,19 @@ import org.apache.ibatis.annotations.Param;
  */
 @MyBatisDao
 public interface SystemDao extends BaseDao {
-    /**
-     * 创建organ扩展表
-     * @return
-     */
-    int createOrganExtend();
 
     /**
      * organ表同步到扩展表
-     * @param id 机构ID
+     * @param parameter 参数
      * @return
      */
-    int insertToOrganExtend(@Param("id") String id);
+    int insertToOrganExtend(Parameter parameter);
 
     /**
      * 删除organ扩展表数据
-     * @param id 机构ID
+     * @param parameter 参数
      * @return
      */
-    int deleteOrganExtend(@Param("id") String id);
+    int deleteOrganExtend(Parameter parameter);
 
 }

@@ -18,7 +18,6 @@ import com.eryansky.core.orm.mybatis.service.TreeService;
 import com.eryansky.modules.sys._enum.OrganType;
 import com.eryansky.modules.sys._enum.SexType;
 import com.eryansky.modules.sys.mapper.OrganExtend;
-import com.eryansky.modules.sys.mapper.Resource;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.utils.AppConstants;
@@ -26,7 +25,6 @@ import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.CacheConstants;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -993,22 +991,22 @@ public class OrganService extends TreeService<OrganDao, Organ> {
 
                 OrganExtend _userOrganExtend = userOrganExtend;
                 while (_userOrganExtend != null) {
-                    List<OrganExtend> organs = organMap.get(_userOrganExtend.getLevel());
+                    List<OrganExtend> organs = organMap.get(_userOrganExtend.getTreeLevel());
                     if (Collections3.isEmpty(organs)) {
                         organs = Lists.newArrayList();
                     }
-                    List<OrganExtend> pList = organMap.get(_userOrganExtend.getLevel());
+                    List<OrganExtend> pList = organMap.get(_userOrganExtend.getTreeLevel());
                     if(Collections3.isEmpty(pList) || !pList.contains(_userOrganExtend)){
                         organs.add(_userOrganExtend);
                     }
-                    organMap.put(_userOrganExtend.getLevel(), organs);
+                    organMap.put(_userOrganExtend.getTreeLevel(), organs);
                     organTempMap.put(_userOrganExtend.getId(),_userOrganExtend);
 
-                    if (maxLevel < _userOrganExtend.getLevel()) {
-                        maxLevel = _userOrganExtend.getLevel();
+                    if (maxLevel < _userOrganExtend.getTreeLevel()) {
+                        maxLevel = _userOrganExtend.getTreeLevel();
                     }
-                    if (minLevel > _userOrganExtend.getLevel()) {
-                        minLevel = _userOrganExtend.getLevel();
+                    if (minLevel > _userOrganExtend.getTreeLevel()) {
+                        minLevel = _userOrganExtend.getTreeLevel();
                     }
 
                     //补全上级机构
@@ -1036,16 +1034,16 @@ public class OrganService extends TreeService<OrganDao, Organ> {
                 //补漏(中间漏了的机构)
                 OrganExtend _userOrganExtend = OrganUtils.getOrganExtendByUserId(user.getId());
                 while (_userOrganExtend != null) {
-                    if(_userOrganExtend.getLevel() >= minLevel && !organTempMap.containsKey(_userOrganExtend.getId())){
-                        List<OrganExtend> organs = organMap.get(_userOrganExtend.getLevel());
+                    if(_userOrganExtend.getTreeLevel() >= minLevel && !organTempMap.containsKey(_userOrganExtend.getId())){
+                        List<OrganExtend> organs = organMap.get(_userOrganExtend.getTreeLevel());
                         if (Collections3.isEmpty(organs)) {
                             organs = Lists.newArrayList();
                         }
-                        List<OrganExtend> pList = organMap.get(_userOrganExtend.getLevel());
+                        List<OrganExtend> pList = organMap.get(_userOrganExtend.getTreeLevel());
                         if(Collections3.isEmpty(pList) || !pList.contains(_userOrganExtend)){
                             organs.add(_userOrganExtend);
                         }
-                        organMap.put(_userOrganExtend.getLevel(), organs);
+                        organMap.put(_userOrganExtend.getTreeLevel(), organs);
                         organTempMap.put(_userOrganExtend.getId(),_userOrganExtend);
 
                     }

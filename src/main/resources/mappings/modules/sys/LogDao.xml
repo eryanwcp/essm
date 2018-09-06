@@ -115,7 +115,10 @@
 		t_sys_log a
 		WHERE
 		t.status = '0'
-		AND a.title LIKE  CONCAT('%', '用户登录', '%')
+		AND t.title LIKE
+		<if test="dbName == 'db2'">'%'||'用户登录'||'%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%', '用户登录', '%')</if>
+		<if test="dbName == 'oracle'">'%'||'用户登录'||'%'</if>
 		AND a.user_id = #{userId}
 		<choose>
 			<when test="startTime != null and endTime != null">
@@ -133,13 +136,26 @@
 	<!--查询每日登陆次数-->
 	<select id="getDayLoginStatistics" resultType="java.util.Map">
 		SELECT
-		DATE_FORMAT(a.create_time, '%Y-%m-%d') as "loginDate",
+		<choose>
+			<when test="dbName != null and dbName == 'oracle'.toString()">
+				to_char(a.create_time, 'yyyy-MM-dd') as "loginDate",
+			</when>
+			<when test="dbName != null and dbName == 'mysql'.toString()">
+				to_char(a.create_time, 'yyyy-MM-dd') as "loginDate",
+			</when>
+			<otherwise>
+				DATE_FORMAT(a.create_time, '%Y-%m-%d') as "loginDate",
+			</otherwise>
+		</choose>
 		count(*) AS "count"
 		FROM
 		t_sys_log a
 		WHERE
 		a.status = '0'
-		AND a.title LIKE  CONCAT('%', '用户登录', '%')
+		AND a.title LIKE
+		<if test="dbName == 'db2'">'%'||'用户登录'||'%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%', '用户登录', '%')</if>
+		<if test="dbName == 'oracle'">'%'||'用户登录'||'%'</if>
 		<choose>
 			<when test="startTime != null and endTime != null">
 				AND a.create_time BETWEEN #{startTime} AND #{endTime}
@@ -152,29 +168,49 @@
 			</when>
 		</choose>
 		GROUP BY
-		loginDate
+		<choose>
+			<when test="dbName != null and dbName == 'oracle'.toString()">
+				to_char(a.create_time, 'yyyy-MM-dd')
+			</when>
+			<when test="dbName != null and dbName == 'mysql'.toString()">
+				to_char(a.create_time, 'yyyy-MM-dd')
+			</when>
+			<otherwise>
+				DATE_FORMAT(a.create_time, '%Y-%m-%d')
+			</otherwise>
+		</choose>
 		ORDER BY
-		loginDate ASC
+		2 ASC
 	</select>
 
 	<!--查询员工登录统计信息-->
 	<select id="getLoginStatistics" resultType="java.util.Map">
 		SELECT
-		o.id AS 'organId',
-		o.name AS 'department',
-		u.name AS 'name',
-		u.login_name AS 'userName',
-		count(*) AS 'count'
+		o.id AS "organId",
+		o.name AS "department",
+		u.name AS "name",
+		u.login_name AS "userName",
+		count(*) AS "count"
 		FROM
 		t_sys_log t
 		LEFT JOIN t_sys_user u ON u.id = t.user_id
 		LEFT JOIN t_sys_organ o ON o.id = u.default_organ_id
 		WHERE
 		t.status = '0'
-		AND t.title LIKE '%用户登录%'
+		AND t.title LIKE
+		<if test="dbName == 'db2'">'%'||'用户登录'||'%'</if>
+		<if test="dbName == 'mysql'">CONCAT('%', '用户登录', '%')</if>
+		<if test="dbName == 'oracle'">'%'||'用户登录'||'%'</if>
+
 		<if test="name != null and name !=''">
-			AND (u.login_name like CONCAT('%',#{name},'%')
-			OR u.name LIKE CONCAT('%',#{name},'%'))
+			AND (u.login_name LIKE
+			<if test="dbName == 'db2'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+			OR u.name LIKE
+			<if test="dbName == 'db2'">'%'||#{name}||'%'</if>
+			<if test="dbName == 'mysql'">CONCAT('%', #{name}, '%')</if>
+			<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>)
 		</if>
 		<choose>
 			<when test="startTime != null and endTime != null">
@@ -188,7 +224,7 @@
 			</when>
 		</choose>
 		GROUP BY
-		t.user_id
+		o.id,o.name,u.name,u.login_name
 		ORDER BY
 		5 DESC
 	</select>
@@ -196,8 +232,8 @@
 	<!--查询模块访问统计-->
 	<select id="getModuleStatistics" resultType="java.util.Map">
 		SELECT
-		t.TITLE AS 'module',
-		count(*) AS 'moduleCount'
+		t.TITLE AS "module",
+		count(*) AS "moduleCount"
 		FROM
 		t_sys_log t
 		LEFT JOIN t_sys_user u ON u.id = t.user_id

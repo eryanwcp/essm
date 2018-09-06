@@ -16,7 +16,7 @@ package com.eryansky.modules.sys.mapper;
 public class OrganExtend extends Organ {
 
 
-    private Integer level;
+    private Integer treeLevel;
 
     private String parentId;
 
@@ -27,12 +27,12 @@ public class OrganExtend extends Organ {
     private String homeCompanyId;
     private String homeCompanyCode;
 
-    public Integer getLevel() {
-        return level;
+    public Integer getTreeLevel() {
+        return treeLevel;
     }
 
-    public void setLevel(Integer level) {
-        this.level = level;
+    public void setTreeLevel(Integer treeLevel) {
+        this.treeLevel = treeLevel;
     }
 
     @Override

@@ -28,7 +28,6 @@ import com.eryansky.modules.sys.mapper.Area;
 import com.eryansky.modules.sys.service.*;
 import com.eryansky.modules.sys.utils.OrganUtils;
 import com.eryansky.modules.sys.utils.UserUtils;
-import com.eryansky.utils.AppConstants;
 import com.eryansky.utils.AppUtils;
 import com.eryansky.utils.SelectType;
 import com.google.common.collect.Lists;
@@ -152,7 +151,7 @@ public class OrganController extends SimpleController {
         }else{
             OrganExtend o = OrganUtils.getOrganExtendByUserId(sessionInfo.getUserId());
             OrganExtend organExtend = OrganUtils.getOrganExtend(organ.getId());
-            if(o.getLevel() >= organExtend.getLevel()){
+            if(o.getTreeLevel() >= organExtend.getTreeLevel()){
                 parentTreeNode = organService.organToTreeNode(organ.getParent());
                 excludeOrganId = null;
             }

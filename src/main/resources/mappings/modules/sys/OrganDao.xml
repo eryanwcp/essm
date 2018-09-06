@@ -608,7 +608,7 @@
         a.COMPANY_CODE AS "companyCode",
         a.HOME_COMPANY_ID AS "homeCompanyId",
         a.HOME_COMPANY_CODE AS "homeCompanyCode",
-        a.LEVEL AS "level"
+        a.TREE_LEVEL AS "treeLevel"
     </sql>
 
     <select id="getOrganExtend" resultType="OrganExtend">
