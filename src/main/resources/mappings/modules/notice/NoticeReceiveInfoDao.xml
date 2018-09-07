@@ -82,8 +82,8 @@
 			<if test="publishUserId != null and publishUserId != ''">
 				AND n.user_id = #{publishUserId}
 			</if>
-			<if test="mode != null">
-				AND n.mode = #{mode}
+			<if test="bizMode != null and bizMode !=''">
+				AND n.biz_mode = #{bizMode}
 			</if>
 
 			<if test="title != null and title != ''">
@@ -144,8 +144,8 @@
 		<include refid="noticeJoins"/>
 		<where>
 			n.status = #{notice.STATUS_NORMAL}
-			<if test="notice != null and notice.mode != null">
-				AND n.mode = #{notice.mode}
+			<if test="notice != null and notice.bizMode != null">
+				AND n.biz_mode = #{notice.bizMode}
 			</if>
 			<if test="userId != null and userId != ''">
 				AND a.user_id = #{userId}

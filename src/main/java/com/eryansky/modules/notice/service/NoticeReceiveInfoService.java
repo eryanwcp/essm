@@ -56,7 +56,7 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
         Assert.notNull(userId, "参数[userId]为空!");
         Parameter parameter = new Parameter();
         parameter.put(DataEntity.FIELD_STATUS, DataEntity.STATUS_NORMAL);
-        parameter.put("mode", NoticeMode.Effective.getValue());
+        parameter.put("bizMode", NoticeMode.Effective.getValue());
         if(noticeQueryVo != null && Collections3.isNotEmpty(noticeQueryVo.getPublishUserIds())){
             parameter.put("publishUserId",noticeQueryVo.getPublishUserIds().get(0));
         }
@@ -100,7 +100,7 @@ public class NoticeReceiveInfoService extends CrudService<NoticeReceiveInfoDao,N
         noticeReceiveInfo.setUserId(userId);
         noticeReceiveInfo.setIsRead(NoticeReadMode.unreaded.getValue());
         Notice notice = new Notice();
-        notice.setMode(NoticeMode.Effective.getValue());
+        notice.setBizMode(NoticeMode.Effective.getValue());
         noticeReceiveInfo.setNotice(notice);
         noticeReceiveInfo.setEntityPage(page);
         page.setResult(dao.findUserUnreadNotices(noticeReceiveInfo));

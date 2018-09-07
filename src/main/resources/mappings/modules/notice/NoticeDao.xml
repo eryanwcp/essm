@@ -17,7 +17,7 @@
 		a.receive_scope AS "receiveScope",
 		a.is_top AS "isTop",
 		a.end_top_day AS "endTopDay",
-		a.mode AS "mode",
+		a.biz_mode AS "bizMode",
 		a.publish_time AS "publishTime",
 		a.effect_time AS "effectTime",
 		a.invalid_time AS "invalidTime",
@@ -59,8 +59,8 @@
 			<if test="type != null and type != ''">
 				AND a.type = #{type}
 			</if>
-			<if test="mode != null and mode != ''">
-				AND a.mode = #{mode}
+			<if test="bizMode != null and bizMode != ''">
+				AND a.biz_mode = #{bizMode}
 			</if>
 			${sqlMap.dsf}
 		</where>
@@ -118,8 +118,8 @@
 			<if test="isTop != null">
 				AND a.is_top = #{isTop}
 			</if>
-			<if test="mode != null">
-				AND a.mode = #{mode}
+			<if test="bizMode != null and bizMode !=''">
+				AND a.biz_mode = #{bizMode}
 			</if>
 
 			<choose>
@@ -161,7 +161,7 @@
 		receive_scope,
 		is_top,
 		end_top_day,
-		mode,
+		biz_mode,
 		publish_time,
 		effect_time,
 		invalid_time,
@@ -183,7 +183,7 @@
 		#{receiveScope},
 		#{isTop},
 		#{endTopDay},
-		#{mode},
+		#{bizMode},
 		#{publishTime},
 		#{effectTime},
 		#{invalidTime},
@@ -206,7 +206,7 @@
 		receive_scope = #{receiveScope},
 		is_top = #{isTop},
 		end_top_day = #{endTopDay},
-		mode = #{mode},
+		biz_mode = #{bizMode},
 		publish_time = #{publishTime},
 		effect_time = #{effectTime},
 		invalid_time = #{invalidTime},

@@ -304,7 +304,7 @@ public class NoticeController extends SimpleController {
     @ResponseBody
     public Result invalid(@PathVariable String id) {
         Notice notice = noticeService.get(id);
-        notice.setMode(NoticeMode.Invalidated.getValue());
+        notice.setBizMode(NoticeMode.Invalidated.getValue());
         notice.setInvalidTime(Calendar.getInstance().getTime());
         noticeService.save(notice);
         return Result.successResult();

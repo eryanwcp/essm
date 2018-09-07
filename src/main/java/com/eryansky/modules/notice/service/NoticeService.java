@@ -12,14 +12,12 @@ import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
 import com.eryansky.common.utils.DateUtils;
 import com.eryansky.common.utils.Identities;
-import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.core.orm.mybatis.entity.DataEntity;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.modules.notice._enum.*;
 import com.eryansky.modules.notice.mapper.NoticeSendInfo;
-import com.eryansky.modules.sys.service.OrganService;
 import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.modules.sys.utils.UserUtils;
 import com.google.common.collect.Lists;
@@ -183,7 +181,7 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
 	 * @param notice 通知
 	 */
 	public void publish(Notice notice) {
-        notice.setMode(NoticeMode.Effective.getValue());
+        notice.setBizMode(NoticeMode.Effective.getValue());
         if(notice.getPublishTime() == null) {
             Date nowTime = Calendar.getInstance().getTime();
             notice.setPublishTime(nowTime);
@@ -375,18 +373,18 @@ public class NoticeService extends CrudService<NoticeDao,Notice> {
         Date nowTime = Calendar.getInstance().getTime();
         Notice notice = new Notice();
         notice.setStatus(StatusState.NORMAL.getValue());
-        notice.setMode(NoticeMode.Invalidated.getValue());
+        notice.setBizMode(NoticeMode.Invalidated.getValue());
         List<Notice> noticeList = dao.findList(notice);
         if (Collections3.isNotEmpty(noticeList)) {
             for (Notice n : noticeList) {
-                if (NoticeMode.UnPublish.getValue().equals(n.getMode())
+                if (NoticeMode.UnPublish.getValue().equals(n.getBizMode())
                         && n.getEffectTime() != null
                         && nowTime.compareTo(n.getEffectTime()) != -1) {//定时发布
                     this.publish(n);
-                }else if (NoticeMode.Effective.getValue().equals(n.getMode())
+                }else if (NoticeMode.Effective.getValue().equals(n.getBizMode())
                         && n.getInvalidTime() != null
                         && nowTime.compareTo(n.getInvalidTime()) != -1) {//到时失效
-                    n.setMode(NoticeMode.Invalidated.getValue());
+                    n.setBizMode(NoticeMode.Invalidated.getValue());
                    this.save(n);
                 }
                 //取消置顶

@@ -78,7 +78,7 @@ public class Notice extends DataEntity<Notice> {
     /**
      * 状态 默认：未发布 {@link NoticeMode}
      */
-    private String mode;
+    private String bizMode;
     /**
      * 发布日期
      */
@@ -110,7 +110,7 @@ public class Notice extends DataEntity<Notice> {
     public Notice() {
         super();
         this.fileIds = new ArrayList<String>(0);
-        this.mode = NoticeMode.UnPublish.getValue();
+        this.bizMode = NoticeMode.UnPublish.getValue();
         this.effectTime = Calendar.getInstance().getTime();
         this.isRecordRead = YesOrNo.YES.getValue();
         this.receiveScope = NoticeReceiveScope.COMPANY_AND_CHILD.getValue();
@@ -187,12 +187,12 @@ public class Notice extends DataEntity<Notice> {
     }
 
 
-    public void setMode(String mode) {
-        this.mode = mode;
+    public void setBizMode(String bizMode) {
+        this.bizMode = bizMode;
     }
 
-    public String getMode() {
-        return this.mode;
+    public String getBizMode() {
+        return this.bizMode;
     }
 
     @JsonFormat(pattern = DATE_TIME_FORMAT, timezone = TIMEZONE)
@@ -272,7 +272,7 @@ public class Notice extends DataEntity<Notice> {
     }
 
     public String getModeView() {
-        NoticeMode s = NoticeMode.getByValue(mode);
+        NoticeMode s = NoticeMode.getByValue(bizMode);
         String str = "";
         if (s != null) {
             str = s.getDescription();
