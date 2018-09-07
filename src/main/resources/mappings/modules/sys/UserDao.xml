@@ -111,7 +111,7 @@
 
 
     <select id="findQuery" resultType="User">
-        SELECT DISTINCT
+        SELECT
         <include refid="userColumns"/>
         FROM t_sys_user a
         LEFT JOIN t_sys_user_organ uo ON uo.user_id = a.id

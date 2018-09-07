@@ -37,6 +37,8 @@ public class DbFactory {
             db = new MysqlDataSource(dbConfig);
         } else if (dialect.contains("db2")) {
             db = new DB2DataSource(dbConfig);
+        } else if (dialect.contains("oracle")) {
+            db = new OracleDataSource(dbConfig);
         } else {
             db = new MysqlDataSource(dbConfig);
         }
