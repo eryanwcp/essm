@@ -52,7 +52,7 @@
         <!-- jdbc driver setting -->
         <mysql.driver.version>5.1.31</mysql.driver.version>
         <mariadb.driver.version>2.2.6</mariadb.driver.version>
-        <oracle.driver.version>10.2.0.3.0</oracle.driver.version>
+        <oracle.driver.version>12.1.0.1-atlassian-hosted</oracle.driver.version>
         <druid-version>1.1.10</druid-version>
 
         <!-- other setting -->
@@ -402,10 +402,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/ojdbc14/ojdbc14 -->
+        <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
         <dependency>
-            <groupId>ojdbc14</groupId>
-            <artifactId>ojdbc14</artifactId>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
             <version>${oracle.driver.version}</version>
         </dependency>
 

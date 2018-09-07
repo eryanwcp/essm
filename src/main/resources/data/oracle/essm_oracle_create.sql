@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      ORACLE Version 10gR2                         */
-/* Created on:     2018/9/7 8:34:06                             */
+/* Created on:     2018/9/7 8:54:49                             */
 /*==============================================================*/
 
 
@@ -295,10 +295,10 @@ create table T_NOTICE_MESSAGE  (
    CATEGORY             VARCHAR2(36)                   default NULL,
    URL                  VARCHAR2(512)                  default NULL,
    IMAGE                VARCHAR2(512)                  default NULL,
-   SEND_TIME            DATE                           default '0000-00-00 00:00:00' not null,
    SENDER               VARCHAR2(36)                   default NULL,
+   SEND_TIME            DATE,
    ORGAN_ID             VARCHAR2(36)                   default NULL,
-   "MODE"               VARCHAR2(36)                   default NULL,
+   BIZ_MODE             VARCHAR2(36)                   default NULL,
    TIP_MESSAGE          VARCHAR2(36)                   default NULL,
    APP_ID               VARCHAR2(64),
    constraint PK_T_NOTICE_MESSAGE primary key (ID)
@@ -343,16 +343,16 @@ comment on column T_NOTICE_MESSAGE.URL is
 comment on column T_NOTICE_MESSAGE.IMAGE is
 '图片';
 
-comment on column T_NOTICE_MESSAGE.SEND_TIME is
-'发送时间';
-
 comment on column T_NOTICE_MESSAGE.SENDER is
 '发送者';
+
+comment on column T_NOTICE_MESSAGE.SEND_TIME is
+'发送时间';
 
 comment on column T_NOTICE_MESSAGE.ORGAN_ID is
 '发布部门';
 
-comment on column T_NOTICE_MESSAGE."MODE" is
+comment on column T_NOTICE_MESSAGE.BIZ_MODE is
 '状态（业务） 草稿:draft 正在发布:Publishing 已发布:Published';
 
 comment on column T_NOTICE_MESSAGE.TIP_MESSAGE is
@@ -365,7 +365,6 @@ comment on column T_NOTICE_MESSAGE.APP_ID is
 /* Index: "Index_8"                                             */
 /*==============================================================*/
 create index "Index_8" on T_NOTICE_MESSAGE (
-   STATUS ASC,
    SENDER ASC,
    APP_ID ASC
 );
