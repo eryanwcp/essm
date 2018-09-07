@@ -8,7 +8,6 @@ package com.eryansky.modules.notice.service;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.utils.UserUtils;
-import com.eryansky.modules.weixin.utils.QYWeixinUtils;
 import com.eryansky.modules.weixin.utils.WeixinUtils;
 import com.google.common.collect.Lists;
 import com.eryansky.core.orm.mybatis.service.CrudService;
@@ -74,7 +73,7 @@ public class MessageService extends CrudService<MessageDao, Message> {
      */
     public void saveAndSend(Message message, MessageReceiveObjectType messageReceiveObjectType, List<String> receiveObjectIds,Boolean sendWeixin){
         if(Collections3.isNotEmpty(receiveObjectIds)){
-            message.setMode(MessageMode.Publishing.getValue());
+            message.setBizMode(MessageMode.Publishing.getValue());
             message.setSendTime(Calendar.getInstance().getTime());
             this.save(message);
             for(String objectId: receiveObjectIds){
@@ -110,7 +109,7 @@ public class MessageService extends CrudService<MessageDao, Message> {
 
 
             }
-            message.setMode(MessageMode.Published.getValue());
+            message.setBizMode(MessageMode.Published.getValue());
             this.save(message);
         }
     }

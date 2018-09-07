@@ -51,7 +51,7 @@ public class Message extends DataEntity<Message> {
     /**
      * 消息状态 {@link MessageMode}
      */
-    private String mode = MessageMode.Draft.getValue();
+    private String bizMode = MessageMode.Draft.getValue();
     /**
      * 发送人
      */
@@ -66,7 +66,7 @@ public class Message extends DataEntity<Message> {
      */
     private String organId;
     /**
-     * 消息提醒 {@link com.jfit.modules.notice._enum.TipMessage}
+     * 消息提醒 {@link com.eryansky.modules.notice._enum.TipMessage}
      */
     private String tipMessage;
 
@@ -146,12 +146,12 @@ public class Message extends DataEntity<Message> {
         this.content = content;
     }
 
-    public String getMode() {
-        return mode;
+    public String getBizMode() {
+        return bizMode;
     }
 
-    public void setMode(String mode) {
-        this.mode = mode;
+    public void setBizMode(String bizMode) {
+        this.bizMode = bizMode;
     }
 
     public String getSender() {
@@ -180,7 +180,7 @@ public class Message extends DataEntity<Message> {
     }
 
     public String getModeView() {
-        MessageMode s = MessageMode.getByValue(mode);
+        MessageMode s = MessageMode.getByValue(bizMode);
         String str = "";
         if (s != null) {
             str = s.getDescription();

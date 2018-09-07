@@ -73,7 +73,7 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
         Parameter parameter = new Parameter();
         parameter.put(BaseInterceptor.PAGE, page);
         parameter.put(Message.FIELD_STATUS, Message.STATUS_NORMAL);
-        parameter.put("mode", MessageMode.Published.getValue());
+        parameter.put("bizMode", MessageMode.Published.getValue());
         parameter.put("userId", userId);
         parameter.put("isRead", isRead);
         parameter.put("isSend", isSend);
@@ -90,7 +90,7 @@ public class MessageReceiveService extends CrudService<MessageReceiveDao, Messag
     public List<MessageReceive> findUnSendByUserId(String userId) {
         Parameter parameter = new Parameter();
         parameter.put(Message.FIELD_STATUS, Message.STATUS_NORMAL);
-        parameter.put("mode", MessageMode.Published.getValue());
+        parameter.put("bizMode", MessageMode.Published.getValue());
         parameter.put("userId", userId);
         return dao.findUserList(parameter);
     }

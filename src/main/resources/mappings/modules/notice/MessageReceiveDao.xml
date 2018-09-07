@@ -59,7 +59,7 @@
 		<include refid="messageReceiveJoins"/>
 		<where>
 			m.status = #{status}
-			AND m.mode = #{mode}
+			AND m.biz_mode = #{bizMode}
 			AND a.user_id = #{userId}
 			<if test="category != null and category != ''">
 				AND m.category = #{category}
