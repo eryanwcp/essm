@@ -1,4 +1,4 @@
-/*==============================================================*/
+ï»¿/*==============================================================*/
 /* DBMS name:      ORACLE Version 10gR2                         */
 /* Created on:     2018/9/6 19:43:58                            */
 /*==============================================================*/
@@ -104,61 +104,61 @@ create table T_DISK_FILE  (
 );
 
 comment on table T_DISK_FILE is
-'ÎÄ¼ş';
+'æ–‡ä»¶';
 
 comment on column T_DISK_FILE.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_DISK_FILE.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_DISK_FILE.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_DISK_FILE.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_DISK_FILE.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_DISK_FILE.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_DISK_FILE.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_DISK_FILE.NAME is
-'ÎÄ¼şÃû';
+'æ–‡ä»¶å';
 
 comment on column T_DISK_FILE.CODE is
-'ÎÄ¼ş±êÊ¶';
+'æ–‡ä»¶æ ‡è¯†';
 
 comment on column T_DISK_FILE.FILE_PATH is
-'´æ´¢Â·¾¶';
+'å­˜å‚¨è·¯å¾„';
 
 comment on column T_DISK_FILE.FILE_SIZE is
-'ÎÄ¼ş´óĞ¡';
+'æ–‡ä»¶å¤§å°';
 
 comment on column T_DISK_FILE.FILE_SUFFIX is
-'ÎÄ¼şºó×º';
+'æ–‡ä»¶åç¼€';
 
 comment on column T_DISK_FILE.FILE_TYPE is
-'ÎÄ¼ş·ÖÀà';
+'æ–‡ä»¶åˆ†ç±»';
 
 comment on column T_DISK_FILE.KEYWORD is
-'¹Ø¼ü×Ö';
+'å…³é”®å­—';
 
 comment on column T_DISK_FILE.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_DISK_FILE.SHARE_USER_ID is
-'ÎÄ¼şÀ´Ô´ÓÃ»§';
+'æ–‡ä»¶æ¥æºç”¨æˆ·';
 
 comment on column T_DISK_FILE.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_DISK_FILE.FOLDER_ID is
-'ÎÄ¼ş¼ĞID';
+'æ–‡ä»¶å¤¹ID';
 
 /*==============================================================*/
 /* Table: T_DISK_FOLDER                                         */
@@ -187,64 +187,64 @@ create table T_DISK_FOLDER  (
 );
 
 comment on table T_DISK_FOLDER is
-'ÎÄ¼ş¼Ğ';
+'æ–‡ä»¶å¤¹';
 
 comment on column T_DISK_FOLDER.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_DISK_FOLDER.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_DISK_FOLDER.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_DISK_FOLDER.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_DISK_FOLDER.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_DISK_FOLDER.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_DISK_FOLDER.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_DISK_FOLDER.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_DISK_FOLDER.CODE is
-'ÎÄ¼ş¼Ğ±êÊ¶ ÊÚÈ¨ÀàĞÍÎªSystemÊ±Ê¹ÓÃ';
+'æ–‡ä»¶å¤¹æ ‡è¯† æˆæƒç±»å‹ä¸ºSystemæ—¶ä½¿ç”¨';
 
 comment on column T_DISK_FOLDER.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_DISK_FOLDER.FOLDER_AUTHORIZE is
-'ÊÚÈ¨ ÎÒµÄÔÆÅÌ£º0 ÏµÍ³ÔÆÅÌ£º1';
+'æˆæƒ æˆ‘çš„äº‘ç›˜ï¼š0 ç³»ç»Ÿäº‘ç›˜ï¼š1';
 
 comment on column T_DISK_FOLDER.TYPE is
-'ÎÄ¼ş¼ĞÀàĞÍ Õı³££º0 Òş²Ø£º1 ';
+'æ–‡ä»¶å¤¹ç±»å‹ æ­£å¸¸ï¼š0 éšè—ï¼š1 ';
 
 comment on column T_DISK_FOLDER.LIMIT_SIZE is
-'´óĞ¡ÏŞÖÆ µ¥Î»£ºM ÎŞÏŞÖÆ£º0';
+'å¤§å°é™åˆ¶ å•ä½ï¼šM æ— é™åˆ¶ï¼š0';
 
 comment on column T_DISK_FOLDER.PATH is
-'´æ´¢Â·¾¶';
+'å­˜å‚¨è·¯å¾„';
 
 comment on column T_DISK_FOLDER.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_DISK_FOLDER.ORGAN_ID is
-'ËùÊô²¿ÃÅ';
+'æ‰€å±éƒ¨é—¨';
 
 comment on column T_DISK_FOLDER.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_DISK_FOLDER.PARENT_IDS is
-'¸¸¼¶IDS';
+'çˆ¶çº§IDS';
 
 comment on column T_DISK_FOLDER.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_AREA                                            */
@@ -270,52 +270,52 @@ create table T_SYS_AREA  (
 );
 
 comment on table T_SYS_AREA is
-'ÇøÓò±í';
+'åŒºåŸŸè¡¨';
 
 comment on column T_SYS_AREA.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_AREA.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_AREA.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_AREA.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_AREA.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_AREA.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_AREA.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_AREA.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_AREA.SHORT_NAME is
-'¼ò³Æ';
+'ç®€ç§°';
 
 comment on column T_SYS_AREA.CODE is
-'±àÂë';
+'ç¼–ç ';
 
 comment on column T_SYS_AREA.TYPE is
-'ÀàĞÍ ÇøÓòÀàĞÍ£¨1£º¹ú¼Ò£»2£ºÊ¡·İ¡¢Ö±Ï½ÊĞ£»3£ºµØÊĞ£»4£ºÇøÏØ£»5£ºÏçÕò£»6£º´å×¯£»9£ºÆäËü£©';
+'ç±»å‹ åŒºåŸŸç±»å‹ï¼ˆ1ï¼šå›½å®¶ï¼›2ï¼šçœä»½ã€ç›´è¾–å¸‚ï¼›3ï¼šåœ°å¸‚ï¼›4ï¼šåŒºå¿ï¼›5ï¼šä¹¡é•‡ï¼›6ï¼šæ‘åº„ï¼›9ï¼šå…¶å®ƒï¼‰';
 
 comment on column T_SYS_AREA.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_AREA.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_SYS_AREA.PARENT_IDS is
-'ÉÏ¼¶ID¼¯ºÏ';
+'ä¸Šçº§IDé›†åˆ';
 
 comment on column T_SYS_AREA.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_CONFIG                                          */
@@ -329,19 +329,19 @@ create table T_SYS_CONFIG  (
 );
 
 comment on table T_SYS_CONFIG is
-'ÅäÖÃ²ÎÊı';
+'é…ç½®å‚æ•°';
 
 comment on column T_SYS_CONFIG.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_CONFIG.CODE is
-'±êÊ¶';
+'æ ‡è¯†';
 
 comment on column T_SYS_CONFIG.VALUE is
-'ÊôĞÔÖµ';
+'å±æ€§å€¼';
 
 comment on column T_SYS_CONFIG.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_DICTIONARY                                      */
@@ -363,43 +363,43 @@ create table T_SYS_DICTIONARY  (
 );
 
 comment on table T_SYS_DICTIONARY is
-'×Öµä±í';
+'å­—å…¸è¡¨';
 
 comment on column T_SYS_DICTIONARY.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_DICTIONARY.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_DICTIONARY.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_DICTIONARY.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_DICTIONARY.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_DICTIONARY.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_DICTIONARY.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_DICTIONARY.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_DICTIONARY.CODE is
-'±àÂë';
+'ç¼–ç ';
 
 comment on column T_SYS_DICTIONARY.ORDER_NO is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_DICTIONARY.GROUP_ID is
-'·Ö×éID';
+'åˆ†ç»„ID';
 
 comment on column T_SYS_DICTIONARY.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_DICTIONARY_ITEM                                 */
@@ -423,49 +423,49 @@ create table T_SYS_DICTIONARY_ITEM  (
 );
 
 comment on table T_SYS_DICTIONARY_ITEM is
-'×ÖµäÏî±í';
+'å­—å…¸é¡¹è¡¨';
 
 comment on column T_SYS_DICTIONARY_ITEM.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_DICTIONARY_ITEM.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_DICTIONARY_ITEM.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_DICTIONARY_ITEM.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_DICTIONARY_ITEM.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_DICTIONARY_ITEM.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_DICTIONARY_ITEM.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_DICTIONARY_ITEM.DICTIONARY_ID is
-'×ÖµäID';
+'å­—å…¸ID';
 
 comment on column T_SYS_DICTIONARY_ITEM.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_DICTIONARY_ITEM.CODE is
-'±àÂë';
+'ç¼–ç ';
 
 comment on column T_SYS_DICTIONARY_ITEM.VALUE is
-'²ÎÊıÖµ';
+'å‚æ•°å€¼';
 
 comment on column T_SYS_DICTIONARY_ITEM.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_SYS_DICTIONARY_ITEM.ORDER_NO is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_DICTIONARY_ITEM.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_LOG                                             */
@@ -499,79 +499,79 @@ create table T_SYS_LOG  (
 );
 
 comment on table T_SYS_LOG is
-'Éó¼ÆÈÕÖ¾';
+'å®¡è®¡æ—¥å¿—';
 
 comment on column T_SYS_LOG.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_LOG.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_LOG.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_LOG.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_LOG.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_LOG.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_LOG.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_LOG.TYPE is
-'ÀàĞÍ °²È«:0 ²Ù×÷:1 ·ÃÎÊ:2 Òì³£:3 APIµ÷ÓÃ:A';
+'ç±»å‹ å®‰å…¨:0 æ“ä½œ:1 è®¿é—®:2 å¼‚å¸¸:3 APIè°ƒç”¨:A';
 
 comment on column T_SYS_LOG.TITLE is
-'±êÌâ';
+'æ ‡é¢˜';
 
 comment on column T_SYS_LOG.USER_ID is
-'µÇÂ¼Ãû';
+'ç™»å½•å';
 
 comment on column T_SYS_LOG.IP is
 'IP';
 
 comment on column T_SYS_LOG.OPER_TIME is
-'²Ù×÷¿ªÊ¼Ê±¼ä';
+'æ“ä½œå¼€å§‹æ—¶é—´';
 
 comment on column T_SYS_LOG.MODULE is
-'Ä£¿é';
+'æ¨¡å—';
 
 comment on column T_SYS_LOG.ACTION is
-'²Ù×÷·½·¨';
+'æ“ä½œæ–¹æ³•';
 
 comment on column T_SYS_LOG.BROWSER_TYPE is
-'¿Í»§¶Ë£¨ä¯ÀÀÆ÷ÀàĞÍ£©';
+'å®¢æˆ·ç«¯ï¼ˆæµè§ˆå™¨ç±»å‹ï¼‰';
 
 comment on column T_SYS_LOG.DEVICE_TYPE is
-'Éè±¸ÀàĞÍ';
+'è®¾å¤‡ç±»å‹';
 
 comment on column T_SYS_LOG.USER_AGENT is
-'¿Í»§¶ËĞÅÏ¢';
+'å®¢æˆ·ç«¯ä¿¡æ¯';
 
 comment on column T_SYS_LOG.ACTION_TIME is
-'²Ù×÷ºÄÊ±ms';
+'æ“ä½œè€—æ—¶ms';
 
 comment on column T_SYS_LOG.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_SYS_LOG.EXCEPTION is
-'Òì³£ĞÅÏ¢';
+'å¼‚å¸¸ä¿¡æ¯';
 
 comment on column T_SYS_LOG.LONGTIDUDE is
-'¾­¶È';
+'ç»åº¦';
 
 comment on column T_SYS_LOG.LATIDUDE is
-'¾­¶È';
+'ç»åº¦';
 
 comment on column T_SYS_LOG.ACCURACY is
-'¾«¶È';
+'ç²¾åº¦';
 
 comment on column T_SYS_LOG.USER_TYPE is
-'ÓÃ»§ÀàĞÍ ÓÃ»§£ºU£»ÁãÊÛ»§£ºR£»Ïû·ÑÕß£ºC£»ÆäËü£ºO';
+'ç”¨æˆ·ç±»å‹ ç”¨æˆ·ï¼šUï¼›é›¶å”®æˆ·ï¼šRï¼›æ¶ˆè´¹è€…ï¼šCï¼›å…¶å®ƒï¼šO';
 
 /*==============================================================*/
 /* Table: T_SYS_LOG_HISTORY                                     */
@@ -605,79 +605,79 @@ create table T_SYS_LOG_HISTORY  (
 );
 
 comment on table T_SYS_LOG_HISTORY is
-'Éó¼ÆÈÕÖ¾ÀúÊ·';
+'å®¡è®¡æ—¥å¿—å†å²';
 
 comment on column T_SYS_LOG_HISTORY.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_LOG_HISTORY.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_LOG_HISTORY.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_LOG_HISTORY.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_LOG_HISTORY.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_LOG_HISTORY.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_LOG_HISTORY.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_LOG_HISTORY.TYPE is
-'ÀàĞÍ °²È«:0 ²Ù×÷:1 ·ÃÎÊ:2 Òì³£:3 APIµ÷ÓÃ:A';
+'ç±»å‹ å®‰å…¨:0 æ“ä½œ:1 è®¿é—®:2 å¼‚å¸¸:3 APIè°ƒç”¨:A';
 
 comment on column T_SYS_LOG_HISTORY.TITLE is
-'±êÌâ';
+'æ ‡é¢˜';
 
 comment on column T_SYS_LOG_HISTORY.USER_ID is
-'µÇÂ¼Ãû';
+'ç™»å½•å';
 
 comment on column T_SYS_LOG_HISTORY.IP is
 'IP';
 
 comment on column T_SYS_LOG_HISTORY.OPER_TIME is
-'²Ù×÷¿ªÊ¼Ê±¼ä';
+'æ“ä½œå¼€å§‹æ—¶é—´';
 
 comment on column T_SYS_LOG_HISTORY.MODULE is
-'Ä£¿é';
+'æ¨¡å—';
 
 comment on column T_SYS_LOG_HISTORY.ACTION is
-'²Ù×÷·½·¨';
+'æ“ä½œæ–¹æ³•';
 
 comment on column T_SYS_LOG_HISTORY.BROWSER_TYPE is
-'¿Í»§¶Ë£¨ä¯ÀÀÆ÷ÀàĞÍ£©';
+'å®¢æˆ·ç«¯ï¼ˆæµè§ˆå™¨ç±»å‹ï¼‰';
 
 comment on column T_SYS_LOG_HISTORY.DEVICE_TYPE is
-'Éè±¸ÀàĞÍ';
+'è®¾å¤‡ç±»å‹';
 
 comment on column T_SYS_LOG_HISTORY.USER_AGENT is
-'¿Í»§¶ËĞÅÏ¢';
+'å®¢æˆ·ç«¯ä¿¡æ¯';
 
 comment on column T_SYS_LOG_HISTORY.ACTION_TIME is
-'²Ù×÷ºÄÊ±ms';
+'æ“ä½œè€—æ—¶ms';
 
 comment on column T_SYS_LOG_HISTORY.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_SYS_LOG_HISTORY.EXCEPTION is
-'Òì³£ĞÅÏ¢';
+'å¼‚å¸¸ä¿¡æ¯';
 
 comment on column T_SYS_LOG_HISTORY.LONGTIDUDE is
-'¾­¶È';
+'ç»åº¦';
 
 comment on column T_SYS_LOG_HISTORY.LATIDUDE is
-'¾­¶È';
+'ç»åº¦';
 
 comment on column T_SYS_LOG_HISTORY.ACCURACY is
-'¾«¶È';
+'ç²¾åº¦';
 
 comment on column T_SYS_LOG_HISTORY.USER_TYPE is
-'ÓÃ»§ÀàĞÍ ÓÃ»§£ºU£»ÁãÊÛ»§£ºR£»Ïû·ÑÕß£ºC£»ÆäËü£ºO';
+'ç”¨æˆ·ç±»å‹ ç”¨æˆ·ï¼šUï¼›é›¶å”®æˆ·ï¼šRï¼›æ¶ˆè´¹è€…ï¼šCï¼›å…¶å®ƒï¼šO';
 
 /*==============================================================*/
 /* Table: T_SYS_ORGAN                                           */
@@ -711,79 +711,79 @@ create table T_SYS_ORGAN  (
 );
 
 comment on table T_SYS_ORGAN is
-'»ú¹¹±í';
+'æœºæ„è¡¨';
 
 comment on column T_SYS_ORGAN.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_ORGAN.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_ORGAN.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_ORGAN.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_ORGAN.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_ORGAN.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_ORGAN.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_ORGAN.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_ORGAN.SHORT_NAME is
-'¼ò³Æ';
+'ç®€ç§°';
 
 comment on column T_SYS_ORGAN.TYPE is
-'»ú¹¹ÀàĞÍ »ú¹¹(·¨ÈËµ¥Î»):0  ²¿ÃÅ:1 Ğ¡×é£º2';
+'æœºæ„ç±»å‹ æœºæ„(æ³•äººå•ä½):0  éƒ¨é—¨:1 å°ç»„ï¼š2';
 
 comment on column T_SYS_ORGAN.CODE is
-'»ú¹¹±àÂë';
+'æœºæ„ç¼–ç ';
 
 comment on column T_SYS_ORGAN.SYS_CODE is
-'»ú¹¹ÏµÍ³±àÂë';
+'æœºæ„ç³»ç»Ÿç¼–ç ';
 
 comment on column T_SYS_ORGAN.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_ORGAN.ADDRESS is
-'µØÖ·';
+'åœ°å€';
 
 comment on column T_SYS_ORGAN.MOBILE is
-'µç»°ºÅÂë';
+'ç”µè¯å·ç ';
 
 comment on column T_SYS_ORGAN.PHONE is
-'µç»°ºÅÂë';
+'ç”µè¯å·ç ';
 
 comment on column T_SYS_ORGAN.FAX is
-'´«Õæ';
+'ä¼ çœŸ';
 
 comment on column T_SYS_ORGAN.MANAGER_USER_ID is
-'»ú¹¹¸ºÔğÈËID';
+'æœºæ„è´Ÿè´£äººID';
 
 comment on column T_SYS_ORGAN.DEPUTY_MANAGER_USER_ID is
-'¸±Ö÷¹Ü';
+'å‰¯ä¸»ç®¡';
 
 comment on column T_SYS_ORGAN.SUPER_MANAGER_USER_ID is
-'·Ö¹ÜÁìµ¼';
+'åˆ†ç®¡é¢†å¯¼';
 
 comment on column T_SYS_ORGAN.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_SYS_ORGAN.PARENT_IDS is
-'ÉÏ¼¶ID¼¯ºÏ';
+'ä¸Šçº§IDé›†åˆ';
 
 comment on column T_SYS_ORGAN.AREA_ID is
-'ÇøÓòID';
+'åŒºåŸŸID';
 
 comment on column T_SYS_ORGAN.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Index: "Index_11"                                            */
@@ -830,94 +830,94 @@ create table T_SYS_ORGAN_EXTEND  (
 );
 
 comment on table T_SYS_ORGAN_EXTEND is
-'»ú¹¹À©Õ¹±í';
+'æœºæ„æ‰©å±•è¡¨';
 
 comment on column T_SYS_ORGAN_EXTEND.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_ORGAN_EXTEND.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_ORGAN_EXTEND.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_ORGAN_EXTEND.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_ORGAN_EXTEND.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_ORGAN_EXTEND.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_ORGAN_EXTEND.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_ORGAN_EXTEND.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_ORGAN_EXTEND.SHORT_NAME is
-'¼ò³Æ';
+'ç®€ç§°';
 
 comment on column T_SYS_ORGAN_EXTEND.TYPE is
-'»ú¹¹ÀàĞÍ »ú¹¹(·¨ÈËµ¥Î»):0  ²¿ÃÅ:1 Ğ¡×é£º2';
+'æœºæ„ç±»å‹ æœºæ„(æ³•äººå•ä½):0  éƒ¨é—¨:1 å°ç»„ï¼š2';
 
 comment on column T_SYS_ORGAN_EXTEND.CODE is
-'»ú¹¹±àÂë';
+'æœºæ„ç¼–ç ';
 
 comment on column T_SYS_ORGAN_EXTEND.SYS_CODE is
-'»ú¹¹ÏµÍ³±àÂë';
+'æœºæ„ç³»ç»Ÿç¼–ç ';
 
 comment on column T_SYS_ORGAN_EXTEND.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_ORGAN_EXTEND.ADDRESS is
-'µØÖ·';
+'åœ°å€';
 
 comment on column T_SYS_ORGAN_EXTEND.MOBILE is
-'µç»°ºÅÂë';
+'ç”µè¯å·ç ';
 
 comment on column T_SYS_ORGAN_EXTEND.PHONE is
-'µç»°ºÅÂë';
+'ç”µè¯å·ç ';
 
 comment on column T_SYS_ORGAN_EXTEND.FAX is
-'´«Õæ';
+'ä¼ çœŸ';
 
 comment on column T_SYS_ORGAN_EXTEND.MANAGER_USER_ID is
-'»ú¹¹¸ºÔğÈËID';
+'æœºæ„è´Ÿè´£äººID';
 
 comment on column T_SYS_ORGAN_EXTEND.DEPUTY_MANAGER_USER_ID is
-'¸±Ö÷¹Ü';
+'å‰¯ä¸»ç®¡';
 
 comment on column T_SYS_ORGAN_EXTEND.SUPER_MANAGER_USER_ID is
-'·Ö¹ÜÁìµ¼';
+'åˆ†ç®¡é¢†å¯¼';
 
 comment on column T_SYS_ORGAN_EXTEND.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_SYS_ORGAN_EXTEND.PARENT_IDS is
-'ÉÏ¼¶ID¼¯ºÏ';
+'ä¸Šçº§IDé›†åˆ';
 
 comment on column T_SYS_ORGAN_EXTEND.AREA_ID is
-'ÇøÓòID';
+'åŒºåŸŸID';
 
 comment on column T_SYS_ORGAN_EXTEND.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_SYS_ORGAN_EXTEND.TREE_LEVEL is
-'²ã¼¶';
+'å±‚çº§';
 
 comment on column T_SYS_ORGAN_EXTEND.COMPANY_ID is
-'µ¥Î»ID';
+'å•ä½ID';
 
 comment on column T_SYS_ORGAN_EXTEND.COMPANY_CODE is
-'µ¥Î»±àÂë';
+'å•ä½ç¼–ç ';
 
 comment on column T_SYS_ORGAN_EXTEND.HOME_COMPANY_ID is
-'ÉÏ¼¶µ¥Î»ID';
+'ä¸Šçº§å•ä½ID';
 
 comment on column T_SYS_ORGAN_EXTEND.HOME_COMPANY_CODE is
-'ÉÏ¼¶µ¥Î»±àÂë';
+'ä¸Šçº§å•ä½ç¼–ç ';
 
 /*==============================================================*/
 /* Index: "Index_17"                                            */
@@ -947,43 +947,43 @@ create table T_SYS_POST  (
 );
 
 comment on table T_SYS_POST is
-'¸ÚÎ»±í';
+'å²—ä½è¡¨';
 
 comment on column T_SYS_POST.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_POST.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_POST.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_POST.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_POST.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_POST.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_POST.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_POST.NAME is
-'¸ÚÎ»Ãû³Æ';
+'å²—ä½åç§°';
 
 comment on column T_SYS_POST.CODE is
-'±àÂë';
+'ç¼–ç ';
 
 comment on column T_SYS_POST.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_POST.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_SYS_POST.ORGAN_ID is
-'»ú¹¹ID';
+'æœºæ„ID';
 
 /*==============================================================*/
 /* Table: T_SYS_POST_ORGAN                                      */
@@ -994,13 +994,13 @@ create table T_SYS_POST_ORGAN  (
 );
 
 comment on table T_SYS_POST_ORGAN is
-'¸ÚÎ»¸½Êô»ú¹¹±í';
+'å²—ä½é™„å±æœºæ„è¡¨';
 
 comment on column T_SYS_POST_ORGAN.ORGAN_ID is
-'»ú¹¹ID';
+'æœºæ„ID';
 
 comment on column T_SYS_POST_ORGAN.POST_ID is
-'¸ÚÎ»ID';
+'å²—ä½ID';
 
 /*==============================================================*/
 /* Table: T_SYS_RESOURCE                                        */
@@ -1027,58 +1027,58 @@ create table T_SYS_RESOURCE  (
 );
 
 comment on table T_SYS_RESOURCE is
-'×ÊÔ´±í';
+'èµ„æºè¡¨';
 
 comment on column T_SYS_RESOURCE.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_RESOURCE.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_RESOURCE.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_RESOURCE.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_RESOURCE.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_RESOURCE.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_RESOURCE.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_RESOURCE.NAME is
-'×ÊÔ´Ãû³Æ';
+'èµ„æºåç§°';
 
 comment on column T_SYS_RESOURCE.CODE is
-'×ÊÔ´±àÂë';
+'èµ„æºç¼–ç ';
 
 comment on column T_SYS_RESOURCE.SORT is
-'ÅÅĞò';
+'æ’åº';
 
 comment on column T_SYS_RESOURCE.URL is
-'×ÊÔ´urlµØÖ·';
+'èµ„æºurlåœ°å€';
 
 comment on column T_SYS_RESOURCE.ICON_CLS is
-'Í¼±ê';
+'å›¾æ ‡';
 
 comment on column T_SYS_RESOURCE.ICON is
-'Í¼±êµØÖ·';
+'å›¾æ ‡åœ°å€';
 
 comment on column T_SYS_RESOURCE.MARK_URL is
-'±ê¼ÇURL';
+'æ ‡è®°URL';
 
 comment on column T_SYS_RESOURCE.TYPE is
-'×ÊÔ´ÀàĞÍ Ó¦ÓÃ£º10 ²Ëµ¥£º0 ¹¦ÄÜ£º1 À¸Ä¿£º21';
+'èµ„æºç±»å‹ åº”ç”¨ï¼š10 èœå•ï¼š0 åŠŸèƒ½ï¼š1 æ ç›®ï¼š21';
 
 comment on column T_SYS_RESOURCE.PARENT_ID is
-'¸¸¼¶ID';
+'çˆ¶çº§ID';
 
 comment on column T_SYS_RESOURCE.PARENT_IDS is
-'¸¸¼¶ID¼¯ºÏ';
+'çˆ¶çº§IDé›†åˆ';
 
 /*==============================================================*/
 /* Index: "Index_12"                                            */
@@ -1111,52 +1111,52 @@ create table T_SYS_ROLE  (
 );
 
 comment on table T_SYS_ROLE is
-'½ÇÉ«±í';
+'è§’è‰²è¡¨';
 
 comment on column T_SYS_ROLE.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_ROLE.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_ROLE.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_ROLE.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_ROLE.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_ROLE.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_ROLE.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_ROLE.NAME is
-'Ãû³Æ';
+'åç§°';
 
 comment on column T_SYS_ROLE.CODE is
-'±àÂë';
+'ç¼–ç ';
 
 comment on column T_SYS_ROLE.ORGAN_ID is
-'ËùÊô»ú¹¹ID';
+'æ‰€å±æœºæ„ID';
 
 comment on column T_SYS_ROLE.IS_SYSTEM is
-'ÏµÍ³½ÇÉ«£º£¨1/0 ÊÇ/·ñ£©';
+'ç³»ç»Ÿè§’è‰²ï¼šï¼ˆ1/0 æ˜¯/å¦ï¼‰';
 
 comment on column T_SYS_ROLE.IS_ACTIVITY is
-'ÊÇ·ñÓĞĞ§ £¨1/0 ÊÇ ·ñ£©';
+'æ˜¯å¦æœ‰æ•ˆ ï¼ˆ1/0 æ˜¯ å¦ï¼‰';
 
 comment on column T_SYS_ROLE.ROLE_TYPE is
-'È¨ÏŞÀàĞÍ ÈÎÎñ·ÖÅä:assignment ¹ÜÀí½ÇÉ«:security-role ÆÕÍ¨½ÇÉ«:user';
+'æƒé™ç±»å‹ ä»»åŠ¡åˆ†é…:assignment ç®¡ç†è§’è‰²:security-role æ™®é€šè§’è‰²:user';
 
 comment on column T_SYS_ROLE.DATA_SCOPE is
-'Êı¾İ·¶Î§ ËùÓĞÊı¾İ:1 ËùÔÚ¹«Ë¾¼°ÒÔÏÂÊı¾İ:2 ËùÔÚ¹«Ë¾Êı¾İ:3 ËùÔÚ²¿ÃÅ¼°ÒÔÏÂÊı¾İ:4 ËùÔÚ²¿ÃÅÊı¾İ:5 ½ö±¾ÈËÊı¾İ:8 °´Ã÷Ï¸ÉèÖÃ:9';
+'æ•°æ®èŒƒå›´ æ‰€æœ‰æ•°æ®:1 æ‰€åœ¨å…¬å¸åŠä»¥ä¸‹æ•°æ®:2 æ‰€åœ¨å…¬å¸æ•°æ®:3 æ‰€åœ¨éƒ¨é—¨åŠä»¥ä¸‹æ•°æ®:4 æ‰€åœ¨éƒ¨é—¨æ•°æ®:5 ä»…æœ¬äººæ•°æ®:8 æŒ‰æ˜ç»†è®¾ç½®:9';
 
 comment on column T_SYS_ROLE.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Table: T_SYS_ROLE_ORGAN                                      */
@@ -1167,13 +1167,13 @@ create table T_SYS_ROLE_ORGAN  (
 );
 
 comment on table T_SYS_ROLE_ORGAN is
-'½ÇÉ«ÊÚÈ¨»ú¹¹±í';
+'è§’è‰²æˆæƒæœºæ„è¡¨';
 
 comment on column T_SYS_ROLE_ORGAN.ORGAN_ID is
-'»ú¹¹ID';
+'æœºæ„ID';
 
 comment on column T_SYS_ROLE_ORGAN.ROLE_ID is
-'½ÇÉ«ID';
+'è§’è‰²ID';
 
 /*==============================================================*/
 /* Table: T_SYS_ROLE_RESOURCE                                   */
@@ -1184,13 +1184,13 @@ create table T_SYS_ROLE_RESOURCE  (
 );
 
 comment on table T_SYS_ROLE_RESOURCE is
-'½ÇÉ«×ÊÔ´±í';
+'è§’è‰²èµ„æºè¡¨';
 
 comment on column T_SYS_ROLE_RESOURCE.RESOURCE_ID is
-'×ÊÔ´ID';
+'èµ„æºID';
 
 comment on column T_SYS_ROLE_RESOURCE.ROLE_ID is
-'½ÇÉ«ID';
+'è§’è‰²ID';
 
 /*==============================================================*/
 /* Table: T_SYS_SERIAL_NUMBER                                   */
@@ -1215,52 +1215,52 @@ create table T_SYS_SERIAL_NUMBER  (
 );
 
 comment on table T_SYS_SERIAL_NUMBER is
-'ĞòÁĞºÅ';
+'åºåˆ—å·';
 
 comment on column T_SYS_SERIAL_NUMBER.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_SERIAL_NUMBER.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_SERIAL_NUMBER.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_SERIAL_NUMBER.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_SERIAL_NUMBER.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_SERIAL_NUMBER.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_SERIAL_NUMBER.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_SERIAL_NUMBER.MODULE_NAME is
-'Ä£¿éÃû³Æ';
+'æ¨¡å—åç§°';
 
 comment on column T_SYS_SERIAL_NUMBER.MODULE_CODE is
-'Ä£¿é±àÂë';
+'æ¨¡å—ç¼–ç ';
 
 comment on column T_SYS_SERIAL_NUMBER.CONFIG_TEMPLATE is
-'Á÷Ë®ºÅÅäÖÃÄ£°å';
+'æµæ°´å·é…ç½®æ¨¡æ¿';
 
 comment on column T_SYS_SERIAL_NUMBER.MAX_SERIAL is
-'ÏµÁĞºÅ×î´óÖµ';
+'ç³»åˆ—å·æœ€å¤§å€¼';
 
 comment on column T_SYS_SERIAL_NUMBER.IS_AUTO_INCREMENT is
-'ÊÇ·ñ×Ô¶¯Ôö³¤±êÊ¶';
+'æ˜¯å¦è‡ªåŠ¨å¢é•¿æ ‡è¯†';
 
 comment on column T_SYS_SERIAL_NUMBER.PRE_MAX_NUM is
-'Ô¤Éú³ÉÁ÷Ë®ºÅÊıÁ¿';
+'é¢„ç”Ÿæˆæµæ°´å·æ•°é‡';
 
 comment on column T_SYS_SERIAL_NUMBER.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 comment on column T_SYS_SERIAL_NUMBER.YEAR_CLEAR is
-'Äêµ×ÇåÁã ÊÇ£º1 ·ñ£º0';
+'å¹´åº•æ¸…é›¶ æ˜¯ï¼š1 å¦ï¼š0';
 
 /*==============================================================*/
 /* Table: T_SYS_USER                                            */
@@ -1296,85 +1296,85 @@ create table T_SYS_USER  (
 );
 
 comment on table T_SYS_USER is
-'ÓÃ»§±í';
+'ç”¨æˆ·è¡¨';
 
 comment on column T_SYS_USER.ID is
-'Ö÷¼üID';
+'ä¸»é”®ID';
 
 comment on column T_SYS_USER.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_USER.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_USER.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_USER.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_USER.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_USER.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_USER.LOGIN_NAME is
-'µÇÂ¼Ãû';
+'ç™»å½•å';
 
 comment on column T_SYS_USER.CODE is
-'Ô±¹¤±àºÅ';
+'å‘˜å·¥ç¼–å·';
 
 comment on column T_SYS_USER.ORIGINAL_PASSWORD is
-'Ô­Ê¼ÃÜÂë';
+'åŸå§‹å¯†ç ';
 
 comment on column T_SYS_USER.PASSWORD is
-'µÇÂ¼ÃÜÂë';
+'ç™»å½•å¯†ç ';
 
 comment on column T_SYS_USER.USER_TYPE is
-'ÓÃ»§ÀàĞÍ £¨0£ºÏµÍ³£»1£ºÔ±¹¤£»2£ºÓ¦ÓÃ¼¯³ÉÆ½Ì¨£©';
+'ç”¨æˆ·ç±»å‹ ï¼ˆ0ï¼šç³»ç»Ÿï¼›1ï¼šå‘˜å·¥ï¼›2ï¼šåº”ç”¨é›†æˆå¹³å°ï¼‰';
 
 comment on column T_SYS_USER.NAME is
-'ĞÕÃû';
+'å§“å';
 
 comment on column T_SYS_USER.SORT is
-'ÅÅĞòºÅ';
+'æ’åºå·';
 
 comment on column T_SYS_USER.SEX is
-'ĞÔ±ğ Å®(0) ÄĞ(1) ±£ÃÜ(2) Ä¬ÈÏ£º±£ÃÜ';
+'æ€§åˆ« å¥³(0) ç”·(1) ä¿å¯†(2) é»˜è®¤ï¼šä¿å¯†';
 
 comment on column T_SYS_USER.BIRTHDAY is
-'³öÉúÈÕÆÚ ¸ñÊ½£ºyyyy-MM-dd';
+'å‡ºç”Ÿæ—¥æœŸ æ ¼å¼ï¼šyyyy-MM-dd';
 
 comment on column T_SYS_USER.PHOTO is
-'Í·Ïñ';
+'å¤´åƒ';
 
 comment on column T_SYS_USER.EMAIL is
-'ÓÊÏäµØÖ·';
+'é‚®ç®±åœ°å€';
 
 comment on column T_SYS_USER.PERSON_EMAIL is
-'¸öÈËÓÊÏä';
+'ä¸ªäººé‚®ç®±';
 
 comment on column T_SYS_USER.MOBILE is
-'ÊÖ»úºÅ';
+'æ‰‹æœºå·';
 
 comment on column T_SYS_USER.TEL is
-'°ì¹«µç»°';
+'åŠå…¬ç”µè¯';
 
 comment on column T_SYS_USER.WEIXIN is
-'Î¢ĞÅºÅ';
+'å¾®ä¿¡å·';
 
 comment on column T_SYS_USER.QQ is
 'QQ';
 
 comment on column T_SYS_USER.ADDRESS is
-'×¡Ö·';
+'ä½å€';
 
 comment on column T_SYS_USER.DEFAULT_ORGAN_ID is
-'Ä¬ÈÏ×éÖ¯»ú¹¹ID';
+'é»˜è®¤ç»„ç»‡æœºæ„ID';
 
 comment on column T_SYS_USER.REMARK is
-'±¸×¢';
+'å¤‡æ³¨';
 
 /*==============================================================*/
 /* Index: "Index_13"                                            */
@@ -1392,13 +1392,13 @@ create table T_SYS_USER_ORGAN  (
 );
 
 comment on table T_SYS_USER_ORGAN is
-'ÓÃ»§»ú¹¹±í';
+'ç”¨æˆ·æœºæ„è¡¨';
 
 comment on column T_SYS_USER_ORGAN.ORGAN_ID is
-'»ú¹¹ID';
+'æœºæ„ID';
 
 comment on column T_SYS_USER_ORGAN.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 /*==============================================================*/
 /* Table: T_SYS_USER_PASSWORD                                   */
@@ -1419,40 +1419,40 @@ create table T_SYS_USER_PASSWORD  (
 );
 
 comment on table T_SYS_USER_PASSWORD is
-'ÓÃ»§ÃÜÂëĞŞ¸Ä¼ÇÂ¼';
+'ç”¨æˆ·å¯†ç ä¿®æ”¹è®°å½•';
 
 comment on column T_SYS_USER_PASSWORD.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_USER_PASSWORD.STATUS is
-'×´Ì¬ Õı³£/É¾³ı/ÉóºË/Ëø¶¨ 0/1/2/3';
+'çŠ¶æ€ æ­£å¸¸/åˆ é™¤/å®¡æ ¸/é”å®š 0/1/2/3';
 
 comment on column T_SYS_USER_PASSWORD.VERSION is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_USER_PASSWORD.CREATE_USER is
-'´´½¨Õß';
+'åˆ›å»ºè€…';
 
 comment on column T_SYS_USER_PASSWORD.CREATE_TIME is
-'´´½¨Ê±¼ä';
+'åˆ›å»ºæ—¶é—´';
 
 comment on column T_SYS_USER_PASSWORD.UPDATE_USER is
-'¸üĞÂÕß';
+'æ›´æ–°è€…';
 
 comment on column T_SYS_USER_PASSWORD.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_USER_PASSWORD.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_SYS_USER_PASSWORD.MODIFY_TIME is
-'ĞŞ¸ÄÊ±¼ä';
+'ä¿®æ”¹æ—¶é—´';
 
 comment on column T_SYS_USER_PASSWORD.ORIGINAL_PASSWORD is
-'Ô­Ê¼ÃÜÂë';
+'åŸå§‹å¯†ç ';
 
 comment on column T_SYS_USER_PASSWORD.PASSWORD is
-'ÃÜÂë';
+'å¯†ç ';
 
 /*==============================================================*/
 /* Table: T_SYS_USER_POST                                       */
@@ -1464,16 +1464,16 @@ create table T_SYS_USER_POST  (
 );
 
 comment on table T_SYS_USER_POST is
-'ÓÃ»§¸ÚÎ»±í';
+'ç”¨æˆ·å²—ä½è¡¨';
 
 comment on column T_SYS_USER_POST.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_SYS_USER_POST.POST_ID is
-'¸ÚÎ»ID';
+'å²—ä½ID';
 
 comment on column T_SYS_USER_POST.ORGAN_ID is
-'»ú¹¹ID';
+'æœºæ„ID';
 
 /*==============================================================*/
 /* Table: T_SYS_USER_RESOURCE                                   */
@@ -1484,13 +1484,13 @@ create table T_SYS_USER_RESOURCE  (
 );
 
 comment on table T_SYS_USER_RESOURCE is
-'ÓÃ»§×ÊÔ´±í';
+'ç”¨æˆ·èµ„æºè¡¨';
 
 comment on column T_SYS_USER_RESOURCE.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_SYS_USER_RESOURCE.RESOURCE_ID is
-'×ÊÔ´ID';
+'èµ„æºID';
 
 /*==============================================================*/
 /* Table: T_SYS_USER_ROLE                                       */
@@ -1501,13 +1501,13 @@ create table T_SYS_USER_ROLE  (
 );
 
 comment on table T_SYS_USER_ROLE is
-'ÓÃ»§½ÇÉ«±í';
+'ç”¨æˆ·è§’è‰²è¡¨';
 
 comment on column T_SYS_USER_ROLE.USER_ID is
-'ÓÃ»§ID';
+'ç”¨æˆ·ID';
 
 comment on column T_SYS_USER_ROLE.ROLE_ID is
-'½ÇÉ«ID';
+'è§’è‰²ID';
 
 /*==============================================================*/
 /* Table: T_SYS_VERSION_LOG                                     */
@@ -1528,37 +1528,37 @@ create table T_SYS_VERSION_LOG  (
 );
 
 comment on table T_SYS_VERSION_LOG is
-'ÉóÏµÍ³¸üĞÂÈÕÖ¾';
+'å®¡ç³»ç»Ÿæ›´æ–°æ—¥å¿—';
 
 comment on column T_SYS_VERSION_LOG.ID is
-'Ö÷¼üID UUID';
+'ä¸»é”®ID UUID';
 
 comment on column T_SYS_VERSION_LOG.VERSION_NAME is
-'°æ±¾ºÅÃû³Æ';
+'ç‰ˆæœ¬å·åç§°';
 
 comment on column T_SYS_VERSION_LOG.VERSION_CODE is
-'°æ±¾ºÅ';
+'ç‰ˆæœ¬å·';
 
 comment on column T_SYS_VERSION_LOG.VERSION_LOG_TYPE is
-'°æ±¾ÀàĞÍ ·şÎñÆ÷Ó¦ÓÃ£º0 AndroidÓ¦ÓÃ£º1 iPhoneÓ¦ÓÃ£º2 iPhoneÏÂÔØ£º3';
+'ç‰ˆæœ¬ç±»å‹ æœåŠ¡å™¨åº”ç”¨ï¼š0 Androidåº”ç”¨ï¼š1 iPhoneåº”ç”¨ï¼š2 iPhoneä¸‹è½½ï¼š3';
 
 comment on column T_SYS_VERSION_LOG.FILE_ID is
-'¸½¼şID';
+'é™„ä»¶ID';
 
 comment on column T_SYS_VERSION_LOG.UPDATE_USER is
-'¸üĞÂÈË';
+'æ›´æ–°äºº';
 
 comment on column T_SYS_VERSION_LOG.UPDATE_TIME is
-'¸üĞÂÊ±¼ä';
+'æ›´æ–°æ—¶é—´';
 
 comment on column T_SYS_VERSION_LOG.IS_PUB is
-'ÊÇ·ñ·¢²¼ 1£ºÊÇ£» 0£º·ñ';
+'æ˜¯å¦å‘å¸ƒ 1ï¼šæ˜¯ï¼› 0ï¼šå¦';
 
 comment on column T_SYS_VERSION_LOG.IS_TIP is
-'ÊÇ·ñÌáÊ¾  1£ºÊÇ£» 0£º·ñ';
+'æ˜¯å¦æç¤º  1ï¼šæ˜¯ï¼› 0ï¼šå¦';
 
 comment on column T_SYS_VERSION_LOG.REMARK is
-'¸üĞÂËµÃ÷';
+'æ›´æ–°è¯´æ˜';
 
 alter table T_SYS_ROLE_RESOURCE
    add constraint FK_T_SYS_RO_REFERENCE_T_SYS_RO foreign key (ROLE_ID)
