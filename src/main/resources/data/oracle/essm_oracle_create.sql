@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      ORACLE Version 10gR2                         */
-/* Created on:     2018/9/7 8:54:49                             */
+/* Created on:     2018/9/7 10:01:25                            */
 /*==============================================================*/
 
 
@@ -196,6 +196,7 @@ create table T_NOTICE  (
    INVALID_TIME         DATE,
    IS_RECORD_READ       CHAR(1),
    RECEIVE_SCOPE        VARCHAR2(36),
+   APP_ID               VARCHAR2(36),
    constraint PK_T_NOTICE primary key (ID)
 );
 
@@ -261,6 +262,9 @@ comment on column T_NOTICE.IS_RECORD_READ is
 
 comment on column T_NOTICE.RECEIVE_SCOPE is
 '接收范围 所在单位及以下/所在单位/所在部门及以下/所在部门/所有/自定义 2/3/4/5/10/0';
+
+comment on column T_NOTICE.APP_ID is
+'APP标识';
 
 /*==============================================================*/
 /* Table: T_NOTICE_FILE                                         */
@@ -750,8 +754,8 @@ create table T_SYS_LOG  (
    ACTION_TIME          VARCHAR2(20),
    REMARK               VARCHAR2(2000),
    EXCEPTION            VARCHAR2(4000),
-   LONGTIDUDE           NUMBER(10,6),
-   LATIDUDE             NUMBER(10,6),
+   LONGITUDE            NUMBER(10,6),
+   LATITUDE             NUMBER(10,6),
    ACCURACY             NUMBER(12,2),
    USER_TYPE            CHAR(1),
    constraint PK_T_SYS_LOG primary key (ID)
@@ -820,10 +824,10 @@ comment on column T_SYS_LOG.REMARK is
 comment on column T_SYS_LOG.EXCEPTION is
 '异常信息';
 
-comment on column T_SYS_LOG.LONGTIDUDE is
+comment on column T_SYS_LOG.LONGITUDE is
 '经度';
 
-comment on column T_SYS_LOG.LATIDUDE is
+comment on column T_SYS_LOG.LATITUDE is
 '经度';
 
 comment on column T_SYS_LOG.ACCURACY is
@@ -856,8 +860,8 @@ create table T_SYS_LOG_HISTORY  (
    ACTION_TIME          VARCHAR2(20),
    REMARK               VARCHAR2(2000),
    EXCEPTION            VARCHAR2(4000),
-   LONGTIDUDE           NUMBER(10,6),
-   LATIDUDE             NUMBER(10,6),
+   LONGITUDE            NUMBER(10,6),
+   LATITUDE             NUMBER(10,6),
    ACCURACY             NUMBER(12,2),
    USER_TYPE            CHAR(1),
    constraint PK_T_SYS_LOG_HISTORY primary key (ID)
@@ -926,10 +930,10 @@ comment on column T_SYS_LOG_HISTORY.REMARK is
 comment on column T_SYS_LOG_HISTORY.EXCEPTION is
 '异常信息';
 
-comment on column T_SYS_LOG_HISTORY.LONGTIDUDE is
+comment on column T_SYS_LOG_HISTORY.LONGITUDE is
 '经度';
 
-comment on column T_SYS_LOG_HISTORY.LATIDUDE is
+comment on column T_SYS_LOG_HISTORY.LATITUDE is
 '经度';
 
 comment on column T_SYS_LOG_HISTORY.ACCURACY is
@@ -1773,16 +1777,21 @@ comment on column T_SYS_USER_ROLE.ROLE_ID is
 /*==============================================================*/
 create table T_SYS_VERSION_LOG  (
    ID                   VARCHAR2(36)                    not null,
+   STATUS               CHAR(1),
+   VERSION              INTEGER,
+   CREATE_USER          VARCHAR2(36),
+   CREATE_TIME          DATE,
+   UPDATE_USER          VARCHAR2(36),
+   UPDATE_TIME          DATE,
    VERSION_NAME         VARCHAR2(128),
    VERSION_CODE         VARCHAR2(128),
    VERSION_LOG_TYPE     VARCHAR2(36),
    FILE_ID              VARCHAR2(36),
-   UPDATE_USER          VARCHAR2(36),
-   UPDATE_TIME          DATE,
    APP                  VARCHAR2(36),
    IS_PUB               CHAR(1),
    IS_TIP               CHAR(1),
    REMARK               VARCHAR2(4000),
+   PUB_TIME             DATE,
    constraint PK_T_SYS_VERSION_LOG primary key (ID)
 );
 
@@ -1792,11 +1801,29 @@ comment on table T_SYS_VERSION_LOG is
 comment on column T_SYS_VERSION_LOG.ID is
 '主键ID UUID';
 
+comment on column T_SYS_VERSION_LOG.STATUS is
+'状态 正常/删除/审核/锁定 0/1/2/3';
+
+comment on column T_SYS_VERSION_LOG.VERSION is
+'版本号';
+
+comment on column T_SYS_VERSION_LOG.CREATE_USER is
+'创建者';
+
+comment on column T_SYS_VERSION_LOG.CREATE_TIME is
+'创建时间';
+
+comment on column T_SYS_VERSION_LOG.UPDATE_USER is
+'更新者';
+
+comment on column T_SYS_VERSION_LOG.UPDATE_TIME is
+'更新时间';
+
 comment on column T_SYS_VERSION_LOG.VERSION_NAME is
 '版本号名称';
 
 comment on column T_SYS_VERSION_LOG.VERSION_CODE is
-'版本号';
+'版本编码';
 
 comment on column T_SYS_VERSION_LOG.VERSION_LOG_TYPE is
 '版本类型 服务器应用：0 Android应用：1 iPhone应用：2 iPhone下载：3';
@@ -1804,11 +1831,8 @@ comment on column T_SYS_VERSION_LOG.VERSION_LOG_TYPE is
 comment on column T_SYS_VERSION_LOG.FILE_ID is
 '附件ID';
 
-comment on column T_SYS_VERSION_LOG.UPDATE_USER is
-'更新人';
-
-comment on column T_SYS_VERSION_LOG.UPDATE_TIME is
-'更新时间';
+comment on column T_SYS_VERSION_LOG.APP is
+'APP标识';
 
 comment on column T_SYS_VERSION_LOG.IS_PUB is
 '是否发布 1：是； 0：否';
@@ -1818,6 +1842,9 @@ comment on column T_SYS_VERSION_LOG.IS_TIP is
 
 comment on column T_SYS_VERSION_LOG.REMARK is
 '更新说明';
+
+comment on column T_SYS_VERSION_LOG.PUB_TIME is
+'发布时间';
 
 alter table T_NOTICE_FILE
    add constraint FK_T_NOTICE_REFERENCE_T_NOTIC2 foreign key (NOTICE_ID)
