@@ -5,6 +5,7 @@
  */
 package com.eryansky.modules.sys.service.aop;
 
+import com.eryansky.common.orm.model.Parameter;
 import com.eryansky.modules.sys.mapper.Organ;
 import com.eryansky.modules.sys.service.SystemService;
 import org.aspectj.lang.JoinPoint;
@@ -40,12 +41,15 @@ public class SystemAspect implements InitializingBean, DisposableBean {
             "execution(* com.eryansky.modules.sys.service.OrganService.deleteById(..))",returning = "returnObj")
     public void afterEnterUserSignIn(JoinPoint joinPoint,Object returnObj) throws Throwable{
         if(returnObj != null){
+            Parameter parameter = Parameter.newParameter();
             if(returnObj instanceof String){
                 String id = (String) returnObj;
-                systemService.syncOrganToExtend(id);
+                parameter.put("id", id);
+                systemService.syncOrganToExtend(parameter);
             }else if(returnObj instanceof Organ){
                 Organ organ = (Organ) returnObj;
-                systemService.syncOrganToExtend(organ.getId());
+                parameter.put("id", organ.getId());
+                systemService.syncOrganToExtend(parameter);
             }
         }else{
             systemService.syncOrganToExtend();
