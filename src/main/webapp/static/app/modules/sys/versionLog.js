@@ -23,8 +23,6 @@ function initDatagrid(){
         nowrap: true,
         border: false,
         remoteSort: true,//是否通过远程服务器对数据排序
-        sortName: 'updateTime',//默认排序字段
-        sortOrder: 'desc',//默认排序方式 'desc' 'asc'
         idField: 'id',
         frozenColumns:[[
             {field: 'ck',checkbox: true,width: 60},
