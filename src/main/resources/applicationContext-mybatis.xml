@@ -30,6 +30,6 @@
     </bean>
     <!-- MyBatis end -->
 
-    <bean class="com.eryansky.common.orm.mybatis.MapperLoader"></bean>
+    <!--<bean class="com.eryansky.common.orm.mybatis.MapperLoader"></bean>-->
 
 </beans>

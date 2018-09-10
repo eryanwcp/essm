@@ -24,14 +24,14 @@
         WHERE a.id = #{id}
     </select>
 
-    <select id="getByCode" resultType="Role">
+    <select id="getByCode" resultType="Post">
         SELECT
         <include refid="postColumns"/>
         FROM t_sys_post a
         WHERE a.status = '0' AND a.code = #{code}
     </select>
 
-    <select id="findPost" resultType="Role">
+    <select id="findPost" resultType="Post">
         SELECT DISTINCT
         <include refid="postColumns"/>
         FROM t_sys_post a
@@ -139,7 +139,7 @@
         LEFT JOIN t_sys_user u ON u.id = up.user_id
         <where>
             a.status = #{status}
-            AND u.id = #{user_id}
+            AND u.id = #{userId}
         </where>
     </select>
 
