@@ -6,7 +6,7 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>3.2.20180907-SNAPSHOT</version>
+    <version>3.3.20180911-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
@@ -51,8 +51,9 @@
 
         <!-- jdbc driver setting -->
         <mysql.driver.version>5.1.31</mysql.driver.version>
-        <mariadb.driver.version>2.2.6</mariadb.driver.version>
+        <mariadb.driver.version>2.3.0</mariadb.driver.version>
         <oracle.driver.version>12.1.0.1-atlassian-hosted</oracle.driver.version>
+        <db2.driver.version>10.1</db2.driver.version>
         <druid-version>1.1.10</druid-version>
 
         <!-- other setting -->
@@ -407,6 +408,11 @@
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc6</artifactId>
             <version>${oracle.driver.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2.jcc</groupId>
+            <artifactId>db2jcc4</artifactId>
+            <version>${db2.driver.version}</version>
         </dependency>
 
 
