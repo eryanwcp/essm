@@ -30,27 +30,27 @@ public class CacheObject {
 	private Object value;
 	private byte level;
 
-	CacheObject(String region, String key, byte level) {
+	public CacheObject(String region, String key, byte level) {
 		this(region, key, level, null);
 	}
 
-	CacheObject(String region, String key, byte level, Object value) {
+	public CacheObject(String region, String key, byte level, Object value) {
 		this.region =  region;
 		this.key = key;
 		this.level = level;
 		this.value = value;
 	}
 
-	void setLevel(byte level) {
+	public void setLevel(byte level) {
 		this.level = level;
 	}
-	void setRegion(String region) {
+	public void setRegion(String region) {
 		this.region = region;
 	}
-	void setKey(String key) {
+	public void setKey(String key) {
 		this.key = key;
 	}
-	void setValue(Object value) {
+	public void setValue(Object value) {
 		this.value = value;
 	}
 
@@ -104,16 +104,48 @@ public class CacheObject {
 		return (value instanceof String) ? Integer.parseInt((String)value) : (Integer)value;
 	}
 
+	public int asInt(int defValue) {
+		try {
+			return Integer.parseInt(asString());
+		} catch (Exception e) {
+			return defValue;
+		}
+	}
+
 	public double asDouble() {
 		return (value instanceof String) ? Double.parseDouble((String)value) : (Double)value;
+	}
+
+	public double asDouble(double defValue) {
+		try {
+			return Double.parseDouble(asString());
+		} catch (Exception e) {
+			return defValue;
+		}
 	}
 
 	public long asLong() {
 		return (value instanceof String) ? Long.parseLong((String)value) : (Long)value;
 	}
 
+	public long asLong(long defValue) {
+		try {
+			return Long.parseLong(asString());
+		} catch (Exception e) {
+			return defValue;
+		}
+	}
+
 	public float asFloat() {
 		return (value instanceof String) ? Float.parseFloat((String)value) : (Float)value;
+	}
+
+	public float asFloat(float defValue) {
+		try {
+			return Float.parseFloat(asString());
+		} catch (Exception e) {
+			return defValue;
+		}
 	}
 
 	@Override

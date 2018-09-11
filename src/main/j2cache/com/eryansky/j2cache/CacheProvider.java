@@ -16,13 +16,17 @@
 package com.eryansky.j2cache;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Support for pluggable caches.
  * @author Winter Lau(javayou@gmail.com)
  */
 public interface CacheProvider {
+
+	Map<String, Object> _g_keyLocks = new ConcurrentHashMap<>();
 
 	/**
 	 * 缓存的标识名称
@@ -57,6 +61,12 @@ public interface CacheProvider {
 	 * @return return cache instance
 	 */
 	Cache buildCache(String region, long timeToLiveInSeconds, CacheExpiredListener listener);
+
+	/**
+	 * Remove a cache region
+	 * @param region cache region name
+	 */
+	default void removeCache(String region) {}
 
 	/**
 	 * Return all channels defined in first level cache
