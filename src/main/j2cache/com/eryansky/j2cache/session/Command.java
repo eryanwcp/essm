@@ -13,37 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.eryansky.j2cache;
+package com.eryansky.j2cache.session;
 
+import org.nustaq.serialization.FSTConfiguration;
+
+import java.io.Serializable;
 import java.util.Random;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
 
 /**
  * 命令消息封装
- * 格式：
- * 第1个字节为命令代码，长度1 [OPT]
- * 第2、3个字节为region长度，长度2 [R_LEN]
- * 第4、N 为 region 值，长度为 [R_LEN]
- * 第N+1、N+2 为 key 长度，长度2 [K_LEN]
- * 第N+3、M为 key值，长度为 [K_LEN]
  * 
  * @author Winter Lau(javayou@gmail.com)
  */
-public class Command {
+public class Command implements Serializable {
+
+	private static final FSTConfiguration conf = FSTConfiguration.createJsonConfiguration();
+
+	static {
+		conf.registerCrossPlatformClassMapping("cmd", Command.class.getName());
+	}
 
 	private final static int SRC_ID = genRandomSrc(); //命令源标识，随机生成，每个节点都有唯一标识
 
-	public final static byte OPT_JOIN 	   = 0x01;	//加入集群
-	public final static byte OPT_EVICT_KEY = 0x02; 	//删除缓存
-	public final static byte OPT_CLEAR_KEY = 0x03; 	//清除缓存
-	public final static byte OPT_QUIT 	   = 0x04;	//退出集群
+	public final static byte OPT_JOIN 	   		= 0x01;	//加入集群
+	public final static byte OPT_DELETE_SESSION = 0x03; //清除会话
+	public final static byte OPT_QUIT 	   		= 0x04;	//退出集群
 	
 	private int src = SRC_ID;
 	private int operator;
-	private String region;
-	private String[] keys;
+	private String session;
+	private String key;
 	
 	private static int genRandomSrc() {
 		long ct = System.currentTimeMillis();
@@ -51,39 +50,32 @@ public class Command {
 		return (int)(rnd_seed.nextInt(10000) * 1000 + ct % 1000);
 	}
 
-	public Command(){}//just for json deserialize , dont remove it.
-
-	public Command(byte o, String r, String...keys){
-		this.operator = o;
-		this.region = r;
-		this.keys = keys;
+	public Command(byte operator, String session, String key) {
+		this.operator = operator;
+		this.session = session;
+		this.key = key;
 	}
 
 	/**
 	 * 返回本地的专有标识
-	 * @return 节点标识
+	 * @return 返回唯一标识
 	 */
 	public static final int LocalID() {
 		return SRC_ID;
 	}
 
 	public static Command join() {
-		return new Command(OPT_JOIN, null);
+		return new Command(OPT_JOIN, null, null);
 	}
 
 	public static Command quit() {
-		return new Command(OPT_QUIT, null);
+		return new Command(OPT_QUIT, null, null);
 	}
 
-	public String json() {
-		return JSON.toJSONString(this);
+	public static Command parse(String data) {
+		return (Command)conf.asObject(data.getBytes());
 	}
 
-	public static Command parse(String json) {
-		return JSON.parseObject(json, Command.class);
-	}
-
-	@JSONField(serialize = false)
 	public boolean isLocal() {
 		return this.src == SRC_ID;
 	}
@@ -92,12 +84,8 @@ public class Command {
 		return operator;
 	}
 
-	public String getRegion() {
-		return region;
-	}
-
-	public String[] getKeys() {
-		return keys;
+	public String getKey() {
+		return key;
 	}
 
 	public int getSrc() {
@@ -112,17 +100,27 @@ public class Command {
         this.operator = operator;
     }
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setKey(String key) {
+        this.key = key;
     }
 
-    public void setKeys(String[] keys) {
-        this.keys = keys;
-    }
+	public String getSession() {
+		return session;
+	}
 
-    @Override
+	public void setSession(String session) {
+		this.session = session;
+	}
+
+	@Override
 	public String toString(){
-		return JSON.toJSONString(this);
+		return conf.asJsonString(this);
+	}
+
+	public static void main(String[] args) {
+		Command cmd = new Command(OPT_JOIN, "aerlkjasldfkjasldkjfas","123");
+		System.out.println(cmd);
+		System.out.println(Command.parse(cmd.toString()));
 	}
 
 }

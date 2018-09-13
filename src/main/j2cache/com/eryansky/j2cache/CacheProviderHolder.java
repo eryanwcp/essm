@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache;
 
+import com.eryansky.j2cache.caffeine.CaffeineProvider;
 import com.eryansky.j2cache.ehcache.EhCacheProvider;
 import com.eryansky.j2cache.redis.RedisCacheProvider;
 import com.eryansky.j2cache.redis.ReadonlyRedisCacheProvider;
@@ -65,6 +66,8 @@ public class CacheProviderHolder {
 	}
 
 	private final static CacheProvider loadProviderInstance(String cacheIdent) {
+		if("caffeine".equalsIgnoreCase(cacheIdent))
+			return new CaffeineProvider();
 		if("ehcache".equalsIgnoreCase(cacheIdent))
 			return new EhCacheProvider();
 		if("redis".equalsIgnoreCase(cacheIdent))

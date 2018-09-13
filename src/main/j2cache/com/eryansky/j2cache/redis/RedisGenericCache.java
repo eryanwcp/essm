@@ -35,7 +35,7 @@ public class RedisGenericCache implements Level2Cache {
      * @param client 缓存客户端接口
      */
     public RedisGenericCache(String namespace, String region, RedisClient client) {
-        if (region == null || region.isEmpty())
+        if (region == null || region.trim().isEmpty())
             region = "_"; // 缺省region
 
         this.client = client;
