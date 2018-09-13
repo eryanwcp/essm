@@ -84,6 +84,7 @@ public class J2CacheSessionFilter implements Filter {
 
         public J2CacheRequestWrapper(ServletRequest req, ServletResponse res) {
             super((HttpServletRequest)req);
+            this.response = (HttpServletResponse)res;
             this.servletContext = req.getServletContext();
         }
 
