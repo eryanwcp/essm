@@ -115,7 +115,6 @@ public class RedisPubSubClusterPolicy extends JedisPubSub implements ClusterPoli
     public void disconnect() {
         try {
             this.publish(Command.quit());
-            log.info("disconnect:"+this.isSubscribed()+"-"+this.hashCode());
             if(this.isSubscribed())
                 this.unsubscribe();
             isRun = false;
