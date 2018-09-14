@@ -97,7 +97,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
                     }
                 }
             }
-        }, "RedisSubscribeThread");
+        }, "RedisSessionSubscribeThread");
 
         subscribeThread.setDaemon(true);
         subscribeThread.start();
