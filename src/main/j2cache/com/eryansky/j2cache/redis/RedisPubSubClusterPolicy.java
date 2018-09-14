@@ -39,10 +39,6 @@ public class RedisPubSubClusterPolicy extends JedisPubSub implements ClusterPoli
 
     private Pool<Jedis> client;
     private String channel;
-    /**
-     * 是否运行中
-     */
-    private boolean isRun = true;
 
     public RedisPubSubClusterPolicy(String channel, Properties props){
         this.channel = channel;
@@ -85,7 +81,7 @@ public class RedisPubSubClusterPolicy extends JedisPubSub implements ClusterPoli
 
         Thread subscribeThread = new Thread(()-> {
             //当 Redis 重启会导致订阅线程断开连接，需要进行重连
-            while(isRun) {
+            while(true) {
                 try (Jedis jedis = client.getResource()){
                     jedis.subscribe(this, channel);
                     log.info("Disconnect to redis channel: " + channel);
@@ -117,7 +113,6 @@ public class RedisPubSubClusterPolicy extends JedisPubSub implements ClusterPoli
             this.publish(Command.quit());
             if(this.isSubscribed())
                 this.unsubscribe();
-            isRun = false;
         } finally {
             this.client.close();
         }
@@ -137,9 +132,6 @@ public class RedisPubSubClusterPolicy extends JedisPubSub implements ClusterPoli
      */
     @Override
     public void onMessage(String channel, String message) {
-        if(!isRun){
-            return;
-        }
         Command cmd = Command.parse(message);
         handleCommand(cmd);
     }

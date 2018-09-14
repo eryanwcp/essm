@@ -78,6 +78,8 @@ public class J2CacheBuilder {
                             opened.set(false);
                         }
                     };
+                    //防止多次实例化
+                    opened.set(true);
                 }
             }
         }
