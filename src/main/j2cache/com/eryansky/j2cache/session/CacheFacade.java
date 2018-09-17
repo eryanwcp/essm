@@ -46,7 +46,11 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
     private RedisClient redisClient;
     private String pubsub_channel;
 
-    public CacheFacade(int maxSizeInMemory, int maxAge, Properties redisConf) {
+    private boolean discardNonSerializable;
+
+    public CacheFacade(int maxSizeInMemory, int maxAge, Properties redisConf, boolean discardNonSerializable) {
+
+        this.discardNonSerializable = discardNonSerializable;
         this.cache1 = new CaffeineCache(maxSizeInMemory, maxAge, this);
 
         JedisPoolConfig poolConfig = RedisUtils.newPoolConfig(redisConf, null);
@@ -212,9 +216,14 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
         cache2.setBytes(session.getId(), new HashMap<String, byte[]>() {{
             put(SessionObject.KEY_CREATE_AT, String.valueOf(session.getCreated_at()).getBytes());
             put(SessionObject.KEY_ACCESS_AT, String.valueOf(session.getLastAccess_at()).getBytes());
-            session.getAttributes().entrySet().forEach((e)->
-                put(e.getKey(), FSTSerializer.write(e.getValue()))
-            );
+            session.getAttributes().entrySet().forEach((e)-> {
+                try {
+                    put(e.getKey(), Serializer.write(e.getValue()));
+                } catch (RuntimeException | IOException excp) {
+                    if(!discardNonSerializable)
+                        throw ((excp instanceof RuntimeException)?(RuntimeException)excp : new RuntimeException(excp));
+                }
+            });
         }}, cache1.getExpire());
     }
 
@@ -236,7 +245,12 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
     public void setSessionAttribute(SessionObject session, String key) {
         try {
             cache1.put(session.getId(), session);
-            cache2.setBytes(session.getId(), key, FSTSerializer.write(session.get(key)));
+            try {
+                cache2.setBytes(session.getId(), key, Serializer.write(session.get(key)));
+            } catch (RuntimeException | IOException e) {
+                if(!this.discardNonSerializable)
+                    throw ((e instanceof RuntimeException)?(RuntimeException)e : new RuntimeException(e));
+            }
         } finally {
             this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
         }
