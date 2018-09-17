@@ -48,12 +48,12 @@ public class NullCache implements Level1Cache, Level2Cache {
 
 	@Override
 	public Collection<String> keys() {
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	@Override
 	public Map get(Collection<String> keys) {
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class NullCache implements Level1Cache, Level2Cache {
 
 	@Override
 	public List<byte[]> getBytes(Collection<String> key) {
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
