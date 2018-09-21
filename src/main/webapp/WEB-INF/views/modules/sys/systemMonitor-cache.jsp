@@ -35,8 +35,8 @@
 			<thead>
 			<tr>
 				<th>缓存</th>
-				<th>已存在KEYS</th>
-				<th>最大值数量</th>
+				<th>KEYS</th>
+				<th>最大数量</th>
 				<th>TTL</th>
 				<th>操作</th>
 			</tr>

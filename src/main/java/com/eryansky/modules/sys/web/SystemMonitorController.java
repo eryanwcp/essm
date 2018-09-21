@@ -87,7 +87,7 @@ public class SystemMonitorController extends SimpleController {
                 map.put("name",r.getName());
                 map.put("size",r.getSize());
                 map.put("ttl",r.getTtl());
-                map.put("keySize",CacheUtils.keys(r.getName()));
+                map.put("keys",CacheUtils.keys(r.getName()).size());
                 dataList.add(map);
                 page.setResult(dataList);
             }
