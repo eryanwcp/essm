@@ -11,19 +11,23 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.io.FileUtils;
 import com.eryansky.common.utils.io.PropertiesLoader;
+import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.ApplicationSessionContext;
 import com.eryansky.core.security.annotation.RequiresPermissions;
+import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.utils.*;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +35,7 @@ import java.io.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统监控
@@ -65,36 +70,110 @@ public class SystemMonitorController extends SimpleController {
 
 
     /**
+     * 系统监控-缓存管理
+     * @return
+     */
+    @RequiresPermissions("sys:systemMonitor:view")
+    @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
+    @RequestMapping("cache")
+    public String cache(HttpServletRequest request, HttpServletResponse response){
+        if(WebUtils.isAjaxRequest(request)){
+            Collection<CacheChannel.Region> regions = CacheUtils.regions();
+            Page<Map<String,Object>> page = new Page<>(request,response);
+            List<CacheChannel.Region> list = AppUtils.getPagedList(Collections3.union(regions,Collections.emptyList()),page.getPageNo(),page.getPageSize());
+            List<Map<String,Object>> dataList = Lists.newArrayList();
+            for(CacheChannel.Region r:list){
+                Map<String,Object> map = Maps.newHashMap();
+                map.put("name",r.getName());
+                map.put("size",r.getSize());
+                map.put("ttl",r.getTtl());
+                map.put("keySize",CacheUtils.keys(r.getName()));
+                dataList.add(map);
+                page.setResult(dataList);
+            }
+            page.setTotalCount(regions.size());
+            return renderString(response,page);
+        }
+        return "modules/sys/systemMonitor-cache";
+    }
+
+    /**
+     * 系统监控-缓存管理
+     * @return
+     */
+    @RequiresPermissions("sys:systemMonitor:view")
+    @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
+    @RequestMapping("cacheDetail")
+    public String cacheDetail(String region,Model uiModel,HttpServletRequest request, HttpServletResponse response){
+        if(WebUtils.isAjaxRequest(request)){
+            Collection<String> keys = CacheUtils.keys(region);
+            Page<String> page = new Page<>(request,response);
+            page.setResult(AppUtils.getPagedList(Collections3.union(keys,Collections.emptyList()),page.getPageNo(),page.getPageSize()));
+            page.setTotalCount(keys.size());
+            return renderString(response,page);
+        }
+        uiModel.addAttribute("region",region);
+        return "modules/sys/systemMonitor-cacheDetail";
+    }
+
+    /**
+     * 系统监控-缓存管理
+     * @return
+     */
+    @RequiresPermissions("sys:systemMonitor:view")
+    @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
+    @RequestMapping("cacheKeyDetail")
+    public String cacheKeyDetail(String region,String key,Model uiModel,HttpServletRequest request, HttpServletResponse response){
+        Object object = CacheUtils.get(region,key);
+        uiModel.addAttribute("data", JsonMapper.toJsonString(object));
+        uiModel.addAttribute("object",object);
+        uiModel.addAttribute("region",region);
+        uiModel.addAttribute("key",key);
+        return "modules/sys/systemMonitor-cacheKeyDetail";
+    }
+
+
+
+    /**
      * 清空缓存
-     * @param cacheName 缓存名称
+     * @param region 缓存名称
      * @return
      */
     @Logging(value = "系统监控-清空缓存",logType = LogType.access)
     @RequiresPermissions("sys:systemMonitor:edit")
     @RequestMapping("clearCache")
-    @ResponseBody
-    public Result clearCache(String cacheName){
-        Result result = null;
-        try {
-            //清空ehcache缓存
-            if(StringUtils.isNotBlank(cacheName)){
-                CacheUtils.removeCache(cacheName);
-            }else{
-                Collection<String> cacheNames = CacheUtils.cacheNames();
-                for (String _cacheName : cacheNames) {
-                    if(!ApplicationSessionContext.CACHE_SESSION.equals(_cacheName)){//黑名单
-                        CacheUtils.removeCache(_cacheName);
-                    }
+    public String clearCache(String region, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response){
+        //清空ehcache缓存
+        if(StringUtils.isNotBlank(region)){
+            CacheUtils.clearCache(region);
+        }else{
+            Collection<String> regions = CacheUtils.regionNames();
+            logger.warn("regionNames:{}",JsonMapper.toJsonString(regions));
+            for (String _cacheName : regions) {
+                if(!ApplicationSessionContext.CACHE_SESSION.equals(_cacheName)){//黑名单
+                    CacheUtils.clearCache(_cacheName);
                 }
             }
             //更新客户端缓存时间戳
             AppConstants.SYS_INIT_TIME = System.currentTimeMillis();
-            result = Result.successResult();
-        } catch (Exception e) {
-            result = Result.errorResult();
-            logger.error(e.getMessage());
         }
-        return result;
+        addMessage(redirectAttributes,"操作成功！");
+        return "redirect:"+AppConstants.getAdminPath()+"/sys/systemMonitor/cache?repage";
+    }
+
+
+    /**
+     * 清空缓存
+     * @param region 缓存名称
+     * @return
+     */
+    @Logging(value = "系统监控-清空缓存",logType = LogType.access)
+    @RequiresPermissions("sys:systemMonitor:edit")
+    @RequestMapping("clearCacheKey")
+    public String clearCacheKey(String region,String key,RedirectAttributes redirectAttributes,HttpServletRequest request,HttpServletResponse response){
+        CacheUtils.remove(region,key);
+        addMessage(redirectAttributes,"操作成功！");
+        return "redirect:"+AppConstants.getAdminPath()+"/sys/systemMonitor/cacheDetail?region="+region+"&repage";
     }
 
 

@@ -41,34 +41,41 @@ public class CacheUtils {
 		remove(SYS_CACHE, key);
 	}
 	
-	public static Object get(String cacheName, String key) {
-		CacheObject cacheObject = cacheManager.getCacheChannel().get(cacheName,key);
+	public static Object get(String region, String key) {
+		CacheObject cacheObject = cacheManager.getCacheChannel().get(region,key);
 		if(cacheObject != null && logger.isDebugEnabled()){
 			logger.info(key+":"+cacheObject.getLevel());
 		}
 		return cacheObject==null?null:cacheObject.getValue();
 	}
 
-	public static void put(String cacheName, String key, Object value) {
-		cacheManager.getCacheChannel().set(cacheName,key,value);
+	public static void put(String region, String key, Object value) {
+		cacheManager.getCacheChannel().set(region,key,value);
 	}
 
-	public static void remove(String cacheName, String key) {
-		cacheManager.getCacheChannel().evict(cacheName,key);
+	public static void remove(String region, String key) {
+		cacheManager.getCacheChannel().evict(region,key);
 	}
 
-	public static void removeCache(String cacheName) {
-		cacheManager.getCacheChannel().clear(cacheName);
+	public static void clearCache(String region) {
+		cacheManager.getCacheChannel().clear(region);
 	}
 
-	public static Collection<String> keys(String cacheName) {
-		return cacheManager.getCacheChannel().keys(cacheName);
+	public static void removeCache(String region) {
+		cacheManager.getCacheChannel().removeRegion(region);
 	}
 
-	public static Collection<String> cacheNames() {
+	public static Collection<String> keys(String region) {
+		return cacheManager.getCacheChannel().keys(region);
+	}
+
+	public static Collection<String> regionNames() {
 		Collection<CacheChannel.Region> regions = cacheManager.getCacheChannel().regions();
 		return Collections3.extractToList(regions,"name");
 	}
 
+	public static Collection<CacheChannel.Region> regions() {
+		return cacheManager.getCacheChannel().regions();
+	}
 
 }
