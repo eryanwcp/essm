@@ -79,6 +79,20 @@ public class IpUtils {
         return ip;
     }
 
+    /**
+     * 获取本地有效IP
+     * @return
+     */
+    public static String getActivityLocalIp(){
+        InetAddress inetAddress;
+        String local = null;
+        try {
+            inetAddress = InetAddress.getLocalHost();
+            local = InetAddresses.toAddrString(inetAddress);
+        } catch (Exception e) {
+        }
+        return "127.0.0.1".equals(local) ? "":local;
+    }
 
     /**
      * 从InetAddress转化到int, 传输和存储时, 用int代表InetAddress是最小的开销.
