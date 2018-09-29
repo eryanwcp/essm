@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -374,6 +376,10 @@ public class SecurityUtils {
         sessionInfo.setAppVersion(appVersion_s);
         sessionInfo.setSessionId(sessionId);
         sessionInfo.setId(SecurityUtils.getNoSuffixSessionId(session));
+        try {
+            sessionInfo.setHost(IpUtils.toIpString(InetAddress.getLocalHost()));
+        } catch (UnknownHostException e) {
+        }
 
         String userAgent = UserAgentUtils.getHTTPUserAgent(request);
         boolean likeIOS = AppUtils.likeIOS(userAgent);

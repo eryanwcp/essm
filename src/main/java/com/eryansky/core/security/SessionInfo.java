@@ -38,6 +38,10 @@ public class SessionInfo implements Serializable {
      */
     private String sessionId;
     /**
+     * 服务主机
+     */
+    private String host;
+    /**
      * 用户ID
      */
     private String userId;
@@ -165,6 +169,21 @@ public class SessionInfo implements Serializable {
      */
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    /**
+     * 服务主机
+     */
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * 设置 服务主机
+     * @param host
+     */
+    public void setHost(String host) {
+        this.host = host;
     }
 
     /**
