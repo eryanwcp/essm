@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.session;
 
+import com.eryansky.j2cache.util.IpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import redis.clients.jedis.Jedis;
@@ -216,6 +217,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
         cache2.setBytes(session.getId(), new HashMap<String, byte[]>() {{
             put(SessionObject.KEY_CREATE_AT, String.valueOf(session.getCreated_at()).getBytes());
             put(SessionObject.KEY_ACCESS_AT, String.valueOf(session.getLastAccess_at()).getBytes());
+            put(SessionObject.KEY_SERVICE_HOST, IpUtils.getActivityLocalIp().getBytes());
             session.getAttributes().entrySet().forEach((e)-> {
                 try {
                     put(e.getKey(), Serializer.write(e.getValue()));

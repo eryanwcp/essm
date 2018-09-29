@@ -105,7 +105,6 @@ public class J2CacheSessionFilter implements Filter {
                         session.setNew(false);
                     }
                 }
-
                 if(session == null && create) {
                     String session_id = UUID.randomUUID().toString().replaceAll("-", "");
                     session = new J2CacheSession(servletContext, session_id, g_cache);

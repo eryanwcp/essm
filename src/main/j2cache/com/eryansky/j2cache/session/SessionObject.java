@@ -29,10 +29,15 @@ public class SessionObject implements Serializable {
 
     public static final String KEY_CREATE_AT = "CREATED_AT";
     public static final String KEY_ACCESS_AT = "ACCESS_AT" ;
+    public static final String KEY_SERVICE_HOST = "SERVICE_HOST" ;
 
     private String id;
     private long created_at;
     private long access_at;
+    /**
+     * 服务器地址 集群环境下区分session所在位置
+     */
+    private String host;
     private int maxInactiveInterval;
     private ConcurrentHashMap<String, Object> attributes = new ConcurrentHashMap<>();
 
@@ -46,6 +51,8 @@ public class SessionObject implements Serializable {
                 this.created_at = Long.parseLong(new String(datas.get(i)));
             else if(KEY_ACCESS_AT.equals(key))
                 this.access_at = Long.parseLong(new String(datas.get(i)));
+            else if(KEY_SERVICE_HOST.equals(key))
+                this.host = new String(datas.get(i));
             else {
                 attributes.put(key, Serializer.read(datas.get(i)));
             }
@@ -100,6 +107,14 @@ public class SessionObject implements Serializable {
 
     public void setLastAccess_at(long access_at) {
         this.access_at = access_at;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 
     public int getMaxInactiveInterval() {

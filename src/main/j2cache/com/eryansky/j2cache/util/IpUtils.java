@@ -33,5 +33,27 @@ public class IpUtils {
         return "127.0.0.1".equals(local) ? "":local;
     }
 
+    /**
+     * 从InetAddress转化到int, 传输和存储时, 用int代表InetAddress是最小的开销.
+     *
+     * InetAddress可以是IPV4或IPV6，都会转成IPV4.
+     *
+     * @see com.google.common.net.InetAddresses#coerceToInteger(InetAddress)
+     */
+    public static int toInt(InetAddress address) {
+        return InetAddresses.coerceToInteger(address);
+    }
+
+    /**
+     * InetAddress转换为String.
+     *
+     * InetAddress可以是IPV4或IPV6. 其中IPV4直接调用getHostAddress()
+     *
+     * @see com.google.common.net.InetAddresses#toAddrString(InetAddress)
+     */
+    public static String toIpString(InetAddress address) {
+        return InetAddresses.toAddrString(address);
+    }
+
 
 }
