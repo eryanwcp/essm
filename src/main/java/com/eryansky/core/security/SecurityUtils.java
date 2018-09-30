@@ -371,7 +371,6 @@ public class SecurityUtils {
         sessionInfo.setLongitude(StringUtils.isBlank(longitude_s) ? null : BigDecimal.valueOf(Double.valueOf(longitude_s)));
         sessionInfo.setLatitude(StringUtils.isBlank(latitude_s) ? null : BigDecimal.valueOf(Double.valueOf(latitude_s)));
         sessionInfo.setAccuracy(StringUtils.isBlank(accuracy_s) ? null : BigDecimal.valueOf(Double.valueOf(accuracy_s)));
-        sessionInfo.setBrowserType(UserAgentUtils.getBrowser(request).getName());
         String appVersion_s = WebUtils.getParameter(request, "appVersion");
         sessionInfo.setAppVersion(appVersion_s);
         sessionInfo.setSessionId(sessionId);
