@@ -136,6 +136,19 @@ public class PostService extends CrudService<PostDao, Post> {
     }
 
 
+    /**
+     * 用户岗位IDS
+     * @param userId
+     * @return
+     */
+    public List<String> findPostIdsByUserId(String userId){
+        Validate.notNull(userId, "参数[userId]不能为null");
+        Parameter parameter = new Parameter();
+        parameter.put(DataEntity.FIELD_STATUS,DataEntity.STATUS_NORMAL);
+        parameter.put("userId",userId);
+        return dao.findPostIdsByUserId(parameter);
+    }
+
 
     /**
      * 保存岗位机构关联信息

@@ -31,6 +31,8 @@ public interface PostDao extends CrudDao<Post> {
 
     List<Post> findPostsByUserId(Parameter parameter);
 
+    List<String> findPostIdsByUserId(Parameter parameter);
+
     /**
      * 删除岗位机构关联信息
      * @param parameter id:岗位ID

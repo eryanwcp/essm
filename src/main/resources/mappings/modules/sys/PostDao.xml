@@ -143,6 +143,18 @@
         </where>
     </select>
 
+    <select id="findPostIdsByUserId" resultType="java.lang.String">
+        SELECT
+        a.id
+        FROM t_sys_post a
+        LEFT JOIN t_sys_user_post up ON up.post_id = a.id
+        LEFT JOIN t_sys_user u ON u.id = up.user_id
+        <where>
+            a.status = #{status}
+            AND u.id = #{userId}
+        </where>
+    </select>
+
     <insert id="insert">
         INSERT INTO t_sys_post(
         id,
