@@ -76,10 +76,10 @@ public class SystemMonitorController extends SimpleController {
     @RequiresPermissions("sys:systemMonitor:view")
     @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
     @RequestMapping("cache")
-    public String cache(HttpServletRequest request, HttpServletResponse response){
+    public String cache(HttpServletRequest request,Model uiModel, HttpServletResponse response){
+        Page<Map<String,Object>> page = new Page<>(request,response);
         if(WebUtils.isAjaxRequest(request)){
             Collection<CacheChannel.Region> regions = CacheUtils.regions();
-            Page<Map<String,Object>> page = new Page<>(request,response);
             List<CacheChannel.Region> list = AppUtils.getPagedList(Collections3.union(regions,Collections.emptyList()),page.getPageNo(),page.getPageSize());
             List<Map<String,Object>> dataList = Lists.newArrayList();
             for(CacheChannel.Region r:list){
@@ -90,10 +90,11 @@ public class SystemMonitorController extends SimpleController {
                 map.put("keys",CacheUtils.keys(r.getName()).size());
                 dataList.add(map);
             }
-            page.setResult(dataList);
             page.setTotalCount(regions.size());
+            page.setResult(dataList);
             return renderString(response,page);
         }
+        uiModel.addAttribute("page",page);
         return "modules/sys/systemMonitor-cache";
     }
 
@@ -105,14 +106,15 @@ public class SystemMonitorController extends SimpleController {
     @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
     @RequestMapping("cacheDetail")
     public String cacheDetail(String region,Model uiModel,HttpServletRequest request, HttpServletResponse response){
+        Page<String> page = new Page<>(request,response);
         if(WebUtils.isAjaxRequest(request)){
             Collection<String> keys = CacheUtils.keys(region);
-            Page<String> page = new Page<>(request,response);
-            page.setResult(AppUtils.getPagedList(Collections3.union(keys,Collections.emptyList()),page.getPageNo(),page.getPageSize()));
             page.setTotalCount(keys.size());
+            page.setResult(AppUtils.getPagedList(Collections3.union(keys,Collections.emptyList()),page.getPageNo(),page.getPageSize()));
             return renderString(response,page);
         }
         uiModel.addAttribute("region",region);
+        uiModel.addAttribute("page",page);
         return "modules/sys/systemMonitor-cacheDetail";
     }
 

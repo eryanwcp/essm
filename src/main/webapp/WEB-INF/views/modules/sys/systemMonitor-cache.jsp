@@ -10,11 +10,13 @@
 			loadData();
 		});
 		function loadData(){
+            var queryParam = $.serializeObject($("#searchForm"));
 			$.ajax({
 				url: ctxAdmin + '/sys/systemMonitor/cache',
-				type: 'get',
+				type: 'post',
                 dataType: "json",
 				cache:false,
+				data:queryParam,
                 beforeSend: function (jqXHR, settings) {
                     $("#list").html("<div style='padding: 10px 30px;text-align:center;font-size: 16px;'>数据加载中...</div>");
                 },
@@ -29,6 +31,12 @@
                 }
             });
 		}
+        function page(n,s){
+            $("#pageNo").val(n);
+            $("#pageSize").val(s);
+            loadData(n,s);
+            return false;
+        }
 	</script>
 	<script type="text/template" id="list_template">
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
@@ -68,6 +76,8 @@
 	<li class="active"><a href="${ctxAdmin}/sys/systemMonitor/cache">缓存管理</a></li>
 </ul>
 <form:form id="searchForm" method="post" class="breadcrumb form-search">
+	<input id="pageNo" name="pageNo" type="hidden" value="${page.pageNo}"/>
+	<input id="pageSize" name="pageSize" type="hidden" value="${page.pageSize}"/>
 	<e:hasPermission name="sys:systemMonitor:edit">
 		<a class="btn btn-link" href="${ctxAdmin}/sys/systemMonitor/clearCache">清空缓存</a>&nbsp;&nbsp;
 	</e:hasPermission>

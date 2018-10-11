@@ -11,11 +11,13 @@
 			loadData();
 		});
 		function loadData(){
+            var queryParam = $.serializeObject($("#searchForm"));
 			$.ajax({
 				url: ctxAdmin + '/sys/systemMonitor/cacheDetail?region='+region,
 				type: 'get',
                 dataType: "json",
 				cache:false,
+                data:queryParam,
                 beforeSend: function (jqXHR, settings) {
                     $("#list").html("<div style='padding: 10px 30px;text-align:center;font-size: 16px;'>数据加载中...</div>");
                 },
@@ -30,6 +32,12 @@
                 }
             });
 		}
+        function page(n,s){
+            $("#pageNo").val(n);
+            $("#pageSize").val(s);
+            loadData();
+            return false;
+        }
 	</script>
 	<script type="text/template" id="list_template">
 		<table id="contentTable" class="table table-striped table-bordered table-condensed">
