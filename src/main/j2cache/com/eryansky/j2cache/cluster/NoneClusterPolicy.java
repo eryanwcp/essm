@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.cluster;
 
+import com.eryansky.j2cache.CacheProviderHolder;
 import com.eryansky.j2cache.Command;
 
 import java.util.Properties;
@@ -26,18 +27,23 @@ import java.util.Properties;
 public class NoneClusterPolicy implements ClusterPolicy {
 
     @Override
-    public void connect(Properties props) {
-
+    public void connect(Properties props, CacheProviderHolder holder) {
     }
 
     @Override
     public void disconnect() {
-
     }
 
     @Override
     public void publish(Command cmd) {
+    }
 
+    @Override
+    public void evict(String region, String... keys) {
+    }
+
+    @Override
+    public void clear(String region) {
     }
 
 }
