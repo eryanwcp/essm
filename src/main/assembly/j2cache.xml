@@ -1,5 +1,5 @@
 <assembly>
-    <id>j2cache-2.7</id>
+    <id>j2cache-2.8</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>jar</format>
