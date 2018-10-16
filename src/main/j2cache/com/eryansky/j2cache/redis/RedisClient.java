@@ -50,7 +50,6 @@ public class RedisClient implements Closeable, AutoCloseable {
     private JedisPool single;
     private JedisSentinelPool sentinel;
     private ShardedJedisPool sharded;
-    private String redisPassword;
 
     /**
      * RedisClient 构造器
@@ -115,7 +114,7 @@ public class RedisClient implements Closeable, AutoCloseable {
      * @param poolConfig    连接池配置
      */
     private RedisClient(String mode, String hosts, String password, String cluster_name, int database, JedisPoolConfig poolConfig) {
-        this.redisPassword = (password != null && password.trim().length() > 0)? password.trim(): null;
+        password = (password != null && password.trim().length() > 0)? password.trim(): null;
         this.clients = new ThreadLocal<BinaryJedisCommands>();
         switch(mode){
             case "sentinel":
@@ -179,7 +178,7 @@ public class RedisClient implements Closeable, AutoCloseable {
     }
 
     /**
-     * 释放 Redis 连接
+     * 释放当前 Redis 连接
      */
     public void release() {
         BinaryJedisCommands client = clients.get();
@@ -198,6 +197,10 @@ public class RedisClient implements Closeable, AutoCloseable {
         }
     }
 
+    /**
+     * 释放连接池
+     * @throws IOException
+     */
     @Override
     public void close() throws IOException {
         if(single != null)
