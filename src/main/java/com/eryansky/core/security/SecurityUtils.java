@@ -649,7 +649,7 @@ public class SecurityUtils {
      * @return
      */
     public static Collection<String> findSessionInfoKeys() {
-        return applicationSessionContext.getSessionInfoKeys();
+        return applicationSessionContext.findSessionInfoKeys();
     }
 
 

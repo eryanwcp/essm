@@ -57,8 +57,8 @@ public class ApplicationSessionContext {
 		return sessionInfoList;
 	}
 
-	public Collection<String> getSessionInfoKeys() {
-		return  CacheUtils.keys(CACHE_SESSION);
+	public Collection<String> findSessionInfoKeys() {
+		return CacheUtils.keys(CACHE_SESSION);
 	}
 
 
