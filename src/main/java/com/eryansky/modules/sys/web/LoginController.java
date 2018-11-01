@@ -23,7 +23,6 @@ import com.eryansky.common.web.utils.WebUtils;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.sys.service.ResourceService;
 import com.eryansky.modules.sys.service.UserService;
-import com.eryansky.utils.AppUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.eryansky.core.security.SecurityConstants;
@@ -115,7 +114,7 @@ public class LoginController extends SimpleController {
      */
     private void checkLoginLimit(){
         int maxSize = AppConstants.getSessionUserMaxSize();
-        int sessionUser = SecurityUtils.getSessionUser().getRows().size();
+        int sessionUser = SecurityUtils.getSessionInfoSize();
         if(maxSize < 0){//系统维护
             throw new SystemException("系统正在维护，请稍后再试！");
         }else if(maxSize != 0){//0 为不限制
@@ -173,7 +172,7 @@ public class LoginController extends SimpleController {
             result = new Result(Result.ERROR, msg, isValidateCodeLogin);
         } else {
             if(AppConstants.getIsSecurityOn()){
-                List<SessionInfo> userSessionInfos = SecurityUtils.getSessionUser(loginName);
+                List<SessionInfo> userSessionInfos = SecurityUtils.findSessionUserByLoginName(loginName);
                 if(AppConstants.getUserSessionSize() > 0 &&  userSessionInfos.size() >= AppConstants.getUserSessionSize() ){
                     result = new Result(Result.ERROR, "已达到用户最大会话登录限制["+AppConstants.getUserSessionSize()+"，请注销其它登录信息后再试！]", AppConstants.getUserSessionSize());
                     return result;

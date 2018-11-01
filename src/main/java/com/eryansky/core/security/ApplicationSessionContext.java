@@ -56,4 +56,41 @@ public class ApplicationSessionContext {
 		}
 		return sessionInfoList;
 	}
+
+	public Collection<String> getSessionInfoKeys() {
+		return  CacheUtils.keys(CACHE_SESSION);
+	}
+
+
+	public synchronized void addSession(String cacheName, String key, Object o) {
+		if (o != null) {
+			CacheUtils.put(cacheName, key, o);
+		}
+	}
+
+	public synchronized void removeSession(String cacheName, String key) {
+		if (key != null) {
+			CacheUtils.remove(cacheName, key);
+		}
+	}
+
+	public <T> T getSession(String cacheName, String key) {
+		if (key == null) return null;
+		return (T) CacheUtils.get(cacheName, key);
+	}
+
+	public List<Object> getSessionData(String cacheName) {
+		List<Object> sessionList = Lists.newArrayList();
+		Collection<String> keys = CacheUtils.keys(cacheName);
+		if (Collections3.isNotEmpty(keys)) {
+			for(String key:keys){
+				Object sessionInfo = CacheUtils.get(cacheName,key);
+				if(sessionInfo != null){
+					sessionList.add(sessionInfo);
+				}
+			}
+		}
+		return sessionList;
+	}
+
 }

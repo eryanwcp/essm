@@ -6,7 +6,6 @@
 package com.eryansky.core.security;
 
 import com.eryansky.common.exception.SystemException;
-import com.eryansky.common.model.Datagrid;
 import com.eryansky.common.orm.Page;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.net.IpUtils;
@@ -34,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -575,7 +575,7 @@ public class SecurityUtils {
      * 全部下线
      */
     public static void offLineAll(){
-        List<SessionInfo> sessionInfos = SecurityUtils.getSessionUser().getRows();
+        List<SessionInfo> sessionInfos = SecurityUtils.findSessionUserList();
         for(SessionInfo sessionInfo:sessionInfos){
             removeUserFromSession(sessionInfo.getId(), SecurityType.offline);
         }
@@ -633,22 +633,23 @@ public class SecurityUtils {
         return page.setResult(AppUtils.getPagedList(list,page.getPageNo(),page.getPageSize()));
     }
 
+
+
     /**
-     * 查看当前登录用户信息
+     * Session size
      * @return
      */
-    public static Datagrid<SessionInfo> getSessionUser() {
-        List<SessionInfo> sessionInfoData= applicationSessionContext.getSessionInfoData();
-        //排序
-        Collections.sort(sessionInfoData, new Comparator<SessionInfo>() {
-            @Override
-            public int compare(SessionInfo o1, SessionInfo o2) {
-                return o2.getLoginTime().compareTo(o1.getLoginTime());
-            }
-        });
+    public static int getSessionInfoSize() {
+        Collection<String> keys = findSessionInfoKeys();
+        return keys != null ? keys.size():0;
+    }
 
-        Datagrid<SessionInfo> dg = new Datagrid<SessionInfo>(sessionInfoData.size(), sessionInfoData);
-        return dg;
+    /**
+     * Session keys
+     * @return
+     */
+    public static Collection<String> findSessionInfoKeys() {
+        return applicationSessionContext.getSessionInfoKeys();
     }
 
 
@@ -657,10 +658,10 @@ public class SecurityUtils {
      * @param loginName 登录帐号
      * @return
      */
-    public static List<SessionInfo> getSessionUser(String loginName) {
-        Datagrid<SessionInfo> datagrid = getSessionUser();
+    public static List<SessionInfo> findSessionUserByLoginName(String loginName) {
+        List<SessionInfo> list = findSessionUserList();
         List<SessionInfo> sessionInfos = Lists.newArrayList();
-        for(SessionInfo sessionInfo: datagrid.getRows()){
+        for(SessionInfo sessionInfo: list){
             if(sessionInfo.getLoginName().equals(loginName)){
                 sessionInfos.add(sessionInfo);
             }
