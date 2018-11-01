@@ -556,7 +556,7 @@ public class SecurityUtils {
      * @param sessionId sessionID
      */
     public static void offLine(String sessionId){
-        removeUserFromSession(sessionId, SecurityType.offline);
+        removeSessionInfoFromSession(sessionId, SecurityType.offline);
     }
 
     /**
@@ -566,7 +566,7 @@ public class SecurityUtils {
     public static void offLine(List<String> sessionIds){
         if(Collections3.isNotEmpty(sessionIds)){
             for(String sessionId:sessionIds){
-                removeUserFromSession(sessionId, SecurityType.offline);
+                removeSessionInfoFromSession(sessionId, SecurityType.offline);
             }
         }
     }
@@ -575,9 +575,9 @@ public class SecurityUtils {
      * 全部下线
      */
     public static void offLineAll(){
-        List<SessionInfo> sessionInfos = SecurityUtils.findSessionUserList();
+        List<SessionInfo> sessionInfos = SecurityUtils.findSessionInfoList();
         for(SessionInfo sessionInfo:sessionInfos){
-            removeUserFromSession(sessionInfo.getId(), SecurityType.offline);
+            removeSessionInfoFromSession(sessionInfo.getId(), SecurityType.offline);
         }
     }
 
@@ -586,7 +586,7 @@ public class SecurityUtils {
      *
      * @param sessionId session ID
      */
-    public static void removeUserFromSession(String sessionId, SecurityType securityType) {
+    public static void removeSessionInfoFromSession(String sessionId, SecurityType securityType) {
         SessionInfo _sessionInfo = applicationSessionContext.getSession(sessionId);
         if(_sessionInfo != null){
             userService.logout(_sessionInfo.getUserId(),securityType);
@@ -606,7 +606,7 @@ public class SecurityUtils {
      * 查看当前登录用户信息
      * @return
      */
-    public static List<SessionInfo> findSessionUserList() {
+    public static List<SessionInfo> findSessionInfoList() {
         List<SessionInfo> sessionInfoData= applicationSessionContext.findSessionInfoData();
         //排序
         Collections.sort(sessionInfoData, new Comparator<SessionInfo>() {
@@ -621,19 +621,28 @@ public class SecurityUtils {
 
 
     /**
-     * 查看当前登录用户信息
+     * 查看当前登录用户信息 （分页查询）
+     * @param page
      * @return
      */
-    public static Page<SessionInfo> findSessionUserPage(Page<SessionInfo> page) {
-        List<SessionInfo> list = findSessionUserList();
+    public static Page<SessionInfo> findSessionInfoPage(Page<SessionInfo> page) {
+        return findSessionInfoPage(page,null);
+    }
+
+    /**
+     * 查看当前登录用户信息 （分页查询）
+     * @param page
+     * @param query 查询条件
+     * @return
+     */
+    public static Page<SessionInfo> findSessionInfoPage(Page<SessionInfo> page, String query) {
+        List<SessionInfo> list = StringUtils.isNotBlank(query) ? findSessionInfoByQuery(query): findSessionInfoList();
         page.setTotalCount(list.size());
         if(Page.PAGESIZE_ALL == page.getPageSize()){
-           return page.setResult(findSessionUserList());
+            return page.setResult(list);
         }
         return page.setResult(AppUtils.getPagedList(list,page.getPageNo(),page.getPageSize()));
     }
-
-
 
     /**
      * Session size
@@ -658,11 +667,31 @@ public class SecurityUtils {
      * @param loginName 登录帐号
      * @return
      */
-    public static List<SessionInfo> findSessionUserByLoginName(String loginName) {
-        List<SessionInfo> list = findSessionUserList();
+    public static List<SessionInfo> findSessionInfoByLoginName(String loginName) {
+        List<SessionInfo> list = findSessionInfoList();
         List<SessionInfo> sessionInfos = Lists.newArrayList();
         for(SessionInfo sessionInfo: list){
             if(sessionInfo.getLoginName().equals(loginName)){
+                sessionInfos.add(sessionInfo);
+            }
+        }
+        return sessionInfos;
+    }
+
+    /**
+     * 查看session信息
+     *
+     * @param query 查询条件
+     * @return
+     */
+    public static List<SessionInfo> findSessionInfoByQuery(String query) {
+        if (StringUtils.isBlank(query)){
+            return Collections.emptyList();
+        }
+        List<SessionInfo> list = findSessionInfoList();
+        List<SessionInfo> sessionInfos = Lists.newArrayList();
+        for (SessionInfo sessionInfo : list) {
+            if (StringUtils.containsAny(sessionInfo.getLoginName(), query) || StringUtils.containsAny(sessionInfo.getName(), query)) {
                 sessionInfos.add(sessionInfo);
             }
         }

@@ -18,7 +18,6 @@
         a.ROLE_TYPE AS "roleType",
         a.DATA_SCOPE AS "dataScope",
         a.REMARK AS "remark"
-        
     </sql>
 
     <select id="get" resultType="Role">
@@ -41,6 +40,13 @@
         FROM t_sys_role a
         <where>
             a.status = #{status}
+            <if test="query != null and query !=''">
+                AND (a.name  LIKE
+                <if test="dbName == 'db2'">'%'||#{query}||'%'</if>
+                <if test="dbName == 'mysql'">CONCAT('%', #{query}, '%')</if>
+                OR a.code  = #{query}
+                )
+            </if>
             <if test="organId != null and organId !=''">
                 AND a.organ_id = #{organId}
             </if>

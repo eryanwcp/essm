@@ -63,6 +63,10 @@ public class Role extends DataEntity<Role> {
      */
     private Set<String> organIds;
 
+    /**
+     * 关键字
+     */
+    private String query;
 
     public Role() {
         this.isSystem = YesOrNo.YES.getValue();
@@ -167,5 +171,13 @@ public class Role extends DataEntity<Role> {
 
     public void setOrganIds(Set<String> organIds) {
         this.organIds = organIds;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 }

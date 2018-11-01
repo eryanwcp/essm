@@ -77,18 +77,17 @@ public class RoleController extends SimpleController {
 
     @RequestMapping(value = {"datagrid"})
     @ResponseBody
-    public String datagrid() {
+    public String datagrid(Role model) {
         HttpServletRequest request = SpringMVCHolder.getRequest();
         // 自动构造属性过滤器
         Page<Role> p = new Page<Role>(request);
 
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
-        Role entity = new Role();
         String organId = sessionInfo.getLoginCompanyId();
         if (!SecurityUtils.isCurrentUserAdmin()) {
-            entity.setOrganId(organId);
+            model.setOrganId(organId);
         }
-        p = roleService.findPage(p,entity);
+        p = roleService.findPage(p,model);
         Datagrid<Role> datagrid = new Datagrid<Role>(p.getTotalCount(), p.getResult());
         String json = JsonMapper.getInstance().toJson(datagrid,Role.class,
                 new String[]{"id","name","code","isSystemView","organName","dataScopeView","resourceNames","dataScope","remark"});

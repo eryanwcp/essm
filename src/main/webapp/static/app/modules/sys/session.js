@@ -1,5 +1,8 @@
 var $session_datagrid;
+var $session_search_form;
 $(function() {
+    $session_search_form = $('#session_search_form').form();
+
     $session_datagrid = $('#session_datagrid').datagrid({
         url : ctxAdmin + '/sys/session/onLineSessions',
         fit : true,
@@ -29,19 +32,23 @@ $(function() {
                 return "<a target='_blank' href='"+ctxAdmin+"/sys/session/detail?id="+rowData['id']+"'>"+value+"</a>";
             }
         },{
-            title : '员工类型',
+            title : 'HOST',
+            field : 'host',
+            width : 120,
+            hidden:true
+        },{
+            title : '用户类型',
             field : 'userType',
             width : 120,
             hidden:true
         },{
             title : '姓名',
             field : 'name',
-            width : 120
+            width : 200
         },{
             title : '登录名',
             field : 'loginName',
-            width : 120,
-            hidden:true
+            width : 120
         },{
             title : '部门',
             field : 'loginOrganName',
@@ -153,4 +160,9 @@ function offline(rowIndex){
     } else {
         eu.showMsg("您未选择任何操作对象，请选择一行数据！");
     }
+}
+
+//搜索
+function search() {
+    $session_datagrid.datagrid('load', $.serializeObject($session_search_form));
 }

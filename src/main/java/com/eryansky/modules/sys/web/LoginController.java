@@ -172,7 +172,7 @@ public class LoginController extends SimpleController {
             result = new Result(Result.ERROR, msg, isValidateCodeLogin);
         } else {
             if(AppConstants.getIsSecurityOn()){
-                List<SessionInfo> userSessionInfos = SecurityUtils.findSessionUserByLoginName(loginName);
+                List<SessionInfo> userSessionInfos = SecurityUtils.findSessionInfoByLoginName(loginName);
                 if(AppConstants.getUserSessionSize() > 0 &&  userSessionInfos.size() >= AppConstants.getUserSessionSize() ){
                     result = new Result(Result.ERROR, "已达到用户最大会话登录限制["+AppConstants.getUserSessionSize()+"，请注销其它登录信息后再试！]", AppConstants.getUserSessionSize());
                     return result;
@@ -215,7 +215,7 @@ public class LoginController extends SimpleController {
             // 退出时清空session中的内容
             String sessionId = SecurityUtils.getNoSuffixSessionId(request.getSession());
             //由监听器更新在线用户列表
-            SecurityUtils.removeUserFromSession(sessionId, SecurityType.logout);
+            SecurityUtils.removeSessionInfoFromSession(sessionId, SecurityType.logout);
             logger.info("用户{}退出系统.", sessionInfo.getLoginName());
         }
         return Result.successResult();
@@ -234,7 +234,7 @@ public class LoginController extends SimpleController {
             // 退出时清空session中的内容
             String sessionId = SecurityUtils.getNoSuffixSessionId(request.getSession());
             //由监听器更新在线用户列表
-            SecurityUtils.removeUserFromSession(sessionId, SecurityType.logout);
+            SecurityUtils.removeSessionInfoFromSession(sessionId, SecurityType.logout);
             logger.info("用户{}退出系统.", sessionInfo.getLoginName());
         }
         return "redirect:/";
@@ -276,7 +276,7 @@ public class LoginController extends SimpleController {
     @ResponseBody
     public Datagrid<SessionInfo> onlineDatagrid(HttpServletRequest request) throws Exception {
         Page<SessionInfo> page = new Page<SessionInfo>(request);
-        page = SecurityUtils.findSessionUserPage(page);
+        page = SecurityUtils.findSessionInfoPage(page);
         Datagrid<SessionInfo> dg = new Datagrid<SessionInfo>(page.getTotalCount(),page.getResult());
         return dg;
     }
