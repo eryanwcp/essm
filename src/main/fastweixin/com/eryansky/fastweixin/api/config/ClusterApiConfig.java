@@ -10,10 +10,6 @@ import com.eryansky.fastweixin.util.JSONUtil;
 import com.eryansky.fastweixin.util.NetWorkCenter;
 import com.eryansky.fastweixin.util.StrUtil;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * API配置类，项目中请保证其为单例
@@ -24,23 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ClusterApiConfig extends ApiConfig {
 
-    private static final Logger LOG             = LoggerFactory.getLogger(ApiConfig.class);
-    /**
-     * 这里定义token正在刷新的标识，想要达到的目标是当有一个请求来获取token，发现token已经过期（我这里的过期逻辑是比官方提供的早100秒），然后开始刷新token
-     * 在刷新的过程里，如果又继续来获取token，会先把旧的token返回，直到刷新结束，之后再来的请求，将获取到新的token
-     * 利用AtomicBoolean实现原理：
-     * 当请求来的时候，检查token是否已经过期（7100秒）以及标识是否已经是true（表示已经在刷新了，还没刷新完），过期则将此标识设为true，并开始刷新token
-     * 在刷新结束前再次进来的请求，由于标识一直是true，而会直接拿到旧的token，由于我们的过期逻辑比官方的早100秒，所以旧的还可以继续用
-     * 无论刷新token正在结束还是出现异常，都在最后将标识改回false，表示刷新工作已经结束
-     */
-    private final AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
-    private final        AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
 
-    private final String  appid;
-    private final String  secret;
-    private       boolean enableJsApi;
     private IAccessTokenCacheService accessTokenCacheService;
-    private final Integer CACHE_TIME = 7100 * 1000;
 
     public ClusterApiConfig(String appid, String secret, IAccessTokenCacheService accessTokenCacheService) {
         this(appid, secret, false,accessTokenCacheService);
@@ -48,25 +29,18 @@ public class ClusterApiConfig extends ApiConfig {
 
     public ClusterApiConfig(String appid, String secret, boolean enableJsApi, IAccessTokenCacheService accessTokenCacheService) {
         super(appid, secret, enableJsApi);
+        if(accessTokenCacheService == null){
+            throw new WeixinException("参数[accessTokenCacheService]不能为null");
+        }
         this.accessTokenCacheService = accessTokenCacheService;
+        //初始化
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
         accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
-        this.appid = appid;
-        this.secret = secret;
-        this.enableJsApi = enableJsApi;
         long now = System.currentTimeMillis();
         initToken(now,accessTokenCache);
         if (enableJsApi) initJSToken(now,accessTokenCache);
     }
 
-
-    public String getAppid() {
-        return appid;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
 
     public String getAccessToken() {
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
@@ -81,9 +55,7 @@ public class ClusterApiConfig extends ApiConfig {
              */
             if (time > CACHE_TIME && this.tokenRefreshing.compareAndSet(false, true)) {
                 LOG.debug("准备刷新token.............");
-                if(accessTokenCacheService.refreshLock(accessTokenCache)){
-                    initToken(now,accessTokenCache);
-                }
+                initToken(now,accessTokenCache);
             }
         } catch (Exception e) {
             LOG.warn("刷新Token出错.", e);
@@ -102,9 +74,7 @@ public class ClusterApiConfig extends ApiConfig {
             try {
                 //官方给出的超时时间是7200秒，这里用7100秒来做，防止出现已经过期的情况
                 if (time > CACHE_TIME && this.jsRefreshing.compareAndSet(false, true)) {
-                    if(accessTokenCacheService.refreshJsLock(accessTokenCache)){
-                        initJSToken(now,accessTokenCache);
-                    }
+                    initJSToken(now,accessTokenCache);
                 }
             } catch (Exception e) {
                 LOG.warn("刷新jsTicket出错.", e);
@@ -117,42 +87,17 @@ public class ClusterApiConfig extends ApiConfig {
         return accessTokenCache.getJsApiTicket();
     }
 
-    public boolean isEnableJsApi() {
-        return enableJsApi;
-    }
-
     public ClusterApiConfig setEnableJsApi(boolean enableJsApi) {
         this.enableJsApi = enableJsApi;
+        if (!enableJsApi){
+            AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+            accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
+            accessTokenCache.setJsApiTicket(null);
+            accessTokenCacheService.putAccessTokenCache(accessTokenCache);
+        }
        return this;
     }
 
-    /**
-     * 添加配置变化监听器
-     *
-     * @param handle 监听器
-     */
-    public ClusterApiConfig addHandle(final ApiConfigChangeHandle handle) {
-        super.addObserver(handle);
-        return this;
-    }
-
-    /**
-     * 移除配置变化监听器
-     *
-     * @param handle 监听器
-     */
-    public ClusterApiConfig removeHandle(final ApiConfigChangeHandle handle) {
-        super.deleteObserver(handle);
-        return this;
-    }
-
-    /**
-     * 移除所有配置变化监听器
-     */
-    public ClusterApiConfig removeAllHandle() {
-        super.deleteObservers();
-        return this;
-    }
 
     /**
      * 初始化微信配置，即第一次获取access_token
@@ -179,7 +124,6 @@ public class ClusterApiConfig extends ApiConfig {
                     }
                     String accessToken = response.getAccessToken();
                     accessTokenCache.setAccessToken(accessToken);
-                    accessTokenCacheService.clearLock();
                     accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     //设置通知点
                     setChanged();
@@ -216,7 +160,6 @@ public class ClusterApiConfig extends ApiConfig {
                     }
                     String jsApiTicket = response.getTicket();
                     accessTokenCache.setJsApiTicket(jsApiTicket);
-                    accessTokenCacheService.clearJsLock();
                     accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     //设置通知点
                     setChanged();

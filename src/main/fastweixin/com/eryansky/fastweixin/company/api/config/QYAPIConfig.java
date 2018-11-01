@@ -24,17 +24,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class QYAPIConfig extends Observable implements Serializable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QYAPIConfig.class);
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    private final Integer       CACHE_TIME      = 7100000;
-    private final AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
-    private final AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
+    protected final Integer       CACHE_TIME      = 7100 * 1000;
+    protected final AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
+    protected final AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
 
-    private final String  corpid;
-    private final String  corpsecret;
+    protected final String  corpid;
+    protected final String  corpsecret;
+    protected       boolean enableJsApi;
     private       String  accessToken;
     private       String  jsApiTicket;
-    private       boolean enableJsApi;
     private       long    jsTokenStartTime;
     private       long    weixinTokenStartTime;
 

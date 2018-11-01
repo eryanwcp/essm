@@ -24,7 +24,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ApiConfig extends Observable implements Serializable {
 
-    private static final Logger        LOG             = LoggerFactory.getLogger(ApiConfig.class);
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+
+    protected final Integer CACHE_TIME = 7100 * 1000;
     /**
      * 这里定义token正在刷新的标识，想要达到的目标是当有一个请求来获取token，发现token已经过期（我这里的过期逻辑是比官方提供的早100秒），然后开始刷新token
      * 在刷新的过程里，如果又继续来获取token，会先把旧的token返回，直到刷新结束，之后再来的请求，将获取到新的token
@@ -33,14 +35,14 @@ public class ApiConfig extends Observable implements Serializable {
      * 在刷新结束前再次进来的请求，由于标识一直是true，而会直接拿到旧的token，由于我们的过期逻辑比官方的早100秒，所以旧的还可以继续用
      * 无论刷新token正在结束还是出现异常，都在最后将标识改回false，表示刷新工作已经结束
      */
-    private final        AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
-    private final        AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
+    protected final        AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
+    protected final        AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
 
-    private final String  appid;
-    private final String  secret;
+    protected final String  appid;
+    protected final String  secret;
+    protected       boolean enableJsApi;
     private       String  accessToken;
     private       String  jsApiTicket;
-    private       boolean enableJsApi;
     private       long    jsTokenStartTime;
     private       long    weixinTokenStartTime;
 
@@ -65,9 +67,6 @@ public class ApiConfig extends Observable implements Serializable {
         this.appid = appid;
         this.secret = secret;
         this.enableJsApi = enableJsApi;
-        long now = System.currentTimeMillis();
-        initToken(now);
-        if (enableJsApi) initJSToken(now);
     }
 
     public String getAppid() {
@@ -88,7 +87,7 @@ public class ApiConfig extends Observable implements Serializable {
              * 2.刷新标识判断，如果已经在刷新了，则也直接跳过，避免多次重复刷新，如果没有在刷新，则开始刷新
              */
 
-            if (time > 7100000 && this.tokenRefreshing.compareAndSet(false, true)) {
+            if (time > CACHE_TIME && this.tokenRefreshing.compareAndSet(false, true)) {
                 LOG.debug("准备刷新token.............");
                 initToken(now);
             }
@@ -103,9 +102,10 @@ public class ApiConfig extends Observable implements Serializable {
     public String getJsApiTicket() {
         if (enableJsApi) {
             long now = System.currentTimeMillis();
+            long time = now - this.weixinTokenStartTime;
             try {
                 //官方给出的超时时间是7200秒，这里用7100秒来做，防止出现已经过期的情况
-                if (now - this.jsTokenStartTime > 7100000 && this.jsRefreshing.compareAndSet(false, true)) {
+                if (time > CACHE_TIME && this.jsRefreshing.compareAndSet(false, true)) {
                     getAccessToken();
                     initJSToken(now);
                 }

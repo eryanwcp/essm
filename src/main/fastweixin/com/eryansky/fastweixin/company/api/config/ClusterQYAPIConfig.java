@@ -7,15 +7,10 @@ import com.eryansky.fastweixin.api.config.ConfigChangeNotice;
 import com.eryansky.fastweixin.api.response.GetJsApiTicketResponse;
 import com.eryansky.fastweixin.api.response.GetTokenResponse;
 import com.eryansky.fastweixin.exception.WeixinException;
-import com.eryansky.fastweixin.handle.ApiConfigChangeHandle;
 import com.eryansky.fastweixin.util.JSONUtil;
 import com.eryansky.fastweixin.util.NetWorkCenter;
 import com.eryansky.fastweixin.util.StrUtil;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 企业微信号配置 支持集群
@@ -23,14 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2018-10-31
  */
 public final class ClusterQYAPIConfig extends QYAPIConfig {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ClusterQYAPIConfig.class);
-
-    private final Integer       CACHE_TIME      = 7100000;
-    private final AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
-    private final AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
-
-    private       boolean enableJsApi;
 
     private IAccessTokenCacheService accessTokenCacheService;
 
@@ -55,7 +42,11 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
      */
     public ClusterQYAPIConfig(String corpid, String corpsecret, boolean enableJsApi,IAccessTokenCacheService accessTokenCacheService) {
         super(corpid,corpsecret,enableJsApi);
+        if(accessTokenCacheService == null){
+            throw new WeixinException("参数[accessTokenCacheService]不能为null");
+        }
         this.accessTokenCacheService = accessTokenCacheService;
+        //初始化
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
         accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
         long now = System.currentTimeMillis();
@@ -101,27 +92,15 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
         return accessTokenCache.getJsApiTicket();
     }
 
-    public boolean isEnableJsApi() {
-        return enableJsApi;
-    }
 
     public ClusterQYAPIConfig setEnableJsApi(boolean enableJsApi) {
         this.enableJsApi = enableJsApi;
-        return this;
-    }
-
-    public ClusterQYAPIConfig addHandle(final ApiConfigChangeHandle handle) {
-        super.addObserver(handle);
-        return this;
-    }
-
-    public ClusterQYAPIConfig removeHandle(final ApiConfigChangeHandle handle) {
-        super.deleteObserver(handle);
-        return this;
-    }
-
-    public ClusterQYAPIConfig removeAllHandle() {
-        super.deleteObservers();
+        if (!enableJsApi){
+            AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+            accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
+            accessTokenCache.setJsApiTicket(null);
+            accessTokenCacheService.putAccessTokenCache(accessTokenCache);
+        }
         return this;
     }
 
@@ -130,7 +109,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
         // 记住原本的事件，用于出错回滚
         final long oldTime = accessTokenCache.getWeixinTokenStartTime();
         accessTokenCache.setWeixinTokenStartTime(refreshTime);
-        String url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + getCorpid() + "&corpsecret=" + getCorpsecret();
+        String url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + corpid + "&corpsecret=" + corpsecret;
         NetWorkCenter.get(url, null, new NetWorkCenter.ResponseCallback() {
             @Override
             public void onResponse(int resultCode, String resultJson) {
@@ -145,7 +124,6 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
                     }
                     String accessToken = response.getAccessToken();
                     accessTokenCache.setAccessToken(accessToken);
-                    accessTokenCacheService.clearLock();
                     accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     // 设置通知点
                     setChanged();
@@ -178,7 +156,6 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
                     }
                     String jsApiTicket = response.getTicket();
                     accessTokenCache.setJsApiTicket(jsApiTicket);
-                    accessTokenCacheService.clearJsLock();
                     accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     //设置通知点
                     setChanged();

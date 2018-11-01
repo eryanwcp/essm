@@ -14,8 +14,6 @@ public class AccessTokenCache implements Serializable {
 
     public static String KEY_ACCESS_TOKEN_CACHE = "accessTokenKey";
 
-    public static String KEY_JS_TOKEN_STARTTIME = "jsTokenStartTimeKey";
-    public static String KEY_WEIXIN_TOKEN_STARTTIME = "weixinTokenStartTimeKey";
 
     private String accessToken;
     private String jsApiTicket;

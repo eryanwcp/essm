@@ -7,14 +7,6 @@ package com.eryansky.fastweixin.cluster;
  */
 public interface IAccessTokenCacheService {
 
-    boolean refreshLock(AccessTokenCache accessTokenCache);
-
-    void clearLock();
-
-    boolean refreshJsLock(AccessTokenCache accessTokenCache);
-
-    void clearJsLock();
-
     AccessTokenCache getAccessTokenCache();
 
     void putAccessTokenCache(AccessTokenCache accessTokenCache);
