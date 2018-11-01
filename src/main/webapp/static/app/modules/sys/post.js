@@ -49,7 +49,6 @@ $(function() {
         fitColumns:false,//自适应列宽
         striped:true,//显示条纹
         pageSize:20,//每页记录数
-        remoteSort:false,//是否通过远程服务器对数据排序
         idField : 'id',
         frozen:true,
         collapsible: true,

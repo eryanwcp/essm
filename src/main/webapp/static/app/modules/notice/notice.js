@@ -69,9 +69,6 @@ function initReadDatagrid(){
         pageSize : 20,//每页记录数
         checkOnSelect:false,
         selectOnCheck:false,
-        remoteSort: false,//是否通过远程服务器对数据排序
-//			sortName : 'id',//默认排序字段
-//			sortOrder : 'asc',//默认排序方式 'desc' 'asc'
         idField : 'id',
         frozenColumns: [[{field: 'ck',checkbox: true} ,
             {field: 'title',title: '标题',width: 360,
@@ -133,7 +130,6 @@ function initDatagrid(){
         checkbox: true,
         nowrap: true,
         border: false,
-        remoteSort: false,//是否通过远程服务器对数据排序
         idField: 'id',
         frozenColumns: [ [
             {field: 'ck',checkbox: true},

@@ -17,9 +17,6 @@ function initRoleUserDatagrid(){
         fitColumns: false,
         striped: true,
         pageSize: 20,
-        remoteSort: false,
-        sortName: 'sort',
-        sortOrder: 'asc',
         idField: 'id',
         frozenColumns: [
             [
