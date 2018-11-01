@@ -44,8 +44,12 @@ public class ApplicationSessionContext {
 	}
 
 	public List<SessionInfo> findSessionInfoData() {
-		List<SessionInfo> sessionInfoList = Lists.newArrayList();
 		Collection<String> keys = CacheUtils.keys(CACHE_SESSION);
+		return findSessionInfoData(keys);
+	}
+
+	public List<SessionInfo> findSessionInfoData(Collection<String> keys) {
+		List<SessionInfo> sessionInfoList = Lists.newArrayList();
 		if (Collections3.isNotEmpty(keys)) {
 			for(String key:keys){
 				SessionInfo sessionInfo = (SessionInfo) CacheUtils.get(CACHE_SESSION,key);
