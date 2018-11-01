@@ -202,7 +202,6 @@ public class ClusterApiConfig extends ApiConfig {
         LOG.debug("初始化 jsapi_ticket........");
         //记住原本的时间，用于出错回滚
         final long oldTime = accessTokenCache.getJsTokenStartTime();
-        //this.jsTokenStartTime = refreshTime;
         accessTokenCache.setJsTokenStartTime(refreshTime);
         String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + getAccessToken() + "&type=jsapi";
         NetWorkCenter.get(url, null, new NetWorkCenter.ResponseCallback() {
