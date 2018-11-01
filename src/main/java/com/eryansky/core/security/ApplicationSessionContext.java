@@ -43,7 +43,7 @@ public class ApplicationSessionContext {
 		return (SessionInfo) CacheUtils.get(CACHE_SESSION,sessionId);
 	}
 
-	public List<SessionInfo> getSessionInfoData() {
+	public List<SessionInfo> findSessionInfoData() {
 		List<SessionInfo> sessionInfoList = Lists.newArrayList();
 		Collection<String> keys = CacheUtils.keys(CACHE_SESSION);
 		if (Collections3.isNotEmpty(keys)) {
@@ -79,7 +79,7 @@ public class ApplicationSessionContext {
 		return (T) CacheUtils.get(cacheName, key);
 	}
 
-	public List<Object> getSessionData(String cacheName) {
+	public List<Object> findSessionData(String cacheName) {
 		List<Object> sessionList = Lists.newArrayList();
 		Collection<String> keys = CacheUtils.keys(cacheName);
 		if (Collections3.isNotEmpty(keys)) {
