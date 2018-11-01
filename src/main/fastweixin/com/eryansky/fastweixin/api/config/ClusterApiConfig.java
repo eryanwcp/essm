@@ -70,7 +70,7 @@ public class ClusterApiConfig extends ApiConfig {
 
     public String getAccessToken() {
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
-
+        accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
         long now = System.currentTimeMillis();
         long time = now - accessTokenCache.getWeixinTokenStartTime();
         try {
@@ -79,7 +79,6 @@ public class ClusterApiConfig extends ApiConfig {
              * 1.官方给出的超时时间是7200秒，这里用7100秒来做，防止出现已经过期的情况
              * 2.刷新标识判断，如果已经在刷新了，则也直接跳过，避免多次重复刷新，如果没有在刷新，则开始刷新
              */
-
             if (time > CACHE_TIME && this.tokenRefreshing.compareAndSet(false, true)) {
                 LOG.debug("准备刷新token.............");
                 if(accessTokenCacheService.refreshLock(accessTokenCache)){
@@ -96,6 +95,7 @@ public class ClusterApiConfig extends ApiConfig {
 
     public String getJsApiTicket() {
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+        accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
         if (enableJsApi) {
             long now = System.currentTimeMillis();
             long time = now - accessTokenCache.getJsTokenStartTime();
@@ -103,10 +103,8 @@ public class ClusterApiConfig extends ApiConfig {
                 //官方给出的超时时间是7200秒，这里用7100秒来做，防止出现已经过期的情况
                 if (time > CACHE_TIME && this.jsRefreshing.compareAndSet(false, true)) {
                     if(accessTokenCacheService.refreshJsLock(accessTokenCache)){
-                        //getAccessToken();
                         initJSToken(now,accessTokenCache);
                     }
-
                 }
             } catch (Exception e) {
                 LOG.warn("刷新jsTicket出错.", e);
@@ -175,8 +173,8 @@ public class ClusterApiConfig extends ApiConfig {
                     LOG.debug("获取access_token:{}", response.getAccessToken());
                     if (null == response.getAccessToken()) {
                         //刷新时间回滚
-                        //weixinTokenStartTime = oldTime;
                         accessTokenCache.setWeixinTokenStartTime(oldTime);
+                        accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                         throw new WeixinException("微信公众号token获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
                     String accessToken = response.getAccessToken();
@@ -213,6 +211,7 @@ public class ClusterApiConfig extends ApiConfig {
                     if (StrUtil.isBlank(response.getTicket())) {
                         //刷新时间回滚
                         accessTokenCache.setJsTokenStartTime(oldTime);
+                        accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                         throw new WeixinException("微信公众号jsToken获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
                     String jsApiTicket = response.getTicket();

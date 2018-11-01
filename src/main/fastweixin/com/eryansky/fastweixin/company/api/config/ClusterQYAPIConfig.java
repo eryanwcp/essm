@@ -39,6 +39,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
      *
      * @param corpid     corpid
      * @param corpSecret corpSecret
+     * @param accessTokenCacheService 集群缓存实现接口
      */
     public ClusterQYAPIConfig(String corpid, String corpSecret,IAccessTokenCacheService accessTokenCacheService) {
         this(corpid, corpSecret, false,accessTokenCacheService);
@@ -50,6 +51,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
      * @param corpid      corpid
      * @param corpsecret  corpsecret
      * @param enableJsApi enableJsApi
+     * @param accessTokenCacheService 集群缓存实现接口
      */
     public ClusterQYAPIConfig(String corpid, String corpsecret, boolean enableJsApi,IAccessTokenCacheService accessTokenCacheService) {
         super(corpid,corpsecret,enableJsApi);
@@ -63,6 +65,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
 
     public String getAccessToken() {
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+        accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
         long now = System.currentTimeMillis();
         long time = now - accessTokenCache.getWeixinTokenStartTime();
         try {
@@ -79,6 +82,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
 
     public String getJsApiTicket() {
         AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+        accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
         if (enableJsApi) {
             long now = System.currentTimeMillis();
             long time = now - accessTokenCache.getJsTokenStartTime();
@@ -136,6 +140,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
                     if (null == response.getAccessToken()) {
                         // 刷新时间回滚
                         accessTokenCache.setWeixinTokenStartTime(oldTime);
+                        accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                         throw new WeixinException("微信企业号token获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
                     String accessToken = response.getAccessToken();
@@ -168,6 +173,7 @@ public final class ClusterQYAPIConfig extends QYAPIConfig {
                     if (StrUtil.isBlank(response.getTicket())) {
                         //刷新时间回滚
                         accessTokenCache.setJsTokenStartTime(oldTime);
+                        accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                         throw new WeixinException("微信企业号jsToken获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
                     String jsApiTicket = response.getTicket();
