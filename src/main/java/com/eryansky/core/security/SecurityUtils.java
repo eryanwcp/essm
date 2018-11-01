@@ -691,7 +691,7 @@ public class SecurityUtils {
         List<SessionInfo> list = findSessionInfoList();
         List<SessionInfo> sessionInfos = Lists.newArrayList();
         for (SessionInfo sessionInfo : list) {
-            if (StringUtils.containsAny(sessionInfo.getLoginName(), query) || StringUtils.containsAny(sessionInfo.getName(), query)) {
+            if (StringUtils.contains(sessionInfo.getLoginName(), query) || StringUtils.contains(sessionInfo.getName(), query)) {
                 sessionInfos.add(sessionInfo);
             }
         }
