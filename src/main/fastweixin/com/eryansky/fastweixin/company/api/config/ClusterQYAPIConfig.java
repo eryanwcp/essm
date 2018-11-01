@@ -1,5 +1,7 @@
 package com.eryansky.fastweixin.company.api.config;
 
+import com.eryansky.fastweixin.cluster.AccessTokenCache;
+import com.eryansky.fastweixin.cluster.IAccessTokenCacheService;
 import com.eryansky.fastweixin.api.config.ChangeType;
 import com.eryansky.fastweixin.api.config.ConfigChangeNotice;
 import com.eryansky.fastweixin.api.response.GetJsApiTicketResponse;
@@ -13,30 +15,24 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.Observable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
+ * 企业微信号配置 支持集群
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2016-03-15
+ * @date 2018-10-31
  */
-public class QYAPIConfig extends Observable implements Serializable {
+public final class ClusterQYAPIConfig extends QYAPIConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QYAPIConfig.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ClusterQYAPIConfig.class);
 
     private final Integer       CACHE_TIME      = 7100000;
     private final AtomicBoolean tokenRefreshing = new AtomicBoolean(false);
     private final AtomicBoolean jsRefreshing    = new AtomicBoolean(false);
 
-    private final String  corpid;
-    private final String  corpsecret;
-    private       String  accessToken;
-    private       String  jsApiTicket;
     private       boolean enableJsApi;
-    private       long    jsTokenStartTime;
-    private       long    weixinTokenStartTime;
+
+    private IAccessTokenCacheService accessTokenCacheService;
 
     /**
      * 构造方法一，实现同时获取AccessToken。不启用jsApi
@@ -44,8 +40,8 @@ public class QYAPIConfig extends Observable implements Serializable {
      * @param corpid     corpid
      * @param corpSecret corpSecret
      */
-    public QYAPIConfig(String corpid, String corpSecret) {
-        this(corpid, corpSecret, false);
+    public ClusterQYAPIConfig(String corpid, String corpSecret,IAccessTokenCacheService accessTokenCacheService) {
+        this(corpid, corpSecret, false,accessTokenCacheService);
     }
 
     /**
@@ -55,87 +51,82 @@ public class QYAPIConfig extends Observable implements Serializable {
      * @param corpsecret  corpsecret
      * @param enableJsApi enableJsApi
      */
-    public QYAPIConfig(String corpid, String corpsecret, boolean enableJsApi) {
-        this.corpid = corpid;
-        this.corpsecret = corpsecret;
-        this.enableJsApi = enableJsApi;
-    }
-
-    public String getCorpid() {
-        return corpid;
-    }
-
-    public String getCorpsecret() {
-        return corpsecret;
+    public ClusterQYAPIConfig(String corpid, String corpsecret, boolean enableJsApi,IAccessTokenCacheService accessTokenCacheService) {
+        super(corpid,corpsecret,enableJsApi);
+        this.accessTokenCacheService = accessTokenCacheService;
+        AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
+        accessTokenCache = accessTokenCache == null ? new AccessTokenCache():accessTokenCache;
+        long now = System.currentTimeMillis();
+        initToken(now,accessTokenCache);
+        if (enableJsApi) initJSToken(now,accessTokenCache);
     }
 
     public String getAccessToken() {
+        AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
         long now = System.currentTimeMillis();
-        long time = now - this.weixinTokenStartTime;
+        long time = now - accessTokenCache.getWeixinTokenStartTime();
         try {
             if (time > CACHE_TIME && tokenRefreshing.compareAndSet(false, true)) {
                 LOG.debug("准备刷新tokean.........");
-                initToken(now);
+                initToken(now,accessTokenCache);
             }
         } catch (Exception e) {
             LOG.error("刷新token异常", e);
             tokenRefreshing.set(false);
         }
-        return accessToken;
+        return accessTokenCache.getAccessToken();
     }
 
     public String getJsApiTicket() {
+        AccessTokenCache accessTokenCache = accessTokenCacheService.getAccessTokenCache();
         if (enableJsApi) {
             long now = System.currentTimeMillis();
-            long time = now - this.jsTokenStartTime;
+            long time = now - accessTokenCache.getJsTokenStartTime();
             try {
-                if (now - this.jsTokenStartTime > CACHE_TIME && jsRefreshing.compareAndSet(false, true)) {
+                if (time > CACHE_TIME && jsRefreshing.compareAndSet(false, true)) {
                     LOG.debug("准备刷新JSTokean..........");
-                    getAccessToken();
-                    initJSToken(now);
+                    initJSToken(now,accessTokenCache);
                 }
             } catch (Exception e) {
                 LOG.error("刷新jsToken异常", e);
                 jsRefreshing.set(false);
             }
         } else {
-            jsApiTicket = null;
+            return null;
         }
-        return jsApiTicket;
+        return accessTokenCache.getJsApiTicket();
     }
 
     public boolean isEnableJsApi() {
         return enableJsApi;
     }
 
-    public QYAPIConfig setEnableJsApi(boolean enableJsApi) {
+    public ClusterQYAPIConfig setEnableJsApi(boolean enableJsApi) {
         this.enableJsApi = enableJsApi;
-        if (!enableJsApi)
-            this.jsApiTicket = null;
         return this;
     }
 
-    public QYAPIConfig addHandle(final ApiConfigChangeHandle handle) {
+    public ClusterQYAPIConfig addHandle(final ApiConfigChangeHandle handle) {
         super.addObserver(handle);
         return this;
     }
 
-    public QYAPIConfig removeHandle(final ApiConfigChangeHandle handle) {
+    public ClusterQYAPIConfig removeHandle(final ApiConfigChangeHandle handle) {
         super.deleteObserver(handle);
         return this;
     }
 
-    public QYAPIConfig removeAllHandle() {
+    public ClusterQYAPIConfig removeAllHandle() {
         super.deleteObservers();
         return this;
     }
 
-    private QYAPIConfig initToken(final long refreshTime) {
+    private ClusterQYAPIConfig initToken(final long refreshTime, final AccessTokenCache accessTokenCache) {
         LOG.debug("开始初始化access_token..........");
         // 记住原本的事件，用于出错回滚
-        final long oldTime = this.weixinTokenStartTime;
-        this.weixinTokenStartTime = refreshTime;
-        String url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + corpid + "&corpsecret=" + corpsecret;
+        final long oldTime = accessTokenCache.getWeixinTokenStartTime();
+        accessTokenCache.setWeixinTokenStartTime(refreshTime);
+        String url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=" + getCorpid() + "&corpsecret=" + getCorpsecret();
         NetWorkCenter.get(url, null, new NetWorkCenter.ResponseCallback() {
             @Override
             public void onResponse(int resultCode, String resultJson) {
@@ -144,13 +135,16 @@ public class QYAPIConfig extends Observable implements Serializable {
                     LOG.debug("获取access_token:{}", response.getAccessToken());
                     if (null == response.getAccessToken()) {
                         // 刷新时间回滚
-                        weixinTokenStartTime = oldTime;
+                        accessTokenCache.setWeixinTokenStartTime(oldTime);
                         throw new WeixinException("微信企业号token获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
-                    accessToken = response.getAccessToken();
+                    String accessToken = response.getAccessToken();
+                    accessTokenCache.setAccessToken(accessToken);
+                    accessTokenCacheService.clearLock();
+                    accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     // 设置通知点
                     setChanged();
-                    notifyObservers(new ConfigChangeNotice(corpid, ChangeType.ACCESS_TOKEN, accessToken));
+                    notifyObservers(new ConfigChangeNotice(getCorpid(), ChangeType.ACCESS_TOKEN, accessToken));
                 }
             }
         });
@@ -158,12 +152,12 @@ public class QYAPIConfig extends Observable implements Serializable {
         return this;
     }
 
-    private QYAPIConfig initJSToken(final long refreshTime) {
+    private ClusterQYAPIConfig initJSToken(final long refreshTime, final AccessTokenCache accessTokenCache) {
         LOG.debug("初始化 jsapi_ticket.........");
         // 记住原本的事件，用于出错回滚
-        final long oldTime = this.jsTokenStartTime;
-        this.jsTokenStartTime = refreshTime;
-        String url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=" + accessToken;
+        final long oldTime = accessTokenCache.getWeixinTokenStartTime();
+        accessTokenCache.setJsTokenStartTime(refreshTime);
+        String url = "https://qyapi.weixin.qq.com/cgi-bin/get_jsapi_ticket?access_token=" + getAccessToken();
         NetWorkCenter.get(url, null, new NetWorkCenter.ResponseCallback() {
 
             @Override
@@ -173,13 +167,16 @@ public class QYAPIConfig extends Observable implements Serializable {
                     LOG.debug("获取jsapi_ticket:{}", response.getTicket());
                     if (StrUtil.isBlank(response.getTicket())) {
                         //刷新时间回滚
-                        jsTokenStartTime = oldTime;
+                        accessTokenCache.setJsTokenStartTime(oldTime);
                         throw new WeixinException("微信企业号jsToken获取出错，错误信息:" + response.getErrcode() + "," + response.getErrmsg());
                     }
-                    jsApiTicket = response.getTicket();
+                    String jsApiTicket = response.getTicket();
+                    accessTokenCache.setJsApiTicket(jsApiTicket);
+                    accessTokenCacheService.clearJsLock();
+                    accessTokenCacheService.putAccessTokenCache(accessTokenCache);
                     //设置通知点
                     setChanged();
-                    notifyObservers(new ConfigChangeNotice(corpid, ChangeType.JS_TOKEN, jsApiTicket));
+                    notifyObservers(new ConfigChangeNotice(getCorpid(), ChangeType.JS_TOKEN, jsApiTicket));
                 }
             }
         });
