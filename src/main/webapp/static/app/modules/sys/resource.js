@@ -9,11 +9,13 @@ $(function() {
         fit:true,
         fitColumns:false,//自适应列宽
         striped:true,//显示条纹
-        singleSelect:false,//单选模式
         rownumbers:true,//显示行数
         nowrap : false,
         border : false,
         singleSelect:true,
+        remoteSort:false,//是否通过远程服务器对数据排序
+        sortName:'sort',//默认排序字段
+        sortOrder:'asc',//默认排序方式 'desc' 'asc'
         idField : 'id',
         treeField:"name",
         frozenColumns:[[
