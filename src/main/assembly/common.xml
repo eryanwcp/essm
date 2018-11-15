@@ -1,5 +1,5 @@
 <assembly>
-    <id>common-3.1</id>
+    <id>common-3.3</id>
     <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>jar</format>
