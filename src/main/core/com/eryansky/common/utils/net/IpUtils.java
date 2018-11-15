@@ -7,6 +7,7 @@ package com.eryansky.common.utils.net;
 
 import com.eryansky.common.utils.NumberUtil;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.common.utils.encode.EncodeUtils;
 import com.google.common.net.InetAddresses;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,6 +76,13 @@ public class IpUtils {
 
         if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
+        }
+        if (StringUtils.isNotBlank(ip)){
+            ip = EncodeUtils.xssFilter(ip);
+            ip = StringUtils.split(ip, ",")[0];
+        }
+        if (StringUtils.isBlank(ip)){
+            ip = "unknown";
         }
         return ip;
     }

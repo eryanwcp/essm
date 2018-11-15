@@ -12,7 +12,7 @@ import java.util.List;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2011-7-22 上午12:37:10
  */
-public class ListUtils {
+public class ListUtils extends org.apache.commons.collections.ListUtils{
 
     private static final String defaultSeparator = ",";
 

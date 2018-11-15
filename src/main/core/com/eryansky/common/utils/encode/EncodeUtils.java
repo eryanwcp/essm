@@ -8,7 +8,12 @@ package com.eryansky.common.utils.encode;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.eryansky.common.utils.StringUtils;
+import com.google.common.collect.Lists;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -125,5 +130,39 @@ public class EncodeUtils {
 		return StringEscapeUtils.unescapeXml(xmlEscaped);
 	}
 
+	// 预编译XSS过滤正则表达式
+	private static List<Pattern> xssPatterns = Lists.newArrayList(
+			Pattern.compile("(<\\s*(script|link|style|iframe)([\\s\\S]*?)(>|<\\/\\s*\\1\\s*>))|(</\\s*(script|link|style|iframe)\\s*>)", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("\\s*(href|src)\\s*=\\s*(\"\\s*(javascript|vbscript):[^\"]+\"|'\\s*(javascript|vbscript):[^']+'|(javascript|vbscript):[^\\s]+)\\s*(?=>)", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("\\s*on[a-z]+\\s*=\\s*(\"[^\"]+\"|'[^']+'|[^\\s]+)\\s*(?=>)", Pattern.CASE_INSENSITIVE),
+			Pattern.compile("(eval\\((.|\\n)*\\)|xpression\\((.|\\n)*\\))", Pattern.CASE_INSENSITIVE)
+	);
+	/**
+	 * XSS 非法字符过滤，内容以<!--HTML-->开头的用以下规则（保留标签）
+	 * @author ThinkGem
+	 */
+	public static String xssFilter(String text) {
+		String oriValue = StringUtils.trim(text);
+		if (text != null){
+			String value = oriValue;
+			for (Pattern pattern : xssPatterns) {
+				Matcher matcher = pattern.matcher(value);
+				if (matcher.find()) {
+					value = matcher.replaceAll(StringUtils.EMPTY);
+				}
+			}
+			// 如果开始不是HTML，XML，JOSN格式，则再进行HTML的 "、<、> 转码。
+			if (!StringUtils.startsWithIgnoreCase(value, "<!--HTML-->") 	// HTML
+					&& !StringUtils.startsWithIgnoreCase(value, "<?xml ") 	// XML
+					&& !StringUtils.contains(value, "id=\"FormHtml\"") 		// JFlow
+					&& !(StringUtils.startsWith(value, "{") && StringUtils.endsWith(value, "}")) // JSON Object
+					&& !(StringUtils.startsWith(value, "[") && StringUtils.endsWith(value, "]")) // JSON Array
+			){
+				value = value.replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			}
+			return value;
+		}
+		return null;
+	}
 
 }
