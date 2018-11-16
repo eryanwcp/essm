@@ -607,15 +607,9 @@ public class SecurityUtils {
      * @return
      */
     public static List<SessionInfo> findSessionInfoList() {
-        List<SessionInfo> sessionInfoData= applicationSessionContext.findSessionInfoData();
+        List<SessionInfo> sessionInfoData = applicationSessionContext.findSessionInfoData();
         //排序
-        Collections.sort(sessionInfoData, new Comparator<SessionInfo>() {
-            @Override
-            public int compare(SessionInfo o1, SessionInfo o2) {
-                return o2.getLoginTime().compareTo(o1.getLoginTime());
-            }
-        });
-
+        Collections.sort(sessionInfoData, (o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
         return sessionInfoData;
     }
 
