@@ -35,7 +35,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -575,7 +574,7 @@ public class SecurityUtils {
      * 全部下线
      */
     public static void offLineAll(){
-        List<SessionInfo> sessionInfos = SecurityUtils.findSessionInfoList();
+        List<SessionInfo> sessionInfos = SecurityUtils.findSessionInfoListWithOrder();
         for(SessionInfo sessionInfo:sessionInfos){
             removeSessionInfoFromSession(sessionInfo.getId(), SecurityType.offline);
         }
@@ -603,13 +602,22 @@ public class SecurityUtils {
     }
 
     /**
+     * 查看当前登录用户信息 按时间排序（降序）
+     * @return
+     */
+    public static List<SessionInfo> findSessionInfoListWithOrder() {
+        List<SessionInfo> sessionInfoData = applicationSessionContext.findSessionInfoData();
+        //排序
+        Collections.sort(sessionInfoData, (o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
+        return sessionInfoData;
+    }
+
+    /**
      * 查看当前登录用户信息
      * @return
      */
     public static List<SessionInfo> findSessionInfoList() {
         List<SessionInfo> sessionInfoData = applicationSessionContext.findSessionInfoData();
-        //排序
-        Collections.sort(sessionInfoData, (o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
         return sessionInfoData;
     }
 
@@ -630,7 +638,7 @@ public class SecurityUtils {
      * @return
      */
     public static Page<SessionInfo> findSessionInfoPage(Page<SessionInfo> page, String query) {
-        List<SessionInfo> list = StringUtils.isNotBlank(query) ? findSessionInfoByQuery(query): findSessionInfoList();
+        List<SessionInfo> list = StringUtils.isNotBlank(query) ? findSessionInfoByQuery(query): findSessionInfoListWithOrder();
         page.setTotalCount(list.size());
         if(Page.PAGESIZE_ALL == page.getPageSize()){
             return page.setResult(list);
@@ -662,10 +670,26 @@ public class SecurityUtils {
      * @return
      */
     public static List<SessionInfo> findSessionInfoByLoginName(String loginName) {
-        List<SessionInfo> list = findSessionInfoList();
+        List<SessionInfo> list = findSessionInfoListWithOrder();
         List<SessionInfo> sessionInfos = Lists.newArrayList();
         for(SessionInfo sessionInfo: list){
             if(sessionInfo.getLoginName().equals(loginName)){
+                sessionInfos.add(sessionInfo);
+            }
+        }
+        return sessionInfos;
+    }
+
+    /**
+     * 查看某个用户登录信息
+     * @param userId 用户ID
+     * @return
+     */
+    public static List<SessionInfo> findSessionInfoByUserId(String userId) {
+        List<SessionInfo> list = findSessionInfoList();
+        List<SessionInfo> sessionInfos = Lists.newArrayList();
+        for(SessionInfo sessionInfo: list){
+            if(sessionInfo.getUserId().equals(userId)){
                 sessionInfos.add(sessionInfo);
             }
         }
@@ -682,7 +706,7 @@ public class SecurityUtils {
         if (StringUtils.isBlank(query)){
             return Collections.emptyList();
         }
-        List<SessionInfo> list = findSessionInfoList();
+        List<SessionInfo> list = findSessionInfoListWithOrder();
         List<SessionInfo> sessionInfos = Lists.newArrayList();
         for (SessionInfo sessionInfo : list) {
             if (StringUtils.contains(sessionInfo.getLoginName(), query) || StringUtils.contains(sessionInfo.getName(), query)) {
