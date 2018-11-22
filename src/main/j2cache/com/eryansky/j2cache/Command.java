@@ -18,7 +18,9 @@ package com.eryansky.j2cache;
 import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 命令消息封装
@@ -33,7 +35,7 @@ import com.alibaba.fastjson.annotation.JSONField;
  */
 public class Command {
 
-	private final static int SRC_ID = genRandomSrc(); //命令源标识，随机生成，每个节点都有唯一标识
+	private final static Logger log = LoggerFactory.getLogger(Command.class);
 
 	public final static byte OPT_JOIN 	   = 0x01;	//加入集群
 	public final static byte OPT_EVICT_KEY = 0x02; 	//删除缓存
@@ -72,7 +74,12 @@ public class Command {
 	}
 
 	public static Command parse(String json) {
-		return JSON.parseObject(json, Command.class);
+		try {
+			return JSON.parseObject(json, Command.class);
+		} catch (JSONException e) {
+			log.warn("Failed to parse j2cache command: {}", json, e);
+		}
+		return null;
 	}
 
 	public int getOperator() {
@@ -109,7 +116,7 @@ public class Command {
 
     @Override
 	public String toString(){
-		return JSON.toJSONString(this);
+		return json();
 	}
 
 }
