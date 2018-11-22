@@ -98,7 +98,7 @@ public class EhCacheProvider implements CacheProvider {
 			net.sf.ehcache.Cache cache = new net.sf.ehcache.Cache(cfg);
 			manager.addCache(cache);
 
-			log.info(String.format("Started Ehcache region [%s] with TTL: %d", region, timeToLiveInSeconds));
+			log.info("Started Ehcache region [{}] with TTL: {}", region, timeToLiveInSeconds);
 
 			return new EhCache(cache, listener);
 		});

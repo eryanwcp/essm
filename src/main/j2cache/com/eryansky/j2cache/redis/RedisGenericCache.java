@@ -124,7 +124,7 @@ public class RedisGenericCache implements Level2Cache {
     @Override
     public void setBytes(String key, byte[] bytes, long timeToLiveInSeconds) {
         if (timeToLiveInSeconds <= 0) {
-            log.debug(String.format("Invalid timeToLiveInSeconds value : %d , skipped it.", timeToLiveInSeconds));
+            log.debug("Invalid timeToLiveInSeconds value : {} , skipped it.", timeToLiveInSeconds);
             setBytes(key, bytes);
         }
         else {
