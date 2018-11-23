@@ -96,7 +96,7 @@ public class ExceptionInterceptor implements HandlerExceptionResolver {
         //业务异常
         else if(Exceptions.isCausedBy(ex, ServiceException.class)){
             ServiceException serviceException = (ServiceException) ex;
-            result = new Result(serviceException.getCode(), serviceException.getMessage(), serviceException.getObj());
+            result = new Result(serviceException.getCode() == null ? Result.ERROR:serviceException.getCode(), serviceException.getMessage(), serviceException.getObj());
         }
 
         //系统异常
