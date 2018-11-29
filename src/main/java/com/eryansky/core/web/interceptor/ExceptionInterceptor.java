@@ -34,8 +34,6 @@ public class ExceptionInterceptor implements HandlerExceptionResolver {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static LogService logService = SpringContextHolder.getBean(LogService.class);
-
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         Result result = null;
