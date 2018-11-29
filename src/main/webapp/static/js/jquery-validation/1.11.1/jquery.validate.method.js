@@ -61,7 +61,7 @@ jQuery.validator.addMethod("userName", function(value, element) {
 // 手机号码验证
 jQuery.validator.addMethod("mobile", function(value, element) {
     var length = value.length;
-    return this.optional(element) || (length == 11 && /^(((13[0-9]{1})|(15[0-9]{1}))+\d{8})$/.test(value));
+    return this.optional(element) || (length == 11 && /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/.test(value));
 }, "请正确填写您的手机号码");
 
 // 电话号码验证
@@ -72,9 +72,9 @@ jQuery.validator.addMethod("simplePhone", function(value, element) {
 
 // 电话号码验证     
 jQuery.validator.addMethod("phone", function(value, element) {     
-	var tel = /(^0[1-9]{1}\d{9,10}$)|(^1[3,5,8]\d{9}$)/g;     
+	var tel = /^(13[0-9]|14[5-9]|15[012356789]|166|17[0-8]|18[0-9]|19[8-9])[0-9]{8}$/;
 	return this.optional(element) || (tel.test(value));     
-}, "格式为:固话为区号(3-4位)号码(7-9位),手机为:13,15,18号段");	
+}, "格式为:固话为区号(3-4位)号码(7-9位),手机为:真实手机号");
 
 // 邮政编码验证
 jQuery.validator.addMethod("zipCode", function(value, element) {
@@ -87,8 +87,30 @@ jQuery.validator.addMethod("qq", function(value, element) {
     var tel = /^[1-9][0-9]{4,}$/;
     return this.optional(element) || (tel.test(value));
 }, "请正确填写您的QQ号码");
- 
-//校验身份证好
+
+jQuery.validator.addMethod("decimal", function(value, element, params) {
+    if(isNaN(params[0])) {
+        console.error("参数错误，decimal验证的decimal只能为数字");
+        return false;
+    }
+    if(isNaN(value)) {
+        return false;
+    }
+    if(typeof(value) == undefined || value == "") {
+        return false;
+    }
+    var testVal = Number(value);
+    if(typeof(params[0]) == undefined || params[0] == 0) {
+        var regX = /^\d+$/;
+    } else {
+        var regxStr = "^\\d+(\\.\\d{1,"+params[0]+"})?$";
+        var regX = new RegExp(regxStr);
+    }
+		console.debug("regX: %o, value: %o, test: %o", regX, value, regX.test(value));
+    return this.optional(element) || (regX.test(value));
+}, $.validator.format("最多只保留小数点后{0}位的数值"));
+
+//校验身份证号
 jQuery.validator.addMethod("card",function(value, element) {
 	return this.optional(element) || checkIdcard(value);
 },"请输入正确的身份证号码(15-18位)")
