@@ -18,9 +18,7 @@ package com.eryansky.j2cache.session;
 import com.eryansky.j2cache.util.IpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.io.Closeable;
@@ -117,8 +115,15 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
      */
     public void publish(Command cmd) {
         try  {
-            Jedis jedis = (Jedis)redisClient.get();
-            jedis.publish(pubsub_channel, cmd.toString());
+            BinaryJedisCommands redis = redisClient.get();
+            if(redis instanceof Jedis) {
+                Jedis jedis = (Jedis) redis;
+                jedis.publish(pubsub_channel, cmd.toString());
+            }
+            else if(redis instanceof JedisCluster) {
+                JedisCluster jedis = (JedisCluster) redis;
+                jedis.publish(pubsub_channel, cmd.toString());
+            }
         } finally {
             redisClient.release();
         }
