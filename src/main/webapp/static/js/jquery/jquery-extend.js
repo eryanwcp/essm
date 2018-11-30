@@ -675,3 +675,64 @@ $.deepClone = function (obj) {
     objClone.valueOf = obj.valueOf;
     return objClone;
 };
+/**
+ * 复制到剪切板
+ * @param elem 复制的元素
+ * @param text 复制的内容
+ * @param success
+ * @param error
+ * @returns {boolean}
+ */
+$.copyToClipboard = function(elem,text,success,error) {
+    // create hidden text element, if it doesn't already exist
+    var targetId = "_hiddenCopyText_";
+    var isInput = (elem && elem.tagName === "INPUT") || (elem && elem.tagName === "TEXTAREA");
+    var origSelectionStart, origSelectionEnd;
+    var textContent = text;
+    if (isInput) {
+        // can just use the original source element for the selection and copy
+        target = elem;
+        origSelectionStart = elem.selectionStart;
+        origSelectionEnd = elem.selectionEnd;
+    } else {
+        // must use a temporary form element for the selection and copy
+        target = document.getElementById(targetId);
+        if (!target) {
+            var target = document.createElement("textarea");
+            target.style.position = "absolute";
+            target.style.left = "-9999px";
+            target.style.top = "0";
+            target.id = targetId;
+            document.body.appendChild(target);
+        }
+        textContent = elem ? elem.textContent:textContent;
+        target.textContent = textContent;
+    }
+    // select the content
+    var currentFocus = document.activeElement;
+    target.focus();
+    target.setSelectionRange(0, target.value.length);
+
+    // copy the selection
+    var succeed;
+    try {
+        succeed = document.execCommand("copy");
+        success ? success(succeed,textContent):null;
+    } catch(e) {
+        error ? error(succeed,textContent):null;
+        succeed = false;
+    }
+    // restore original focus
+    if (currentFocus && typeof currentFocus.focus === "function") {
+        currentFocus.focus();
+    }
+
+    if (isInput) {
+        // restore prior selection
+        elem.setSelectionRange(origSelectionStart, origSelectionEnd);
+    } else {
+        // clear temporary content
+        target.textContent = "";
+    }
+    return succeed;
+};
