@@ -2,6 +2,7 @@ package com.eryansky.j2cache.redis;
 
 import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
+import io.lettuce.core.cluster.RedisClusterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryJedis;
@@ -219,5 +220,34 @@ public class RedisGenericCache implements Level2Cache {
         } finally {
             client.release();
         }
+    }
+
+
+    @Override
+    public void push(String... values) {
+        try {
+            for (String value : values) {
+                BinaryJedisCommands cmd = client.get();
+                cmd.rpush(_key(this.region),value.getBytes());
+            }
+        } finally {
+            client.release();
+        }
+    }
+
+    @Override
+    public String pop() {
+        try {
+            BinaryJedisCommands cmd = client.get();
+            byte[] data = cmd.lpop(_key(this.region));
+            return data == null ? null:new String(data);
+        } finally {
+            client.release();
+        }
+    }
+
+    @Override
+    public void clearQueue() {
+        clear();
     }
 }

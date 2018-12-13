@@ -16,7 +16,9 @@
 package com.eryansky.j2cache.redis;
 
 import com.eryansky.j2cache.Level2Cache;
+import redis.clients.jedis.BinaryJedisCommands;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class RedisHashCache implements Level2Cache {
 
     private String namespace;
+    private String region;
     private byte[] regionBytes;
     private RedisClient client;
 
@@ -46,6 +49,7 @@ public class RedisHashCache implements Level2Cache {
 
         this.client = client;
         this.namespace = namespace;
+        this.region = region;
         this.regionBytes = getRegionName(region).getBytes();
     }
 
@@ -138,6 +142,42 @@ public class RedisHashCache implements Level2Cache {
         } finally {
             client.release();
         }
+    }
+
+    private byte[] _key(String key) {
+        try {
+            return (this.region + ":" + key).getBytes("utf-8");
+        } catch (UnsupportedEncodingException e) {
+            return (this.region + ":" + key).getBytes();
+        }
+    }
+
+    @Override
+    public void push(String... values) {
+        try {
+            for (String value : values) {
+                BinaryJedisCommands cmd = client.get();
+                cmd.rpush(_key(this.region),value.getBytes());
+            }
+        } finally {
+            client.release();
+        }
+    }
+
+    @Override
+    public String pop() {
+        try {
+            BinaryJedisCommands cmd = client.get();
+            byte[] data = cmd.lpop(_key(this.region));
+            return data == null ? null:new String(data);
+        } finally {
+            client.release();
+        }
+    }
+
+    @Override
+    public void clearQueue() {
+        clear();
     }
 
 }

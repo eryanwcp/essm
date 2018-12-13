@@ -16,7 +16,10 @@
 package com.eryansky.j2cache;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Cache Data Operation Interface
@@ -24,6 +27,7 @@ import java.util.Map;
  * @author Winter Lau(javayou@gmail.com)
  */
 public interface Cache {
+	Queue<String> queue = new LinkedBlockingQueue<String>();
 
 	/**
 	 * Get an item from the cache, nontransactionally
@@ -82,5 +86,23 @@ public interface Cache {
 	 * Clear the cache
 	 */
 	void clear();
+
+	/**
+	 * 队列 放入
+	 */
+	default void push(String... values) {
+		for(String value:values){
+			queue.add(value);
+		}
+	}
+	/**
+	 * 队列 获取
+	 */
+	default String pop(){return queue.poll();}
+
+	/**
+	 * 队列 清空
+	 */
+	default void clearQueue(){queue.clear();}
 
 }

@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.lettuce;
 
+import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.api.sync.RedisKeyCommands;
 import io.lettuce.core.api.sync.RedisStringCommands;
@@ -32,13 +33,14 @@ import java.util.stream.Collectors;
  */
 public class LettuceGenericCache extends LettuceCache {
 
-    public LettuceGenericCache(String namespace, String region, GenericObjectPool<StatefulConnection<String, byte[]>> pool) {
+    public LettuceGenericCache(String namespace, String region, AbstractRedisClient redisClient, GenericObjectPool<StatefulConnection<String, byte[]>> pool) {
         if (region == null || region.isEmpty())
             region = "_"; // 缺省region
 
+        super.redisClient = redisClient;
         super.pool = pool;
-        this.namespace = namespace;
-        this.region = getRegionName(region);
+        super.namespace = namespace;
+        super.region = getRegionName(region);
     }
 
     /**

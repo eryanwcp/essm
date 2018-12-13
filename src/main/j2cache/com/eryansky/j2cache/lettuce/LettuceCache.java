@@ -15,9 +15,12 @@
  */
 package com.eryansky.j2cache.lettuce;
 
+import io.lettuce.core.AbstractRedisClient;
+import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.BaseRedisCommands;
+import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
@@ -32,6 +35,7 @@ public abstract class LettuceCache implements Level2Cache {
 
     protected String namespace;
     protected String region;
+    protected AbstractRedisClient redisClient;
     protected GenericObjectPool<StatefulConnection<String, byte[]>> pool;
 
     protected StatefulConnection connect() {
@@ -50,4 +54,30 @@ public abstract class LettuceCache implements Level2Cache {
         return null;
     }
 
+
+    @Override
+    public void push(String... values) {
+        for(String value:values){
+            if(redisClient instanceof RedisClient){
+                ((RedisClient)redisClient).connect().sync().rpush(region,value);
+            }else if(redisClient instanceof RedisClusterClient){
+                ((RedisClusterClient)redisClient).connect().sync().rpush(region,values);
+            }
+        }
+    }
+
+    @Override
+    public String pop() {
+        if(redisClient instanceof RedisClient){
+            return ((RedisClient)redisClient).connect().sync().lpop(region);
+        }else if(redisClient instanceof RedisClusterClient){
+            return ((RedisClusterClient)redisClient).connect().sync().lpop(region);
+        }
+        return null;
+    }
+
+    @Override
+    public void clearQueue() {
+        clear();
+    }
 }

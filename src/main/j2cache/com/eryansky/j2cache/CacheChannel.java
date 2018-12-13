@@ -594,4 +594,56 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		}
 	}
 
+
+	/**
+	 * 队列 压入
+	 * @param region
+	 * @param values
+	 */
+	public void push(String region,String... values){
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+
+		Level2Cache level2Cache = holder.getLevel2Cache(region);
+		if(!(level2Cache instanceof NullCache)){
+			level2Cache.push(values);
+		}else{
+			Level1Cache level1Cache = holder.getLevel1Cache(region);
+			level1Cache.push(values);
+		}
+	}
+
+	/**
+	 * 队列 弹出
+	 * @param region
+	 * @return
+	 */
+	public String pop(String region) {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+		Level2Cache level2Cache = holder.getLevel2Cache(region);
+		if(!(level2Cache instanceof NullCache)){
+			return level2Cache.pop();
+		}else{
+			Level1Cache level1Cache = holder.getLevel1Cache(region);
+			return level1Cache.pop();
+		}
+	}
+
+	/**
+	 * 队列 清空
+	 * @param region
+	 */
+	public void clearQueue(String region) {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+        Level2Cache level2Cache = holder.getLevel2Cache(region);
+        if(!(level2Cache instanceof NullCache)){
+            level2Cache.clearQueue();
+        }else{
+            Level1Cache level1Cache = holder.getLevel1Cache(region);
+            level1Cache.clearQueue();
+        }
+	}
+
 }

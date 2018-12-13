@@ -132,8 +132,8 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
     @Override
     public Cache buildCache(String region, CacheExpiredListener listener) {
         return regions.computeIfAbsent(this.namespace + ":" + region, v -> "hash".equalsIgnoreCase(this.storage)?
-                new LettuceHashCache(this.namespace, region, pool):
-                new LettuceGenericCache(this.namespace, region, pool));
+                new LettuceHashCache(this.namespace, region, redisClient, pool):
+                new LettuceGenericCache(this.namespace, region,redisClient, pool));
     }
 
     @Override

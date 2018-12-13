@@ -42,8 +42,8 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml",
         "classpath:applicationContext-mybatis.xml",
-        "classpath:applicationContext-task.xml",
-        "classpath:applicationContext-ehcache.xml" })
+        "classpath:applicationContext-quartz.xml",
+        "classpath:applicationContext-j2cache.xml" })
 public class WeixinTest {
 
     private static Logger logger = LoggerFactory.getLogger(WeixinTest.class);
