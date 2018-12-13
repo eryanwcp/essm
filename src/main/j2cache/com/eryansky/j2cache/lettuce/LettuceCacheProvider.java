@@ -17,6 +17,7 @@ package com.eryansky.j2cache.lettuce;
 
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.pubsub.RedisPubSubAdapter;
 import io.lettuce.core.pubsub.StatefulRedisPubSubConnection;
@@ -24,6 +25,9 @@ import io.lettuce.core.pubsub.api.async.RedisPubSubAsyncCommands;
 import io.lettuce.core.pubsub.api.sync.RedisPubSubCommands;
 import com.eryansky.j2cache.*;
 import com.eryansky.j2cache.cluster.ClusterPolicy;
+import io.lettuce.core.support.ConnectionPoolSupport;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +46,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *  lettuce.password =
  *  lettuce.database = 0
  *  lettuce.sentinelMasterId =
+ *  lettuce.maxTotal = 100
+ *  lettuce.maxIdle = 10
+ *  lettuce.minIdle = 10
  *
  * @author Winter Lau (javayou@gmail.com)
  */
@@ -49,7 +56,10 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
 
     private int LOCAL_COMMAND_ID = Command.genRandomSrc(); //命令源标识，随机生成，每个节点都有唯一标识
 
+    private static final LettuceByteCodec codec = new LettuceByteCodec();
+
     private static AbstractRedisClient redisClient;
+    GenericObjectPool<StatefulConnection<String, byte[]>> pool;
     private StatefulRedisPubSubConnection<String, String> pubsub_subscriber;
     private String storage;
 
@@ -96,10 +106,25 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
         String redis_url = String.format("%s://%s@%s/%d#%s", scheme, password, hosts, database, sentinelMasterId);
 
         redisClient = isCluster?RedisClusterClient.create(redis_url):RedisClient.create(redis_url);
+
+        //connection pool configurations
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        poolConfig.setMaxTotal(Integer.parseInt(props.getProperty("maxTotal", "100")));
+        poolConfig.setMaxIdle(Integer.parseInt(props.getProperty("maxIdle", "10")));
+        poolConfig.setMinIdle(Integer.parseInt(props.getProperty("minIdle", "10")));
+
+        pool = ConnectionPoolSupport.createGenericObjectPool(() -> {
+            if(redisClient instanceof RedisClient)
+                return ((RedisClient)redisClient).connect(codec);
+            else if(redisClient instanceof RedisClusterClient)
+                return ((RedisClusterClient)redisClient).connect(codec);
+            return null;
+        }, poolConfig);
     }
 
     @Override
     public void stop() {
+        pool.close();
         regions.clear();
         redisClient.shutdown();
     }
@@ -107,8 +132,8 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
     @Override
     public Cache buildCache(String region, CacheExpiredListener listener) {
         return regions.computeIfAbsent(this.namespace + ":" + region, v -> "hash".equalsIgnoreCase(this.storage)?
-                new LettuceHashCache(this.namespace, region, redisClient):
-                new LettuceGenericCache(this.namespace, region, redisClient));
+                new LettuceHashCache(this.namespace, region, pool):
+                new LettuceGenericCache(this.namespace, region, pool));
     }
 
     @Override
@@ -175,7 +200,7 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
 
     @Override
     public void publish(Command cmd) {
-    	cmd.setSrc(LOCAL_COMMAND_ID);
+        cmd.setSrc(LOCAL_COMMAND_ID);
         try (StatefulRedisPubSubConnection<String, String> connection = this.pubsub()){
             RedisPubSubCommands<String, String> sync = connection.sync();
             sync.publish(this.channel, cmd.json());
