@@ -78,7 +78,6 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
      * @param moduleCode 模块code
      * @return
      */
-    @CachePut(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE,key="#moduleCode")
     public List<String> generatePrepareSerialNumbers(String moduleCode){
         SystemSerialNumber entity = getByCode(moduleCode);
         int version = entity.getVersion();
@@ -135,7 +134,8 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
                 systemSerialNumber.setVersion(0);
                 this.save(systemSerialNumber);
                 //清空缓存
-                CacheUtils.remove(CacheConstants.SYS_SERIAL_NUMBER_CACHE,systemSerialNumber.getModuleCode());
+                String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+systemSerialNumber.getModuleCode();
+                CacheUtils.getCacheChannel().clearQueue(region);
             }
         }
     }
@@ -144,16 +144,20 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
     /**
      * 清空缓存(指定key)
      */
-    @CacheEvict(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE,key="#moduleCode")
     public void clearCacheByModuleCode(String moduleCode){
-        logger.debug("清空缓存:{},key:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode);
+        String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+moduleCode;
+        CacheUtils.getCacheChannel().clearQueue(region);
     }
 
     /**
      * 清空缓存
      */
-    @CacheEvict(value = CacheConstants.SYS_SERIAL_NUMBER_CACHE)
     public void clearCache(){
-        logger.debug("清空缓存:{}", CacheConstants.SYS_SERIAL_NUMBER_CACHE);
+        List<SystemSerialNumber> numberList = this.findAll();
+        for (SystemSerialNumber systemSerialNumber : numberList) {
+            //清空缓存
+            String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+systemSerialNumber.getModuleCode();
+            CacheUtils.getCacheChannel().clearQueue(region);
+        }
     }
 }

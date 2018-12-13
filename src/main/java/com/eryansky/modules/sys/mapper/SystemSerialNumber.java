@@ -14,6 +14,8 @@ import com.eryansky.modules.sys._enum.ResetType;
  * @date 2016-07-14 
  */
 public class SystemSerialNumber extends DataEntity<SystemSerialNumber> {
+
+    public static final String QUEUE_SYS_SERIAL = "queue_system_serial";
     /**
      * 模块名称
      */

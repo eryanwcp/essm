@@ -78,4 +78,8 @@ public class CacheUtils {
 		return cacheManager.getCacheChannel().regions();
 	}
 
+	public static CacheChannel getCacheChannel() {
+		return cacheManager.getCacheChannel();
+	}
+
 }

@@ -7,10 +7,8 @@ package com.eryansky.modules.sys.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
-import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.service.SystemSerialNumberService;
-import com.eryansky.utils.CacheConstants;
 import com.eryansky.utils.CacheUtils;
 
 import java.util.List;
@@ -64,17 +62,18 @@ public class SystemSerialNumberUtils {
      * @return  序列号
      */
     public static String generateSerialNumberByModelCode(String moduleCode){
+        String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+moduleCode;
+        String value = CacheUtils.getCacheChannel().pop(region);
+        if(value != null){
+            return value;
+        }
         synchronized (moduleCode.intern()){
-            List<String> preData = (List<String>)CacheUtils.get(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode);
-            if(Collections3.isNotEmpty(preData)){
-                String result = preData.remove(0);
-                CacheUtils.put(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode,preData);
-                return result;
+            List<String> list = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
+            for(String serial:list){
+                CacheUtils.getCacheChannel().push(region,serial);
             }
-            preData = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
-            String result = preData.remove(0);
-            CacheUtils.put(CacheConstants.SYS_SERIAL_NUMBER_CACHE,moduleCode,preData);
-            return result;
+            value = CacheUtils.getCacheChannel().pop(region);
+            return value;
         }
     }
 

@@ -48,10 +48,6 @@ public class CacheConstants {
 
 
     public static final String ORGAN_USER_TREE_CACHE = "organ_user_tree_cache";
-	/**
-	 * 序列号
-	 */
-	public static final String SYS_SERIAL_NUMBER_CACHE = "sys_serial_number_cache";
 
 	
 }
