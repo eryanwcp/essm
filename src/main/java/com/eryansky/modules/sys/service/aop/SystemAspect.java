@@ -39,7 +39,7 @@ public class SystemAspect implements InitializingBean, DisposableBean {
      */
     @AfterReturning(value = "execution(* com.eryansky.modules.sys.service.OrganService.saveOrgan(..)) || " +
             "execution(* com.eryansky.modules.sys.service.OrganService.deleteById(..))",returning = "returnObj")
-    public void afterEnterUserSignIn(JoinPoint joinPoint,Object returnObj) throws Throwable{
+    public void afterSyncOrganToExtend(JoinPoint joinPoint,Object returnObj) throws Throwable{
         if(returnObj != null){
             Parameter parameter = Parameter.newParameter();
             if(returnObj instanceof String){
@@ -60,7 +60,6 @@ public class SystemAspect implements InitializingBean, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-
     }
 
     @Override
