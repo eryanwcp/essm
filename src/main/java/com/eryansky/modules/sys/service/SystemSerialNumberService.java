@@ -82,7 +82,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
         SystemSerialNumber entity = getByCode(moduleCode);
         int version = entity.getVersion();
         /** 预生成数量 */
-        int prepare = StringUtils.isNotBlank(entity.getPreMaxNum()) ? Integer.valueOf(entity.getPreMaxNum()):0;
+        int prepare = StringUtils.isNotBlank(entity.getPreMaxNum()) ? Integer.valueOf(entity.getPreMaxNum()):1;
         /** 数据库存储的当前最大序列号 **/
         long maxSerialInt = StringUtils.isNotBlank(entity.getMaxSerial()) ? Integer.valueOf(entity.getMaxSerial()):0;
         //临时List变量
