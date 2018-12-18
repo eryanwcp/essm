@@ -58,7 +58,7 @@ public class CacheTest {
     public void cache() throws Exception{
         List<TreeNode> treeNodes = resourceService.findTreeNodeResourcesWithPermissions("1");
         System.out.println(JsonMapper.toJsonString(treeNodes));
-        System.out.println(CacheUtils.get(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,"1"));
+        System.out.println((String)CacheUtils.get(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,"1"));
         System.out.println(CacheUtils.keys(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE));
 
     }

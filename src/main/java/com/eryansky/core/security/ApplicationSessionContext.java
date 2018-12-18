@@ -49,16 +49,7 @@ public class ApplicationSessionContext {
 	}
 
 	public List<SessionInfo> findSessionInfoData(Collection<String> keys) {
-		List<SessionInfo> sessionInfoList = Lists.newArrayList();
-		if (Collections3.isNotEmpty(keys)) {
-			for(String key:keys){
-				SessionInfo sessionInfo = (SessionInfo) CacheUtils.get(CACHE_SESSION,key);
-				if(sessionInfo != null){
-					sessionInfoList.add(sessionInfo);
-				}
-			}
-		}
-		return sessionInfoList;
+		return CacheUtils.get(CACHE_SESSION,keys);
 	}
 
 	public Collection<String> findSessionInfoKeys() {
@@ -84,17 +75,8 @@ public class ApplicationSessionContext {
 	}
 
 	public List<Object> findSessionData(String cacheName) {
-		List<Object> sessionList = Lists.newArrayList();
 		Collection<String> keys = CacheUtils.keys(cacheName);
-		if (Collections3.isNotEmpty(keys)) {
-			for(String key:keys){
-				Object sessionInfo = CacheUtils.get(cacheName,key);
-				if(sessionInfo != null){
-					sessionList.add(sessionInfo);
-				}
-			}
-		}
-		return sessionList;
+		return CacheUtils.get(CACHE_SESSION,keys);
 	}
 
 }

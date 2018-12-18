@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Cache工具类
@@ -29,28 +30,35 @@ public class CacheUtils {
 
 	private static final String SYS_CACHE = "sysCache";
 
-	public static Object get(String key) {
+	public static <T> T get(String key) {
 		return get(SYS_CACHE, key);
+	}
+
+	public static <T> T get(String region, String key) {
+		CacheObject cacheObject = cacheManager.getCacheChannel().get(region,key);
+		if(cacheObject != null && logger.isDebugEnabled()){
+			logger.debug(key+":"+cacheObject.getLevel());
+		}
+		return cacheObject==null?null:(T)cacheObject.getValue();
+	}
+
+	public static <T> T get(String region, Collection<String> keys) {
+		java.util.Map<String,CacheObject> map = cacheManager.getCacheChannel().get(region,keys);
+		return (T)map.values().stream().filter(x -> x!=null && x.getValue() != null).map(v->v.getValue()).collect(Collectors.toList());
 	}
 
 	public static void put(String key, Object value) {
 		put(SYS_CACHE, key, value);
 	}
 
-	public static void remove(String key) {
-		remove(SYS_CACHE, key);
-	}
-	
-	public static Object get(String region, String key) {
-		CacheObject cacheObject = cacheManager.getCacheChannel().get(region,key);
-		if(cacheObject != null && logger.isDebugEnabled()){
-			logger.info(key+":"+cacheObject.getLevel());
-		}
-		return cacheObject==null?null:cacheObject.getValue();
-	}
+
 
 	public static void put(String region, String key, Object value) {
 		cacheManager.getCacheChannel().set(region,key,value);
+	}
+
+	public static void remove(String key) {
+		remove(SYS_CACHE, key);
 	}
 
 	public static void remove(String region, String key) {

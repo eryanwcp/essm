@@ -45,8 +45,6 @@ public class SysServiceTest {
     private PostService postService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private CacheChannel cacheChannel;
 
 
     @Test
@@ -77,24 +75,6 @@ public class SysServiceTest {
 
     }
 
-    @Test
-    public void cache() throws Exception{
-        List<TreeNode> treeNodes = resourceService.findTreeNodeResourcesWithPermissions("1");
-        System.out.println(JsonMapper.toJsonString(treeNodes));
-        System.out.println(CacheUtils.get(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE,"1"));
-        System.out.println(CacheUtils.keys(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE));
-
-    }
-
-
-    @Test
-    public void cache3() throws Exception{
-        System.out.println(cacheChannel.regions());
-        cacheChannel.set("sessionCache","1","2");
-        System.out.println(cacheChannel.get("sessionCache","1"));;
-        System.out.println(cacheChannel.keys(CacheConstants.RESOURCE_USER_RESOURCE_TREE_CACHE));
-
-    }
 
 
     @Test
