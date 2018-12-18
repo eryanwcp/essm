@@ -5,22 +5,8 @@
  */
 package test.weixin;
 
-import com.eryansky.common.utils.mapper.JsonMapper;
-import com.eryansky.fastweixin.company.api.QYMenuAPI;
-import com.eryansky.fastweixin.company.api.QYMessageAPI;
-import com.eryansky.fastweixin.company.api.QYUserAPI;
-import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
-import com.eryansky.fastweixin.company.api.entity.QYMenu;
-import com.eryansky.fastweixin.company.api.entity.QYMenuButton;
-import com.eryansky.fastweixin.company.api.enums.QYMenuType;
-import com.eryansky.fastweixin.company.api.enums.QYResultType;
-import com.eryansky.fastweixin.company.api.response.GetQYSendMessageResponse;
-import com.eryansky.fastweixin.company.api.response.GetQYUserInfoResponse;
-import com.eryansky.fastweixin.company.message.QYTextMsg;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.J2Cache;
-import com.eryansky.modules.weixin.utils.WeixinUtils;
-import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -28,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 /**
  * @author : 尔演&Eryan eryanwcp@gmail.com
@@ -51,16 +35,18 @@ public class J2CacheTest {
     public void test() {
         String region = "QUEUE_01";
         String region2 = "QUEUE_02";
-        cacheChannel.push(region,"1");
-        cacheChannel.push(region,"2");
-        cacheChannel.push(region,"3");
-        cacheChannel.push(region2,"123");
-        System.out.println(cacheChannel.pop(region));
-        System.out.println(cacheChannel.pop(region));
-//        cacheChannel.clearQueue(region);
-        System.out.println(cacheChannel.pop(region));
-        System.out.println(cacheChannel.pop(region));
-        System.out.println(cacheChannel.pop(region2));
+        cacheChannel.queuePush(region,"11");
+        cacheChannel.queuePush(region,"22");
+        cacheChannel.queuePush(region,"33");
+        cacheChannel.queuePush(region2,"123");
+        System.out.println(cacheChannel.queuePop(region));
+        System.out.println(cacheChannel.queueList(region));
+        System.out.println(cacheChannel.queuePop(region));
+//        cacheChannel.queueClear(region);
+        System.out.println(cacheChannel.queuePop(region));
+        System.out.println(cacheChannel.queuePop(region));
+        System.out.println(cacheChannel.queuePop(region2));
+        System.out.println(cacheChannel.queueList(region));
     }
 
 

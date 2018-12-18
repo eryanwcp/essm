@@ -602,13 +602,13 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	 * @param region
 	 * @param values
 	 */
-	public void push(String region,String... values){
+	public void queuePush(String region, String... values){
 		if(closed)
 			throw new IllegalStateException("CacheChannel closed");
 
 		Level2Cache level2Cache = holder.getLevel2Cache(region);
 		if(!(level2Cache instanceof NullCache)){
-			level2Cache.push(values);
+			level2Cache.queuePush(values);
 		}else{
 			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			for(String value:values){
@@ -622,12 +622,12 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	 * @param region
 	 * @return
 	 */
-	public String pop(String region) {
+	public String queuePop(String region) {
 		if(closed)
 			throw new IllegalStateException("CacheChannel closed");
 		Level2Cache level2Cache = holder.getLevel2Cache(region);
 		if(!(level2Cache instanceof NullCache)){
-			return level2Cache.pop();
+			return level2Cache.queuePop();
 		}else{
 			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			return queue.poll();
@@ -635,15 +635,49 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	}
 
 	/**
+	 * 队列 排队大小
+	 * @param region
+	 * @return
+	 */
+	public int queueSize(String region) {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+		Level2Cache level2Cache = holder.getLevel2Cache(region);
+		if(!(level2Cache instanceof NullCache)){
+			return level2Cache.queueSize();
+		}else{
+			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			return queue.size();
+		}
+	}
+
+	/**
+	 * 队列 列表
+	 * @param region
+	 * @return
+	 */
+	public Collection<String> queueList(String region) {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+		Level2Cache level2Cache = holder.getLevel2Cache(region);
+		if(!(level2Cache instanceof NullCache)){
+			return level2Cache.queueList();
+		}else{
+			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			return new ArrayList<>(queue);
+		}
+	}
+
+	/**
 	 * 队列 清空
 	 * @param region
 	 */
-	public void clearQueue(String region) {
+	public void queueClear(String region) {
 		if(closed)
 			throw new IllegalStateException("CacheChannel closed");
         Level2Cache level2Cache = holder.getLevel2Cache(region);
         if(!(level2Cache instanceof NullCache)){
-            level2Cache.clearQueue();
+            level2Cache.queueClear();
         }else{
 			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			queue.clear();

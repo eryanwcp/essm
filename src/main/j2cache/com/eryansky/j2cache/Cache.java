@@ -16,6 +16,8 @@
 package com.eryansky.j2cache;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,15 +101,28 @@ public interface Cache {
 	/**
 	 * 队列 放入
 	 */
-	default void push(String... values) {}
+	default void queuePush(String... values) {}
+
 	/**
 	 * 队列 获取
 	 */
-	default String pop(){return null;};
+	default String queuePop(){return null;};
+
+    /**
+     * 队列 储存元素长度
+     * @return
+     */
+	default int queueSize(){return 0;};
+
+    /**
+     * 队列 储存的全部元素
+     * @return
+     */
+	default Collection<String> queueList(){return Collections.emptyList();};
 
 	/**
 	 * 队列 清空
 	 */
-	default void clearQueue(){}
+	default void queueClear(){}
 
 }

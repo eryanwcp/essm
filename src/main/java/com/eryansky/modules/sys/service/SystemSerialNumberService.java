@@ -16,10 +16,7 @@ import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.sn.GeneratorConstants;
 import com.eryansky.modules.sys.sn.SNGenerateApp;
 import com.eryansky.utils.AppDateUtils;
-import com.eryansky.utils.CacheConstants;
 import com.eryansky.utils.CacheUtils;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -135,7 +132,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
                 this.save(systemSerialNumber);
                 //清空缓存
                 String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+systemSerialNumber.getModuleCode();
-                CacheUtils.getCacheChannel().clearQueue(region);
+                CacheUtils.getCacheChannel().queueClear(region);
             }
         }
     }
@@ -146,7 +143,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
      */
     public void clearCacheByModuleCode(String moduleCode){
         String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+moduleCode;
-        CacheUtils.getCacheChannel().clearQueue(region);
+        CacheUtils.getCacheChannel().queueClear(region);
     }
 
     /**
@@ -157,7 +154,7 @@ public class SystemSerialNumberService extends CrudService<SystemSerialNumberDao
         for (SystemSerialNumber systemSerialNumber : numberList) {
             //清空缓存
             String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+systemSerialNumber.getModuleCode();
-            CacheUtils.getCacheChannel().clearQueue(region);
+            CacheUtils.getCacheChannel().queueClear(region);
         }
     }
 }

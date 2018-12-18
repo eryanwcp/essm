@@ -21,11 +21,19 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.BaseRedisCommands;
+import io.lettuce.core.api.sync.RedisCommands;
 import io.lettuce.core.cluster.RedisClusterClient;
 import io.lettuce.core.cluster.api.StatefulRedisClusterConnection;
 import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
+import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import redis.clients.jedis.BinaryJedisCommands;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Lettuce 的基类，封装了普通 Redis 连接和集群 Redis 连接的差异
@@ -57,7 +65,7 @@ public abstract class LettuceCache implements Level2Cache {
 
 
     @Override
-    public void push(String... values) {
+    public void queuePush(String... values) {
         for(String value:values){
             if(redisClient instanceof RedisClient){
                 ((RedisClient)redisClient).connect().sync().rpush(Cache.getRegionName(namespace,region),value);
@@ -68,7 +76,7 @@ public abstract class LettuceCache implements Level2Cache {
     }
 
     @Override
-    public String pop() {
+    public String queuePop() {
         if(redisClient instanceof RedisClient){
             return ((RedisClient)redisClient).connect().sync().lpop(Cache.getRegionName(namespace,region));
         }else if(redisClient instanceof RedisClusterClient){
@@ -78,7 +86,38 @@ public abstract class LettuceCache implements Level2Cache {
     }
 
     @Override
-    public void clearQueue() {
+    public int queueSize() {
+        if(redisClient instanceof RedisClient){
+            return ((RedisClient)redisClient).connect().sync().llen(Cache.getRegionName(namespace,region)).intValue();
+        }else if(redisClient instanceof RedisClusterClient){
+            return ((RedisClusterClient)redisClient).connect().sync().llen(Cache.getRegionName(namespace,region)).intValue();
+        }
+        return 0;
+    }
+
+    @Override
+    public Collection<String> queueList() {
+        String _region = Cache.getRegionName(namespace,region);
+        if(redisClient instanceof RedisClient){
+            RedisCommands cmd = ((RedisClient)redisClient).connect().sync();
+            long length = cmd.llen(_region);
+            if(length == 0){
+                return Collections.emptyList();
+            }
+            return cmd.lrange(_region,0,length-1);
+        }else if(redisClient instanceof RedisClusterClient){
+            RedisAdvancedClusterCommands cmd = ((RedisClusterClient)redisClient).connect().sync();
+            long length = cmd.llen(_region);
+            if(length == 0){
+                return Collections.emptyList();
+            }
+            return cmd.lrange(_region,0,length-1);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void queueClear() {
         clear();
     }
 }

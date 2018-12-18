@@ -63,16 +63,16 @@ public class SystemSerialNumberUtils {
      */
     public static String generateSerialNumberByModelCode(String moduleCode){
         String region = SystemSerialNumber.QUEUE_SYS_SERIAL+":"+moduleCode;
-        String value = CacheUtils.getCacheChannel().pop(region);
+        String value = CacheUtils.getCacheChannel().queuePop(region);
         if(value != null){
             return value;
         }
         synchronized (moduleCode.intern()){
             List<String> list = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
             for(String serial:list){
-                CacheUtils.getCacheChannel().push(region,serial);
+                CacheUtils.getCacheChannel().queuePush(region,serial);
             }
-            value = CacheUtils.getCacheChannel().pop(region);
+            value = CacheUtils.getCacheChannel().queuePop(region);
             return value;
         }
     }

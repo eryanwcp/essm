@@ -12,10 +12,7 @@ import redis.clients.jedis.MultiKeyBinaryCommands;
 import redis.clients.jedis.MultiKeyCommands;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -213,7 +210,7 @@ public class RedisGenericCache implements Level2Cache {
 
 
     @Override
-    public void push(String... values) {
+    public void queuePush(String... values) {
         try {
             for (String value : values) {
                 BinaryJedisCommands cmd = client.get();
@@ -225,7 +222,7 @@ public class RedisGenericCache implements Level2Cache {
     }
 
     @Override
-    public String pop() {
+    public String queuePop() {
         try {
             BinaryJedisCommands cmd = client.get();
             byte[] data = cmd.lpop(_key(this.region));
@@ -236,7 +233,27 @@ public class RedisGenericCache implements Level2Cache {
     }
 
     @Override
-    public void clearQueue() {
+    public int queueSize() {
+        BinaryJedisCommands cmd = client.get();
+        return cmd.llen(_key(this.region)).intValue();
+    }
+
+    @Override
+    public Collection<String> queueList() {
+        BinaryJedisCommands cmd = client.get();
+        byte[] keys = _key(this.region);
+        long length = cmd.llen(keys);
+        if(length == 0){
+            return Collections.emptyList();
+        }
+        List<byte[]> values =  cmd.lrange(keys,0,length-1);
+        List<String> valueStrs =  new ArrayList<>(values.size());
+        values.forEach(e ->valueStrs.add(new String(e)));
+        return valueStrs;
+    }
+
+    @Override
+    public void queueClear() {
         clear();
     }
 }
