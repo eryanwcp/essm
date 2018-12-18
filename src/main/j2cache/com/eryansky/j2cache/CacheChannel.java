@@ -635,7 +635,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	}
 
 	/**
-	 * 队列 排队大小
+	 * 队列 大小
 	 * @param region
 	 * @return
 	 */
