@@ -79,7 +79,7 @@ public class CacheUtils {
 
 	public static Collection<String> regionNames() {
 		Collection<CacheChannel.Region> regions = cacheManager.getCacheChannel().regions();
-		return Collections3.extractToList(regions,"name");
+		return regions.stream().map(CacheChannel.Region::getName).collect(Collectors.toList());
 	}
 
 	public static Collection<CacheChannel.Region> regions() {
