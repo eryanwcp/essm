@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.lettuce;
 
+import com.eryansky.j2cache.Cache;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.api.StatefulConnection;
 import io.lettuce.core.api.sync.RedisKeyCommands;
@@ -40,21 +41,9 @@ public class LettuceGenericCache extends LettuceCache {
         super.redisClient = redisClient;
         super.pool = pool;
         super.namespace = namespace;
-        super.region = getRegionName(region);
+        super.region = Cache.getRegionName(namespace,region);
     }
 
-    /**
-     * 在region里增加一个可选的层级,作为命名空间,使结构更加清晰
-     * 同时满足小型应用,多个J2Cache共享一个redis database的场景
-     *
-     * @param region
-     * @return
-     */
-    private String getRegionName(String region) {
-        if (namespace != null && !namespace.trim().isEmpty())
-            region = namespace + ":" + region;
-        return region;
-    }
 
     private String _key(String key) {
         return this.region + ":" + key;

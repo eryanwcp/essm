@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.redis;
 
+import com.eryansky.j2cache.Cache;
 import com.eryansky.j2cache.Level2Cache;
 import redis.clients.jedis.BinaryJedisCommands;
 
@@ -50,21 +51,9 @@ public class RedisHashCache implements Level2Cache {
         this.client = client;
         this.namespace = namespace;
         this.region = region;
-        this.regionBytes = getRegionName(region).getBytes();
+        this.regionBytes = Cache.getRegionName(namespace,region).getBytes();
     }
 
-    /**
-     * 在region里增加一个可选的层级,作为命名空间,使结构更加清晰
-     * 同时满足小型应用,多个J2Cache共享一个redis database的场景
-     *
-     * @param region
-     * @return
-     */
-    private String getRegionName(String region) {
-        if (namespace != null && !namespace.isEmpty())
-            region = namespace + ":" + region;
-        return region;
-    }
 
     @Override
     public byte[] getBytes(String key) {

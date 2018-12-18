@@ -16,10 +16,7 @@
 package com.eryansky.j2cache;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Cache Data Operation Interface
@@ -27,7 +24,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Winter Lau(javayou@gmail.com)
  */
 public interface Cache {
-	Queue<String> queue = new LinkedBlockingQueue<String>();
 
 	/**
 	 * Get an item from the cache, nontransactionally
@@ -88,21 +84,30 @@ public interface Cache {
 	void clear();
 
 	/**
+	 * 在region里增加一个可选的层级,作为命名空间,使结构更加清晰
+	 * 同时满足小型应用,多个J2Cache共享一个redis database的场景
+	 * @param namespace
+	 * @param region
+	 * @return
+	 */
+	static String getRegionName(String namespace,String region) {
+		if (namespace != null && !namespace.trim().isEmpty())
+			region = namespace + ":" + region;
+		return region;
+	}
+
+	/**
 	 * 队列 放入
 	 */
-	default void push(String... values) {
-		for(String value:values){
-			queue.add(value);
-		}
-	}
+	default void push(String... values) {}
 	/**
 	 * 队列 获取
 	 */
-	default String pop(){return queue.poll();}
+	default String pop(){return null;};
 
 	/**
 	 * 队列 清空
 	 */
-	default void clearQueue(){queue.clear();}
+	default void clearQueue(){}
 
 }

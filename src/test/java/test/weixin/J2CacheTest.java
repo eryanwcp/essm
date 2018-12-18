@@ -50,14 +50,17 @@ public class J2CacheTest {
     @Test
     public void test() {
         String region = "QUEUE_01";
+        String region2 = "QUEUE_02";
         cacheChannel.push(region,"1");
         cacheChannel.push(region,"2");
         cacheChannel.push(region,"3");
+        cacheChannel.push(region2,"123");
         System.out.println(cacheChannel.pop(region));
         System.out.println(cacheChannel.pop(region));
 //        cacheChannel.clearQueue(region);
         System.out.println(cacheChannel.pop(region));
         System.out.println(cacheChannel.pop(region));
+        System.out.println(cacheChannel.pop(region2));
     }
 
 

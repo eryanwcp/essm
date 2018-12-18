@@ -1,5 +1,6 @@
 package com.eryansky.j2cache.redis;
 
+import com.eryansky.j2cache.Cache;
 import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
 import io.lettuce.core.cluster.RedisClusterClient;
@@ -41,7 +42,7 @@ public class RedisGenericCache implements Level2Cache {
 
         this.client = client;
         this.namespace = namespace;
-        this.region = _regionName(region);
+        this.region = Cache.getRegionName(namespace,region);
     }
 
     @Override
@@ -49,18 +50,6 @@ public class RedisGenericCache implements Level2Cache {
         return true;
     }
 
-    /**
-     * 在region里增加一个可选的层级,作为命名空间,使结构更加清晰
-     * 同时满足小型应用,多个J2Cache共享一个redis database的场景
-     *
-     * @param region
-     * @return
-     */
-    private String _regionName(String region) {
-        if (namespace != null && !namespace.isEmpty())
-            region = namespace + ":" + region;
-        return region;
-    }
 
     private byte[] _key(String key) {
         try {

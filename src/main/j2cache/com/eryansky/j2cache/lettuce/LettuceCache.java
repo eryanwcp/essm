@@ -15,6 +15,7 @@
  */
 package com.eryansky.j2cache.lettuce;
 
+import com.eryansky.j2cache.Cache;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;
@@ -59,9 +60,9 @@ public abstract class LettuceCache implements Level2Cache {
     public void push(String... values) {
         for(String value:values){
             if(redisClient instanceof RedisClient){
-                ((RedisClient)redisClient).connect().sync().rpush(region,value);
+                ((RedisClient)redisClient).connect().sync().rpush(Cache.getRegionName(namespace,region),value);
             }else if(redisClient instanceof RedisClusterClient){
-                ((RedisClusterClient)redisClient).connect().sync().rpush(region,values);
+                ((RedisClusterClient)redisClient).connect().sync().rpush(Cache.getRegionName(namespace,region),values);
             }
         }
     }
@@ -69,9 +70,9 @@ public abstract class LettuceCache implements Level2Cache {
     @Override
     public String pop() {
         if(redisClient instanceof RedisClient){
-            return ((RedisClient)redisClient).connect().sync().lpop(region);
+            return ((RedisClient)redisClient).connect().sync().lpop(Cache.getRegionName(namespace,region));
         }else if(redisClient instanceof RedisClusterClient){
-            return ((RedisClusterClient)redisClient).connect().sync().lpop(region);
+            return ((RedisClusterClient)redisClient).connect().sync().lpop(Cache.getRegionName(namespace,region));
         }
         return null;
     }

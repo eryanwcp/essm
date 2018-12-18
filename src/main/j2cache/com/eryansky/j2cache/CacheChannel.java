@@ -18,6 +18,7 @@ package com.eryansky.j2cache;
 import java.io.Closeable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +34,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	private CacheProviderHolder holder;
     private boolean defaultCacheNullObject ;
 	private boolean closed;
+	private static final Map<String, LinkedBlockingQueue<String>> _queueMap = new ConcurrentHashMap<>();
 
 	public CacheChannel(J2CacheConfig config, CacheProviderHolder holder) {
 		this.config = config;
@@ -608,8 +610,10 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			level2Cache.push(values);
 		}else{
-			Level1Cache level1Cache = holder.getLevel1Cache(region);
-			level1Cache.push(values);
+			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			for(String value:values){
+				queue.add(value);
+			}
 		}
 	}
 
@@ -625,8 +629,8 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.pop();
 		}else{
-			Level1Cache level1Cache = holder.getLevel1Cache(region);
-			return level1Cache.pop();
+			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			return queue.poll();
 		}
 	}
 
@@ -641,8 +645,8 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
         if(!(level2Cache instanceof NullCache)){
             level2Cache.clearQueue();
         }else{
-            Level1Cache level1Cache = holder.getLevel1Cache(region);
-            level1Cache.clearQueue();
+			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			queue.clear();
         }
 	}
 
