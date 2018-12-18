@@ -6,7 +6,7 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>3.3.20181214-SNAPSHOT</version>
+    <version>3.3.20181218-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
