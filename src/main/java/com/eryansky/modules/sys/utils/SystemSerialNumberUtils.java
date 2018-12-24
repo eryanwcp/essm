@@ -5,8 +5,10 @@
  */
 package com.eryansky.modules.sys.utils;
 
+import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
+import com.eryansky.j2cache.lock.DefaultLockCallback;
 import com.eryansky.modules.sys.mapper.SystemSerialNumber;
 import com.eryansky.modules.sys.service.SystemSerialNumberService;
 import com.eryansky.utils.CacheUtils;
@@ -67,14 +69,22 @@ public class SystemSerialNumberUtils {
         if(value != null){
             return value;
         }
-        synchronized (moduleCode.intern()){
-            List<String> list = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
-            for(String serial:list){
-                CacheUtils.getCacheChannel().queuePush(region,serial);
+        String lockKey = "SystemSerialNumber:lock:"+moduleCode;
+        boolean flag = CacheUtils.getCacheChannel().lock(lockKey, 20, 60, new DefaultLockCallback<Boolean>(false,false) {
+            @Override
+            public Boolean handleObtainLock() {
+                List<String> list = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
+                for(String serial:list){
+                    CacheUtils.getCacheChannel().queuePush(region,serial);
+                }
+                return true;
             }
-            value = CacheUtils.getCacheChannel().queuePop(region);
-            return value;
+        });
+        if(!flag){
+            return null;
         }
+        value = CacheUtils.getCacheChannel().queuePop(region);
+        return value;
     }
 
 }

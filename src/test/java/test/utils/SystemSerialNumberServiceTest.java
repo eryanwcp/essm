@@ -46,7 +46,7 @@ public class SystemSerialNumberServiceTest {
         System.out.println(SystemSerialNumberUtils.generateSerialNumberByModelCode("test"));
     }
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(10);
+    private ExecutorService executorService = Executors.newFixedThreadPool(4);
     @Test
     public void test2() throws Exception{
         for(int i=0;i<100;i++){
