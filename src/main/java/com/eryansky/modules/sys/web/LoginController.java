@@ -114,15 +114,16 @@ public class LoginController extends SimpleController {
      */
     private void checkLoginLimit(){
         int maxSize = AppConstants.getSessionUserMaxSize();
-        int sessionUser = SecurityUtils.getSessionInfoSize();
         if(maxSize < 0){//系统维护
             throw new SystemException("系统正在维护，请稍后再试！");
         }else if(maxSize != 0){//0 为不限制
+            int sessionUser = SecurityUtils.getSessionInfoSize();
             if(sessionUser >= maxSize){
                 throw new SystemException("系统当前登录用户数量过多，请稍后再试！");
             }
         }
     }
+
     /**
      * 登录验证
      *
