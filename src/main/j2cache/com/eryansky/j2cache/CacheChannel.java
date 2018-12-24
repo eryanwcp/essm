@@ -15,10 +15,17 @@
  */
 package com.eryansky.j2cache;
 
+import com.eryansky.j2cache.lock.LockCallback;
+import com.eryansky.j2cache.lock.LockCantObtainException;
+import com.eryansky.j2cache.lock.LockInsideExecutedException;
+import com.eryansky.j2cache.lock.LockRetryFrequency;
+
 import java.io.Closeable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,7 +41,8 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	private CacheProviderHolder holder;
     private boolean defaultCacheNullObject ;
 	private boolean closed;
-	private static final Map<String, LinkedBlockingQueue<String>> _queueMap = new ConcurrentHashMap<>();
+	private static final Map<String, LinkedBlockingQueue<String>> mQueueMap = new ConcurrentHashMap<>();
+	private static final Map<String, ReentrantLock> mLockMap = new ConcurrentHashMap<>();
 
 	public CacheChannel(J2CacheConfig config, CacheProviderHolder holder) {
 		this.config = config;
@@ -610,7 +618,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			level2Cache.queuePush(values);
 		}else{
-			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			for(String value:values){
 				queue.add(value);
 			}
@@ -629,7 +637,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queuePop();
 		}else{
-			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			return queue.poll();
 		}
 	}
@@ -646,7 +654,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queueSize();
 		}else{
-			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			return queue.size();
 		}
 	}
@@ -663,7 +671,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queueList();
 		}else{
-			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			return new ArrayList<>(queue);
 		}
 	}
@@ -679,9 +687,84 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
         if(!(level2Cache instanceof NullCache)){
             level2Cache.queueClear();
         }else{
-			LinkedBlockingQueue<String> queue = _queueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
 			queue.clear();
         }
+	}
+
+	/**
+	 * 锁定对象（自动释放锁）
+	 * @param region 锁对象
+	 * @param keyExpireSeconds 锁超时时间（使用redis有效） 单位：秒
+	 * @param lockCallback 回调函数
+	 * @param <T>
+	 * @return
+	 * @throws LockInsideExecutedException
+	 * @throws LockCantObtainException
+	 */
+	public <T> T lock(String region, long keyExpireSeconds,
+					  LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+		return lock(region,LockRetryFrequency.VERY_SLOW,1,keyExpireSeconds,lockCallback);
+	}
+
+	/**
+	 * 锁定对象（自动释放锁）
+	 * @param region 锁对象
+	 * @param timeoutInSecond 获取锁超时时间 单位：秒
+	 * @param keyExpireSeconds 锁超时时间（使用redis有效） 单位：秒
+	 * @param lockCallback 回调函数
+	 * @param <T>
+	 * @return
+	 * @throws LockInsideExecutedException
+	 * @throws LockCantObtainException
+	 */
+	public <T> T lock(String region, int timeoutInSecond, long keyExpireSeconds,
+					  LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+		return lock(region,LockRetryFrequency.NORMAL,timeoutInSecond,keyExpireSeconds,lockCallback);
+	}
+
+	/**
+	 * 锁定对象（自动释放锁）
+	 * @param region 锁对象
+	 * @param frequency {@link LockRetryFrequency}
+	 * @param timeoutInSecond 获取锁超时时间 单位：秒
+	 * @param keyExpireSeconds 锁超时时间（使用redis有效） 单位：秒
+	 * @param lockCallback 回调函数
+	 * @param <T>
+	 * @return
+	 * @throws LockInsideExecutedException
+	 * @throws LockCantObtainException
+	 */
+	public <T> T lock(String region, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds,
+						LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+		Level2Cache level2Cache = holder.getLevel2Cache(region);
+		if(!(level2Cache instanceof NullCache)){
+			return level2Cache.lock(region,frequency,timeoutInSecond, keyExpireSeconds,lockCallback);
+		}else{
+			ReentrantLock lock  = mLockMap.computeIfAbsent(region, k -> {return new ReentrantLock();});
+			int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
+
+			for (int i = 0; i < retryCount; i++) {
+				boolean flag = lock.tryLock();
+				if(flag) {
+					try {
+						return lockCallback.handleObtainLock();
+					} catch (Exception e) {
+						LockInsideExecutedException ie = new LockInsideExecutedException(e);
+						return lockCallback.handleException(ie);
+					} finally {
+						lock.unlock();
+					}
+				} else {
+					try {
+						Thread.sleep(frequency.getRetryInterval());
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return lockCallback.handleNotObtainLock();
+		}
 	}
 
 }

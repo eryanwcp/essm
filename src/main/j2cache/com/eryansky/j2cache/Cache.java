@@ -15,6 +15,11 @@
  */
 package com.eryansky.j2cache;
 
+import com.eryansky.j2cache.lock.LockCallback;
+import com.eryansky.j2cache.lock.LockCantObtainException;
+import com.eryansky.j2cache.lock.LockInsideExecutedException;
+import com.eryansky.j2cache.lock.LockRetryFrequency;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -124,5 +129,22 @@ public interface Cache {
 	 * 队列 清空
 	 */
 	default void queueClear(){}
+
+	/**
+	 * @param lockKey
+	 * @param frequency
+	 * @param timeoutInSecond
+	 * @param keyExpireSeconds
+	 * @param lockCallback
+	 * @param <T>
+	 * @return
+	 * @throws LockInsideExecutedException
+	 * @throws LockCantObtainException
+	 */
+	default <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds,
+					   LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException{
+		return null;
+	};
+
 
 }

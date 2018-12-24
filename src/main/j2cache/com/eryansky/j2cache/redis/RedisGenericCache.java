@@ -3,6 +3,10 @@ package com.eryansky.j2cache.redis;
 import com.eryansky.j2cache.Cache;
 import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
+import com.eryansky.j2cache.lock.LockCallback;
+import com.eryansky.j2cache.lock.LockCantObtainException;
+import com.eryansky.j2cache.lock.LockInsideExecutedException;
+import com.eryansky.j2cache.lock.LockRetryFrequency;
 import io.lettuce.core.cluster.RedisClusterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,4 +260,38 @@ public class RedisGenericCache implements Level2Cache {
     public void queueClear() {
         clear();
     }
+
+    private static final String LOCK_SUCCESS = "OK";
+    private static final String SET_IF_NOT_EXIST = "NX";
+    private static final String SET_WITH_EXPIRE_TIME = "PX";
+    @Override
+    public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+//        long curentTime = System.currentTimeMillis();
+//        long expireSecond = curentTime / 1000 + keyExpireSeconds;
+//        long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
+
+        int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
+        for (int i = 0; i < retryCount; i++) {
+            String result = client.get().set(_key(lockKey), "".getBytes(), SET_IF_NOT_EXIST.getBytes(), SET_WITH_EXPIRE_TIME.getBytes(), keyExpireSeconds);
+            boolean flag = LOCK_SUCCESS.equals(result);
+            if(flag) {
+                try {
+                    return lockCallback.handleObtainLock();
+                } catch (Exception e) {
+                    LockInsideExecutedException ie = new LockInsideExecutedException(e);
+                    return lockCallback.handleException(ie);
+                } finally {
+                    client.get().del(_key(lockKey));
+                }
+            } else {
+                try {
+                    Thread.sleep(frequency.getRetryInterval());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return lockCallback.handleNotObtainLock();
+    }
+
 }

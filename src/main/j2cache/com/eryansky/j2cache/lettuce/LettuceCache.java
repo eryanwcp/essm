@@ -16,6 +16,10 @@
 package com.eryansky.j2cache.lettuce;
 
 import com.eryansky.j2cache.Cache;
+import com.eryansky.j2cache.lock.LockCallback;
+import com.eryansky.j2cache.lock.LockCantObtainException;
+import com.eryansky.j2cache.lock.LockInsideExecutedException;
+import com.eryansky.j2cache.lock.LockRetryFrequency;
 import io.lettuce.core.AbstractRedisClient;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulConnection;
@@ -28,12 +32,9 @@ import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
 import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import redis.clients.jedis.BinaryJedisCommands;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Lettuce 的基类，封装了普通 Redis 连接和集群 Redis 连接的差异
@@ -120,4 +121,69 @@ public abstract class LettuceCache implements Level2Cache {
     public void queueClear() {
         clear();
     }
+
+    @Override
+    public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+        String _region = Cache.getRegionName(namespace,region);
+        if(redisClient instanceof RedisClient){
+            RedisCommands cmd = ((RedisClient)redisClient).connect().sync();
+//            long curentTime = System.currentTimeMillis();
+//            long expireSecond = curentTime / 1000 + keyExpireSeconds;
+//            long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
+
+            int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
+
+            for (int i = 0; i < retryCount; i++) {
+                boolean flag = cmd.setnx(_region,String.valueOf(keyExpireSeconds));
+                if(flag) {
+                    try {
+                        cmd.expire(_region, keyExpireSeconds);
+                        return lockCallback.handleObtainLock();
+                    } catch (Exception e) {
+                        LockInsideExecutedException ie = new LockInsideExecutedException(e);
+                        return lockCallback.handleException(ie);
+                    } finally {
+                        cmd.del(_region);
+                    }
+                } else {
+                    try {
+                        Thread.sleep(frequency.getRetryInterval());
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            return lockCallback.handleNotObtainLock();
+        }else if(redisClient instanceof RedisClusterClient){
+            RedisAdvancedClusterCommands cmd = ((RedisClusterClient)redisClient).connect().sync();
+            long curentTime = System.currentTimeMillis();
+            long expireSecond = curentTime / 1000 + keyExpireSeconds;
+            long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
+
+            int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
+
+            for (int i = 0; i < retryCount; i++) {
+                boolean flag = cmd.setnx(_region,String.valueOf(expireMillisSecond));
+                if(flag) {
+                    try {
+                        cmd.expire(_region, keyExpireSeconds);
+                        return lockCallback.handleObtainLock();
+                    } catch (Exception e) {
+                        LockInsideExecutedException ie = new LockInsideExecutedException(e);
+                        return lockCallback.handleException(ie);
+                    } finally {
+                        cmd.del(_region);
+                    }
+                } else {
+                    try {
+                        Thread.sleep(frequency.getRetryInterval());
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return lockCallback.handleNotObtainLock();
+        }
+        return null;
+    }
+
 }
