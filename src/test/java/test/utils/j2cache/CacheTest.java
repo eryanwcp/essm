@@ -12,6 +12,8 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.J2Cache;
+import com.eryansky.j2cache.lock.DefaultLockCallback;
+import com.eryansky.j2cache.lock.LockRetryFrequency;
 import com.eryansky.j2cache.util.FSTSerializer;
 import com.eryansky.j2cache.util.FstJSONSerializer;
 import com.eryansky.j2cache.util.FstSnappySerializer;
@@ -41,6 +43,7 @@ import java.util.concurrent.Executors;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:applicationContext.xml",
         "classpath:applicationContext-mybatis.xml",
+        "classpath:applicationContext-quartz.xml",
         "classpath:applicationContext-j2cache.xml" })
 public class CacheTest {
 
@@ -158,6 +161,137 @@ public class CacheTest {
     }
 
 
+    @Test
+    public void lock3() throws Exception{
+
+        ExecutorService executorService = Executors.newScheduledThreadPool(4);
+        String region = "cache1";
+        CacheChannel channel = J2Cache.getChannel();
+
+        Date d1 = Calendar.getInstance().getTime();
+        final int[] m = {0};
+        String requesId = Thread.currentThread().getName();
+        System.out.println(requesId);
+        for(int i=0;i<1000;i++){
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    boolean flag = channel.lock(region, LockRetryFrequency.VERY_QUICK, 3, 20, new DefaultLockCallback<Boolean>(null,false) {
+                        @Override
+                        public Boolean handleObtainLock() {
+                            m[0]++;
+                            System.out.println(m[0]);
+                            return true;
+                        }
+                    });
+                    if(!flag){
+                        System.out.println(flag);
+                    }
+                }
+            });
+
+        }
+        ThreadUtils.sleep(600000);
+//        executorService.shutdown();
+//        while (true) {
+//            if (executorService.isTerminated()) {
+//                Date d2 = Calendar.getInstance().getTime();
+//                System.out.println("执行完毕！");
+//                System.out.println(d2.getTime() - d1.getTime());
+//                channel.close();
+//                break;
+//            }
+//            ThreadUtils.sleep(200);
+//        }
+    }
+
+    @Test
+    public void lock0() throws Exception{
+
+        ExecutorService executorService = Executors.newScheduledThreadPool(8);
+        String region = "cache1";
+        CacheChannel channel = J2Cache.getChannel();
+
+        Date d1 = Calendar.getInstance().getTime();
+        final int[] m = {0};
+        String requesId = Thread.currentThread().getName();
+        System.out.println(requesId);
+        for(int i=0;i<10000;i++){
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    m[0]++;
+                    System.out.println(m[0]);
+                }
+            });
+
+        }
+        ThreadUtils.sleep(600000);
+    }
+
+    private void s(){
+        synchronized (CacheTest.this){
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("S");
+        }
+    }
+
+    private synchronized void ss(){
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("S");
+    }
+    private void s2(){
+        System.out.println("S2");
+    }
+    @Test
+    public void lock2() throws Exception{
+
+        ExecutorService executorService = Executors.newScheduledThreadPool(4);
+        String region = "cache1";
+        CacheChannel channel = J2Cache.getChannel();
+        Date d1 = Calendar.getInstance().getTime();
+        final int[] m = {0};
+        for(int i=0;i<5;i++){
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    m[0]++;
+                    s();
+                }
+            });
+
+        }
+
+        for(int j=0;j<10;j++){
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    s2();
+                }
+            });
+
+        }
+
+        executorService.shutdown();
+        while (true) {
+            if (executorService.isTerminated()) {
+                Date d2 = Calendar.getInstance().getTime();
+                System.out.println("执行完毕！");
+                System.out.println(d2.getTime() - d1.getTime());
+                channel.close();
+                break;
+            }
+            ThreadUtils.sleep(200);
+        }
+    }
 
 
 }
