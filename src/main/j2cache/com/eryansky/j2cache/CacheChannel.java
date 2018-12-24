@@ -15,10 +15,9 @@
  */
 package com.eryansky.j2cache;
 
-import com.eryansky.j2cache.lock.LockCallback;
-import com.eryansky.j2cache.lock.LockCantObtainException;
-import com.eryansky.j2cache.lock.LockInsideExecutedException;
-import com.eryansky.j2cache.lock.LockRetryFrequency;
+import com.eryansky.j2cache.lock.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.util.*;
@@ -35,6 +34,8 @@ import java.util.stream.Collectors;
  * @author Winter Lau(javayou@gmail.com)
  */
 public abstract class CacheChannel implements Closeable , AutoCloseable {
+
+	private final Logger logger = LoggerFactory.getLogger(CacheChannel.class);
 
 	private static final Map<String, Object> _g_keyLocks = new ConcurrentHashMap<>();
 	private J2CacheConfig config;
@@ -750,6 +751,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 					try {
 						return lockCallback.handleObtainLock();
 					} catch (Exception e) {
+						logger.error(e.getMessage(),e);
 						LockInsideExecutedException ie = new LockInsideExecutedException(e);
 						return lockCallback.handleException(ie);
 					} finally {
@@ -759,7 +761,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 					try {
 						Thread.sleep(frequency.getRetryInterval());
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						logger.error(e.getMessage(),e);
 					}
 				}
 			}

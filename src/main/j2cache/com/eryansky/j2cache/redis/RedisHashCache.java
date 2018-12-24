@@ -21,6 +21,8 @@ import com.eryansky.j2cache.lock.LockCallback;
 import com.eryansky.j2cache.lock.LockCantObtainException;
 import com.eryansky.j2cache.lock.LockInsideExecutedException;
 import com.eryansky.j2cache.lock.LockRetryFrequency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryJedisCommands;
 
 import java.io.UnsupportedEncodingException;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
  */
 @Deprecated
 public class RedisHashCache implements Level2Cache {
+
+    private final static Logger log = LoggerFactory.getLogger(RedisHashCache.class);
 
     private String namespace;
     private String region;
@@ -212,6 +216,7 @@ public class RedisHashCache implements Level2Cache {
                 try {
                     return lockCallback.handleObtainLock();
                 } catch (Exception e) {
+                    log.error(e.getMessage(),e);
                     LockInsideExecutedException ie = new LockInsideExecutedException(e);
                     return lockCallback.handleException(ie);
                 } finally {
@@ -221,7 +226,7 @@ public class RedisHashCache implements Level2Cache {
                 try {
                     Thread.sleep(frequency.getRetryInterval());
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(),e);
                 }
             }
         }

@@ -16,6 +16,7 @@
 package com.eryansky.j2cache.lettuce;
 
 import com.eryansky.j2cache.Cache;
+import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.lock.LockCallback;
 import com.eryansky.j2cache.lock.LockCantObtainException;
 import com.eryansky.j2cache.lock.LockInsideExecutedException;
@@ -32,6 +33,8 @@ import com.eryansky.j2cache.CacheException;
 import com.eryansky.j2cache.Level2Cache;
 import io.lettuce.core.cluster.api.sync.RedisAdvancedClusterCommands;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -42,6 +45,8 @@ import java.util.Collections;
  * @author Winter Lau(javayou@gmail.com)
  */
 public abstract class LettuceCache implements Level2Cache {
+
+    private final Logger logger = LoggerFactory.getLogger(LettuceCache.class);
 
     protected String namespace;
     protected String region;
@@ -140,6 +145,7 @@ public abstract class LettuceCache implements Level2Cache {
                         cmd.expire(_region, keyExpireSeconds);
                         return lockCallback.handleObtainLock();
                     } catch (Exception e) {
+                        logger.error(e.getMessage(),e);
                         LockInsideExecutedException ie = new LockInsideExecutedException(e);
                         return lockCallback.handleException(ie);
                     } finally {
@@ -149,25 +155,27 @@ public abstract class LettuceCache implements Level2Cache {
                     try {
                         Thread.sleep(frequency.getRetryInterval());
                     } catch (InterruptedException e) {
+                        logger.error(e.getMessage(),e);
                     }
                 }
             }
             return lockCallback.handleNotObtainLock();
         }else if(redisClient instanceof RedisClusterClient){
             RedisAdvancedClusterCommands cmd = ((RedisClusterClient)redisClient).connect().sync();
-            long curentTime = System.currentTimeMillis();
-            long expireSecond = curentTime / 1000 + keyExpireSeconds;
-            long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
+//            long curentTime = System.currentTimeMillis();
+//            long expireSecond = curentTime / 1000 + keyExpireSeconds;
+//            long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
 
             int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
 
             for (int i = 0; i < retryCount; i++) {
-                boolean flag = cmd.setnx(_region,String.valueOf(expireMillisSecond));
+                boolean flag = cmd.setnx(_region,String.valueOf(keyExpireSeconds));
                 if(flag) {
                     try {
                         cmd.expire(_region, keyExpireSeconds);
                         return lockCallback.handleObtainLock();
                     } catch (Exception e) {
+                        logger.error(e.getMessage(),e);
                         LockInsideExecutedException ie = new LockInsideExecutedException(e);
                         return lockCallback.handleException(ie);
                     } finally {
@@ -177,7 +185,7 @@ public abstract class LettuceCache implements Level2Cache {
                     try {
                         Thread.sleep(frequency.getRetryInterval());
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        logger.error(e.getMessage(),e);
                     }
                 }
             }
