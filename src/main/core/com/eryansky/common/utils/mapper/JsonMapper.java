@@ -21,6 +21,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * 简单封装Jackson，实现JSON String<->Java Object的Mapper.
@@ -50,6 +51,7 @@ public class JsonMapper  extends ObjectMapper{
         //解决hibernate延时加载设置
 //        this.registerHibernate4Module();
         // 设置默认日期格式
+        this.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         this.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         this.setFilters(new SimpleFilterProvider().setFailOnUnknownId(false));
         //设置输入时忽略在JSON字符串中存在但Java对象实际没有的属性
