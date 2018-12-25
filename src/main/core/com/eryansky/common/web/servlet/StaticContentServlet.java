@@ -77,7 +77,7 @@ public class StaticContentServlet extends HttpServlet {
     public void init() throws ServletException {
 
     }
-    
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //获取请求内容的基本信息.
@@ -121,7 +121,9 @@ public class StaticContentServlet extends HttpServlet {
             if(cacheFileData && contentInfo.fileData != null && contentInfo.fileData.length >0 ){
                 output.write(contentInfo.fileData);
             }else{
-                input = new FileInputStream(contentInfo.file);
+//                input = new FileInputStream(contentInfo.file);
+                String realFilePath = getServletContext().getRealPath(contentInfo.contentPath);
+                input = new FileInputStream(realFilePath);
                 IoUtils.copy(input, output);
             }
             output.flush();
