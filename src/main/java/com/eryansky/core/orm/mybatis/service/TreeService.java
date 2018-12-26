@@ -19,7 +19,6 @@ import java.util.List;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @version 2014-05-16
  */
-@Transactional(readOnly = true)
 public abstract class TreeService<D extends TreeDao<T>, T extends TreeEntity<T>> extends CrudService<D, T> {
 	
 	@Transactional(readOnly = false)
