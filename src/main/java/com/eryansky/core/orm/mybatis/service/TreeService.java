@@ -10,7 +10,6 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.reflection.ReflectionUtils;
 import com.eryansky.core.orm.mybatis.dao.TreeDao;
 import com.eryansky.core.orm.mybatis.entity.TreeEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ import java.util.List;
  */
 public abstract class TreeService<D extends TreeDao<T>, T extends TreeEntity<T>> extends CrudService<D, T> {
 	
-	@Transactional(readOnly = false)
 	public void save(T entity) {
 		
 		@SuppressWarnings("unchecked")
