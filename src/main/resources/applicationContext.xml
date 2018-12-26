@@ -74,7 +74,7 @@
 
     <!-- 1.使用annotation定义事务 -->
     <!-- proxy-target-class ture:动态代理(需cglib类库的支持)  false:接口(Spring默认方式) -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" order="200"/>
 
     <!-- proxy-target-class true:CGLIB代理 false:JDK代理-->
     <aop:aspectj-autoproxy proxy-target-class="true" />
@@ -82,7 +82,7 @@
 
     <!-- 2.声明式事务配置 -->
     <aop:config proxy-target-class="true">
-        <aop:advisor pointcut="execution(* com.eryansky.modules..*.service..*Service.*(..))" advice-ref="txAdvice" />
+        <aop:advisor pointcut="execution(* com.eryansky.modules..*.service..*Service.*(..))" advice-ref="txAdvice" order="199"/>
     </aop:config>
 
     <!-- 通知  默认事务管理器：transaction-manager="transactionManager" -->
