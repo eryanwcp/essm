@@ -123,6 +123,8 @@ public abstract class BaseInterceptor implements Interceptor, Serializable {
             dialect = new HSQLDialect();
         }else if("mysql".equalsIgnoreCase(dbType)){
             dialect = new MySQLDialect();
+        }else if("mariadb".equalsIgnoreCase(dbType)){
+            dialect = new MariaDBDialect();
         }else if("oracle".equalsIgnoreCase(dbType)){
             dialect = new OracleDialect();
         }else if("postgre".equalsIgnoreCase(dbType)){

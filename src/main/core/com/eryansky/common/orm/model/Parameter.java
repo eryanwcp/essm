@@ -5,6 +5,10 @@
  */
 package com.eryansky.common.orm.model;
 
+import com.eryansky.common.orm.Page;
+import com.eryansky.common.orm.mybatis.interceptor.BaseInterceptor;
+import com.eryansky.common.utils.SysConstants;
+
 import java.util.HashMap;
 
 /**
@@ -48,6 +52,28 @@ public class Parameter extends HashMap<String, Object> {
 	 */
 	public static Parameter newParameter() {
 		return new Parameter();
+	}
+
+	/**
+	 * 构造参数(分页)
+	 * @param page
+	 * @return
+	 */
+	public static Parameter newPageParameter(Page page) {
+		return newPageParameter(page,null);
+	}
+
+	/**
+	 * 构造参数(分页)
+	 * @param page 分页
+	 * @param jdbcType 数据库类型
+	 * @return
+	 */
+	public static Parameter newPageParameter(Page page,String jdbcType) {
+		Parameter parameter =  Parameter.newParameter();
+		parameter.put(BaseInterceptor.PAGE,page);
+		parameter.put(BaseInterceptor.DB_NAME,jdbcType == null ? SysConstants.getJdbcType():jdbcType);
+		return parameter;
 	}
 
 	/**
