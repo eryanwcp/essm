@@ -195,6 +195,6 @@ public abstract class SpringMVCHolder {
      */
     public static String getIp() {
         HttpServletRequest request = getRequest();
-        return IpUtils.getIpAddr(request);
+        return IpUtils.getIpAddr0(request);
     }
 }

@@ -358,7 +358,7 @@ public class SecurityUtils {
             logger.debug("putUserToSession:{}", sessionId);
         }
         SessionInfo sessionInfo = userToSessionInfo(user);
-        sessionInfo.setIp(IpUtils.getIpAddr(request));
+        sessionInfo.setIp(IpUtils.getIpAddr0(request));
         sessionInfo.setUserAgent(UserAgentUtils.getHTTPUserAgent(request));
         sessionInfo.setDeviceType(UserAgentUtils.getDeviceType(request).toString());
         sessionInfo.setBrowserType(UserAgentUtils.getBrowser(request).getName());

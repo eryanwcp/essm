@@ -28,61 +28,83 @@ import java.util.List;
  */
 public class IpUtils {
 
+    private static final String IP_UNKNOW = "unknown";
+
     private IpUtils() {
     }
 
+    /**
+     * 获取客户端IP
+     * @param request
+     * @return
+     */
     public static String getIpAddr(HttpServletRequest request) {
         if (request == null) {
-            return "unknown";
+            return IP_UNKNOW;
         }
         String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Forwarded-For");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("X-Real-IP");
         }
 
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_FORWARDED_FOR");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_FORWARDED");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("HTTP_VIA");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getHeader("REMOTE_ADDR");
         }
 
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (ip == null || ip.length() == 0 || IP_UNKNOW.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
         if (StringUtils.isNotBlank(ip)){
             ip = EncodeUtils.xssFilter(ip);
+        }
+        if (StringUtils.isBlank(ip)){
+            ip = IP_UNKNOW;
+        }
+        return ip;
+    }
+
+    /**
+     * 获取客户端IP （有多个时，仅取第一个）
+     * @param request
+     * @return
+     */
+    public static String getIpAddr0(HttpServletRequest request) {
+        String ip = getIpAddr(request);
+        if (StringUtils.isNotBlank(ip) && !IP_UNKNOW.equalsIgnoreCase(ip)){
             ip = StringUtils.split(ip, ",")[0];
         }
         if (StringUtils.isBlank(ip)){
-            ip = "unknown";
+            ip = IP_UNKNOW;
         }
         return ip;
     }

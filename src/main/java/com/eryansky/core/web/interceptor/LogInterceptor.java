@@ -195,7 +195,7 @@ public class LogInterceptor implements HandlerInterceptor {
 			log.setTitle(newLogValue);
 			log.setUserId(sessionInfo == null ? User.SUPERUSER_ID : sessionInfo.getUserId());
 			log.setType(logType);
-			log.setIp(IpUtils.getIpAddr(request));
+			log.setIp(sessionInfo == null ? IpUtils.getIpAddr0(request):sessionInfo.getIp());
 			log.setUserAgent(UserAgentUtils.getHTTPUserAgent(request));
 			log.setDeviceType(UserAgentUtils.getDeviceType(request).toString());
 			log.setBrowserType(UserAgentUtils.getBrowser(request).getName());
