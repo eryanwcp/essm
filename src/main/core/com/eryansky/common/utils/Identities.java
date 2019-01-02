@@ -5,6 +5,8 @@
  */
 package com.eryansky.common.utils;
 
+import com.eryansky.common.utils.id.SnowFlake;
+
 import java.security.SecureRandom;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import java.util.UUID;
 public class Identities {
 
 	private static SecureRandom random = new SecureRandom();
+	private static SnowFlake snowFlake = SnowFlake.newInstance();
 
 	private Identities() {
 	}
@@ -32,6 +35,14 @@ public class Identities {
 	 */
 	public static String uuid2() {
 		return uuid().replaceAll("-", "");
+	}
+
+	/**
+	 * 基于雪花算法
+	 * @return
+	 */
+	public static Long uuid3() {
+		return snowFlake.nextId();
 	}
 
 	/**
