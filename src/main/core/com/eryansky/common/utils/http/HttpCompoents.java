@@ -254,7 +254,7 @@ public class HttpCompoents {
      *
      * @return
      */
-    public static synchronized HttpCompoents newInstance() {
+    public static HttpCompoents newInstance() {
         return new HttpCompoents();
     }
 
@@ -264,7 +264,7 @@ public class HttpCompoents {
      * @param httpClient
      * @return
      */
-    public static synchronized HttpCompoents newInstance(RequestConfig requestConfig,CloseableHttpClient httpClient) {
+    public static HttpCompoents newInstance(RequestConfig requestConfig,CloseableHttpClient httpClient) {
         return new HttpCompoents(requestConfig,httpClient);
     }
 

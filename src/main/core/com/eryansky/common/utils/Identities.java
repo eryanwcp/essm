@@ -18,7 +18,7 @@ import java.util.UUID;
 public class Identities {
 
 	private static SecureRandom random = new SecureRandom();
-	private static SnowFlake snowFlake = SnowFlake.newInstance();
+	private static SnowFlake snowFlake = SnowFlake.getInstance();
 
 	private Identities() {
 	}
