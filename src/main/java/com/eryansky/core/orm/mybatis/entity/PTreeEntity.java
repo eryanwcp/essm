@@ -15,7 +15,7 @@ import java.io.Serializable;
 /**
  * 树形Entity基类
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2019-01-02
+ * @version 2014-05-16
  */
 public abstract class PTreeEntity<T, PK extends Serializable> extends PDataEntity<T,PK> {
 
@@ -80,7 +80,7 @@ public abstract class PTreeEntity<T, PK extends Serializable> extends PDataEntit
 		if (parent != null){
 			id = ReflectionUtils.getFieldValue(parent, "id");
 		}
-		return id != null ? id : (PK)(id  instanceof Long ? 0L:"0");
+		return id != null ? id : (PK)(id  instanceof Long ? Long.valueOf(0):"0");
 	}
 	
 }
