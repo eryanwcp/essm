@@ -102,16 +102,16 @@ public class SnowFlake {
         return this;
     }
 
+    public boolean isClock() {
+        return isClock;
+    }
+
     public long getWorkerId() {
         return workerId;
     }
 
     public long getDatacenterId() {
         return datacenterId;
-    }
-
-    public boolean isClock() {
-        return isClock;
     }
 
     /**
