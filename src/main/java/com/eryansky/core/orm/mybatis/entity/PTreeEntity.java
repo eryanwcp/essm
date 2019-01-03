@@ -76,11 +76,11 @@ public abstract class PTreeEntity<T, PK extends Serializable> extends PDataEntit
 	}
 	
 	public PK getParentId() {
-		PK id = null;
+		PK parentId = null;
 		if (parent != null){
-			id = ReflectionUtils.getFieldValue(parent, "id");
+			parentId = ReflectionUtils.getFieldValue(parent, "id");
 		}
-		return id != null ? id : (PK)(id  instanceof Long ? Long.valueOf(0):"0");
+		return parentId != null ? parentId : (PK)(getId()  instanceof Long ? Long.valueOf(0):"0");
 	}
 	
 }
