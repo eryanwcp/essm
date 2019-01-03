@@ -27,7 +27,7 @@ public abstract class PTreeService<D extends PTreeDao<T,PK>, T extends PTreeEnti
 		Class<T> entityClass = ReflectionUtils.getClassGenricType(getClass(), 1);
 		// 如果没有设置父节点，则代表为跟节点，有则获取父节点实体
 		if (entity.getParent() == null || entity.getParentId() == null
-				 || "0".equals(entity.getId()) || Long.valueOf(0).equals(entity.getParentId())){
+				 || "0".equals(entity.getParentId()) || Long.valueOf(0).equals(entity.getParentId())){
 			entity.setParent(null);
 		}else{
 			entity.setParent(super.get(entity.getParentId()));
