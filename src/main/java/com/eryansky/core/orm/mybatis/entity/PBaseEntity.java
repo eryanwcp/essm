@@ -10,6 +10,7 @@ import com.eryansky.common.orm.persistence.AbstractBaseEntity;
 import com.eryansky.common.orm.persistence.IUser;
 import com.eryansky.common.utils.Identities;
 import com.eryansky.common.utils.io.PropertiesLoader;
+import com.eryansky.common.utils.reflection.ReflectionUtils;
 import com.eryansky.core.security.SecurityUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -44,10 +45,12 @@ public abstract class PBaseEntity<T, PK extends Serializable> extends AbstractBa
     public void prePersist() {
         // 不限制ID为UUID，调用setIsNewRecord()使用自定义ID
         if (!this.isNewRecord){
-            if(id instanceof String){
-                setId((PK)Identities.uuid2());
-            }if(id instanceof Long){
-                setId((PK)Identities.uuid3());
+            Class<T> idClass = ReflectionUtils.getClassGenricType(getClass(), 1);
+            String idTypeName = idClass.getSimpleName();
+            if("Long".equals(idTypeName)){
+                setId((PK) Identities.uuid3());
+            }else if("String".equals(idTypeName)){
+                setId((PK) Identities.uuid2());
             }
         }
     }
