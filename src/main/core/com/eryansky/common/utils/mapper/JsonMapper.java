@@ -34,9 +34,6 @@ public class JsonMapper  extends ObjectMapper{
 
 	private static Logger logger = LoggerFactory.getLogger(JsonMapper.class);
 
-	private static JsonMapper mapper;
-
-
     public JsonMapper() {
         this(null);
     }
@@ -66,14 +63,14 @@ public class JsonMapper  extends ObjectMapper{
 //        });
 	}
 
+    private static class JsonMapperHolder {
+        private static final JsonMapper jsonMapper = new JsonMapper();
+    }
     /**
      * 创建只输出非Null且非Empty(如List.isEmpty)的属性到Json字符串的Mapper,建议在外部接口中使用.
      */
     public static JsonMapper getInstance() {
-        if (mapper == null){
-            mapper = new JsonMapper();
-        }
-        return mapper;
+        return JsonMapperHolder.jsonMapper;
     }
 
     /**
