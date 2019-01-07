@@ -64,13 +64,13 @@ public class SnowFlake {
 
     private boolean isClock = false;
 
-    private static SnowFlake defaultSnowFlake;
 
-    public static synchronized SnowFlake getInstance() {
-        if (defaultSnowFlake == null) {
-            defaultSnowFlake = new SnowFlake();
-        }
-        return defaultSnowFlake;
+    private static class SnowFlakeHolder {
+        private static final SnowFlake snowFlake = new SnowFlake();
+    }
+
+    public static SnowFlake getInstance() {
+        return SnowFlakeHolder.snowFlake;
     }
 
     public static SnowFlake newInstance() {
