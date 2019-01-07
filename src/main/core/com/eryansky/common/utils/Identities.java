@@ -46,6 +46,14 @@ public class Identities {
 	}
 
 	/**
+	 * 基于雪花算法
+	 * @return
+	 */
+	public static String uuid4() {
+		return String.valueOf(uuid3());
+	}
+
+	/**
 	 * 使用SecureRandom随机生成Long. 
 	 */
 	public static long randomLong() {
