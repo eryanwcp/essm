@@ -59,6 +59,13 @@ public class AppConstants extends SysConstants {
     public static final String CONFIG_FILE_PATH = "config.properties";
 
     /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    private static final class Static {
+        private static ConfigService configService = SpringContextHolder.getBean(ConfigService.class);
+    }
+
+    /**
      * 获取jdbc交校验sql
      */
     public static String getJdbcValidationQuery() {
@@ -138,8 +145,7 @@ public class AppConstants extends SysConstants {
         if (isdevMode()) {//调试模式 从本地配置文件读取
             return getConfig(code, defaultValue);
         }
-        ConfigService configService = SpringContextHolder.getBean(ConfigService.class);
-        String configValue = configService.getConfigValueByCode(code);
+        String configValue = Static.configService.getConfigValueByCode(code);
         if (StringUtils.isBlank(configValue)) {
             return getConfig().getProperty(code, defaultValue);
         }
