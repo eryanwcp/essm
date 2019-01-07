@@ -19,17 +19,17 @@ public class SysConstants {
      * session 验证码key
      */
     public static final String SESSION_VALIDATE_CODE = "validateCode";
-    
-    private static PropertiesLoader appconfig = null;
+    public static final String APP_CONFIG_FILE = "appconfig.properties";
+
+    private static class SysConstantsHolder {
+        private static final PropertiesLoader appconfig = new PropertiesLoader(APP_CONFIG_FILE);
+    }
 
     /**
      * 配置文件(appconfig.properties)
      */
     public static PropertiesLoader getAppConfig() {
-    	if(appconfig == null){
-    		appconfig = new PropertiesLoader("appconfig.properties");
-    	}
-        return appconfig;
+        return SysConstantsHolder.appconfig;
     }
 
     /**
@@ -52,11 +52,7 @@ public class SysConstants {
      * @param value
      */
     public static void modifyAppConfig(String key,String value) {
-        String filePath = "appconfig.properties";
-        if(appconfig == null){
-            appconfig = new PropertiesLoader(filePath);
-        }
-        appconfig.modifyProperties(filePath,key,value);
+        SysConstantsHolder.appconfig.modifyProperties(APP_CONFIG_FILE,key,value);
     }
     
 

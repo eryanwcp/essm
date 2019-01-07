@@ -77,7 +77,6 @@ public class HttpCompoents {
      */
     private static int MAX_EXECUT_COUNT = 3;
 
-    private static HttpCompoents instance;
     private final String _DEFLAUT_CHARSET = "utf-8";
     private CloseableHttpClient httpClient;
     /**
@@ -268,16 +267,18 @@ public class HttpCompoents {
         return new HttpCompoents(requestConfig,httpClient);
     }
 
+
+    private static class HttpCompoentsHolder {
+        private static final HttpCompoents httpCompoents = new HttpCompoents();
+    }
+
     /**
      * 单例
      *
      * @return
      */
-    public static synchronized HttpCompoents getInstance() {
-        if (instance == null) {
-            instance = new HttpCompoents();
-        }
-        return instance;
+    public static HttpCompoents getInstance() {
+        return HttpCompoentsHolder.httpCompoents;
     }
 
     /**
