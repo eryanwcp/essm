@@ -205,11 +205,11 @@ public class AppUtils {
 
     //         \b 是单词边界(连着的两个(字母字符 与 非字母字符) 之间的逻辑上的间隔),字符串在编译时会被转码一次,所以是 "\\b"
     // \B 是单词内部逻辑间隔(连着的两个字母字符之间的逻辑上的间隔)
-    static String androidReg = "\\bandroid|Nexus\\b";
-    static String iosReg = "ip(hone|od|ad)";
+    private static String androidReg = "\\bandroid|Nexus\\b";
+    private static String iosReg = "ip(hone|od|ad)";
 
-    static Pattern androidPat = Pattern.compile(androidReg, Pattern.CASE_INSENSITIVE);
-    static Pattern iosPat = Pattern.compile(iosReg, Pattern.CASE_INSENSITIVE);
+    private static Pattern androidPat = Pattern.compile(androidReg, Pattern.CASE_INSENSITIVE);
+    private static Pattern iosPat = Pattern.compile(iosReg, Pattern.CASE_INSENSITIVE);
 
     /**
      *
@@ -222,11 +222,7 @@ public class AppUtils {
         }
         // 匹配
         Matcher matcherAndroid = androidPat.matcher(userAgent);
-        if(matcherAndroid.find()){
-            return true;
-        } else {
-            return false;
-        }
+        return matcherAndroid.find();
     }
 
     /**
@@ -240,11 +236,7 @@ public class AppUtils {
         }
         // 匹配
         Matcher matcherIOS = iosPat.matcher(userAgent);
-        if(matcherIOS.find()){
-            return true;
-        } else {
-            return false;
-        }
+        return matcherIOS.find();
     }
 
 
@@ -287,7 +279,7 @@ public class AppUtils {
      */
     public static List<TreeNode> toTreeTreeNodes(List<TreeNode> treeNodes){
         if(Collections3.isEmpty(treeNodes)){
-            return new ArrayList<TreeNode>(0);
+            return Collections.emptyList();
         }
         List<TreeNode> tempTreeNodes = Lists.newArrayList();
         Map<String,TreeNode> tempMap = Maps.newLinkedHashMap();

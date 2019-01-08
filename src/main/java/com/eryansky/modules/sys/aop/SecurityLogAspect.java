@@ -39,7 +39,7 @@ public class SecurityLogAspect {
      * @param joinPoint 切入点
      */
     @After("execution(* com.eryansky.modules.sys.web.LoginController.login(..))")
-    public void afterLoginLog(JoinPoint joinPoint) throws Throwable{
+    public void afterLoginLog(JoinPoint joinPoint){
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
             saveLog(sessionInfo, joinPoint, SecurityType.login); //保存日志
@@ -51,7 +51,7 @@ public class SecurityLogAspect {
      * @param joinPoint 切入点
      */
     @Before("execution(* com.eryansky.modules.sys.service.UserService.*logout(..))")
-    public void beforeLogoutLog(JoinPoint joinPoint) throws Throwable{
+    public void beforeLogoutLog(JoinPoint joinPoint){
         SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         if(sessionInfo != null){
             Object[] args = joinPoint.getArgs();
@@ -105,8 +105,8 @@ public class SecurityLogAspect {
             }
             log.setOperTime(new Date());
             end = System.currentTimeMillis();
-            Long opTime = end - start;
-            log.setActionTime(opTime.toString());
+            long opTime = end - start;
+            log.setActionTime(String.valueOf(opTime));
             logService.save(log);
         } catch (Exception e) {
             logger.error(e.getMessage());

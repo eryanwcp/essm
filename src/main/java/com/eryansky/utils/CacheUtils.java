@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @version 2013-5-29
  */
+@SuppressWarnings("unchecked")
 public class CacheUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(SystemInitListener.class);
@@ -38,6 +39,7 @@ public class CacheUtils {
 		return get(SYS_CACHE, key);
 	}
 
+
 	public static <T> T get(String region, String key) {
 		CacheObject cacheObject = Static.cacheManager.getCacheChannel().get(region,key);
 		if(cacheObject != null && logger.isDebugEnabled()){
@@ -48,7 +50,7 @@ public class CacheUtils {
 
 	public static <T> T get(String region, Collection<String> keys) {
 		java.util.Map<String,CacheObject> map = Static.cacheManager.getCacheChannel().get(region,keys);
-		return (T)map.values().stream().filter(x -> x!=null && x.getValue() != null).map(v->v.getValue()).collect(Collectors.toList());
+		return (T)map.values().stream().filter(x -> x!=null && x.getValue() != null).map(CacheObject::getValue).collect(Collectors.toList());
 	}
 
 	public static void put(String key, Object value) {
