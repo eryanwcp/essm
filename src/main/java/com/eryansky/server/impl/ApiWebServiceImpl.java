@@ -34,10 +34,15 @@ public class ApiWebServiceImpl implements IApiWebService {
 
     private static Logger logger = LoggerFactory.getLogger(ApiWebServiceImpl.class);
 
-    private UserService userService = SpringContextHolder.getBean(UserService.class);
-    private OrganService organService = SpringContextHolder.getBean(OrganService.class);
-    private NoticeService noticeService = SpringContextHolder.getBean(NoticeService.class);
 
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    private static final class Static {
+        private static UserService userService = SpringContextHolder.getBean(UserService.class);
+        private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
+        private static NoticeService noticeService = SpringContextHolder.getBean(NoticeService.class);
+    }
 
     @Override
     public WSResult sendMessage(String data) {
@@ -80,19 +85,19 @@ public class ApiWebServiceImpl implements IApiWebService {
             //发送者
             User senderUser = null;
             if (StringUtils.isNotBlank(senderId)) {
-                senderUser = userService.getUserByLoginName(senderId);
+                senderUser = Static.userService.getUserByLoginName(senderId);
                 if (senderUser == null) {
                     return WSResult.buildResult(WSResult.class, WSResult.IMAGE_ERROR, "senderId:" + senderId + "，无相关账号信息");
                 }
             }
             if (senderUser == null) {
-                senderUser = userService.getSuperUser();
+                senderUser = Static.userService.getSuperUser();
             }
 
 
             List<String> receiveObjectIds = new ArrayList<String>();
             for (String localLoginName : receiveIds) {
-                User recevieUser = userService.getUserByLoginName(localLoginName);
+                User recevieUser = Static.userService.getUserByLoginName(localLoginName);
                 if (recevieUser == null) {
                     logger.error("账号[" + localLoginName + "]，无相关账号信息");
                     return WSResult.buildResult(WSResult.class, WSResult.IMAGE_ERROR, "账号[" + localLoginName + "]，无相关账号信息");
@@ -169,23 +174,23 @@ public class ApiWebServiceImpl implements IApiWebService {
             //发送者
             User senderUser = null;
             if (StringUtils.isNotBlank(senderId)) {
-                senderUser = userService.getUserByLoginName(senderId);
+                senderUser = Static.userService.getUserByLoginName(senderId);
                 if (senderUser == null) {
                     return WSResult.buildResult(WSResult.class, WSResult.IMAGE_ERROR, "senderId:" + senderId + "，应用集成平台无相关账号映射信息");
                 }
             }
             if (senderUser == null) {
-                senderUser = userService.getSuperUser();
+                senderUser = Static.userService.getSuperUser();
             }
 
             List<String> organIds = new ArrayList<String>();
             for (String companyCode : receiveIds) {
-                Organ company = organService.getByCode(companyCode);
+                Organ company = Static.organService.getByCode(companyCode);
                 if (company == null) {
                     logger.error("机构[" + companyCode + "]，应用集成平台无相关映射信息");
                     return WSResult.buildResult(WSResult.class, WSResult.IMAGE_ERROR, "机构[" + companyCode + "]，应用集成平台无相关映射信息");
                 }
-                List<String> organList = organService.findDepartmentAndGroupOrganIdsByCompanyId(company.getId());
+                List<String> organList = Static.organService.findDepartmentAndGroupOrganIdsByCompanyId(company.getId());
                 if(Collections3.isNotEmpty(organList)){
                     organIds.addAll(organList);
                 }
@@ -196,7 +201,7 @@ public class ApiWebServiceImpl implements IApiWebService {
 
             //发送
             try {
-                noticeService.sendToOrganNotice(appId, type,title, content, sendTime, senderUser.getId(),senderUser.getDefaultOrganId(),organIds);
+                Static.noticeService.sendToOrganNotice(appId, type,title, content, sendTime, senderUser.getId(),senderUser.getDefaultOrganId(),organIds);
                 return WSResult.buildResult(WSResult.class, WSResult.SUCCESS, "通知发送成功");
             } catch (Exception e) {
                 return WSResult.buildResult(WSResult.class, WSResult.IMAGE_ERROR, "通知发送失败");

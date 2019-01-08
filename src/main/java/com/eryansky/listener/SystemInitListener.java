@@ -5,10 +5,12 @@
  */
 package com.eryansky.listener;
 
+import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.listener.DefaultSystemInitListener;
 import com.eryansky.core.security.SecurityType;
 import com.eryansky.core.security.SecurityUtils;
+import com.eryansky.j2cache.spring.J2CacheCacheManger;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.server.IApiWebService;
 import com.eryansky.server.impl.ApiWebServiceImpl;
@@ -30,7 +32,13 @@ import javax.xml.ws.Endpoint;
 public class SystemInitListener extends DefaultSystemInitListener{
 
 	private static final Logger logger = LoggerFactory.getLogger(SystemInitListener.class);
-	public static IApiWebService apiWebService ;
+
+	/**
+	 * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+	 */
+	public static final class Static {
+		public static IApiWebService apiWebService = new ApiWebServiceImpl();
+	}
 
 	public SystemInitListener() {
 	}
@@ -41,13 +49,12 @@ public class SystemInitListener extends DefaultSystemInitListener{
 		AppUtils.init(sce.getServletContext());
 		clearTempDir();
 
-		apiWebService = new ApiWebServiceImpl();
 		//WebService发布
 		if(StringUtils.isNotBlank(AppConstants.getWebServiceUrl())){
 			logger.info("WebService发布...");
 			try {
 
-				Endpoint.publish(AppConstants.getWebServiceUrl(), apiWebService);
+				Endpoint.publish(AppConstants.getWebServiceUrl(), Static.apiWebService);
 			} catch (Exception e) {
 				logger.error("WebService发布失败，"+e.getMessage(),e);
 			}

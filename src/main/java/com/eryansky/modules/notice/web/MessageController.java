@@ -239,8 +239,8 @@ public class MessageController extends SimpleController {
     @RequestMapping(value = { "api/sendMessage"},method = RequestMethod.POST)
     @ResponseBody
     public WSResult sendMessage(String paramJson) {
-        if(SystemInitListener.apiWebService != null){
-            return SystemInitListener.apiWebService.sendMessage(paramJson);
+        if(SystemInitListener.Static.apiWebService != null){
+            return SystemInitListener.Static.apiWebService.sendMessage(paramJson);
         }
         return WSResult.buildDefaultErrorResult(WSResult.class);
     }

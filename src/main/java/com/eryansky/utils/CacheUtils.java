@@ -6,7 +6,6 @@
 package com.eryansky.utils;
 
 import com.eryansky.common.spring.SpringContextHolder;
-import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.j2cache.CacheObject;
 import com.eryansky.j2cache.spring.J2CacheCacheManger;
