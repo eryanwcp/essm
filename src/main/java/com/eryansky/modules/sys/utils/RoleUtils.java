@@ -20,7 +20,13 @@ import java.util.List;
  */
 public class RoleUtils {
 
-    private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
+
+    }
 
     /**
      * 根据角色ID查找角色
@@ -31,7 +37,7 @@ public class RoleUtils {
         if(StringUtils.isBlank(roleId)){
             return null;
         }
-        return roleService.get(roleId);
+        return Static.roleService.get(roleId);
     }
 
 
@@ -42,7 +48,7 @@ public class RoleUtils {
      */
     public static String getRoleName(String roleId){
         if(StringUtils.isNotBlank(roleId)){
-            Role role = roleService.get(roleId);
+            Role role = Static.roleService.get(roleId);
             if(role != null){
                 return role.getName();
             }
@@ -55,7 +61,7 @@ public class RoleUtils {
      * @return
      */
     public static List<Role> findRolesByUserId(String userId){
-        return roleService.findRolesByUserId(userId);
+        return Static.roleService.findRolesByUserId(userId);
     }
 
 
@@ -66,7 +72,7 @@ public class RoleUtils {
      */
     public static String getRoleNames(List<String> roleIds){
         if(Collections3.isNotEmpty(roleIds)){
-            List<Role> list = roleService.findRolesByIds(roleIds);
+            List<Role> list = Static.roleService.findRolesByIds(roleIds);
             return ConvertUtils.convertElementPropertyToString(list, "name", ", ");
         }
         return null;

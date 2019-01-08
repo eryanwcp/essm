@@ -47,11 +47,16 @@ public class SecurityUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityUtils.class);
 
-    private static ResourceService resourceService = SpringContextHolder.getBean(ResourceService.class);
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
-    private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
-    private static PostService postService = SpringContextHolder.getBean(PostService.class);
-    private static ApplicationSessionContext applicationSessionContext = ApplicationSessionContext.getInstance();
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static ResourceService resourceService = SpringContextHolder.getBean(ResourceService.class);
+        private static UserService userService = SpringContextHolder.getBean(UserService.class);
+        private static RoleService roleService = SpringContextHolder.getBean(RoleService.class);
+        private static PostService postService = SpringContextHolder.getBean(PostService.class);
+        private static ApplicationSessionContext applicationSessionContext = ApplicationSessionContext.getInstance();
+    }
 
     /**
      * 是否授权某个资源
@@ -95,7 +100,7 @@ public class SecurityUtils {
                     }
                 }
             }else{
-                return resourceService.isPermittedResourceCodeWithPermission(userId,resourceCode);
+                return Static.resourceService.isPermittedResourceCodeWithPermission(userId,resourceCode);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -158,7 +163,7 @@ public class SecurityUtils {
                 }
                 return flag;
             }else{
-                return resourceService.isPermittedResourceMarkUrlWithPermissions(userId,url);
+                return Static.resourceService.isPermittedResourceMarkUrlWithPermissions(userId,url);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(),e);
@@ -208,7 +213,7 @@ public class SecurityUtils {
                     }
                 }
             }else{
-                List<Role> list = roleService.findRolesByUserId(userId);
+                List<Role> list = Static.roleService.findRolesByUserId(userId);
                 for (Role role : list) {
                     if (StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())) {
                         return true;
@@ -255,7 +260,7 @@ public class SecurityUtils {
         User user = UserUtils.getUser(userId);
         // 获取到最大的数据权限范围
         int dataScopeInteger = Integer.valueOf(DataScope.SELF.getValue());
-        List<Role> roles = roleService.findRolesByUserId(user.getId());
+        List<Role> roles = Static.roleService.findRolesByUserId(user.getId());
         for (Role r : roles) {
             if(StringUtils.isBlank(r.getDataScope())){
                 continue;
@@ -310,7 +315,7 @@ public class SecurityUtils {
                 }
             }
 
-            List<Post> posts = postService.findPostsByUserId(userId);
+            List<Post> posts = Static.postService.findPostsByUserId(userId);
             for (Post post : posts) {
                 if (postCode.equalsIgnoreCase(post.getCode())) {
                     return true;
@@ -333,7 +338,7 @@ public class SecurityUtils {
         sessionInfo.setUserId(user.getId());
         sessionInfo.setName(user.getName());
         sessionInfo.setLoginName(user.getLoginName());
-        List<String> roleIds = roleService.findRoleIdsByUserId(user.getId());
+        List<String> roleIds = Static.roleService.findRoleIdsByUserId(user.getId());
         sessionInfo.setRoleIds(roleIds);
         OrganExtend organExtend = OrganUtils.getOrganExtendByUserId(user.getId());
         sessionInfo.setLoginOrganId(organExtend.getId());
@@ -390,7 +395,7 @@ public class SecurityUtils {
             sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
         }
 
-        List<Resource> resources = resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
+        List<Resource> resources = Static.resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
         if (Collections3.isNotEmpty(resources)) {
             for(Resource resource:resources){
                 if(StringUtils.isNotBlank(resource.getCode()) || StringUtils.isNotBlank(resource.getMarkUrl())){
@@ -398,7 +403,7 @@ public class SecurityUtils {
                 }
             }
         }
-        List<Role> roles = roleService.findRolesByUserId(user.getId());
+        List<Role> roles = Static.roleService.findRolesByUserId(user.getId());
         if (Collections3.isNotEmpty(roles)) {
             for(Role role:roles){
                 if(StringUtils.isNotBlank(role.getCode())){
@@ -407,7 +412,7 @@ public class SecurityUtils {
             }
         }
 
-        List<Post> posts = postService.findPostsByUserId(user.getId());
+        List<Post> posts = Static.postService.findPostsByUserId(user.getId());
         if (Collections3.isNotEmpty(posts)) {
             for(Post post:posts){
                 if(StringUtils.isNotBlank(post.getCode())){
@@ -416,7 +421,7 @@ public class SecurityUtils {
             }
         }
 
-        applicationSessionContext.addSession(sessionInfo);
+        Static.applicationSessionContext.addSession(sessionInfo);
         return sessionInfo;
     }
 
@@ -436,7 +441,7 @@ public class SecurityUtils {
 
         sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
 
-        List<Resource> resources = resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
+        List<Resource> resources = Static.resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
         if (Collections3.isNotEmpty(resources)) {
             for(Resource resource:resources){
                 if(StringUtils.isNotBlank(resource.getCode()) || StringUtils.isNotBlank(resource.getMarkUrl())){
@@ -444,7 +449,7 @@ public class SecurityUtils {
                 }
             }
         }
-        List<Role> roles = roleService.findRolesByUserId(user.getId());
+        List<Role> roles = Static.roleService.findRolesByUserId(user.getId());
         if (Collections3.isNotEmpty(roles)) {
             for(Role role:roles){
                 if(StringUtils.isNotBlank(role.getCode())){
@@ -453,7 +458,7 @@ public class SecurityUtils {
             }
         }
 
-        List<Post> posts = postService.findPostsByUserId(user.getId());
+        List<Post> posts = Static.postService.findPostsByUserId(user.getId());
         if (Collections3.isNotEmpty(posts)) {
             for(Post post:posts){
                 if(StringUtils.isNotBlank(post.getCode())){
@@ -462,7 +467,7 @@ public class SecurityUtils {
             }
         }
 
-        applicationSessionContext.addSession(sessionInfo);
+        Static.applicationSessionContext.addSession(sessionInfo);
         return sessionInfo;
     }
 
@@ -489,7 +494,7 @@ public class SecurityUtils {
         SessionInfo sessionInfo = getCurrentSessionInfo();
         User user = null;
         if(sessionInfo != null){
-            user = userService.get(sessionInfo.getUserId());
+            user = Static.userService.get(sessionInfo.getUserId());
         }
         return user;
     }
@@ -532,7 +537,7 @@ public class SecurityUtils {
      * @return
      */
     public static boolean isUserAdmin(String userId) {
-        User superUser = userService.getSuperUser();
+        User superUser = Static.userService.getSuperUser();
         boolean flag = false;
         if (userId != null && superUser != null
                 && userId.equals(superUser.getId())) {// 超级用户
@@ -586,11 +591,11 @@ public class SecurityUtils {
      * @param sessionId session ID
      */
     public static void removeSessionInfoFromSession(String sessionId, SecurityType securityType) {
-        SessionInfo _sessionInfo = applicationSessionContext.getSession(sessionId);
+        SessionInfo _sessionInfo = Static.applicationSessionContext.getSession(sessionId);
         if(_sessionInfo != null){
-            userService.logout(_sessionInfo.getUserId(),securityType);
+            Static.userService.logout(_sessionInfo.getUserId(),securityType);
         }
-        applicationSessionContext.removeSession(sessionId);
+        Static.applicationSessionContext.removeSession(sessionId);
         try {
             HttpSession httpSession = SpringMVCHolder.getSession();
             if(httpSession != null && SecurityUtils.getNoSuffixSessionId(httpSession).equals(sessionId)){
@@ -606,7 +611,7 @@ public class SecurityUtils {
      * @return
      */
     public static List<SessionInfo> findSessionInfoListWithOrder() {
-        List<SessionInfo> sessionInfoData = applicationSessionContext.findSessionInfoData();
+        List<SessionInfo> sessionInfoData = Static.applicationSessionContext.findSessionInfoData();
         //排序
         sessionInfoData.sort((o1, o2) -> o2.getLoginTime().compareTo(o1.getLoginTime()));
         return sessionInfoData;
@@ -617,7 +622,7 @@ public class SecurityUtils {
      * @return
      */
     public static List<SessionInfo> findSessionInfoList() {
-        List<SessionInfo> sessionInfoData = applicationSessionContext.findSessionInfoData();
+        List<SessionInfo> sessionInfoData = Static.applicationSessionContext.findSessionInfoData();
         return sessionInfoData;
     }
 
@@ -660,7 +665,7 @@ public class SecurityUtils {
      * @return
      */
     public static Collection<String> findSessionInfoKeys() {
-        return applicationSessionContext.findSessionInfoKeys();
+        return Static.applicationSessionContext.findSessionInfoKeys();
     }
 
 
@@ -732,11 +737,11 @@ public class SecurityUtils {
      * @return
      */
     public static SessionInfo getSessionInfo(String id, String sessionId) {
-        SessionInfo sessionInfo = applicationSessionContext.getSession(id);
+        SessionInfo sessionInfo = Static.applicationSessionContext.getSession(id);
         //更新真实的SessionID
         if(sessionInfo != null && sessionId != null && !sessionInfo.getSessionId().equals(sessionId)){
             sessionInfo.setSessionId(sessionId);
-            applicationSessionContext.addSession(sessionInfo);
+            Static.applicationSessionContext.addSession(sessionInfo);
         }
         return sessionInfo;
     }

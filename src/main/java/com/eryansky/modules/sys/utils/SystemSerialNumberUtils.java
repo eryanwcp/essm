@@ -5,7 +5,6 @@
  */
 package com.eryansky.modules.sys.utils;
 
-import com.eryansky.common.exception.ServiceException;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.j2cache.lock.DefaultLockCallback;
@@ -21,7 +20,14 @@ import java.util.List;
  */
 public class SystemSerialNumberUtils {
 
-    private static SystemSerialNumberService systemSerialNumberService = SpringContextHolder.getBean(SystemSerialNumberService.class);
+
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static SystemSerialNumberService systemSerialNumberService = SpringContextHolder.getBean(SystemSerialNumberService.class);
+
+    }
 
     /**
      * @param id
@@ -29,7 +35,7 @@ public class SystemSerialNumberUtils {
      */
     public static SystemSerialNumber get(String id){
         if(StringUtils.isNotBlank(id)){
-            return systemSerialNumberService.get(id);
+            return Static.systemSerialNumberService.get(id);
         }
         return null;
     }
@@ -40,7 +46,7 @@ public class SystemSerialNumberUtils {
      */
     public static SystemSerialNumber getByModuleCode(String moduleCode){
         if(StringUtils.isNotBlank(moduleCode)){
-            return systemSerialNumberService.getByCode(moduleCode);
+            return Static.systemSerialNumberService.getByCode(moduleCode);
         }
         return null;
     }
@@ -73,7 +79,7 @@ public class SystemSerialNumberUtils {
         boolean flag = CacheUtils.getCacheChannel().lock(lockKey, 20, 60, new DefaultLockCallback<Boolean>(false,false) {
             @Override
             public Boolean handleObtainLock() {
-                List<String> list = systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
+                List<String> list = Static.systemSerialNumberService.generatePrepareSerialNumbers(moduleCode);
                 for(String serial:list){
                     CacheUtils.getCacheChannel().queuePush(region,serial);
                 }

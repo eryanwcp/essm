@@ -21,7 +21,12 @@ import java.util.List;
  */
 public class OrganUtils {
 
-    private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static OrganService organService = SpringContextHolder.getBean(OrganService.class);
+    }
 
     /**
      * 根据机构ID查找机构
@@ -32,7 +37,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return organService.get(organId);
+        return Static.organService.get(organId);
     }
 
 
@@ -45,7 +50,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return organService.getOrganExtend(organId);
+        return Static.organService.getOrganExtend(organId);
     }
 
     /**
@@ -57,7 +62,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(organId)){
             return null;
         }
-        return organService.getOrganCompany(organId);
+        return Static.organService.getOrganCompany(organId);
     }
 
     /**
@@ -69,7 +74,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        return organService.getOrganExtendByUserId(userId);
+        return Static.organService.getOrganExtendByUserId(userId);
     }
 
     /**
@@ -81,7 +86,7 @@ public class OrganUtils {
         if(StringUtils.isBlank(userId)){
             return null;
         }
-        return organService.getCompanyByUserId(userId);
+        return Static.organService.getCompanyByUserId(userId);
     }
 
 
@@ -132,7 +137,7 @@ public class OrganUtils {
     }
 
     public static boolean hasChild(String organId){
-        List<Organ> list = organService.findByParent(organId);
+        List<Organ> list = Static.organService.findByParent(organId);
         return  Collections3.isNotEmpty(list);
     }
 

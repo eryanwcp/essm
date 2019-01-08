@@ -16,7 +16,12 @@ import com.eryansky.modules.sys.service.AreaService;
  */
 public class AreaUtils {
 
-    private static AreaService areaService = SpringContextHolder.getBean(AreaService.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static AreaService areaService = SpringContextHolder.getBean(AreaService.class);
+    }
 
     /**
      * @param areaId 区域ID
@@ -24,7 +29,7 @@ public class AreaUtils {
      */
     public static Area get(String areaId){
         if(StringUtils.isNotBlank(areaId)){
-            return areaService.get(areaId);
+            return Static.areaService.get(areaId);
         }
         return null;
     }
@@ -36,7 +41,7 @@ public class AreaUtils {
      */
     public static Area getByCode(String code){
         if(StringUtils.isNotBlank(code)){
-            return areaService.getByCode(code);
+            return Static.areaService.getByCode(code);
         }
         return null;
     }

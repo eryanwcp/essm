@@ -9,17 +9,20 @@ import java.util.List;
  */
 public class ApplicationSessionContext {
 
-	private static ApplicationSessionContext instance;
 	public final static String CACHE_SESSION = "sessionCache";
+
+	/**
+	 * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+	 */
+	public static final class Static {
+		public static ApplicationSessionContext instance = new ApplicationSessionContext();
+	}
 
 	private ApplicationSessionContext() {
 	}
 
 	public static ApplicationSessionContext getInstance() {
-		if (instance == null) {
-			instance = new ApplicationSessionContext();
-		}
-		return instance;
+		return Static.instance;
 	}
 
 	public synchronized void addSession(SessionInfo sessionInfo) {

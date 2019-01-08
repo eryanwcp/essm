@@ -19,7 +19,12 @@ import java.util.List;
  */
 public class DictionaryUtils {
 
-    private static DictionaryItemService dictionaryItemService = SpringContextHolder.getBean(DictionaryItemService.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static DictionaryItemService dictionaryItemService = SpringContextHolder.getBean(DictionaryItemService.class);
+    }
 
     /**
      *
@@ -29,7 +34,7 @@ public class DictionaryUtils {
      * @return
      */
     public static String getDictionaryNameByDC(String dictionaryCode,String code, String defaultValue){
-        DictionaryItem dictionary = dictionaryItemService.getDictionaryItemByDC(dictionaryCode, code);
+        DictionaryItem dictionary = Static.dictionaryItemService.getDictionaryItemByDC(dictionaryCode, code);
         if(dictionary != null){
             return dictionary.getName();
         }
@@ -47,7 +52,7 @@ public class DictionaryUtils {
         if(StringUtils.isBlank(value)){
             return defaultValue;
         }
-        DictionaryItem dictionaryItem = dictionaryItemService.getDictionaryItemByDV(dictionaryCode, value);
+        DictionaryItem dictionaryItem = Static.dictionaryItemService.getDictionaryItemByDV(dictionaryCode, value);
         if(dictionaryItem != null){
             defaultValue = dictionaryItem.getName();
         }
@@ -60,7 +65,7 @@ public class DictionaryUtils {
      * @return
      */
     public static List<DictionaryItem> getDictList(String dictionaryCode){
-        return dictionaryItemService.findDictionaryItemsByDictionaryCode(dictionaryCode);
+        return Static.dictionaryItemService.findDictionaryItemsByDictionaryCode(dictionaryCode);
     }
 
 

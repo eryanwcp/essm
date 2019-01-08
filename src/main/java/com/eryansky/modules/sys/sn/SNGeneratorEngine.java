@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SNGeneratorEngine {
-    private static SNGeneratorEngine snGeneratorEngine = new SNGeneratorEngine();
+
     private static Map<String, IGenerator> generatorMap = new HashMap<String, IGenerator>();
     /**
      * 流水号生成规则
@@ -35,8 +35,15 @@ public class SNGeneratorEngine {
     private SNGeneratorEngine() {
     }
 
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static SNGeneratorEngine snGeneratorEngine = new SNGeneratorEngine();
+    }
+
     public static SNGeneratorEngine getInstance() {
-        return snGeneratorEngine;
+        return Static.snGeneratorEngine;
     }
 
     /**
@@ -56,7 +63,7 @@ public class SNGeneratorEngine {
      * @return
      */
     public String generate(Map parameterMap) {
-        StringBuffer seriableNumber = new StringBuffer();
+        StringBuilder seriableNumber = new StringBuilder();
         for (String format : subFormatStr) {
             seriableNumber.append(generateSubSN(format, parameterMap));
         }

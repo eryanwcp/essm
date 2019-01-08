@@ -12,8 +12,7 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.modules.sys.mapper.OrganExtend;
 import com.eryansky.modules.sys.mapper.User;
 import com.eryansky.modules.sys.mapper.UserPassword;
-import com.eryansky.modules.sys.service.UserPasswordService;
-import com.eryansky.modules.sys.service.UserService;
+import com.eryansky.modules.sys.service.*;
 
 import java.util.List;
 
@@ -23,8 +22,13 @@ import java.util.List;
  */
 public class UserUtils {
 
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
-    private static UserPasswordService userPasswordService = SpringContextHolder.getBean(UserPasswordService.class);
+     /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+         private static UserService userService = SpringContextHolder.getBean(UserService.class);
+         private static UserPasswordService userPasswordService = SpringContextHolder.getBean(UserPasswordService.class);
+     }
 
     /**
      * 根据userId查找用户
@@ -33,8 +37,7 @@ public class UserUtils {
      */
     public static User getUser(String userId){
         if(StringUtils.isNotBlank(userId)) {
-            User user = userService.get(userId);
-            return user;
+            return Static.userService.get(userId);
         }
         return null;
     }
@@ -46,8 +49,7 @@ public class UserUtils {
      */
     public static User getUserByLoginName(String loginName){
         if(StringUtils.isNotBlank(loginName)) {
-            User user = userService.getUserByLoginName(loginName);
-            return user;
+            return Static.userService.getUserByLoginName(loginName);
         }
         return null;
     }
@@ -214,7 +216,7 @@ public class UserUtils {
      */
     public static String getUserNames(List<String> userIds){
         if(Collections3.isNotEmpty(userIds)){
-            List<User> list = userService.findUsersByIds(userIds);
+            List<User> list = Static.userService.findUsersByIds(userIds);
             return ConvertUtils.convertElementPropertyToString(list, "name", ",");
         }
         return null;
@@ -225,7 +227,7 @@ public class UserUtils {
      * @return
      */
     public static User getSuperUser() {
-        User superUser = userService.getSuperUser();
+        User superUser = Static.userService.getSuperUser();
         return superUser;
     }
 
@@ -237,7 +239,7 @@ public class UserUtils {
     public static UserPassword addUserPasswordUpdate(User user){
         UserPassword userPassword = new UserPassword(user.getId(),user.getPassword());
         userPassword.setOriginalPassword(user.getOriginalPassword());
-        userPasswordService.save(userPassword);
+        Static.userPasswordService.save(userPassword);
         return userPassword;
     }
 
@@ -251,7 +253,7 @@ public class UserUtils {
     public static UserPassword addUserPasswordUpdate(String userId,String password,String originalPassword){
         UserPassword userPassword = new UserPassword(userId,password);
         userPassword.setOriginalPassword(originalPassword);
-        userPasswordService.save(userPassword);
+        Static.userPasswordService.save(userPassword);
         return userPassword;
     }
 
@@ -262,7 +264,7 @@ public class UserUtils {
      * @param password 密码(未加密)
      */
     public static void updateUserPassword(List<String> userIds,String password){
-        userService.updateUserPassword(userIds,password);
+        Static.userService.updateUserPassword(userIds,password);
     }
 
 }
