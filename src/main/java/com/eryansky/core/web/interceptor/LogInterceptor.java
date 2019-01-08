@@ -10,7 +10,7 @@ import com.eryansky.common.utils.*;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.utils.net.IpUtils;
 import com.eryansky.modules.sys.mapper.User;
-import com.eryansky.modules.sys.service.LogService;
+import com.eryansky.modules.sys.service.*;
 import com.google.common.collect.Lists;
 import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.SecurityUtils;
@@ -52,7 +52,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LogInterceptor implements HandlerInterceptor {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	private static LogService logService = SpringContextHolder.getBean(LogService.class);
 	private static final ThreadLocal<Long> startTimeThreadLocal =
 			new NamedThreadLocal<Long>("ThreadLocal StartTime");
 	@Autowired
@@ -70,6 +69,13 @@ public class LogInterceptor implements HandlerInterceptor {
 	 * 排除拦截的资源
 	 */
 	private List<String> excludeUrls = Lists.newArrayList();
+
+	/**
+	 * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+	 */
+	public static final class Static {
+		private static LogService logService = SpringContextHolder.getBean(LogService.class);
+	}
 
 	@Autowired
 	public LogInterceptor(RequestMappingHandlerAdapter requestMappingHandlerAdapter) {
@@ -207,7 +213,7 @@ public class LogInterceptor implements HandlerInterceptor {
 			log.setParams(request.getParameterMap());
 			// 如果有异常，设置异常信息
 			log.setException(Exceptions.getStackTraceAsString(ex));
-			logService.saveAspectLog(log, handlerMethod);
+			Static.logService.saveAspectLog(log, handlerMethod);
 
 		}
 
