@@ -45,6 +45,7 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
         private static ClusterQYAPIConfig qyapiConfig = SpringContextHolder.getBean(ClusterQYAPIConfig.class);
 
     }
+
     /**
      * 需要拦截的资源
      */

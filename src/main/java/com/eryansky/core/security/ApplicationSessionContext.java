@@ -31,13 +31,13 @@ public class ApplicationSessionContext {
 		}
 	}
 
-	public synchronized void removeSession(String sessionId) {
+	public void removeSession(String sessionId) {
 		if (sessionId != null) {
 			CacheUtils.remove(CACHE_SESSION, sessionId);
 		}
 	}
 
-	public synchronized SessionInfo getSession(String sessionId) {
+	public SessionInfo getSession(String sessionId) {
 		if (sessionId == null) return null;
 		return (SessionInfo) CacheUtils.get(CACHE_SESSION,sessionId);
 	}
