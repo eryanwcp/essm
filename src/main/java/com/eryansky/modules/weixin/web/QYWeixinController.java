@@ -19,7 +19,6 @@ import com.eryansky.modules.weixin.utils.WeixinUtils;
 import com.eryansky.utils.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -38,8 +37,6 @@ public class QYWeixinController extends QYWeixinControllerSupport {
     private static final Logger log = LoggerFactory.getLogger(QYWeixinController.class);
     private static final String TOKEN = "myToken";
 
-    @Autowired
-    private ClusterQYAPIConfig qyapiConfig;
 
     //设置TOKEN，用于绑定微信服务器
     @Override
