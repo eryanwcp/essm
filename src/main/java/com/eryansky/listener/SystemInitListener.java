@@ -5,12 +5,10 @@
  */
 package com.eryansky.listener;
 
-import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.web.listener.DefaultSystemInitListener;
 import com.eryansky.core.security.SecurityType;
 import com.eryansky.core.security.SecurityUtils;
-import com.eryansky.j2cache.spring.J2CacheCacheManger;
 import com.eryansky.modules.disk.utils.DiskUtils;
 import com.eryansky.server.IApiWebService;
 import com.eryansky.server.impl.ApiWebServiceImpl;
