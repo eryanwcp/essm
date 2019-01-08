@@ -145,7 +145,7 @@
 
 
     <!--企业微信号配置-->
-    <bean id="qyapiConfig" class="com.eryansky.fastweixin.company.api.config.QYAPIConfig">
+    <bean id="qyapiConfig" class="com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig">
         <constructor-arg name="corpid" value="${weixin.cropId}"></constructor-arg>
         <constructor-arg name="corpsecret" value="${weixin.corpSecret}"></constructor-arg>
         <constructor-arg name="enableJsApi" value="${weixin.enableJsApi}"></constructor-arg>

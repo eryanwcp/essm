@@ -10,6 +10,7 @@ import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.fastweixin.company.api.QYUserAPI;
+import com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig;
 import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
 import com.eryansky.fastweixin.company.api.response.GetOauthUserInfoResponse;
 import com.google.common.collect.Lists;
@@ -38,8 +39,13 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static ClusterQYAPIConfig qyapiConfig = SpringContextHolder.getBean(ClusterQYAPIConfig.class);
 
+    }
     /**
      * 需要拦截的资源
      */
@@ -72,7 +78,7 @@ public class QYWeixinOauth2Interceptor extends HandlerInterceptorAdapter {
             }
 
             if (flag) {
-                QYUserAPI qyUserAPI = new QYUserAPI(qyapiConfig);
+                QYUserAPI qyUserAPI = new QYUserAPI(Static.qyapiConfig);
                 try {
                     GetOauthUserInfoResponse getOauthUserInfoResponse = qyUserAPI.getOauthUserInfo(code);
                     User user = UserUtils.getUserByLoginName(getOauthUserInfoResponse.getUserid());

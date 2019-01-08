@@ -3,7 +3,7 @@
  */
 package com.eryansky.modules.weixin.web;
 
-import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
+import com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig;
 import com.eryansky.fastweixin.company.message.req.QYBaseEvent;
 import com.eryansky.fastweixin.company.message.req.QYEnterAgentEvent;
 import com.eryansky.fastweixin.company.message.req.QYTextReqMsg;
@@ -39,7 +39,7 @@ public class QYWeixinController extends QYWeixinControllerSupport {
     private static final String TOKEN = "myToken";
 
     @Autowired
-    private QYAPIConfig qyapiConfig;
+    private ClusterQYAPIConfig qyapiConfig;
 
     //设置TOKEN，用于绑定微信服务器
     @Override

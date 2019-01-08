@@ -8,13 +8,11 @@ package com.eryansky.modules.weixin.utils;
 import com.eryansky.common.spring.SpringContextHolder;
 import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.encode.EncodeUtils;
-import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.fastweixin.api.enums.ResultType;
 import com.eryansky.fastweixin.company.api.QYMessageAPI;
-import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
+import com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig;
 import com.eryansky.fastweixin.company.api.response.GetQYSendMessageResponse;
 import com.eryansky.fastweixin.company.message.QYTextMsg;
-import com.eryansky.modules.sys.service.AreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +29,7 @@ public class QYWeixinUtils {
      * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
      */
     public static final class Static {
-        private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
+        private static ClusterQYAPIConfig qyapiConfig = SpringContextHolder.getBean(ClusterQYAPIConfig.class);
 
     }
 
