@@ -129,7 +129,7 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
         }
 
         if (loglog || (pattendefaultMethod && (logging == null || logging != null && !Boolean.valueOf(SpringUtils.parseSpel(logging.logging(), method, args))))) {
-            Long time = end - start;
+            long time = end - start;
             Log log = new Log();
             log.setTitle(newLogValue);
             log.setType(_LogType);
@@ -137,7 +137,7 @@ public class LogMethodInterceptor implements MethodInterceptor, InitializingBean
             log.setModule(name);
             log.setAction(opertype);
             log.setOperTime(new Date(start));
-            log.setActionTime(time.toString());
+            log.setActionTime(String.valueOf(time));
             log.setIp(ip);
             log.setRemark(remark);
             if (sessionInfo != null) {

@@ -32,10 +32,15 @@ import java.util.List;
  */
 public class MessageUtils {
 
-    private static MessageService messageService = SpringContextHolder.getBean(MessageService.class);
-    private static MessageReceiveService messageReceiveService = SpringContextHolder.getBean(MessageReceiveService.class);
-    private static MessageTask messageTask = SpringContextHolder.getBean(MessageTask.class);
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static MessageService messageService = SpringContextHolder.getBean(MessageService.class);
+        private static MessageReceiveService messageReceiveService = SpringContextHolder.getBean(MessageReceiveService.class);
+        private static MessageTask messageTask = SpringContextHolder.getBean(MessageTask.class);
+        private static UserService userService = SpringContextHolder.getBean(UserService.class);
+    }
 
     private MessageUtils(){
 
@@ -43,7 +48,7 @@ public class MessageUtils {
 
     public static Message get(String id){
         if(StringUtils.isNotBlank(id)){
-            return messageService.get(id);
+            return Static.messageService.get(id);
         }
         return null;
     }
@@ -78,7 +83,7 @@ public class MessageUtils {
                                          String linkUrl) {
         List<String> receiveObjectIds = new ArrayList<String>(1);
         receiveObjectIds.add(receiveUserId);
-        User user = userService.getSuperUser();
+        User user = Static.userService.getSuperUser();
         sendUserMessage(user.getId(), content, linkUrl, receiveUserId);
     }
 
@@ -168,7 +173,7 @@ public class MessageUtils {
         model.setUrl(linkUrl);
         model.setSendTime(date);
 //        messageService.save(model);
-        messageTask.saveAndSend(model, messageReceiveObjectType, receiveObjectIds);
+        Static.messageTask.saveAndSend(model, messageReceiveObjectType, receiveObjectIds);
     }
 
     /**
@@ -195,6 +200,6 @@ public class MessageUtils {
             _userId = SecurityUtils.getCurrentUserLoginName();
         }
         Page<MessageReceive> page = new Page<MessageReceive>(pageNo,pageSize);
-        return messageReceiveService.findUserPage(page, _userId,isRead);
+        return Static.messageReceiveService.findUserPage(page, _userId,isRead);
     }
 }

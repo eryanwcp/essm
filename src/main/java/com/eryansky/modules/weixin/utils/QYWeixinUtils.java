@@ -14,6 +14,7 @@ import com.eryansky.fastweixin.company.api.QYMessageAPI;
 import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
 import com.eryansky.fastweixin.company.api.response.GetQYSendMessageResponse;
 import com.eryansky.fastweixin.company.message.QYTextMsg;
+import com.eryansky.modules.sys.service.AreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,14 @@ import org.slf4j.LoggerFactory;
 public class QYWeixinUtils {
 
     private static Logger logger = LoggerFactory.getLogger(QYWeixinUtils.class);
-    private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
+
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static QYAPIConfig qyapiConfig = SpringContextHolder.getBean(QYAPIConfig.class);
+
+    }
 
     private QYWeixinUtils(){}
 
@@ -124,7 +132,7 @@ public class QYWeixinUtils {
 //            logger.warn("消息未发送，未开启微信消息提醒！请在config.properties配置文件中配置参数[weixin.tipMessage=true]");
             return false;
         }
-        QYMessageAPI qyMessageAPI = new QYMessageAPI(qyapiConfig);
+        QYMessageAPI qyMessageAPI = new QYMessageAPI(Static.qyapiConfig);
         QYTextMsg qyTextMsg = new QYTextMsg();
         StringBuffer msg = new StringBuffer();
         if(StringUtils.isBlank(linkUrl)){

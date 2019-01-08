@@ -11,9 +11,7 @@ import com.eryansky.core.security.SecurityUtils;
 import com.eryansky.core.security.SessionInfo;
 import com.eryansky.modules.notice.mapper.Notice;
 import com.eryansky.modules.notice.mapper.NoticeReceiveInfo;
-import com.eryansky.modules.notice.service.NoticeReceiveInfoService;
-import com.eryansky.modules.notice.service.NoticeSendInfoService;
-import com.eryansky.modules.notice.service.NoticeService;
+import com.eryansky.modules.notice.service.*;
 import com.eryansky.modules.sys.service.UserService;
 import com.eryansky.utils.AppConstants;
 
@@ -28,15 +26,21 @@ public class NoticeUtils {
 
     public static final String MSG_REPEAT = "转发：";
     public static final String DIC_NOTICE = "NOTICE_TYPE";//通知
-    private NoticeUtils(){
+
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static UserService userService = SpringContextHolder.getBean(UserService.class);
+        private static NoticeService noticeService = SpringContextHolder.getBean(NoticeService.class);
+        private static NoticeSendInfoService noticeSendInfoService = SpringContextHolder.getBean(NoticeSendInfoService.class);
+        private static NoticeReceiveInfoService noticeReceiveInfoService = SpringContextHolder.getBean(NoticeReceiveInfoService.class);
 
     }
 
-    private static UserService userService = SpringContextHolder.getBean(UserService.class);
-    private static NoticeService noticeService = SpringContextHolder.getBean(NoticeService.class);
-    private static NoticeSendInfoService noticeSendInfoService = SpringContextHolder.getBean(NoticeSendInfoService.class);
-    private static NoticeReceiveInfoService noticeReceiveInfoService = SpringContextHolder.getBean(NoticeReceiveInfoService.class);
+    private NoticeUtils(){
 
+    }
 
     /**
      * 根据ID查找
@@ -44,7 +48,7 @@ public class NoticeUtils {
      * @return
      */
     public static Notice getNotice(String noticeId) {
-        return noticeService.get(noticeId);
+        return Static.noticeService.get(noticeId);
     }
 
     /**
@@ -53,7 +57,7 @@ public class NoticeUtils {
      * @return
      */
     public static boolean isRead(String noticeId) {
-        NoticeReceiveInfo noticeReceiveInfo = noticeReceiveInfoService.getUserNotice(SecurityUtils.getCurrentUserId(), noticeId);
+        NoticeReceiveInfo noticeReceiveInfo = Static.noticeReceiveInfoService.getUserNotice(SecurityUtils.getCurrentUserId(), noticeId);
         return noticeReceiveInfo != null && noticeReceiveInfo.isRead();
     }
 
@@ -62,21 +66,21 @@ public class NoticeUtils {
         if(StringUtils.isBlank(noticeId)){
             return Collections.emptyList();
         }
-        return noticeService.findFileIdsByNoticeId(noticeId);
+        return Static.noticeService.findFileIdsByNoticeId(noticeId);
     }
 
     public static List<String> findNoticeReceiveUserIds(String noticeId) {
         if(StringUtils.isBlank(noticeId)){
             return Collections.emptyList();
         }
-        return noticeSendInfoService.findUserIdsByNoticeId(noticeId);
+        return Static.noticeSendInfoService.findUserIdsByNoticeId(noticeId);
     }
 
     public static List<String> findNoticeReceiveOrganIds(String noticeId) {
         if(StringUtils.isBlank(noticeId)){
             return Collections.emptyList();
         }
-        return noticeSendInfoService.findOrganIdsByNoticeId(noticeId);
+        return Static.noticeSendInfoService.findOrganIdsByNoticeId(noticeId);
     }
 
 
@@ -94,7 +98,7 @@ public class NoticeUtils {
         }
 
         boolean isAdmin = false;
-        if (userService.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER)
+        if (Static.userService.isSuperUser(_userId) || SecurityUtils.isPermittedRole(AppConstants.ROLE_SYSTEM_MANAGER)
                 || SecurityUtils.isPermittedRole(AppConstants.ROLE_NOTICE_MANAGER)) {//系统管理员 + 通知管理员
             isAdmin = true;
         }

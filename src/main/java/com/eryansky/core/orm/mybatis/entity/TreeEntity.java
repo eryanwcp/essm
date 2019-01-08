@@ -78,7 +78,7 @@ public abstract class TreeEntity<T> extends DataEntity<T> {
 	public String getParentId() {
 		String id = null;
 		if (parent != null){
-			id = (String) ReflectionUtils.getFieldValue(parent, "id");
+			id = ReflectionUtils.getFieldValue(parent, "id");
 		}
 		return StringUtils.isNotBlank(id) ? id : "0";
 	}

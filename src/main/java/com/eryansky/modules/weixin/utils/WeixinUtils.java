@@ -14,6 +14,7 @@ import com.eryansky.fastweixin.api.OauthAPI;
 import com.eryansky.fastweixin.api.config.ApiConfig;
 import com.eryansky.fastweixin.api.enums.OauthScope;
 import com.eryansky.fastweixin.api.enums.ResultType;
+import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
 import com.eryansky.fastweixin.message.TextMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 public class WeixinUtils {
 
     private static Logger logger = LoggerFactory.getLogger(WeixinUtils.class);
-    private static ApiConfig apiConfig = SpringContextHolder.getBean(ApiConfig.class);
 
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static ApiConfig apiConfig = SpringContextHolder.getBean(ApiConfig.class);
+
+    }
     private WeixinUtils(){}
 
     public static void main(String[] args) {
@@ -52,7 +59,7 @@ public class WeixinUtils {
      * @return
      */
     public static String getOauth2URL(String toURL){
-        OauthAPI oauthAPI = new OauthAPI(apiConfig);
+        OauthAPI oauthAPI = new OauthAPI(Static.apiConfig);
         return oauthAPI.getOauthPageUrl(toURL, OauthScope.SNSAPI_BASE,null);
     }
 
@@ -79,7 +86,7 @@ public class WeixinUtils {
 //            logger.warn("消息未发送，未开启微信消息提醒！请在config.properties配置文件中配置参数[weixin.tipMessage=true]");
             return false;
         }
-        CustomAPI customAPI = new CustomAPI(apiConfig);
+        CustomAPI customAPI = new CustomAPI(Static.apiConfig);
         TextMsg textMsg = new TextMsg();
 
         StringBuffer msg = new StringBuffer();

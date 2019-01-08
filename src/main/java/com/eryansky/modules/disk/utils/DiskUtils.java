@@ -53,9 +53,15 @@ public class DiskUtils {
 
     protected static Logger logger = LoggerFactory.getLogger(DiskUtils.class);
 
-    private static FolderService folderService = SpringContextHolder.getBean(FolderService.class);
-    private static FileService fileService = SpringContextHolder.getBean(FileService.class);
-    private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    public static final class Static {
+        private static FolderService folderService = SpringContextHolder.getBean(FolderService.class);
+        private static FileService fileService = SpringContextHolder.getBean(FileService.class);
+        private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
+
+    }
     /**
      * 文件上传失败提示信息
      */
@@ -165,7 +171,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder checkAndSaveSystemFolderByCode(String code) {
-        return folderService.checkAndSaveSystemFolderByCode(code);
+        return Static.folderService.checkAndSaveSystemFolderByCode(code);
     }
     /**
      * 根据编码获取 获取系统文件夹 <br/>
@@ -176,7 +182,7 @@ public class DiskUtils {
      * @return
      */
     public static Folder checkAndSaveSystemFolderByCode(String code, String userId) {
-        return folderService.checkAndSaveSystemFolderByCode(code,userId);
+        return Static.folderService.checkAndSaveSystemFolderByCode(code,userId);
     }
 
 
@@ -223,7 +229,7 @@ public class DiskUtils {
         String _userId = StringUtils.isBlank(userId) ? User.SUPERUSER_ID:userId;
         String code = FileUploadUtils.encodingFilenamePrefix(_userId + "",fileName);
         Folder folder = checkAndSaveSystemFolderByCode(folderCode, _userId);
-        String storeFilePath = iFileManager.getStorePath(folder,_userId,fileName);
+        String storeFilePath = Static.iFileManager.getStorePath(folder,_userId,fileName);
         File file = new File();
         file.setFolderId(folder.getId());
         file.setCode(code);
@@ -232,8 +238,8 @@ public class DiskUtils {
         file.setFilePath(storeFilePath);
         file.setFileSize(Long.valueOf(inputStream.available()));
         file.setFileSuffix(FilenameUtils.getExtension(fileName));
-        iFileManager.saveFile(file.getFilePath(),inputStream, true);
-        fileService.save(file);
+        Static.iFileManager.saveFile(file.getFilePath(),inputStream, true);
+        Static.fileService.save(file);
         return file;
     }
 
@@ -247,7 +253,7 @@ public class DiskUtils {
      */
     public static String getFileLocationName(String folderId) {
         StringBuffer location = new StringBuffer("");
-        Folder folder = folderService.get(folderId);
+        Folder folder = Static.folderService.get(folderId);
         if (folder != null) {
             String type = folder.getType();// 文件夹类型
             String userName = folder.getUserName();// 文件夹创建人
@@ -282,7 +288,7 @@ public class DiskUtils {
      * @return
      */
     public static List<File> findFolderFiles(String folderId, Collection<String> fileSuffixs) {
-        return fileService.findFolderFiles(folderId,fileSuffixs);
+        return Static.fileService.findFolderFiles(folderId,fileSuffixs);
     }
 
     /**
@@ -291,7 +297,7 @@ public class DiskUtils {
      * @return
      */
     public static void deleteFolderFiles(Collection<String> fildIds){
-        fileService.deleteFileByFileIds(fildIds);
+        Static.fileService.deleteFileByFileIds(fildIds);
     }
 
     /**
@@ -300,7 +306,7 @@ public class DiskUtils {
      * @return
      */
     public static List<File> findFilesByIds(Collection<String> fildIds) {
-        return fileService.findFilesByIds(fildIds);
+        return Static.fileService.findFilesByIds(fildIds);
     }
 
 
@@ -351,7 +357,7 @@ public class DiskUtils {
      */
     public static long countFileSize(Collection<String> fileIds){
         if(Collections3.isNotEmpty(fileIds)){
-            return fileService.countFileSize(fileIds);
+            return Static.fileService.countFileSize(fileIds);
         }
         return 0L;
     }
@@ -362,7 +368,7 @@ public class DiskUtils {
      * @return
      */
     public static File getFile(String fileId){
-        return fileService.get(fileId);
+        return Static.fileService.get(fileId);
     }
 
     /**
@@ -371,7 +377,7 @@ public class DiskUtils {
      * @return
      */
     public static void saveFile(File file){
-        fileService.save(file);
+        Static.fileService.save(file);
     }
 
 
@@ -382,7 +388,7 @@ public class DiskUtils {
      */
     public static void deleteFile(String fileId){
         Validate.notNull(fileId, "参数[fileId]不能为null.");
-        fileService.deleteByFileId(fileId);
+        Static.fileService.deleteByFileId(fileId);
     }
     /**
      * 删除文件
@@ -391,7 +397,7 @@ public class DiskUtils {
      */
     public static void deleteFile(File file){
         Validate.notNull(file, "参数[file]不能为null.");
-        fileService.deleteByFileId(file.getId());
+        Static.fileService.deleteByFileId(file.getId());
     }
 
 
@@ -424,7 +430,7 @@ public class DiskUtils {
         if(fileId == null){
             return null;
         }
-        File file = fileService.get(fileId);
+        File file = Static.fileService.get(fileId);
         return getDiskFile(file);
     }
 
@@ -438,7 +444,7 @@ public class DiskUtils {
         try {
             if (file != null) {
                 if(!tempFile.exists()){
-                    iFileManager.loadFile(file.getFilePath(), tempPath);
+                    Static.iFileManager.loadFile(file.getFilePath(), tempPath);
                 }
                 return tempFile;
             }

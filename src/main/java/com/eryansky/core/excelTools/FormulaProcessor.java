@@ -11,17 +11,22 @@ import java.util.regex.Pattern;
  * @date : 2014-07-31 20:36
  */
 public class FormulaProcessor {
-	private static FormulaProcessor self = null;
 	
 	private Pattern pattern = Pattern.compile("\\$(\\d+)");
+
+	/**
+	 * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+	 */
+	public static final class Static {
+		public static FormulaProcessor self = new FormulaProcessor();
+	}
+
 	private FormulaProcessor(){
 		
 	}
 	
 	public static FormulaProcessor getInstance(){
-		if (self == null)
-			self = new FormulaProcessor();
-		return self;	
+		return Static.self;
 	}
 	
 	public void fillValue(TableDataRow row){
