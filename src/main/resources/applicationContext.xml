@@ -146,7 +146,7 @@
 
     <!--企业微信号配置-->
     <bean id="j2CacheAccessTokenCacheService" class="com.eryansky.fastweixin.cluster.j2cache.J2CacheAccessTokenCacheService"/>
-    <bean id="apiConfig" class="com.eryansky.fastweixin.api.config.ClusterApiConfig">
+    <bean id="apiConfig" class="com.eryansky.fastweixin.api.config.ClusterApiConfig" lazy-init="true">
         <constructor-arg name="appid" value="${weixin.appId}"></constructor-arg>
         <constructor-arg name="secret" value="${weixin.secret}"></constructor-arg>
         <constructor-arg name="enableJsApi" value="${weixin.enableJsApi}"></constructor-arg>

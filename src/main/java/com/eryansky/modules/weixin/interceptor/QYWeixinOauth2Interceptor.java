@@ -11,7 +11,6 @@ import com.eryansky.common.utils.collections.Collections3;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.fastweixin.company.api.QYUserAPI;
 import com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig;
-import com.eryansky.fastweixin.company.api.config.QYAPIConfig;
 import com.eryansky.fastweixin.company.api.response.GetOauthUserInfoResponse;
 import com.google.common.collect.Lists;
 import com.eryansky.core.security.SecurityUtils;

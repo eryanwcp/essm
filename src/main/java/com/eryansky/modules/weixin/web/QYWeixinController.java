@@ -3,7 +3,6 @@
  */
 package com.eryansky.modules.weixin.web;
 
-import com.eryansky.fastweixin.company.api.config.ClusterQYAPIConfig;
 import com.eryansky.fastweixin.company.message.req.QYBaseEvent;
 import com.eryansky.fastweixin.company.message.req.QYEnterAgentEvent;
 import com.eryansky.fastweixin.company.message.req.QYTextReqMsg;
