@@ -19,10 +19,10 @@ public class SysConstants {
      * session 验证码key
      */
     public static final String SESSION_VALIDATE_CODE = "validateCode";
-    public static final String APP_CONFIG_FILE = "appconfig.properties";
+    public static final String APP_CONFIG_FILE_PATH = "appconfig.properties";
 
     private static class SysConstantsHolder {
-        private static final PropertiesLoader appconfig = new PropertiesLoader(APP_CONFIG_FILE);
+        private static final PropertiesLoader appconfig = new PropertiesLoader(APP_CONFIG_FILE_PATH);
     }
 
     /**
@@ -52,7 +52,7 @@ public class SysConstants {
      * @param value
      */
     public static void modifyAppConfig(String key,String value) {
-        SysConstantsHolder.appconfig.modifyProperties(APP_CONFIG_FILE,key,value);
+        SysConstantsHolder.appconfig.modifyProperties(APP_CONFIG_FILE_PATH,key,value);
     }
     
 

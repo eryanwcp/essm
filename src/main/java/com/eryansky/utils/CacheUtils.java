@@ -25,17 +25,22 @@ import java.util.stream.Collectors;
 public class CacheUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(SystemInitListener.class);
-	
-	private static J2CacheCacheManger cacheManager = SpringContextHolder.getBean("j2CacheCacheManger");
 
 	private static final String SYS_CACHE = "sysCache";
+
+	/**
+	 * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+	 */
+	private static final class Static {
+		private static J2CacheCacheManger cacheManager = SpringContextHolder.getBean("j2CacheCacheManger");
+	}
 
 	public static <T> T get(String key) {
 		return get(SYS_CACHE, key);
 	}
 
 	public static <T> T get(String region, String key) {
-		CacheObject cacheObject = cacheManager.getCacheChannel().get(region,key);
+		CacheObject cacheObject = Static.cacheManager.getCacheChannel().get(region,key);
 		if(cacheObject != null && logger.isDebugEnabled()){
 			logger.debug(key+":"+cacheObject.getLevel());
 		}
@@ -43,7 +48,7 @@ public class CacheUtils {
 	}
 
 	public static <T> T get(String region, Collection<String> keys) {
-		java.util.Map<String,CacheObject> map = cacheManager.getCacheChannel().get(region,keys);
+		java.util.Map<String,CacheObject> map = Static.cacheManager.getCacheChannel().get(region,keys);
 		return (T)map.values().stream().filter(x -> x!=null && x.getValue() != null).map(v->v.getValue()).collect(Collectors.toList());
 	}
 
@@ -54,7 +59,7 @@ public class CacheUtils {
 
 
 	public static void put(String region, String key, Object value) {
-		cacheManager.getCacheChannel().set(region,key,value);
+		Static.cacheManager.getCacheChannel().set(region,key,value);
 	}
 
 	public static void remove(String key) {
@@ -62,32 +67,32 @@ public class CacheUtils {
 	}
 
 	public static void remove(String region, String key) {
-		cacheManager.getCacheChannel().evict(region,key);
+		Static.cacheManager.getCacheChannel().evict(region,key);
 	}
 
 	public static void clearCache(String region) {
-		cacheManager.getCacheChannel().clear(region);
+		Static.cacheManager.getCacheChannel().clear(region);
 	}
 
 	public static void removeCache(String region) {
-		cacheManager.getCacheChannel().removeRegion(region);
+		Static.cacheManager.getCacheChannel().removeRegion(region);
 	}
 
 	public static Collection<String> keys(String region) {
-		return cacheManager.getCacheChannel().keys(region);
+		return Static.cacheManager.getCacheChannel().keys(region);
 	}
 
 	public static Collection<String> regionNames() {
-		Collection<CacheChannel.Region> regions = cacheManager.getCacheChannel().regions();
+		Collection<CacheChannel.Region> regions = Static.cacheManager.getCacheChannel().regions();
 		return regions.stream().map(CacheChannel.Region::getName).collect(Collectors.toList());
 	}
 
 	public static Collection<CacheChannel.Region> regions() {
-		return cacheManager.getCacheChannel().regions();
+		return Static.cacheManager.getCacheChannel().regions();
 	}
 
 	public static CacheChannel getCacheChannel() {
-		return cacheManager.getCacheChannel();
+		return Static.cacheManager.getCacheChannel();
 	}
 
 }

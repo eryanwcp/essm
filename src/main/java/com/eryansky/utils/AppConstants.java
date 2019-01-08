@@ -51,7 +51,6 @@ public class AppConstants extends SysConstants {
      */
     public static final String ROLE_DISK_MANAGER = "disk_manager";
 
-    private static PropertiesLoader config = null;
 
     /**
      * 配置文件路径
@@ -63,6 +62,7 @@ public class AppConstants extends SysConstants {
      */
     private static final class Static {
         private static ConfigService configService = SpringContextHolder.getBean(ConfigService.class);
+        private static PropertiesLoader config = new PropertiesLoader(CONFIG_FILE_PATH);
     }
 
     /**
@@ -104,10 +104,7 @@ public class AppConstants extends SysConstants {
      * 配置文件(config.properties)
      */
     public static PropertiesLoader getConfig() {
-        if (config == null) {
-            config = new PropertiesLoader(CONFIG_FILE_PATH);
-        }
-        return config;
+        return Static.config;
     }
 
     /**
