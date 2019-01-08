@@ -25,7 +25,7 @@ public class ApplicationSessionContext {
 		return Static.instance;
 	}
 
-	public synchronized void addSession(SessionInfo sessionInfo) {
+	public void addSession(SessionInfo sessionInfo) {
 		if (sessionInfo != null) {
 			CacheUtils.put(CACHE_SESSION,sessionInfo.getId(),sessionInfo);
 		}
@@ -56,13 +56,13 @@ public class ApplicationSessionContext {
 	}
 
 
-	public synchronized void addSession(String cacheName, String key, Object o) {
+	public void addSession(String cacheName, String key, Object o) {
 		if (o != null) {
 			CacheUtils.put(cacheName, key, o);
 		}
 	}
 
-	public synchronized void removeSession(String cacheName, String key) {
+	public void removeSession(String cacheName, String key) {
 		if (key != null) {
 			CacheUtils.remove(cacheName, key);
 		}
