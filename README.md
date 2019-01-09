@@ -12,9 +12,6 @@ EasyUI/Bootstrap、SpringMVC、Spring、Mybatis、微信服务端API
     管理员账号：
     admin/1
     
-   
-演示地址：https://cnhv.co/30qwd admin/1
-请做个正常人！
 
 如果你觉得代码写得好 很受益，请尔演喝一杯咖啡吧！
 
