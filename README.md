@@ -1,9 +1,7 @@
 # essm基础开发平台
-    
-    3.0版本完全去除Hibernate依赖
-    2.3版本包含Hibernate实现
 
 EasyUI/Bootstrap、SpringMVC、Spring、Mybatis、微信服务端API
+适合会看代码的人员使用
 
 支持集群部署 JDK8+
 
