@@ -62,6 +62,7 @@ public class DiskUtils {
         private static IFileManager iFileManager = SpringContextHolder.getBean("iFileManager");
 
     }
+
     /**
      * 文件上传失败提示信息
      */

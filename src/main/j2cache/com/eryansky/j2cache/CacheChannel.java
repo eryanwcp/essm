@@ -619,7 +619,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			level2Cache.queuePush(values);
 		}else{
-			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> new LinkedBlockingQueue<>());
 			for(String value:values){
 				queue.add(value);
 			}
@@ -638,7 +638,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queuePop();
 		}else{
-			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> new LinkedBlockingQueue<>());
 			return queue.poll();
 		}
 	}
@@ -655,7 +655,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queueSize();
 		}else{
-			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> new LinkedBlockingQueue<>());
 			return queue.size();
 		}
 	}
@@ -672,7 +672,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		if(!(level2Cache instanceof NullCache)){
 			return level2Cache.queueList();
 		}else{
-			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k ->new LinkedBlockingQueue<>());
 			return new ArrayList<>(queue);
 		}
 	}
@@ -688,7 +688,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
         if(!(level2Cache instanceof NullCache)){
             level2Cache.queueClear();
         }else{
-			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> {return new LinkedBlockingQueue<String>();});
+			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> new LinkedBlockingQueue<>());
 			queue.clear();
         }
 	}
