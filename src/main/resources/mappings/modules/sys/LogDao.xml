@@ -141,7 +141,7 @@
 				to_char(a.create_time, 'yyyy-MM-dd') as "loginDate",
 			</when>
 			<when test="dbName != null and dbName == 'mysql'.toString()">
-				to_char(a.create_time, 'yyyy-MM-dd') as "loginDate",
+				DATE_FORMAT(a.create_time, 'yyyy-MM-dd') as "loginDate",
 			</when>
 			<otherwise>
 				DATE_FORMAT(a.create_time, '%Y-%m-%d') as "loginDate",
@@ -173,7 +173,7 @@
 				to_char(a.create_time, 'yyyy-MM-dd')
 			</when>
 			<when test="dbName != null and dbName == 'mysql'.toString()">
-				to_char(a.create_time, 'yyyy-MM-dd')
+				DATE_FORMAT(a.create_time, 'yyyy-MM-dd')
 			</when>
 			<otherwise>
 				DATE_FORMAT(a.create_time, '%Y-%m-%d')
