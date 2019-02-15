@@ -19,9 +19,15 @@ public class J2CacheAdapter implements Cache {
     private static final String DEFAULT_REGION = "default";
 
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private CacheChannel cache = J2Cache.getChannel();
     private String id;
     private boolean encodeKey;
+
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    private static final class Static {
+        private static CacheChannel cache = J2Cache.getChannel();
+    }
 
     public J2CacheAdapter(String id) {
         if (id == null)
@@ -43,32 +49,32 @@ public class J2CacheAdapter implements Cache {
     @Override
     public void putObject(Object key, Object value) {
         String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        this.cache.set(this.id, _key, value);
+        Static.cache.set(this.id, _key, value);
     }
 
     @Override
     public Object getObject(Object key) {
         String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        return this.cache.get(this.id, _key).getValue();
+        return Static.cache.get(this.id, _key).getValue();
     }
 
     @Override
     public Object removeObject(Object key) {
         String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        Object obj = this.cache.get(this.id, _key).getValue();
+        Object obj = Static.cache.get(this.id, _key).getValue();
         if (obj != null)
-            this.cache.evict(this.id, _key);
+            Static.cache.evict(this.id, _key);
         return obj;
     }
 
     @Override
     public void clear() {
-        this.cache.clear(this.getId());
+        Static.cache.clear(this.getId());
     }
 
     @Override
     public int getSize() {
-        Collection<String> keys = this.cache.keys(this.getId());
+        Collection<String> keys = Static.cache.keys(this.getId());
         return keys != null ? keys.size() : 0;
     }
 

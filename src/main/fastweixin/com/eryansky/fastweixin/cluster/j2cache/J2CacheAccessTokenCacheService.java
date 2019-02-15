@@ -14,9 +14,14 @@ import com.eryansky.j2cache.J2Cache;
  */
 public class J2CacheAccessTokenCacheService implements IAccessTokenCacheService {
 
-    private CacheChannel cache = J2Cache.getChannel();
     private String region = AccessTokenCache.CACHE_NAME;
     private String prefix = "";
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    private static final class Static {
+        private static CacheChannel cache = J2Cache.getChannel();
+    }
 
     public J2CacheAccessTokenCacheService() {
     }
@@ -33,7 +38,7 @@ public class J2CacheAccessTokenCacheService implements IAccessTokenCacheService 
 
     @Override
     public AccessTokenCache getAccessTokenCache() {
-        CacheObject cacheObject = cache.get(region, this.prefix + AccessTokenCache.KEY_ACCESS_TOKEN_CACHE);
+        CacheObject cacheObject = Static.cache.get(region, this.prefix + AccessTokenCache.KEY_ACCESS_TOKEN_CACHE);
         if (cacheObject != null) {
             return (AccessTokenCache) cacheObject.getValue();
         }
@@ -42,7 +47,7 @@ public class J2CacheAccessTokenCacheService implements IAccessTokenCacheService 
 
     @Override
     public void putAccessTokenCache(AccessTokenCache accessTokenCache) {
-        cache.set(region, this.prefix + AccessTokenCache.KEY_ACCESS_TOKEN_CACHE, accessTokenCache);
+        Static.cache.set(region, this.prefix + AccessTokenCache.KEY_ACCESS_TOKEN_CACHE, accessTokenCache);
     }
 
 }
