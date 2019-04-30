@@ -5,6 +5,8 @@
  */
 package test.utils.j2cache;
 
+import com.eryansky.common.exception.ServiceException;
+import com.eryansky.common.model.Result;
 import com.eryansky.common.model.TreeNode;
 import com.eryansky.common.utils.Identities;
 import com.eryansky.common.utils.ThreadUtils;
@@ -293,5 +295,40 @@ public class CacheTest {
         }
     }
 
+    @Test
+    public void cache13() throws Exception{
+        for(int i=0;i<10;i++){
+            int finalI = i;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String key = "essm_l2";
+                    p13(key, finalI);
+                }
+            }).start();
+        }
+        ThreadUtils.sleep(300*1000);
+    }
+    private void p13(String key,int index){
+        Result result = CacheUtils.getCacheChannel().lock(key, 20, 30, new DefaultLockCallback<Result>(null,null) {
+            @Override
+            public Result handleObtainLock() {
+                try{
+
+                    return s13(index);
+                }catch (ServiceException e){
+                    logger.error(e.getMessage(),e);
+                    return Result.warnResult().setMsg(e.getMessage());
+                }
+            }
+        });
+        System.out.println(result != null ? result.toString():index+" null");
+    }
+
+    private Result s13(int index){
+        System.out.println(index);
+        ThreadUtils.sleep(60*1000);
+        return Result.successResult();
+    }
 
 }

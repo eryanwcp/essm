@@ -197,23 +197,26 @@ public class RedisHashCache implements Level2Cache {
         clear();
     }
 
-    private static final String LOCK_SUCCESS = "OK";
-    private static final String SET_IF_NOT_EXIST = "NX";
-    private static final String SET_WITH_EXPIRE_TIME = "PX";
-
     @Override
     public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
-//        long curentTime = System.currentTimeMillis();
-//        long expireSecond = curentTime / 1000 + keyExpireSeconds;
-//        long expireMillisSecond = curentTime + keyExpireSeconds * 1000;
+        long curentTime = System.currentTimeMillis();
+        /*
+         * 设置加锁过期时间
+         */
+        long expireSecond = curentTime / 1000L + keyExpireSeconds;
+        /*
+         * 作为值存入锁中(记录这把锁持有最终时限)
+         */
+        long expireMillisSecond = curentTime + keyExpireSeconds * 1000L;
 
         int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
 
         for (int i = 0; i < retryCount; i++) {
-            String result = client.get().set(regionBytes, "".getBytes(), SET_IF_NOT_EXIST.getBytes(), SET_WITH_EXPIRE_TIME.getBytes(), keyExpireSeconds);
-            boolean flag = LOCK_SUCCESS.equals(result);
+            Long result = client.get().setnx(_key(lockKey),String.valueOf(expireMillisSecond).getBytes());
+            boolean flag = 1L == result;
             if(flag) {
                 try {
+                    client.get().expireAt(_key(lockKey),expireSecond);
                     return lockCallback.handleObtainLock();
                 } catch (Exception e) {
                     log.error(e.getMessage(),e);
