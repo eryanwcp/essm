@@ -1,3 +1,5 @@
+Spring Boot版本参考 https://github.com/eryanwcp/ec
+
 # essm基础开发平台
 
 EasyUI/Bootstrap、SpringMVC、Spring、Mybatis、微信服务端API
