@@ -60,9 +60,12 @@ public class J2CacheSessionFilter implements Filter {
     @Override
     public void init(FilterConfig config) {
         this.cookieName     = config.getInitParameter("cookie.name");
+        this.cookieName = this.cookieName != null ? this.cookieName:"J2CACHE_SESSION_ID";
         this.cookieDomain   = config.getInitParameter("cookie.domain");
         this.cookiePath     = config.getInitParameter("cookie.path");
-        this.cookieMaxAge   = Integer.parseInt(config.getInitParameter("session.maxAge"));
+        this.cookiePath = this.cookiePath != null ? this.cookiePath:"/";
+        String maxAge     = config.getInitParameter("session.maxAge");
+        this.cookieMaxAge   = Integer.parseInt(maxAge != null ? maxAge:"1800");
         this.discardNonSerializable = "true".equalsIgnoreCase(config.getInitParameter("session.discardNonSerializable"));
 
         Properties redisConf = new Properties();
@@ -72,11 +75,13 @@ public class J2CacheSessionFilter implements Filter {
             }
         }
 
-        int maxSizeInMemory = Integer.parseInt(config.getInitParameter("session.maxSizeInMemory"));
+        String maxSessionSizeInMemory = config.getInitParameter("session.maxSizeInMemory");
+        int maxSizeInMemory = Integer.parseInt(maxSessionSizeInMemory != null ? maxSessionSizeInMemory:"1000");
 
         this.g_cache = new CacheFacade(maxSizeInMemory, this.cookieMaxAge, redisConf, this.discardNonSerializable);
 
         String whiteListURLStr = config.getInitParameter("whiteListURL");
+        whiteListURLStr = whiteListURLStr != null ? whiteListURLStr : "/**";
         whiteListURLs = strToArray(whiteListURLStr);
         String blackListURLStr = config.getInitParameter("blackListURL");
         blackListURLs = strToArray(blackListURLStr);

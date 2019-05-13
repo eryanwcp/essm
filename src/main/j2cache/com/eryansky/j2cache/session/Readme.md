@@ -26,6 +26,10 @@
         </init-param>
         <!-- redis configuration -->
         <init-param>
+            <param-name>redis.enabled</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
             <param-name>redis.mode</param-name>
             <param-value>single</param-value>
         </init-param>

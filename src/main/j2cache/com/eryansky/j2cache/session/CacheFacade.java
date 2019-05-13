@@ -16,8 +16,8 @@
 package com.eryansky.j2cache.session;
 
 import com.eryansky.j2cache.util.IpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 
@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable, CacheExpiredListener {
 
-    private static final Log log = LogFactory.getLog(CacheFacade.class);
+    private final Logger logger = LoggerFactory.getLogger(CacheFacade.class);
 
     private static final Map<String, Object> _g_keyLocks = new ConcurrentHashMap<>();
 
@@ -48,19 +48,30 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
     private boolean discardNonSerializable;
 
     public CacheFacade(int maxSizeInMemory, int maxAge, Properties redisConf, boolean discardNonSerializable) {
-
         this.discardNonSerializable = discardNonSerializable;
         this.cache1 = new CaffeineCache(maxSizeInMemory, maxAge, this);
 
+        logger.info("J2Cache Session L1 CacheProvider {}.",this.cache1.getClass().getName());
+
+        String enabled = redisConf.getProperty("enabled");
+        if(!"true".equalsIgnoreCase(enabled)){
+            logger.info("J2Cache Session L2/redis not enabled.");
+            return;
+        }
         JedisPoolConfig poolConfig = RedisUtils.newPoolConfig(redisConf, null);
 
         String hosts = redisConf.getProperty("hosts");
+        hosts = hosts != null ? hosts:"127.0.0.1:6379";
         String mode = redisConf.getProperty("mode");
+        mode = mode != null ? mode:"single";
         String clusterName = redisConf.getProperty("cluster_name");
+        clusterName = clusterName != null ? clusterName:"j2cache-session";
         String password = redisConf.getProperty("password");
-        int database = Integer.parseInt(redisConf.getProperty("database"));
+        String _database = redisConf.getProperty("database");
+        int database = _database != null ? Integer.parseInt(_database):0;
 
         this.pubsub_channel = redisConf.getProperty("channel");
+        this.pubsub_channel = this.pubsub_channel != null ? this.pubsub_channel:"j2cache-session";
 
         long ct = System.currentTimeMillis();
 
@@ -73,6 +84,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
                 .poolConfig(poolConfig).newClient();
 
         this.cache2 = new RedisCache(null, redisClient);
+        logger.info("J2Cache Session L2 CacheProvider {}.",this.cache2.getClass().getName());
 
         this.publish(Command.join());
 
@@ -83,7 +95,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
                 try {
                     Jedis jedis = (Jedis)redisClient.get();
                     jedis.subscribe(this, pubsub_channel);
-                    log.info("Disconnect to redis channel: " + pubsub_channel);
+                    logger.info("Disconnect to redis channel: " + pubsub_channel);
                     break;
                 } catch (JedisConnectionException e) {
                     if (tryCount++ < 3) {
@@ -92,7 +104,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
                         continue;
                     }
                     tryCount = 0;
-                    log.error("Failed connect to redis, reconnect it.", e);
+                    logger.error("Failed connect to redis, reconnect it.", e);
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ie){
@@ -105,7 +117,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
         subscribeThread.setDaemon(true);
         subscribeThread.start();
 
-        log.info("Connected to redis channel:" + pubsub_channel + ", time " + (System.currentTimeMillis()-ct) + " ms.");
+        logger.info("Connected to redis channel:" + pubsub_channel + ", time " + (System.currentTimeMillis()-ct) + " ms.");
 
     }
 
@@ -114,6 +126,9 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
      * @param cmd 待发布的消息
      */
     public void publish(Command cmd) {
+        if(this.cache2 == null){
+            return;
+        }
         try  {
             BinaryJedisCommands redis = redisClient.get();
             if(redis instanceof Jedis) {
@@ -136,6 +151,9 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
      */
     @Override
     public void onMessage(String channel, String message) {
+        if(this.cache2 == null){
+            return;
+        }
         Command cmd = Command.parse(message);
 
         try {
@@ -144,40 +162,48 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
 
             switch (cmd.getOperator()) {
                 case Command.OPT_JOIN:
-                    log.info("Server-"+cmd.getSrc() + " joined !");
+                    logger.info("Server-"+cmd.getSrc() + " joined !");
                     break;
                 case Command.OPT_DELETE_SESSION:
                     cache1.evict(cmd.getSession());
-                    log.debug("Received session clear command, session=" + cmd.getSession());
+                    logger.debug("Received session clear command, session=" + cmd.getSession());
                     break;
                 case Command.OPT_QUIT:
-                    log.info("Server-"+cmd.getSrc() + " quit !");
+                    logger.info("Server-"+cmd.getSrc() + " quit !");
                     break;
                 default:
-                    log.warn("Unknown command type = " + cmd.getOperator());
+                    logger.warn("Unknown command type = " + cmd.getOperator());
             }
         } catch (Exception e) {
-            log.error("Failed to handle received command", e);
+            logger.error("Failed to handle received command", e);
         }
     }
 
     @Override
     public void notifyElementExpired(String session_id) {
+        if(this.cache2 == null){
+            return;
+        }
         this.publish(new Command(Command.OPT_DELETE_SESSION, session_id, null));
     }
 
     @Override
     public void close() {
         try {
-            this.publish(Command.quit());
-            if (this.isSubscribed())
-                this.unsubscribe();
+            if(this.cache2 != null){
+                this.publish(Command.quit());
+                if (this.isSubscribed())
+                    this.unsubscribe();
+            }
         } finally {
             this.cache1.close();
-            this.cache2.close();
-            try {
-                this.redisClient.close();
-            } catch (IOException e) {}
+            if(this.cache2 != null){
+                this.cache2.close();
+                try {
+                    this.redisClient.close();
+                } catch (IOException e) {}
+            }
+
         }
     }
 
@@ -195,6 +221,9 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
             if(session != null)
                 return session;
             try {
+                if(this.cache2 == null){
+                    return session;
+                }
                 List<String> keys = cache2.keys(session_id);
                 if(keys.size() == 0)
                     return null;
@@ -203,7 +232,7 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
                 session = new SessionObject(session_id, keys, datas);
                 cache1.put(session_id, session);
             } catch (Exception e) {
-                log.error("Failed to read session from j2cache", e);
+                logger.error("Failed to read session from j2cache", e);
             } finally {
                 _g_keyLocks.remove(session_id);
             }
@@ -218,6 +247,9 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
     public void saveSession(SessionObject session) {
         //write to caffeine
         cache1.put(session.getId(), session);
+        if(this.cache2 == null){
+            return;
+        }
         //write to redis
         cache2.setBytes(session.getId(), new HashMap<String, byte[]>() {{
             put(SessionObject.KEY_CREATE_AT, String.valueOf(session.getCreated_at()).getBytes());
@@ -242,33 +274,45 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
         try {
             session.setLastAccess_at(System.currentTimeMillis());
             cache1.put(session.getId(), session);
-            cache2.setBytes(session.getId(), SessionObject.KEY_ACCESS_AT, String.valueOf(session.getLastAccess_at()).getBytes());
-            cache2.ttl(session.getId(), cache1.getExpire());
+            if(this.cache2 != null){
+                cache2.setBytes(session.getId(), SessionObject.KEY_ACCESS_AT, String.valueOf(session.getLastAccess_at()).getBytes());
+                cache2.ttl(session.getId(), cache1.getExpire());
+            }
         } finally {
-            this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            if(this.cache2 != null){
+                this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            }
         }
     }
 
     public void setSessionAttribute(SessionObject session, String key) {
         try {
             cache1.put(session.getId(), session);
-            try {
-                cache2.setBytes(session.getId(), key, Serializer.write(session.get(key)));
-            } catch (RuntimeException | IOException e) {
-                if(!this.discardNonSerializable)
-                    throw ((e instanceof RuntimeException)?(RuntimeException)e : new RuntimeException(e));
+            if(this.cache2 != null){
+                try {
+                    cache2.setBytes(session.getId(), key, Serializer.write(session.get(key)));
+                } catch (RuntimeException | IOException e) {
+                    if(!this.discardNonSerializable)
+                        throw ((e instanceof RuntimeException)?(RuntimeException)e : new RuntimeException(e));
+                }
             }
         } finally {
-            this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            if(this.cache2 != null){
+                this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            }
         }
     }
 
     public void removeSessionAttribute(SessionObject session, String key) {
         try {
             cache1.put(session.getId(), session);
-            cache2.evict(session.getId(), key);
+            if(this.cache2 != null){
+                cache2.evict(session.getId(), key);
+            }
         } finally {
-            this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            if(this.cache2 != null){
+                this.publish(new Command(Command.OPT_DELETE_SESSION, session.getId(), null));
+            }
         }
     }
 
@@ -279,9 +323,13 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
     public void deleteSession(String session_id) {
         try {
             cache1.evict(session_id);
-            cache2.clear(session_id);
+            if(this.cache2 != null){
+                cache2.clear(session_id);
+            }
         } finally {
-            this.publish(new Command(Command.OPT_DELETE_SESSION, session_id, null));
+            if(this.cache2 != null){
+                this.publish(new Command(Command.OPT_DELETE_SESSION, session_id, null));
+            }
         }
     }
 
