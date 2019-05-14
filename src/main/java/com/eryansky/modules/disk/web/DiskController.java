@@ -584,6 +584,8 @@ public class DiskController extends SimpleController {
         String contentType = AppUtils.getServletContext().getMimeType(filename);
         if (null != contentType) {
             response.setContentType(contentType);
+        }else{
+            response.setContentType("application/x-download");
         }
 
         // 告诉客户端允许断点续传多线程连接下载,响应的格式是:Accept-Ranges: bytes
@@ -596,6 +598,7 @@ public class DiskController extends SimpleController {
         InputStream istream = null;
         OutputStream os = null;
         try {
+            WebUtils.setDownloadableHeader(request,response,filename);
             os = response.getOutputStream();
             istream = new BufferedInputStream(new FileInputStream(diskFile), bufferSize);
             try {
