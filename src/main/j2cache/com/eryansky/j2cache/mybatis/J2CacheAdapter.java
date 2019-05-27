@@ -48,32 +48,47 @@ public class J2CacheAdapter implements Cache {
 
     @Override
     public void putObject(Object key, Object value) {
-        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        Static.cache.set(this.id, _key, value);
+        if(null == Static.cache){
+            return;
+        }
+        String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        Static.cache.set(this.id, mKey, value);
     }
 
     @Override
     public Object getObject(Object key) {
-        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        return Static.cache.get(this.id, _key).getValue();
+        if(null == Static.cache){
+            return null;
+        }
+        String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        return Static.cache.get(this.id, mKey).getValue();
     }
 
     @Override
     public Object removeObject(Object key) {
-        String _key = encodeKey ? Encrypt.md5(key.toString()):key.toString();
-        Object obj = Static.cache.get(this.id, _key).getValue();
+        if(null == Static.cache){
+            return null;
+        }
+        String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
+        Object obj = Static.cache.get(this.id, mKey).getValue();
         if (obj != null)
-            Static.cache.evict(this.id, _key);
+            Static.cache.evict(this.id, mKey);
         return obj;
     }
 
     @Override
     public void clear() {
+        if(null == Static.cache){
+            return;
+        }
         Static.cache.clear(this.getId());
     }
 
     @Override
     public int getSize() {
+        if(null == Static.cache){
+            return 0;
+        }
         Collection<String> keys = Static.cache.keys(this.getId());
         return keys != null ? keys.size() : 0;
     }
