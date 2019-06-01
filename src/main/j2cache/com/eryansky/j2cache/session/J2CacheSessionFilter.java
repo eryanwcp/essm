@@ -63,7 +63,8 @@ public class J2CacheSessionFilter implements Filter {
         this.cookieName = this.cookieName != null ? this.cookieName:"J2CACHE_SESSION_ID";
         this.cookieDomain   = config.getInitParameter("cookie.domain");
         this.cookiePath     = config.getInitParameter("cookie.path");
-        this.cookiePath = this.cookiePath != null ? this.cookiePath:"/";
+        String ctx = config.getServletContext().getContextPath();
+        this.cookiePath = null != this.cookiePath && !"".equals(this.cookiePath) ? this.cookiePath:"".equals(ctx) ? "/":ctx;
         String maxAge     = config.getInitParameter("session.maxAge");
         this.cookieMaxAge   = Integer.parseInt(maxAge != null ? maxAge:"1800");
         this.discardNonSerializable = "true".equalsIgnoreCase(config.getInitParameter("session.discardNonSerializable"));
