@@ -14,7 +14,7 @@
         <param-value>
             classpath*:applicationContext.xml,
             classpath*:applicationContext-j2cache.xml,
-             classpath*:applicationContext-mybatis.xml,
+            classpath*:applicationContext-mybatis.xml,
             classpath*:applicationContext-quartz.xml
         </param-value>
     </context-param>
@@ -66,26 +66,116 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
 
+
+    <filter>
+        <filter-name>j2cache-session-filter</filter-name>
+        <filter-class>com.eryansky.j2cache.session.J2CacheSessionFilter</filter-class>
+        <init-param>
+            <param-name>blackListURL</param-name> <!-- 配置黑名单url 表示走过滤器的url order：1-->
+            <param-value>
+                /static/**
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>whiteListURL</param-name> <!-- 配置白名单url 表示走过滤器的url order：2-->
+            <param-value>
+                /**
+            </param-value>
+        </init-param>
+        <init-param><!-- 内存中存放会话数 -->
+            <param-name>session.maxSizeInMemory</param-name>
+            <param-value>100000</param-value>
+        </init-param>
+        <init-param><!-- 会话有效期，单位：秒钟 -->
+            <param-name>session.maxAge</param-name>
+            <param-value>1800</param-value>
+        </init-param>
+        <!-- cookie configuration -->
+        <init-param>
+            <param-name>cookie.name</param-name>
+            <param-value>J2CACHE_SESSION_ID</param-value>
+            <!--<param-value>JSESSIONID</param-value>-->
+        </init-param>
+        <init-param>
+            <param-name>cookie.path</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>cookie.domain</param-name>
+            <param-value></param-value>
+        </init-param>
+        <!-- redis configuration -->
+        <init-param>
+            <param-name>redis.enabled</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.mode</param-name>
+            <param-value>single</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.hosts</param-name>
+            <param-value>127.0.0.1:6379</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.channel</param-name>
+            <param-value>j2cache-session</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.cluster_name</param-name>
+            <param-value>j2cache-session</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.timeout</param-name>
+            <param-value>2000</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.password</param-name>
+            <param-value></param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.database</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.maxTotal</param-name>
+            <param-value>100</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.maxIdle</param-name>
+            <param-value>10</param-value>
+        </init-param>
+        <init-param>
+            <param-name>redis.minIdle</param-name>
+            <param-value>1</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>j2cache-session-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- 防止XSS注入-->
     <!--<filter>-->
-        <!--<filter-name>XssFilter</filter-name>-->
-        <!--<filter-class>com.eryansky.common.web.filter.XssFilter</filter-class>-->
-        <!--<init-param>-->
-            <!--<param-name>blackListURL</param-name> &lt;!&ndash; 配置黑名单url 表示走过滤器的url order：1&ndash;&gt;-->
-            <!--<param-value>-->
-                <!--/static/**-->
-            <!--</param-value>-->
-        <!--</init-param>-->
-        <!--<init-param>-->
-            <!--<param-name>whiteListURL</param-name> &lt;!&ndash; 配置白名单url 表示走过滤器的url order：2&ndash;&gt;-->
-            <!--<param-value>-->
-                <!--/**-->
-            <!--</param-value>-->
-        <!--</init-param>-->
+    <!--<filter-name>XssFilter</filter-name>-->
+    <!--<filter-class>com.eryansky.common.web.filter.XssFilter</filter-class>-->
+    <!--<init-param>-->
+    <!--<param-name>blackListURL</param-name> &lt;!&ndash; 配置黑名单url 表示走过滤器的url order：1&ndash;&gt;-->
+    <!--<param-value>-->
+    <!--/static/**-->
+    <!--</param-value>-->
+    <!--</init-param>-->
+    <!--<init-param>-->
+    <!--<param-name>whiteListURL</param-name> &lt;!&ndash; 配置白名单url 表示走过滤器的url order：2&ndash;&gt;-->
+    <!--<param-value>-->
+    <!--/**-->
+    <!--</param-value>-->
+    <!--</init-param>-->
     <!--</filter>-->
     <!--<filter-mapping>-->
-        <!--<filter-name>XssFilter</filter-name>-->
-        <!--<url-pattern>/*</url-pattern>-->
+    <!--<filter-name>XssFilter</filter-name>-->
+    <!--<url-pattern>/*</url-pattern>-->
     <!--</filter-mapping>-->
 
 
@@ -93,16 +183,16 @@
 
     <!-- 生产环境下使用 Response Header Added Filter -->
     <!--<filter>-->
-        <!--<filter-name>expiresHeaderFilter</filter-name>-->
-        <!--<filter-class>com.eryansky.common.web.filter.ResponseHeaderFilter</filter-class>-->
-        <!--<init-param>-->
-            <!--<param-name>Cache-Control</param-name>-->
-            <!--<param-value>public, max-age=31536000</param-value>-->
-        <!--</init-param>-->
+    <!--<filter-name>expiresHeaderFilter</filter-name>-->
+    <!--<filter-class>com.eryansky.common.web.filter.ResponseHeaderFilter</filter-class>-->
+    <!--<init-param>-->
+    <!--<param-name>Cache-Control</param-name>-->
+    <!--<param-value>public, max-age=31536000</param-value>-->
+    <!--</init-param>-->
     <!--</filter>-->
     <!--<filter-mapping>-->
-        <!--<filter-name>expiresHeaderFilter</filter-name>-->
-        <!--<url-pattern>/static/*</url-pattern>-->
+    <!--<filter-name>expiresHeaderFilter</filter-name>-->
+    <!--<url-pattern>/static/*</url-pattern>-->
     <!--</filter-mapping>-->
 
 
