@@ -21,8 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import java.util.Collections;
-import java.util.Enumeration;
+import java.util.*;
 
 /**
  * 实现对 Session 的自定义管理

@@ -20,10 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -220,6 +220,135 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		return results;
 	}
 
+    /**
+     * 将缓存对象转换为指定类型对象
+     * @param cache
+     * 缓存对象
+     * @param dataClass
+     * 指定数据类型
+     * @param <T>
+     *     数据类型
+     * @return 缓存数据
+     */
+    private <T extends Serializable> T parse(final CacheObject cache, final Class<T> dataClass){
+        if(cache == null || cache.getValue() == null){
+            return null;
+        }
+        return dataClass.cast(cache.getValue());
+    }
+
+    /**
+     * 将缓存对象转换为指定类型对象
+     * @param cacheObjectMap
+     * 缓存Map
+     * @param dataClass
+     * 指定数据类型
+     * @param <T>
+     *     数据类型
+     * @return 转换后的Map
+     */
+    private <T extends Serializable> Map<String, T> parse(final Map<String, CacheObject> cacheObjectMap, final Class<T> dataClass) {
+        if (cacheObjectMap == null || cacheObjectMap.size() == 0 || dataClass == null) {
+            return null;
+        }
+        return cacheObjectMap.entrySet().stream()
+                .map(entry -> {
+                    if (entry != null && entry.getValue() != null) {
+                        final T data = parse(entry.getValue(), dataClass);
+                        if (data != null) {
+                            return new Map.Entry<String, T>() {
+
+                                @Override
+                                public String getKey() {
+                                    return entry.getKey();
+                                }
+
+                                @Override
+                                public T getValue() {
+                                    return data;
+                                }
+
+                                @Override
+                                public T setValue(T value) {
+                                    return value;
+                                }
+                            };
+                        }
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+    }
+
+    /**
+     * 读取指定类型的缓存
+     * @param region
+     * Cache region name
+     * @param key
+     * Cache data key
+     * @param dataClass
+     * 数据类型class
+     * @param <T>
+     *     数据类型
+     * @return 缓存数据
+     */
+    public <T extends Serializable> T get(final String region, final String key, final Class<T> dataClass){
+        return parse(get(region, key), dataClass);
+    }
+
+    /**
+     * 支持外部数据自动加载的缓存方法
+     * @param region
+     * Cache region name
+     * @param key
+     * Cache data key
+     * @param dataClass
+     * 数据类型class
+     * @param loader
+     * data loader
+     * @param <T>
+     *     数据类型
+     * @return 缓存数据
+     */
+    public <T extends Serializable> T get(final String region, final String key, final Class<T> dataClass,final Function<String, T> loader){
+        return parse(get(region, key, loader::apply), dataClass);
+    }
+
+    /**
+     * 批量读取缓存中的指定类型对象
+     * @param region
+     * Cache region name
+     * @param keys
+     * cache keys
+     * @param dataClass
+     * 数据类型class
+     * @param <T>
+     *     数据类型
+     * @return 缓存对象Map
+     */
+    public <T extends Serializable> Map<String, T> get(final String region,final Collection<String> keys, final Class<T> dataClass){
+        return parse(get(region, keys), dataClass);
+    }
+
+    /**
+     * 使用数据加载器的批量缓存读取指定类型
+     * @param region
+     * Cache region name
+     * @param keys
+     * cache keys
+     * @param dataClass
+     * 数据类型class
+     * @param loader
+     * data loader
+     * @param <T>
+     *     数据类型
+     * @return 缓存对象Map
+     */
+    public <T extends Serializable> Map<String, T> get(final String region,final Collection<String> keys, final Class<T> dataClass,final Function<String, T> loader){
+        return parse(get(region, keys, loader::apply), dataClass);
+    }
+
 	/**
 	 * 判断某个缓存键是否存在
 	 * @param region Cache region name
@@ -359,8 +488,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 
 		try {
 			if (cacheNullObject && elements.containsValue(null)) {
-				Map<String, Object> newElems = new HashMap<>();
-				newElems.putAll(elements);
+				Map<String, Object> newElems = new HashMap<>(elements);
 				newElems.forEach((k,v) -> {
 					if (v == null)
 						newElems.put(k, newNullObject());
@@ -382,7 +510,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 			}
 		} finally {
 			//广播
-			this.sendEvictCmd(region, elements.keySet().stream().toArray(String[]::new));
+			this.sendEvictCmd(region, elements.keySet().toArray(new String[0]));
 		}
 	}
 
@@ -419,8 +547,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 		else {
 			try {
 				if (cacheNullObject && elements.containsValue(null)) {
-					Map<String, Object> newElems = new HashMap<>();
-					newElems.putAll(elements);
+					Map<String, Object> newElems = new HashMap<>(elements);
 					newElems.forEach((k,v) -> {
 						if (v == null)
 							newElems.put(k, newNullObject());
@@ -440,7 +567,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 				}
 			} finally {
 				//广播
-				this.sendEvictCmd(region, elements.keySet().stream().toArray(String[]::new));
+				this.sendEvictCmd(region, elements.keySet().toArray(new String[0]));
 			}
 		}
 	}
@@ -516,15 +643,66 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 	 * @return key list
 	 */
 	public Collection<String> keys(String region)  {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
 
+		Set<String> keys = new HashSet<>();
+		keys.addAll(holder.getLevel1Cache(region).keys());
+		Collection<String> key2s = holder.getLevel2Cache(region).keys();
+		String separator = ":";
+		Set<String> key2ss = key2s.stream().map(k->{
+			final int pos = k.lastIndexOf(separator);
+			if (pos == -1 || pos == k.length() - separator.length()) {
+				return k;
+			}
+			return k.substring(pos + separator.length());
+		}).collect(Collectors.toSet());
+
+		keys.addAll(key2ss);
+		return keys;
+    }
+
+	/**
+	 * key大小
+	 * @param region
+	 * @return
+	 */
+	public int keySize(String region)  {
 		if(closed)
 			throw new IllegalStateException("CacheChannel closed");
 
 		Set<String> keys = new HashSet<>();
 		keys.addAll(holder.getLevel1Cache(region).keys());
 		keys.addAll(holder.getLevel2Cache(region).keys());
-		return keys;
-    }
+		return keys.size();
+	}
+
+
+	/**
+	 * 获取key的ttl时间
+	 * @param region
+	 * @param key
+	 * @return
+	 */
+	public Long ttl(String region,String key)  {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+		Long ttl =  ttl(region,key,1);
+		return null != ttl ? ttl:ttl(region,key,2);
+	}
+
+	/**
+	 * 获取key的ttl时间
+	 * @param region
+	 * @param key
+	 * @param level 缓存级别
+	 * @return
+	 */
+	public Long ttl(String region,String key,int level)  {
+		if(closed)
+			throw new IllegalStateException("CacheChannel closed");
+		return level > 1 ? holder.getLevel2Cache(region).ttl(key):holder.getLevel1Cache(region).ttl(key);
+	}
 
 	/**
 	 * Close J2Cache
@@ -620,9 +798,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 			level2Cache.queuePush(values);
 		}else{
 			LinkedBlockingQueue<String> queue = mQueueMap.computeIfAbsent(region, k -> new LinkedBlockingQueue<>());
-			for(String value:values){
-				queue.add(value);
-			}
+			queue.addAll(Arrays.asList(values));
 		}
 	}
 
@@ -740,7 +916,7 @@ public abstract class CacheChannel implements Closeable , AutoCloseable {
 						LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
 		Level2Cache level2Cache = holder.getLevel2Cache(region);
 		if(!(level2Cache instanceof NullCache)){
-			return level2Cache.lock(region,frequency,timeoutInSecond, keyExpireSeconds,lockCallback);
+			return level2Cache.lock(frequency,timeoutInSecond, keyExpireSeconds,lockCallback);
 		}else{
 			ReentrantLock lock  = mLockMap.computeIfAbsent(region, k -> {return new ReentrantLock();});
 			int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();

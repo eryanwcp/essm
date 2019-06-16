@@ -54,7 +54,9 @@ public class ApplicationSessionContext {
 	public Collection<String> findSessionInfoKeys() {
 		return CacheUtils.keys(CACHE_SESSION);
 	}
-
+	public int findSessionInfoKeySize() {
+		return CacheUtils.getCacheChannel().keySize(CACHE_SESSION);
+	}
 
 	public void addSession(String cacheName, String key, Object o) {
 		if (o != null) {

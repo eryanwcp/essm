@@ -67,8 +67,8 @@ public class CacheFacade extends JedisPubSub implements Closeable, AutoCloseable
         String clusterName = redisConf.getProperty("cluster_name");
         clusterName = clusterName != null ? clusterName:"j2cache-session";
         String password = redisConf.getProperty("password");
-        String _database = redisConf.getProperty("database");
-        int database = _database != null ? Integer.parseInt(_database):0;
+        String mDatabase = redisConf.getProperty("database");
+        int database = mDatabase != null ? Integer.parseInt(mDatabase):0;
 
         this.pubsub_channel = redisConf.getProperty("channel");
         this.pubsub_channel = this.pubsub_channel != null ? this.pubsub_channel:"j2cache-session";

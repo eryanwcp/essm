@@ -135,4 +135,12 @@ public class LettuceGenericCache extends LettuceCache {
                 cmd.del(keys.stream().toArray(String[]::new));
         }
     }
+
+    @Override
+    public Long ttl(String key) {
+        try(StatefulConnection<String, byte[]> connection = super.connect()) {
+            RedisKeyCommands<String, byte[]> cmd = (RedisKeyCommands)super.sync(connection);
+            return cmd.ttl(_key(key));
+        }
+    }
 }

@@ -74,9 +74,9 @@ public abstract class LettuceCache implements Level2Cache {
     public void queuePush(String... values) {
         for(String value:values){
             if(redisClient instanceof RedisClient){
-                ((RedisClient)redisClient).connect().sync().rpush(Cache.getRegionName(namespace,region),value);
+                ((RedisClient)redisClient).connect().sync().rpush(region,value);
             }else if(redisClient instanceof RedisClusterClient){
-                ((RedisClusterClient)redisClient).connect().sync().rpush(Cache.getRegionName(namespace,region),values);
+                ((RedisClusterClient)redisClient).connect().sync().rpush(region,values);
             }
         }
     }
@@ -84,9 +84,9 @@ public abstract class LettuceCache implements Level2Cache {
     @Override
     public String queuePop() {
         if(redisClient instanceof RedisClient){
-            return ((RedisClient)redisClient).connect().sync().lpop(Cache.getRegionName(namespace,region));
+            return ((RedisClient)redisClient).connect().sync().lpop(region);
         }else if(redisClient instanceof RedisClusterClient){
-            return ((RedisClusterClient)redisClient).connect().sync().lpop(Cache.getRegionName(namespace,region));
+            return ((RedisClusterClient)redisClient).connect().sync().lpop(region);
         }
         return null;
     }
@@ -94,30 +94,29 @@ public abstract class LettuceCache implements Level2Cache {
     @Override
     public int queueSize() {
         if(redisClient instanceof RedisClient){
-            return ((RedisClient)redisClient).connect().sync().llen(Cache.getRegionName(namespace,region)).intValue();
+            return ((RedisClient)redisClient).connect().sync().llen(region).intValue();
         }else if(redisClient instanceof RedisClusterClient){
-            return ((RedisClusterClient)redisClient).connect().sync().llen(Cache.getRegionName(namespace,region)).intValue();
+            return ((RedisClusterClient)redisClient).connect().sync().llen(region).intValue();
         }
         return 0;
     }
 
     @Override
     public Collection<String> queueList() {
-        String _region = Cache.getRegionName(namespace,region);
         if(redisClient instanceof RedisClient){
             RedisCommands cmd = ((RedisClient)redisClient).connect().sync();
-            long length = cmd.llen(_region);
+            long length = cmd.llen(region);
             if(length == 0){
                 return Collections.emptyList();
             }
-            return cmd.lrange(_region,0,length-1);
+            return cmd.lrange(region,0,length-1);
         }else if(redisClient instanceof RedisClusterClient){
             RedisAdvancedClusterCommands cmd = ((RedisClusterClient)redisClient).connect().sync();
-            long length = cmd.llen(_region);
+            long length = cmd.llen(region);
             if(length == 0){
                 return Collections.emptyList();
             }
-            return cmd.lrange(_region,0,length-1);
+            return cmd.lrange(region,0,length-1);
         }
         return Collections.emptyList();
     }
@@ -128,8 +127,7 @@ public abstract class LettuceCache implements Level2Cache {
     }
 
     @Override
-    public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
-        String _region = Cache.getRegionName(namespace,region);
+    public <T> T lock(LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
         if(redisClient instanceof RedisClient){
             RedisCommands cmd = ((RedisClient)redisClient).connect().sync();
 //            long curentTime = System.currentTimeMillis();
@@ -139,17 +137,17 @@ public abstract class LettuceCache implements Level2Cache {
             int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
 
             for (int i = 0; i < retryCount; i++) {
-                boolean flag = cmd.setnx(_region,String.valueOf(keyExpireSeconds));
+                boolean flag = cmd.setnx(region,String.valueOf(keyExpireSeconds));
                 if(flag) {
                     try {
-                        cmd.expire(_region, keyExpireSeconds);
+                        cmd.expire(region, keyExpireSeconds);
                         return lockCallback.handleObtainLock();
                     } catch (Exception e) {
                         logger.error(e.getMessage(),e);
                         LockInsideExecutedException ie = new LockInsideExecutedException(e);
                         return lockCallback.handleException(ie);
                     } finally {
-                        cmd.del(_region);
+                        cmd.del(region);
                     }
                 } else {
                     try {
@@ -169,17 +167,17 @@ public abstract class LettuceCache implements Level2Cache {
             int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
 
             for (int i = 0; i < retryCount; i++) {
-                boolean flag = cmd.setnx(_region,String.valueOf(keyExpireSeconds));
+                boolean flag = cmd.setnx(region,String.valueOf(keyExpireSeconds));
                 if(flag) {
                     try {
-                        cmd.expire(_region, keyExpireSeconds);
+                        cmd.expire(region, keyExpireSeconds);
                         return lockCallback.handleObtainLock();
                     } catch (Exception e) {
                         logger.error(e.getMessage(),e);
                         LockInsideExecutedException ie = new LockInsideExecutedException(e);
                         return lockCallback.handleException(ie);
                     } finally {
-                        cmd.del(_region);
+                        cmd.del(region);
                     }
                 } else {
                     try {

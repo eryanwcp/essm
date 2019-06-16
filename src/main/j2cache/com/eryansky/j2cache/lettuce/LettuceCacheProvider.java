@@ -29,6 +29,7 @@ import io.lettuce.core.support.ConnectionPoolSupport;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
@@ -106,6 +107,12 @@ public class LettuceCacheProvider extends RedisPubSubAdapter<String, String> imp
         String redis_url = String.format("%s://%s@%s/%d#%s", scheme, password, hosts, database, sentinelMasterId);
 
         redisClient = isCluster?RedisClusterClient.create(redis_url):RedisClient.create(redis_url);
+        try {
+            int timeout = Integer.parseInt(props.getProperty("timeout", "10000"));
+            redisClient.setDefaultTimeout(Duration.ofMillis(timeout));
+        }catch(Exception e){
+            log.warn("Failed to set default timeout, using default 10000 milliseconds.", e);
+        }
 
         //connection pool configurations
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();

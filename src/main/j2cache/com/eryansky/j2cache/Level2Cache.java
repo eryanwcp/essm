@@ -125,7 +125,7 @@ public interface Level2Cache extends Cache {
     @Override
     default Map<String, Object> get(Collection<String> keys) {
         Map<String, Object> results = new HashMap<>();
-        if(keys.size() > 0) {
+        if(!keys.isEmpty()) {
             List<byte[]> bytes = getBytes(keys);
             int i = 0;
             try {

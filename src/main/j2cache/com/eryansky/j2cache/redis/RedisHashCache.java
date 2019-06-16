@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryJedisCommands;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,7 +74,7 @@ public class RedisHashCache implements Level2Cache {
     @Override
     public List<byte[]> getBytes(Collection<String> keys) {
         try {
-            byte[][] bytes = keys.stream().map(k -> k.getBytes()).toArray(byte[][]::new);
+            byte[][] bytes = keys.stream().map(String::getBytes).toArray(byte[][]::new);
             return client.get().hmget(regionBytes, bytes);
         } finally {
             client.release();
@@ -116,7 +115,7 @@ public class RedisHashCache implements Level2Cache {
         if (keys == null || keys.length == 0)
             return;
         try {
-            byte[][] bytes = Arrays.stream(keys).map(k -> k.getBytes()).toArray(byte[][]::new);
+            byte[][] bytes = Arrays.stream(keys).map(String::getBytes).toArray(byte[][]::new);
             client.get().hdel(regionBytes, bytes);
         } finally {
             client.release();
@@ -126,7 +125,7 @@ public class RedisHashCache implements Level2Cache {
     @Override
     public Collection<String> keys() {
         try {
-            return client.get().hkeys(regionBytes).stream().map(bs -> new String(bs)).collect(Collectors.toList());
+            return client.get().hkeys(regionBytes).stream().map(String::new).collect(Collectors.toList());
         } finally {
             client.release();
         }
@@ -141,11 +140,13 @@ public class RedisHashCache implements Level2Cache {
         }
     }
 
-    private byte[] _key(String key) {
+
+    @Override
+    public Long ttl(String key) {
         try {
-            return (this.region + ":" + key).getBytes("utf-8");
-        } catch (UnsupportedEncodingException e) {
-            return (this.region + ":" + key).getBytes();
+            return client.get().ttl(key.getBytes());
+        } finally {
+            client.release();
         }
     }
 
@@ -154,7 +155,7 @@ public class RedisHashCache implements Level2Cache {
         try {
             for (String value : values) {
                 BinaryJedisCommands cmd = client.get();
-                cmd.rpush(_key(this.region),value.getBytes());
+                cmd.rpush(regionBytes,value.getBytes());
             }
         } finally {
             client.release();
@@ -165,7 +166,7 @@ public class RedisHashCache implements Level2Cache {
     public String queuePop() {
         try {
             BinaryJedisCommands cmd = client.get();
-            byte[] data = cmd.lpop(_key(this.region));
+            byte[] data = cmd.lpop(regionBytes);
             return data == null ? null:new String(data);
         } finally {
             client.release();
@@ -174,22 +175,27 @@ public class RedisHashCache implements Level2Cache {
 
     @Override
     public int queueSize() {
-        BinaryJedisCommands cmd = client.get();
-        return cmd.llen(_key(this.region)).intValue();
+        try {
+            BinaryJedisCommands cmd = client.get();
+            return cmd.llen(regionBytes).intValue();
+        } finally {
+            client.release();
+        }
     }
 
     @Override
     public Collection<String> queueList() {
-        BinaryJedisCommands cmd = client.get();
-        byte[] keys = _key(this.region);
-        long length = cmd.llen(keys);
-        if(length == 0){
-            return Collections.emptyList();
+        try {
+            BinaryJedisCommands cmd = client.get();
+            long length = cmd.llen(regionBytes);
+            if(length == 0){
+                return Collections.emptyList();
+            }
+            List<byte[]> values =  cmd.lrange(regionBytes,0,length-1);
+            return values.stream().map(String::new).collect(Collectors.toList());
+        } finally {
+            client.release();
         }
-        List<byte[]> values =  cmd.lrange(keys,0,length-1);
-        List<String> valueStrs =  new ArrayList<>(values.size());
-        values.forEach(e ->valueStrs.add(new String(e)));
-        return valueStrs;
     }
 
     @Override
@@ -198,7 +204,7 @@ public class RedisHashCache implements Level2Cache {
     }
 
     @Override
-    public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+    public <T> T lock(LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
         long curentTime = System.currentTimeMillis();
         /*
          * 设置加锁过期时间
@@ -211,29 +217,35 @@ public class RedisHashCache implements Level2Cache {
 
         int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
 
-        for (int i = 0; i < retryCount; i++) {
-            Long result = client.get().setnx(_key(lockKey),String.valueOf(expireMillisSecond).getBytes());
-            boolean flag = 1L == result;
-            if(flag) {
-                try {
-                    client.get().expireAt(_key(lockKey),expireSecond);
-                    return lockCallback.handleObtainLock();
-                } catch (Exception e) {
-                    log.error(e.getMessage(),e);
-                    LockInsideExecutedException ie = new LockInsideExecutedException(e);
-                    return lockCallback.handleException(ie);
-                } finally {
-                    client.get().del(regionBytes);
-                }
-            } else {
-                try {
-                    Thread.sleep(frequency.getRetryInterval());
-                } catch (InterruptedException e) {
-                    log.error(e.getMessage(),e);
+        try {
+            BinaryJedisCommands cmd = client.get();
+            for (int i = 0; i < retryCount; i++) {
+                Long result = cmd.setnx(regionBytes,String.valueOf(expireMillisSecond).getBytes());
+                boolean flag = 1L == result;
+                if(flag) {
+                    try {
+                        cmd.expireAt(regionBytes,expireSecond);
+                        return lockCallback.handleObtainLock();
+                    } catch (Exception e) {
+                        log.error(e.getMessage(),e);
+                        LockInsideExecutedException ie = new LockInsideExecutedException(e);
+                        return lockCallback.handleException(ie);
+                    } finally {
+                        cmd.del(regionBytes);
+                    }
+                } else {
+                    try {
+                        Thread.sleep(frequency.getRetryInterval());
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage(),e);
+                    }
                 }
             }
+            return lockCallback.handleNotObtainLock();
+        } finally {
+            client.release();
         }
-        return lockCallback.handleNotObtainLock();
     }
+
 
 }

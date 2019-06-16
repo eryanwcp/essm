@@ -15,9 +15,13 @@
  */
 package com.eryansky.j2cache;
 
-import java.util.Random;
+import com.eryansky.j2cache.util.FstJSONSerializer;
+import com.eryansky.j2cache.util.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.eryansky.common.utils.mapper.JsonMapper;
+import java.io.IOException;
+import java.util.Random;
 
 /**
  * 命令消息封装
@@ -30,7 +34,9 @@ import com.eryansky.common.utils.mapper.JsonMapper;
  * 
  * @author Winter Lau(javayou@gmail.com)
  */
-public class Command {
+public class Command implements java.io.Serializable{
+
+	private final static Logger logger = LoggerFactory.getLogger(Command.class);
 
 
 	public final static byte OPT_JOIN 	   = 0x01;	//加入集群
@@ -43,7 +49,13 @@ public class Command {
 	private String region;
 	private String[] keys;
 
-	public final static int genRandomSrc() {
+	private static Serializer serializer;
+
+	static {
+		serializer = new FstJSONSerializer(null);
+	}
+
+	public static int genRandomSrc() {
 		long ct = System.currentTimeMillis();
 		Random rnd_seed = new Random(ct);
 		return (int)(rnd_seed.nextInt(10000) * 1000 + ct % 1000);
@@ -66,11 +78,21 @@ public class Command {
 	}
 
 	public String json() {
-		return JsonMapper.getInstance().toJson(this);
+		try {
+			return new String(serializer.serialize(this));
+		} catch (IOException e) {
+			logger.warn("Failed to json j2cache command", e);
+		}
+		return null;
 	}
 
 	public static Command parse(String json) {
-		return JsonMapper.getInstance().fromJson(json, Command.class);
+		try {
+			return (Command) serializer.deserialize(json.getBytes());
+		} catch (IOException e) {
+			logger.warn("Failed to parse j2cache command: {}", json, e);
+		}
+		return null;
 	}
 
 	public int getOperator() {

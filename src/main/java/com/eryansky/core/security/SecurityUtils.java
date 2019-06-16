@@ -656,8 +656,7 @@ public class SecurityUtils {
      * @return
      */
     public static int getSessionInfoSize() {
-        Collection<String> keys = findSessionInfoKeys();
-        return keys != null ? keys.size():0;
+        return Static.applicationSessionContext.findSessionInfoKeySize();
     }
 
     /**

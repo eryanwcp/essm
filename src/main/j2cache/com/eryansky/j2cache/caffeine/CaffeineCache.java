@@ -17,10 +17,14 @@ package com.eryansky.j2cache.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.eryansky.j2cache.Level1Cache;
+import com.github.benmanes.caffeine.cache.Policy;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Caffeine cache
@@ -80,5 +84,14 @@ public class CaffeineCache implements Level1Cache {
     @Override
     public void clear() {
         cache.invalidateAll();
+    }
+
+
+    @Override
+    public Long ttl(String key) {
+        Policy.Expiration<String,Object> p = cache.policy().expireAfterWrite().orElse(null);
+        long  total = null == p ? 0:p.getExpiresAfter(TimeUnit.SECONDS);
+        Duration d = null == p ? null:p.ageOf(key).orElse(null);
+        return null == d ? null:total - d.getSeconds();
     }
 }
