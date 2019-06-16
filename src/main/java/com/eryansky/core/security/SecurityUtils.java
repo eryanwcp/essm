@@ -483,6 +483,10 @@ public class SecurityUtils {
             sessionInfo = getSessionInfo(SecurityUtils.getNoSuffixSessionId(session),session.getId());
         } catch (Exception e) {
 //            logger.error(e.getMessage(),e);
+        }finally {
+            if(null != sessionInfo){
+                Static.applicationSessionContext.addSession(sessionInfo);
+            }
         }
         return sessionInfo;
     }
