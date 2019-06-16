@@ -673,7 +673,6 @@
                         static/js/jquery-ztree/3.5.12/api/**,
                         static/js/jquery-ztree/3.5.12/demo/**,
                         static/js/My97DatePicker/docs/**,
-                        static/js/jquery-validation/1.11.1/*/*.*,
                         static/js/jquery-validation/1.11.1/test/**,
                         static/js/fancyBox/lib/**,
                         static/js/fancyBox/demo/**,
