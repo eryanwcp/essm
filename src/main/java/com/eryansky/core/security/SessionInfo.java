@@ -38,6 +38,10 @@ public class SessionInfo implements Serializable {
      */
     private String sessionId;
     /**
+     * token
+     */
+    private String token;
+    /**
      * 服务主机
      */
     private String host;
@@ -66,7 +70,7 @@ public class SessionInfo implements Serializable {
      */
     private String sysTemDeviceType;
     /**
-     * 设备类型 {@link eu.bitwalker.useragentutils.DeviceType}
+     * 设备类型 {@link DeviceType}
      */
     private String deviceType;
     /**
@@ -111,6 +115,10 @@ public class SessionInfo implements Serializable {
      */
     private Date loginTime = new Date();
     /**
+     * 最后访问时间
+     */
+    private Date updateTime = new Date();
+    /**
      * 经度
      */
     private BigDecimal longitude;
@@ -139,6 +147,7 @@ public class SessionInfo implements Serializable {
      * 登录的设备编号
      */
     private String deviceCode;
+
 
     public SessionInfo() {
     }
@@ -169,6 +178,14 @@ public class SessionInfo implements Serializable {
      */
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /**
@@ -303,6 +320,13 @@ public class SessionInfo implements Serializable {
     }
 
     /**
+     * 设置登录时间
+     */
+    public void setLoginTime(Date loginTime) {
+        this.loginTime = loginTime;
+    }
+
+    /**
      * 登录时间
      */
     // 设定JSON序列化时的日期格式
@@ -311,6 +335,14 @@ public class SessionInfo implements Serializable {
         return loginTime;
     }
 
+    @JsonFormat(pattern = AbstractBaseEntity.DATE_TIME_FORMAT, timezone = AbstractBaseEntity.TIMEZONE)
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
 
     public BigDecimal getLongitude() {
         return longitude;
@@ -336,12 +368,7 @@ public class SessionInfo implements Serializable {
         this.accuracy = accuracy;
     }
 
-    /**
-     * 设置登录时间
-     */
-    public void setLoginTime(Date loginTime) {
-        this.loginTime = loginTime;
-    }
+
 
     public String getLoginOrganId() {
         return loginOrganId;
@@ -468,6 +495,13 @@ public class SessionInfo implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public boolean isAuthenticated() {
+        return true;
+    }
+    public String getPrincipal() {
+        return name;
     }
 
 }

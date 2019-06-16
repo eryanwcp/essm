@@ -33,9 +33,11 @@ import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 系统使用的特殊工具类 简化代码编写.
@@ -94,11 +96,7 @@ public class SecurityUtils {
                 if (sessionInfo.isSuperUser()) {// 超级用户
                     return true;
                 }
-                for(Permisson permisson:sessionInfo.getPermissons()){
-                    if (resourceCode.equalsIgnoreCase(permisson.getCode())) {
-                        return true;
-                    }
-                }
+                return null != sessionInfo.getPermissons().stream().filter(permisson -> resourceCode.equalsIgnoreCase(permisson.getCode())).findFirst().orElse(null);
             }else{
                 return Static.resourceService.isPermittedResourceCodeWithPermission(userId,resourceCode);
             }
@@ -147,10 +145,11 @@ public class SecurityUtils {
 //            }
 
             if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
+                if (sessionInfo.isSuperUser()) {// 超级用户
+                    return true;
+                }
+
                 for(Permisson permisson:sessionInfo.getPermissons()){
-                    if (sessionInfo.isSuperUser()) {// 超级用户
-                        return true;
-                    }
                     if(!flag && StringUtils.isNotBlank(permisson.getMarkUrl())){
                         String[] markUrls = permisson.getMarkUrl().split(";");
                         for(int i=0;i<markUrls.length;i++){
@@ -207,18 +206,10 @@ public class SecurityUtils {
                 if (sessionInfo.isSuperUser()) {// 超级用户
                     return true;
                 }
-                for(PermissonRole permissonRole:sessionInfo.getPermissonRoles()){
-                    if (roleCode.equalsIgnoreCase(permissonRole.getCode())) {
-                        return true;
-                    }
-                }
+                return null != sessionInfo.getPermissonRoles().stream().filter(permissonRole -> roleCode.equalsIgnoreCase(permissonRole.getCode())).findFirst().orElse(null);
             }else{
                 List<Role> list = Static.roleService.findRolesByUserId(userId);
-                for (Role role : list) {
-                    if (StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())) {
-                        return true;
-                    }
-                }
+                return null != list.stream().filter(role -> StringUtils.isNotBlank(role.getCode()) && roleCode.equalsIgnoreCase(role.getCode())).findFirst().orElse(null);
             }
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -308,19 +299,11 @@ public class SecurityUtils {
             }
 
             if(sessionInfo != null && userId.equals(sessionInfo.getUserId())){
-                for(String pCode:sessionInfo.getPostCodes()){
-                    if (postCode.equalsIgnoreCase(pCode)) {
-                        return true;
-                    }
-                }
+                return null != sessionInfo.getPostCodes().stream().filter(postCode::equals).findFirst().orElse(null);
             }
 
             List<Post> posts = Static.postService.findPostsByUserId(userId);
-            for (Post post : posts) {
-                if (postCode.equalsIgnoreCase(post.getCode())) {
-                    return true;
-                }
-            }
+            return null != posts.stream().filter(post -> postCode.equals(post.getCode())).findFirst().orElse(null);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -333,7 +316,7 @@ public class SecurityUtils {
      * @param user
      * @return
      */
-    public static SessionInfo userToSessionInfo(User user) {
+    private static SessionInfo userToSessionInfo(User user) {
         SessionInfo sessionInfo = new SessionInfo();
         sessionInfo.setUserId(user.getId());
         sessionInfo.setName(user.getName());
@@ -349,6 +332,27 @@ public class SecurityUtils {
         return sessionInfo;
     }
 
+
+    /**
+     * 初始化权限
+     * @param sessionInfo
+     * @return
+     */
+    private static void initPermission(SessionInfo sessionInfo){
+        List<Resource> resources = Static.resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
+        resources.forEach(resource->{
+            sessionInfo.addPermissons(new Permisson(StringUtils.isNotBlank(resource.getCode()) ? resource.getCode():resource.getId(),resource.getMarkUrl()));
+        });
+        List<Role> roles = Static.roleService.findRolesByUserId(sessionInfo.getUserId());
+        roles.forEach(role -> {
+            sessionInfo.addPermissonRoles(new PermissonRole(StringUtils.isNotBlank(role.getCode()) ? role.getCode():role.getId()));
+        });
+
+        List<Post> posts = Static.postService.findPostsByUserId(sessionInfo.getUserId());
+        posts.forEach(post -> {
+            sessionInfo.getPostCodes().add(StringUtils.isNotBlank(post.getCode()) ? post.getCode():post.getId());
+        });
+    }
 
 
     /**
@@ -395,40 +399,18 @@ public class SecurityUtils {
             sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
         }
 
-        List<Resource> resources = Static.resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
-        if (Collections3.isNotEmpty(resources)) {
-            for(Resource resource:resources){
-                if(StringUtils.isNotBlank(resource.getCode()) || StringUtils.isNotBlank(resource.getMarkUrl())){
-                    sessionInfo.addPermissons(new Permisson(resource.getCode(),resource.getMarkUrl()));
-                }
-            }
-        }
-        List<Role> roles = Static.roleService.findRolesByUserId(user.getId());
-        if (Collections3.isNotEmpty(roles)) {
-            for(Role role:roles){
-                if(StringUtils.isNotBlank(role.getCode())){
-                    sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
-                }
-            }
-        }
-
-        List<Post> posts = Static.postService.findPostsByUserId(user.getId());
-        if (Collections3.isNotEmpty(posts)) {
-            for(Post post:posts){
-                if(StringUtils.isNotBlank(post.getCode())){
-                    sessionInfo.getPostCodes().add(post.getCode());
-                }
-            }
-        }
+        initPermission(sessionInfo);
 
         Static.applicationSessionContext.addSession(sessionInfo);
+        request.getSession().setAttribute("loginUser",sessionInfo.getName()+"["+sessionInfo.getLoginName()+"]");
         return sessionInfo;
     }
 
 
     /**
-     * 将用户放入session中.
+     * 将用户放入session中. 测试用
      *
+     * @param sessionId
      * @param user
      */
     public static SessionInfo putUserToSession(String sessionId,User user) {
@@ -441,34 +423,41 @@ public class SecurityUtils {
 
         sessionInfo.setSysTemDeviceType(DeviceType.PC.getDescription());
 
-        List<Resource> resources = Static.resourceService.findAuthorityResourcesByUserId(sessionInfo.getUserId());
-        if (Collections3.isNotEmpty(resources)) {
-            for(Resource resource:resources){
-                if(StringUtils.isNotBlank(resource.getCode()) || StringUtils.isNotBlank(resource.getMarkUrl())){
-                    sessionInfo.addPermissons(new Permisson(resource.getCode(),resource.getMarkUrl()));
-                }
-            }
-        }
-        List<Role> roles = Static.roleService.findRolesByUserId(user.getId());
-        if (Collections3.isNotEmpty(roles)) {
-            for(Role role:roles){
-                if(StringUtils.isNotBlank(role.getCode())){
-                    sessionInfo.addPermissonRoles(new PermissonRole(role.getCode()));
-                }
-            }
-        }
-
-        List<Post> posts = Static.postService.findPostsByUserId(user.getId());
-        if (Collections3.isNotEmpty(posts)) {
-            for(Post post:posts){
-                if(StringUtils.isNotBlank(post.getCode())){
-                    sessionInfo.getPostCodes().add(post.getCode());
-                }
-            }
-        }
+        initPermission(sessionInfo);
 
         Static.applicationSessionContext.addSession(sessionInfo);
         return sessionInfo;
+    }
+
+    /**
+     * 重新加载当前登录用户权限
+     * @return
+     */
+    public static SessionInfo reloadCurrentSessionPermission(){
+        SessionInfo sessionInfo = getCurrentSessionInfo();
+        if(null == sessionInfo){
+            return null;
+        }
+        sessionInfo.getPermissons().clear();
+        sessionInfo.getPermissonRoles().clear();
+        sessionInfo.getPostCodes().clear();
+        initPermission(sessionInfo);
+        return sessionInfo;
+    }
+
+    /**
+     * 重新加载用户权限
+     * @param userId 用户ID
+     * @return
+     */
+    public static void reloadSessionPermission(String userId){
+        List<SessionInfo> sessionInfos = findSessionInfoByUserId(userId);
+        sessionInfos.forEach(sessionInfo -> {
+            sessionInfo.getPermissons().clear();
+            sessionInfo.getPermissonRoles().clear();
+            sessionInfo.getPostCodes().clear();
+            initPermission(sessionInfo);
+        });
     }
 
     /**
@@ -478,13 +467,43 @@ public class SecurityUtils {
         SessionInfo sessionInfo = null;
         try {
             HttpSession session = SpringMVCHolder.getSession();
-//            System.out.println(UserAgentUtils.getUserAgent(SpringMVCHolder.getRequest())+" "+SpringMVCHolder.getRequest().getRequestURI()+" "+SpringMVCHolder.getSession().getId());
-//            sessionInfo = getSessionInfo(SpringMVCHolder.getSession().getId());
             sessionInfo = getSessionInfo(SecurityUtils.getNoSuffixSessionId(session),session.getId());
+            if(sessionInfo == null){
+                String token = SpringMVCHolder.getRequest().getHeader("Authorization");
+                if(StringUtils.isNotBlank(token)){
+                    sessionInfo = getSessionInfoByToken(StringUtils.replaceOnce(token,"Bearer ",""));
+                }
+            }
         } catch (Exception e) {
 //            logger.error(e.getMessage(),e);
         }finally {
             if(null != sessionInfo){
+                sessionInfo.setUpdateTime(Calendar.getInstance().getTime());
+                Static.applicationSessionContext.addSession(sessionInfo);
+            }
+        }
+
+        return sessionInfo;
+    }
+
+    /**
+     * 获取当前用户session信息.
+     */
+    public static SessionInfo getCurrentSessionInfo(HttpServletRequest request) {
+        SessionInfo sessionInfo = null;
+        try {
+            sessionInfo = getSessionInfo(SecurityUtils.getNoSuffixSessionId(request.getSession()),request.getSession().getId());
+            if(sessionInfo == null){
+                String token = SpringMVCHolder.getRequest().getHeader("Authorization");
+                if(StringUtils.isNotBlank(token)){
+                    sessionInfo = getSessionInfoByToken(StringUtils.replaceOnce(token,"Bearer ",""));
+                }
+            }
+        } catch (Exception e) {
+//            logger.error(e.getMessage(),e);
+        }finally {
+            if(null != sessionInfo){
+                sessionInfo.setUpdateTime(Calendar.getInstance().getTime());
                 Static.applicationSessionContext.addSession(sessionInfo);
             }
         }
@@ -672,6 +691,17 @@ public class SecurityUtils {
     }
 
 
+
+    /**
+     * 查看某个用户登录信息
+     * @param token
+     * @return
+     */
+    public static SessionInfo getSessionInfoByToken(String token) {
+        List<SessionInfo> list = findSessionInfoListWithOrder();
+        return list.stream().filter(sessionInfo -> token.equals(sessionInfo.getToken())).findFirst().orElse(null);
+    }
+
     /**
      * 查看某个用户登录信息
      * @param loginName 登录帐号
@@ -679,13 +709,7 @@ public class SecurityUtils {
      */
     public static List<SessionInfo> findSessionInfoByLoginName(String loginName) {
         List<SessionInfo> list = findSessionInfoListWithOrder();
-        List<SessionInfo> sessionInfos = Lists.newArrayList();
-        for(SessionInfo sessionInfo: list){
-            if(sessionInfo.getLoginName().equals(loginName)){
-                sessionInfos.add(sessionInfo);
-            }
-        }
-        return sessionInfos;
+        return list.stream().filter(sessionInfo -> loginName.equals(sessionInfo.getLoginName())).collect(Collectors.toList());
     }
 
     /**
@@ -695,13 +719,7 @@ public class SecurityUtils {
      */
     public static List<SessionInfo> findSessionInfoByUserId(String userId) {
         List<SessionInfo> list = findSessionInfoList();
-        List<SessionInfo> sessionInfos = Lists.newArrayList();
-        for(SessionInfo sessionInfo: list){
-            if(sessionInfo.getUserId().equals(userId)){
-                sessionInfos.add(sessionInfo);
-            }
-        }
-        return sessionInfos;
+        return list.stream().filter(sessionInfo -> userId.equals(sessionInfo.getUserId())).collect(Collectors.toList());
     }
 
     /**
@@ -715,13 +733,7 @@ public class SecurityUtils {
             return Collections.emptyList();
         }
         List<SessionInfo> list = findSessionInfoListWithOrder();
-        List<SessionInfo> sessionInfos = Lists.newArrayList();
-        for (SessionInfo sessionInfo : list) {
-            if (StringUtils.contains(sessionInfo.getLoginName(), query) || StringUtils.contains(sessionInfo.getName(), query)) {
-                sessionInfos.add(sessionInfo);
-            }
-        }
-        return sessionInfos;
+        return list.stream().filter(sessionInfo -> StringUtils.contains(sessionInfo.getLoginName(), query) || StringUtils.contains(sessionInfo.getName(), query)).collect(Collectors.toList());
     }
 
     /**
@@ -748,6 +760,7 @@ public class SecurityUtils {
         }
         return sessionInfo;
     }
+
 
     public static boolean isMobileLogin(){
         SessionInfo sessionInfo = getCurrentSessionInfo();
