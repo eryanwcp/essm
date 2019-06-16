@@ -6,14 +6,14 @@
 package com.eryansky.modules.sys.mapper;
 
 
-import com.eryansky.core.orm.mybatis.entity.DataEntity;
+import com.eryansky.core.orm.mybatis.entity.BaseEntity;
 
 /**
  * 系统配置参数
  * @author 尔演&Eryan eryanwcp@gmail.com
  * @date 2014-12-18
  */
-public class Config extends DataEntity<Config> {
+public class Config extends BaseEntity<Config> {
     /**
      * 属性标识
      */
