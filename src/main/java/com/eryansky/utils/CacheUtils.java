@@ -83,7 +83,7 @@ public class CacheUtils {
 		return Static.cacheManager.getCacheChannel().keys(region);
 	}
 
-	public static Collection<String> keySize(String region) {
+	public static int keySize(String region) {
 		return Static.cacheManager.getCacheChannel().keySize(region);
 	}
 
