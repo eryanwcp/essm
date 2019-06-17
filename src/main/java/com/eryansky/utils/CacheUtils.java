@@ -83,6 +83,10 @@ public class CacheUtils {
 		return Static.cacheManager.getCacheChannel().keys(region);
 	}
 
+	public static Collection<String> keySize(String region) {
+		return Static.cacheManager.getCacheChannel().keySize(region);
+	}
+
 	public static Collection<String> regionNames() {
 		Collection<CacheChannel.Region> regions = Static.cacheManager.getCacheChannel().regions();
 		return regions.stream().map(CacheChannel.Region::getName).collect(Collectors.toList());
