@@ -7,7 +7,6 @@ import com.eryansky.j2cache.lock.LockCallback;
 import com.eryansky.j2cache.lock.LockCantObtainException;
 import com.eryansky.j2cache.lock.LockInsideExecutedException;
 import com.eryansky.j2cache.lock.LockRetryFrequency;
-import io.lettuce.core.cluster.RedisClusterClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.BinaryJedis;
@@ -74,10 +73,10 @@ public class RedisGenericCache implements Level2Cache {
         try {
             BinaryJedisCommands cmd = client.get();
             if(cmd instanceof MultiKeyBinaryCommands) {
-                byte[][] bytes = keys.stream().map(k -> _key(k)).toArray(byte[][]::new);
+                byte[][] bytes = keys.stream().map(this::_key).toArray(byte[][]::new);
                 return ((MultiKeyBinaryCommands)cmd).mget(bytes);
             }
-            return keys.stream().map(k -> getBytes(k)).collect(Collectors.toList());
+            return keys.stream().map(this::getBytes).collect(Collectors.toList());
         } finally {
             client.release();
         }
@@ -106,7 +105,7 @@ public class RedisGenericCache implements Level2Cache {
                 ((MultiKeyBinaryCommands)cmd).mset(data);
             }
             else
-                bytes.forEach((k,v) -> setBytes(k, v));
+                bytes.forEach(this::setBytes);
         } finally {
             client.release();
         }
@@ -181,7 +180,7 @@ public class RedisGenericCache implements Level2Cache {
         try {
             BinaryJedisCommands cmd = client.get();
             if (cmd instanceof BinaryJedis) {
-                byte[][] bytes = Arrays.stream(keys).map(k -> _key(k)).toArray(byte[][]::new);
+                byte[][] bytes = Arrays.stream(keys).map(this::_key).toArray(byte[][]::new);
                 ((BinaryJedis)cmd).del(bytes);
             }
             else {
@@ -202,8 +201,9 @@ public class RedisGenericCache implements Level2Cache {
             BinaryJedisCommands cmd = client.get();
             if (cmd instanceof MultiKeyCommands) {
                 String[] keys = ((MultiKeyCommands) cmd).keys(this.region + ":*").stream().toArray(String[]::new);
-                if (keys != null && keys.length > 0)
+                if (keys.length > 0) {
                     ((MultiKeyCommands) cmd).del(keys);
+                }
             }
             else
                 throw new CacheException("clear() not implemented in Redis Generic Mode");
@@ -212,13 +212,21 @@ public class RedisGenericCache implements Level2Cache {
         }
     }
 
+    @Override
+    public Long ttl(String key) {
+        try {
+            return client.get().ttl(_key(key));
+        } finally {
+            client.release();
+        }
+    }
 
     @Override
     public void queuePush(String... values) {
         try {
             for (String value : values) {
                 BinaryJedisCommands cmd = client.get();
-                cmd.rpush(_key(this.region),value.getBytes());
+                cmd.rpush(region.getBytes(),value.getBytes());
             }
         } finally {
             client.release();
@@ -229,7 +237,7 @@ public class RedisGenericCache implements Level2Cache {
     public String queuePop() {
         try {
             BinaryJedisCommands cmd = client.get();
-            byte[] data = cmd.lpop(_key(this.region));
+            byte[] data = cmd.lpop(region.getBytes());
             return data == null ? null:new String(data);
         } finally {
             client.release();
@@ -238,22 +246,27 @@ public class RedisGenericCache implements Level2Cache {
 
     @Override
     public int queueSize() {
-        BinaryJedisCommands cmd = client.get();
-        return cmd.llen(_key(this.region)).intValue();
+        try {
+            BinaryJedisCommands cmd = client.get();
+            return cmd.llen(region.getBytes()).intValue();
+        } finally {
+            client.release();
+        }
     }
 
     @Override
     public Collection<String> queueList() {
-        BinaryJedisCommands cmd = client.get();
-        byte[] keys = _key(this.region);
-        long length = cmd.llen(keys);
-        if(length == 0){
-            return Collections.emptyList();
+        try {
+            BinaryJedisCommands cmd = client.get();
+            long length = cmd.llen(region.getBytes());
+            if(length == 0){
+                return Collections.emptyList();
+            }
+            List<byte[]> values =  cmd.lrange(region.getBytes(),0,length-1);
+            return values.stream().map(String::new).collect(Collectors.toList());
+        } finally {
+            client.release();
         }
-        List<byte[]> values =  cmd.lrange(keys,0,length-1);
-        List<String> valueStrs =  new ArrayList<>(values.size());
-        values.forEach(e ->valueStrs.add(new String(e)));
-        return valueStrs;
     }
 
     @Override
@@ -262,7 +275,7 @@ public class RedisGenericCache implements Level2Cache {
     }
 
     @Override
-    public <T> T lock(String lockKey, LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
+    public <T> T lock(LockRetryFrequency frequency, int timeoutInSecond, long keyExpireSeconds, LockCallback<T> lockCallback) throws LockInsideExecutedException, LockCantObtainException {
         long curentTime = System.currentTimeMillis();
         /*
          * 设置加锁过期时间
@@ -274,29 +287,34 @@ public class RedisGenericCache implements Level2Cache {
         long expireMillisSecond = curentTime + keyExpireSeconds * 1000L;
 
         int retryCount = Float.valueOf(timeoutInSecond * 1000 / frequency.getRetryInterval()).intValue();
-        for (int i = 0; i < retryCount; i++) {
-            Long result = client.get().setnx(_key(lockKey),String.valueOf(expireMillisSecond).getBytes());
-            boolean flag = 1L == result;
-            if(flag) {
-                try {
-                    client.get().expireAt(_key(lockKey),expireSecond);
-                    return lockCallback.handleObtainLock();
-                } catch (Exception e) {
-                    log.error(e.getMessage(),e);
-                    LockInsideExecutedException ie = new LockInsideExecutedException(e);
-                    return lockCallback.handleException(ie);
-                } finally {
-                    client.get().del(_key(lockKey));
-                }
-            } else {
-                try {
-                    Thread.sleep(frequency.getRetryInterval());
-                } catch (InterruptedException e) {
-                    log.error(e.getMessage(),e);
+        try {
+            for (int i = 0; i < retryCount; i++) {
+                Long result = client.get().setnx(region.getBytes(),String.valueOf(expireMillisSecond).getBytes());
+                boolean flag = 1L == result;
+                if(flag) {
+                    try {
+                        client.get().expireAt(region.getBytes(),expireSecond);
+                        return lockCallback.handleObtainLock();
+                    } catch (Exception e) {
+                        log.error(e.getMessage(),e);
+                        LockInsideExecutedException ie = new LockInsideExecutedException(e);
+                        return lockCallback.handleException(ie);
+                    } finally {
+                        client.get().del(region.getBytes());
+                    }
+                } else {
+                    try {
+                        Thread.sleep(frequency.getRetryInterval());
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage(),e);
+                    }
                 }
             }
+            return lockCallback.handleNotObtainLock();
+        } finally {
+            client.release();
         }
-        return lockCallback.handleNotObtainLock();
     }
+
 
 }

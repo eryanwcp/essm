@@ -67,7 +67,6 @@ public class LettuceHashCache extends LettuceCache {
     public void setBytes(String key, byte[] bytes) {
         try(StatefulConnection<String, byte[]> connection = super.connect()) {
             RedisHashCommands<String, byte[]> cmd = (RedisHashCommands)super.sync(connection);
-            cmd.hset(this.region, key, bytes);
         }
     }
 
@@ -100,6 +99,14 @@ public class LettuceHashCache extends LettuceCache {
         try(StatefulConnection<String, byte[]> connection = super.connect()) {
             RedisKeyCommands<String, byte[]> cmd = (RedisKeyCommands)super.sync(connection);
             cmd.del(this.region);
+        }
+    }
+
+    @Override
+    public Long ttl(String key) {
+        try(StatefulConnection<String, byte[]> connection = super.connect()) {
+            RedisKeyCommands<String, byte[]> cmd = (RedisKeyCommands)super.sync(connection);
+            return cmd.ttl(key);
         }
     }
 }

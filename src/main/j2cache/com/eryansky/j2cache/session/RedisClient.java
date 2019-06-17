@@ -245,6 +245,21 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
+            public byte[] dump(byte[] bytes) {
+                return cluster.dump(bytes);
+            }
+
+            @Override
+            public String restore(byte[] bytes, int i, byte[] bytes1) {
+                return cluster.restore(bytes, i, bytes1);
+            }
+
+            @Override
+            public String restoreReplace(byte[] bytes, int i, byte[] bytes1) {
+                return cluster.restore(bytes, i, bytes1);
+            }
+
+            @Override
             public Long expire(byte[] bytes, int i) {
                 return cluster.expire(bytes, i);
             }
@@ -272,6 +287,16 @@ class RedisClient implements Closeable, AutoCloseable {
             @Override
             public Long ttl(byte[] bytes) {
                 return cluster.ttl(bytes);
+            }
+
+            @Override
+            public Long pttl(byte[] key) {
+                return cluster.pttl(key);
+            }
+
+            @Override
+            public Long touch(byte[] bytes) {
+                return cluster.touch(bytes);
             }
 
             @Override
@@ -315,6 +340,11 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
+            public String psetex(byte[] bytes, long l, byte[] bytes1) {
+                return cluster.psetex(bytes,l,bytes1);
+            }
+
+            @Override
             public Long decrBy(byte[] bytes, long l) {
                 return cluster.decrBy(bytes, l);
             }
@@ -352,6 +382,11 @@ class RedisClient implements Closeable, AutoCloseable {
             @Override
             public Long hset(byte[] bytes, byte[] bytes1, byte[] bytes2) {
                 return cluster.hset(bytes, bytes1, bytes2);
+            }
+
+            @Override
+            public Long hset(byte[] bytes, Map<byte[], byte[]> map) {
+                return cluster.hset(bytes, map);
             }
 
             @Override
@@ -740,6 +775,11 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
+            public Long linsert(byte[] bytes, ListPosition listPosition, byte[] bytes1, byte[] bytes2) {
+                return cluster.linsert(bytes, listPosition, bytes1, bytes2);
+            }
+
+            @Override
             public Long lpushx(byte[] bytes, byte[]... bytes1) {
                 return cluster.lpushx(bytes, bytes1);
             }
@@ -762,6 +802,11 @@ class RedisClient implements Closeable, AutoCloseable {
             @Override
             public Long del(byte[] bytes) {
                 return cluster.del(bytes);
+            }
+
+            @Override
+            public Long unlink(byte[] bytes) {
+                return cluster.unlink(bytes);
             }
 
             @Override
@@ -830,8 +875,18 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
+            public List<GeoRadiusResponse> georadiusReadonly(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit) {
+                return cluster.georadiusReadonly(bytes, v, v1, v2, geoUnit);
+            }
+
+            @Override
             public List<GeoRadiusResponse> georadius(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
                 return cluster.georadius(bytes, v, v1, v2, geoUnit, geoRadiusParam);
+            }
+
+            @Override
+            public List<GeoRadiusResponse> georadiusReadonly(byte[] bytes, double v, double v1, double v2, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
+                return cluster.georadiusReadonly(bytes, v, v1, v2, geoUnit, geoRadiusParam);
             }
 
             @Override
@@ -840,8 +895,18 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
+            public List<GeoRadiusResponse> georadiusByMemberReadonly(byte[] bytes, byte[] bytes1, double v, GeoUnit geoUnit) {
+                return cluster.georadiusByMemberReadonly(bytes, bytes1, v, geoUnit);
+            }
+
+            @Override
             public List<GeoRadiusResponse> georadiusByMember(byte[] bytes, byte[] bytes1, double v, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
                 return cluster.georadiusByMember(bytes, bytes1, v, geoUnit, geoRadiusParam);
+            }
+
+            @Override
+            public List<GeoRadiusResponse> georadiusByMemberReadonly(byte[] bytes, byte[] bytes1, double v, GeoUnit geoUnit, GeoRadiusParam geoRadiusParam) {
+                return cluster.georadiusByMemberReadonly(bytes, bytes1, v, geoUnit, geoRadiusParam);
             }
 
             @Override
@@ -875,8 +940,13 @@ class RedisClient implements Closeable, AutoCloseable {
             }
 
             @Override
-            public List<byte[]> bitfield(byte[] bytes, byte[]... bytes1) {
-                return cluster.bitfield(bytes, bytes1);
+            public List<Long> bitfield(byte[] key, byte[]... arguments) {
+                return cluster.bitfield(key, arguments);
+            }
+
+            @Override
+            public Long hstrlen(byte[] bytes, byte[] bytes1) {
+                return cluster.hstrlen(bytes, bytes1);
             }
         };
     }

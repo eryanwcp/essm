@@ -18,6 +18,7 @@ import com.eryansky.core.aop.annotation.Logging;
 import com.eryansky.core.security.ApplicationSessionContext;
 import com.eryansky.core.security.annotation.RequiresPermissions;
 import com.eryansky.j2cache.CacheChannel;
+import com.eryansky.j2cache.util.SerializationUtils;
 import com.eryansky.modules.sys._enum.LogType;
 import com.eryansky.utils.*;
 import com.google.common.collect.Lists;
@@ -106,11 +107,21 @@ public class SystemMonitorController extends SimpleController {
     @Logging(value = "系统监控-缓存管理",logType = LogType.access,logging = "!#isAjax")
     @RequestMapping("cacheDetail")
     public String cacheDetail(String region,Model uiModel,HttpServletRequest request, HttpServletResponse response){
-        Page<String> page = new Page<>(request,response);
+        Page<Map<String,Object>> page = new Page<>(request,response);
         if(WebUtils.isAjaxRequest(request)){
             Collection<String> keys = CacheUtils.keys(region);
             page.setTotalCount(keys.size());
-            page.setResult(AppUtils.getPagedList(Collections3.union(keys,Collections.emptyList()),page.getPageNo(),page.getPageSize()));
+            List<String> pKeys = AppUtils.getPagedList(Collections3.union(keys,Collections.emptyList()),page.getPageNo(),page.getPageSize());
+            List<Map<String,Object>> dataList = Lists.newArrayList();
+            CacheChannel cacheChannel = CacheUtils.getCacheChannel();
+            pKeys.forEach(key->{
+                Map<String,Object> map = Maps.newHashMap();
+                map.put("key",key);
+                map.put("ttl1",cacheChannel.ttl(region,key,1));
+                map.put("ttl2",cacheChannel.ttl(region,key,2));
+                dataList.add(map);
+            });
+            page.setResult(dataList);
             return renderString(response,page);
         }
         uiModel.addAttribute("region",region);
@@ -127,13 +138,22 @@ public class SystemMonitorController extends SimpleController {
     @RequestMapping("cacheKeyDetail")
     public String cacheKeyDetail(String region,String key,Model uiModel,HttpServletRequest request, HttpServletResponse response){
         Object object = CacheUtils.get(region,key);
-        uiModel.addAttribute("data", JsonMapper.toJsonString(object));
+        try {
+            uiModel.addAttribute("data", JsonMapper.getInstance().writeValueAsString(object));
+        } catch (IOException e) {
+            logger.error(e.getMessage(),e);
+            try {
+                uiModel.addAttribute("data", new String(SerializationUtils.serialize(object)));
+            } catch (IOException e1) {
+                logger.error(e1.getMessage(),e1);
+            }
+
+        }
         uiModel.addAttribute("object",object);
         uiModel.addAttribute("region",region);
         uiModel.addAttribute("key",key);
         return "modules/sys/systemMonitor-cacheKeyDetail";
     }
-
 
 
     /**

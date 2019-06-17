@@ -26,7 +26,26 @@ public class J2CacheAdapter implements Cache {
      * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
      */
     private static final class Static {
-        private static CacheChannel cache = J2Cache.getChannel();
+        private static CacheChannel cache = getChannel();
+
+        /**
+         * CacheChannel
+         * @return
+         */
+        private static CacheChannel getChannel(){
+            return J2Cache.getChannel();
+        }
+
+        /**
+         * 重新加载
+         * @return
+         */
+        private static CacheChannel reload(){
+            if(null == cache){
+                cache = getChannel();
+            }
+            return cache;
+        }
     }
 
     public J2CacheAdapter(String id) {
@@ -49,6 +68,7 @@ public class J2CacheAdapter implements Cache {
     @Override
     public void putObject(Object key, Object value) {
         if(null == Static.cache){
+            Static.reload();
             return;
         }
         String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
@@ -58,6 +78,7 @@ public class J2CacheAdapter implements Cache {
     @Override
     public Object getObject(Object key) {
         if(null == Static.cache){
+            Static.reload();
             return null;
         }
         String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
@@ -67,6 +88,7 @@ public class J2CacheAdapter implements Cache {
     @Override
     public Object removeObject(Object key) {
         if(null == Static.cache){
+            Static.reload();
             return null;
         }
         String mKey = encodeKey ? Encrypt.md5(key.toString()):key.toString();
@@ -79,6 +101,7 @@ public class J2CacheAdapter implements Cache {
     @Override
     public void clear() {
         if(null == Static.cache){
+            Static.reload();
             return;
         }
         Static.cache.clear(this.getId());
@@ -87,6 +110,7 @@ public class J2CacheAdapter implements Cache {
     @Override
     public int getSize() {
         if(null == Static.cache){
+            Static.reload();
             return 0;
         }
         Collection<String> keys = Static.cache.keys(this.getId());

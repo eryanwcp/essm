@@ -15,7 +15,10 @@
  */
 package com.eryansky.j2cache.session;
 
+import com.eryansky.j2cache.CacheException;
 import redis.clients.jedis.BinaryJedisCommands;
+import redis.clients.jedis.MultiKeyBinaryCommands;
+import redis.clients.jedis.MultiKeyCommands;
 
 import java.io.IOException;
 import java.util.*;
@@ -158,6 +161,18 @@ public class RedisCache {
             this.client.close();
         } catch (IOException e) {
         }
+    }
+
+    public Collection<String> keys() {
+        try {
+            BinaryJedisCommands cmd = client.get();
+            if (cmd instanceof MultiKeyCommands) {
+                return ((MultiKeyCommands) cmd).keys("*");
+            }
+        } finally {
+            client.release();
+        }
+        throw new CacheException("keys() not implemented in Redis Mode");
     }
 
 }

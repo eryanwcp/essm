@@ -84,6 +84,13 @@ $(function() {
                 return value;
             }
         },{
+            title : '最后更新时间',
+            field : 'updateTime',
+            width : 146,
+            formatter:function(value, rowData, rowIndex){
+                return value;
+            }
+        },{
             title : '操作',
             field : 'operate',
             width : 100,

@@ -6,6 +6,7 @@
 package test.utils;
 
 import com.eryansky.common.model.TreeNode;
+import com.eryansky.common.utils.encode.Encrypt;
 import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.j2cache.CacheChannel;
 import com.eryansky.modules.sys.mapper.Organ;
@@ -49,7 +50,7 @@ public class SysServiceTest {
 
     @Test
     public void security() throws Exception{
-
+        System.out.println(Encrypt.e("1"));
     }
 
     @Test

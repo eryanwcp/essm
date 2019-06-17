@@ -15,7 +15,8 @@
  */
 package com.eryansky.j2cache;
 
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * J2Cache 的缓存入口
@@ -23,17 +24,26 @@ import java.io.IOException;
  */
 public class J2Cache {
 
+	private static final Logger logger = LoggerFactory.getLogger(J2Cache.class);
+
 	private final static String CONFIG_FILE = "/j2cache.properties";
 
-	private final static J2CacheBuilder builder;
+	private static J2CacheConfig config;
+	private static J2CacheBuilder builder;
 
 	static {
 		try {
-            J2CacheConfig config = J2CacheConfig.initFromConfig(CONFIG_FILE);
-            builder = J2CacheBuilder.init(config);
-		} catch (IOException e) {
-			throw new CacheException("Failed to load j2cache configuration " + CONFIG_FILE, e);
+            config = J2CacheConfig.initFromConfig(CONFIG_FILE);
+			builder = J2CacheBuilder.init(config);
+		} catch (Exception e) {
+			logger.error("Failed to load J2Cache Config File : [{}]. " ,CONFIG_FILE);
 		}
+	}
+
+	public static void init(J2CacheConfig j2CacheConfig,J2CacheBuilder j2CacheBuilder) {
+		config = j2CacheConfig;
+		builder = j2CacheBuilder;
+		logger.info("Load J2Cache Config File : [{}].",j2CacheConfig.getConfigResource());
 	}
 
 	/**
@@ -41,10 +51,14 @@ public class J2Cache {
 	 * @return CacheChannel
 	 */
 	public static CacheChannel getChannel(){
-		return builder.getChannel();
+		return builder == null ? null:builder.getChannel();
 	}
 
-    /**
+	public static J2CacheConfig getConfig() {
+		return config;
+	}
+
+	/**
      * 关闭 J2Cache
      */
 	public static void close() {

@@ -19,6 +19,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -68,5 +69,9 @@ public class CaffeineCache {
 
     public int getExpire() {
         return expire;
+    }
+
+    public Collection<String> keys() {
+        return cache.asMap().keySet();
     }
 }
