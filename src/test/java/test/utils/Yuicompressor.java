@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2018 http://www.eryansky.com
+ * Copyright (c) 2012-2014 http://www.eryansky.com
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 /**
  * 静态文件css/js文件压缩
  * @author 尔演&Eryan eryanwcp@gmail.com
- * @date 2015-09-14 
+ * @date 2015-09-14
  */
 public class Yuicompressor {
 
@@ -44,7 +44,7 @@ public class Yuicompressor {
                             .append(fileName)
                             .append(" -o ")
                             .append(fileName.replaceAll(".js", ".min.js"))
-                    .append("\r\n");
+                            .append("\r\n");
 
                 }else if(fileName.endsWith(".css")){
                     cmd.append("css ")
@@ -88,7 +88,7 @@ public class Yuicompressor {
             String[] args = new String[]{"cmd","/c",command};
             //String[] args = new String[]{"sh","-?/c",command};
 
-            Process pro = runtime.exec(args);
+            Process pro = runtime.exec(command);
             //Process pro = runtime.exec("c://///////.exe");
 
             InputStream in = pro.getErrorStream();

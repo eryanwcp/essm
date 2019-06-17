@@ -12,8 +12,10 @@ $(function() {
         pagination: true,
         rownumbers: true,
         fitColumns: false,
+        remoteSort: false,
         striped: true,
         pageSize: 20,
+        pageList:[10,20,50,100,1000,99999],
         frozenColumns: [[
             {field: 'ck', checkbox: true}
         ]],
@@ -80,6 +82,7 @@ $(function() {
             title : '登录时间',
             field : 'loginTime',
             width : 146,
+            sortable: true,
             formatter:function(value, rowData, rowIndex){
                 return value;
             }
@@ -87,6 +90,7 @@ $(function() {
             title : '最后更新时间',
             field : 'updateTime',
             width : 146,
+            sortable: true,
             formatter:function(value, rowData, rowIndex){
                 return value;
             }
