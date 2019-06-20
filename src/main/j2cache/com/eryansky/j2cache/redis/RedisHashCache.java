@@ -57,8 +57,8 @@ public class RedisHashCache implements Level2Cache {
 
         this.client = client;
         this.namespace = namespace;
-        this.region = region;
-        this.regionBytes = Cache.getRegionName(namespace,region).getBytes();
+        this.region = Cache.getRegionName(namespace,region);
+        this.regionBytes = region.getBytes();
     }
 
 
@@ -126,6 +126,7 @@ public class RedisHashCache implements Level2Cache {
     public Collection<String> keys() {
         try {
             return client.get().hkeys(regionBytes).stream().map(String::new).collect(Collectors.toList());
+//            return client.get().hkeys(regionBytes).stream().map(k->new String(k).substring(this.region.length()+1)).collect(Collectors.toList());
         } finally {
             client.release();
         }

@@ -37,7 +37,7 @@ public class J2CacheCache extends AbstractValueAdaptingCache {
 		return this.j2CacheName;
 	}
 
-	public void setJ2CacheNmae(String name) {
+	public void setJ2CacheName(String name) {
 		this.j2CacheName = name;
 	}
 
