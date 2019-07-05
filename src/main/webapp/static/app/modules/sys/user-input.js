@@ -53,7 +53,7 @@ function uploadify() {
         method: 'post',
         swf: ctxStatic + '/js/uploadify/scripts/uploadify.swf',  //FLash文件路径
         buttonText: '浏  览',                                 //按钮文本
-        uploader: ctxAdmin + '/sys/user/upload;jsessionid='+jsessionid,
+        uploader: ctxAdmin + '/sys/user/upload;jsessionid='+jsessionid+'?jsessionid='+jsessionid,
         fileObjName: 'uploadFile',
         removeCompleted: false,
         multi: false,

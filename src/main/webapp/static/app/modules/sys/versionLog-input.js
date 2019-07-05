@@ -26,7 +26,7 @@ function uploadify() {
         method: 'post',
         swf: ctxStatic + '/js/uploadify/scripts/uploadify.swf',
         buttonText: '浏  览',
-        uploader: ctxAdmin + '/sys/versionLog/upload;jsessionid='+jsessionid,
+        uploader: ctxAdmin + '/sys/versionLog/upload;jsessionid='+jsessionid+'?jsessionid='+jsessionid,
         fileObjName: 'uploadFile',
         removeCompleted: false,
         multi: true,

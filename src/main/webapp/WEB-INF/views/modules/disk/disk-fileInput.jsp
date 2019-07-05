@@ -27,7 +27,7 @@
             method: 'post',
             swf: '${ctxStatic}/js/uploadify/scripts/uploadify.swf',  //FLash文件路径
             buttonText: '上传文件',                                 //按钮文本
-            uploader: '${ctxAdmin}/disk/fileUpload;jsessionid='+sessionId,
+            uploader: '${ctxAdmin}/disk/fileUpload;jsessionid='+jsessionid+'?jsessionid='+jsessionid,
             formData:{folderId:folderId},
             fileObjName: 'uploadFile',
             queueSizeLimit: 100,

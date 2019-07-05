@@ -419,19 +419,24 @@ public class DiskController extends SimpleController {
      *            上传文件
      * @return
      */
+    @RequiresUser(required = false)
     @RequestMapping(value = { "fileUpload" })
     @ResponseBody
     public Result fileUpload(
             @RequestParam(value = "folderId", required = false) String folderId,
-            @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile)
+            @RequestParam(value = "uploadFile", required = false) MultipartFile uploadFile,String jsessionid)
             throws Exception {
+        SessionInfo sessionInfo = SecurityUtils.getSessionInfo(jsessionid);
+        sessionInfo = null != sessionInfo ? sessionInfo:SecurityUtils.getCurrentSessionInfo();
+        if(null == sessionInfo){
+            return Result.errorResult().setMsg("未授权！");
+        }
         Result result = Result.errorResult();
         if (StringUtils.isBlank(folderId)) {
             result.setMsg("文件夹Id丢失！");
         } else if (uploadFile == null) {
             result.setMsg("上传文件丢失！");
         } else {
-            SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
             Folder folder = folderService.get(folderId);
             if (folder != null) {
                 File file = fileService.fileUpload(sessionInfo, folder,uploadFile);
@@ -521,7 +526,12 @@ public class DiskController extends SimpleController {
     @RequiresUser(required = false)
     @RequestMapping(value = { "fileDownload/{fileId}" })
     public ModelAndView fileDownload(HttpServletResponse response,
-                             HttpServletRequest request, @PathVariable String fileId) {
+                             HttpServletRequest request, @PathVariable String fileId,String jsessionid) {
+        SessionInfo sessionInfo = SecurityUtils.getSessionInfo(jsessionid);
+        sessionInfo = null != sessionInfo ? sessionInfo:SecurityUtils.getCurrentSessionInfo();
+        if(null == sessionInfo){
+            throw new ActionException("未授权！");
+        }
         File file = fileService.get(fileId);
         return downloadSingleFileUtil(response, request, file);
 

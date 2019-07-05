@@ -16,6 +16,7 @@ import com.eryansky.common.utils.mapper.JsonMapper;
 import com.eryansky.common.web.springmvc.SimpleController;
 import com.eryansky.common.web.springmvc.SpringMVCHolder;
 import com.eryansky.common.web.utils.WebUtils;
+import com.eryansky.core.security.annotation.RequiresUser;
 import com.eryansky.core.web.annotation.MobileValue;
 import com.eryansky.modules.disk.mapper.File;
 import com.eryansky.modules.sys._enum.YesOrNo;
@@ -326,11 +327,16 @@ public class NoticeController extends SimpleController {
     /**
      * 文件上传
      */
+    @RequiresUser(required = false)
     @RequestMapping(value = { "upload" })
     @ResponseBody
-    public static Result upload( @RequestParam(value = "uploadFile", required = false)MultipartFile multipartFile) {
+    public static Result upload( @RequestParam(value = "uploadFile", required = false)MultipartFile multipartFile,String jsessionid) {
+        SessionInfo sessionInfo = SecurityUtils.getSessionInfo(jsessionid);
+        sessionInfo = null != sessionInfo ? sessionInfo:SecurityUtils.getCurrentSessionInfo();
+        if(null == sessionInfo){
+            return Result.errorResult().setMsg("未授权！");
+        }
         Result result = null;
-        SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
         Exception exception = null;
         File file = null;
         try {

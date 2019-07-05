@@ -448,13 +448,18 @@ public class UserController extends SimpleController {
      * @param multipartFile
      * @return
      */
+    @RequiresUser(required = false)
     @RequestMapping(value = {"upload"})
     @ResponseBody
     public Result upload(HttpServletRequest request,
-                         @RequestParam(value = "uploadFile", required = false) MultipartFile multipartFile) {
+                         @RequestParam(value = "uploadFile", required = false) MultipartFile multipartFile,String jsessionid) {
+        SessionInfo sessionInfo = SecurityUtils.getSessionInfo(jsessionid);
+        sessionInfo = null != sessionInfo ? sessionInfo:SecurityUtils.getCurrentSessionInfo();
+        if(null == sessionInfo){
+            return Result.errorResult().setMsg("未授权！");
+        }
         Result result = null;
         try {
-            SessionInfo sessionInfo = SecurityUtils.getCurrentSessionInfo();
             File file = DiskUtils.saveSystemFile(User.FOLDER_USER_PHOTO, sessionInfo.getUserId(), multipartFile);
             result = Result.successResult().setObj(file);
         } catch (InvalidExtensionException e) {
