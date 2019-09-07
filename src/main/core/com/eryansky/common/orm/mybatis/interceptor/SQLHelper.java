@@ -6,8 +6,9 @@
 package com.eryansky.common.orm.mybatis.interceptor;
 
 import com.eryansky.common.orm.Page;
-import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.orm.mybatis.dialect.Dialect;
+import com.eryansky.common.orm.mybatis.utils.CountSqlParser;
+import com.eryansky.common.utils.StringUtils;
 import com.eryansky.common.utils.reflection.ReflectionUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.ExecutorException;
@@ -39,6 +40,15 @@ import java.util.regex.Pattern;
  */
 public class SQLHelper {
 
+
+
+    /**
+     * 静态内部类，延迟加载，懒汉式，线程安全的单例模式
+     */
+    private static final class Static {
+        private static final CountSqlParser countSqlParser = new CountSqlParser();
+    }
+
     /**
      * 对SQL参数(?)设值,参考org.apache.ibatis.executor.parameter.DefaultParameterHandler
      *
@@ -46,7 +56,7 @@ public class SQLHelper {
      * @param mappedStatement MappedStatement
      * @param boundSql        SQL
      * @param parameterObject 参数对象
-     * @throws java.sql.SQLException 数据库异常
+     * @throws SQLException 数据库异常
      */
     @SuppressWarnings("unchecked")
     public static void setParameters(PreparedStatement ps, MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) throws SQLException {
@@ -97,19 +107,19 @@ public class SQLHelper {
      * @param parameterObject 参数
      * @param boundSql        boundSql
      * @return 总记录数
-     * @throws java.sql.SQLException sql查询错误
+     * @throws SQLException sql查询错误
      */
     public static int getCount(final String sql, final Connection connection,
                                final MappedStatement mappedStatement, final Object parameterObject,
                                final BoundSql boundSql, Log log) throws SQLException {
         String dbName = BaseInterceptor.convertDbNameParameter(parameterObject);
-        final String countSql;
-        if("oracle".equals(dbName)){
-            countSql = "select count(1) from (" + sql + ") tmp_count";
-        }else{
-            countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
+        final String countSql = Static.countSqlParser.getSmartCountSql(sql,"1");
+//        if("oracle".equals(dbName)){
+//            countSql = "select count(1) from (" + sql + ") tmp_count";
+//        }else{
+//            countSql = "select count(1) from (" + removeOrders(sql) + ") tmp_count";
 //	        countSql = "select count(1) " + removeSelect(removeOrders(sql));
-        }
+//        }
         Connection conn = connection;
         PreparedStatement ps = null;
         ResultSet rs = null;
