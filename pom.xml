@@ -6,22 +6,22 @@
     <packaging>war</packaging>
     <!--项目当前版本，格式为:主版本.次版本.增量版本-限定版本号-->
     <!--<version>1.0-SNAPSHOT/RELEASE</version>-->
-    <version>3.3.20190619-SNAPSHOT</version>
+    <version>3.3.20190907-SNAPSHOT</version>
     <name>essm Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
     <properties>
         <!-- version setting -->
-        <spring.version>4.3.24.RELEASE</spring.version>
+        <spring.version>4.3.25.RELEASE</spring.version>
         <hibernate-validator.version>4.3.2.Final</hibernate-validator.version>
         <asm.version>3.3</asm.version>
         <aspectj.version>1.8.13</aspectj.version>
-        <mybatis.version>3.4.6</mybatis.version>
-        <mybatis-spring.version>1.3.2</mybatis-spring.version>
+        <mybatis.version>3.5.2</mybatis.version>
+        <mybatis-spring.version>2.0.2</mybatis-spring.version>
         <ehcache.version>2.10.6</ehcache.version>
-        <caffeine.version>2.7.0</caffeine.version>
+        <caffeine.version>2.8.0</caffeine.version>
         <redis.version>2.10.2</redis.version>
-        <lettuce.version>5.1.7.RELEASE</lettuce.version>
+        <lettuce.version>5.1.8.RELEASE</lettuce.version>
         <fst.version>2.57</fst.version>
         <slf4j.version>1.7.25</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
@@ -29,7 +29,7 @@
         <commons-lang3.version>3.7</commons-lang3.version>
         <commons-io.version>2.6</commons-io.version>
         <commons-pool2.version>2.6.0</commons-pool2.version>
-        <commons-codec.version>1.11</commons-codec.version>
+        <commons-codec.version>1.12</commons-codec.version>
         <commons-fileupload.version>1.3.3</commons-fileupload.version>
         <commons-beanutils.version>1.9.3</commons-beanutils.version>
         <commons-net.version>3.6</commons-net.version>
@@ -57,7 +57,7 @@
         <mariadb.driver.version>2.3.0</mariadb.driver.version>
         <oracle.driver.version>12.1.0.1-atlassian-hosted</oracle.driver.version>
         <db2.driver.version>10.1</db2.driver.version>
-        <druid-version>1.1.14</druid-version>
+        <druid-version>1.1.20</druid-version>
 
         <!-- other setting -->
         <jdk.version>1.8</jdk.version>
@@ -412,7 +412,7 @@
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>1.1</version>
+            <version>2.1</version>
         </dependency>
 
 
@@ -588,7 +588,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.58</version>
+            <version>1.2.60</version>
         </dependency>
 
         <dependency>

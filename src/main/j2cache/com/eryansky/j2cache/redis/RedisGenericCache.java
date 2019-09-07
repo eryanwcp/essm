@@ -143,7 +143,12 @@ public class RedisGenericCache implements Level2Cache {
             }
             else
             */
-            bytes.forEach((k,v) -> setBytes(k, v, timeToLiveInSeconds));
+            if (timeToLiveInSeconds <= 0) {
+                log.debug("Invalid timeToLiveInSeconds value : {} , skipped it.", timeToLiveInSeconds);
+                setBytes(bytes);
+            }else{
+                bytes.forEach((k,v) -> setBytes(k, v, timeToLiveInSeconds));
+            }
         } finally {
             client.release();
         }
