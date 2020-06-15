@@ -13,7 +13,7 @@
     <properties>
         <!-- version setting -->
         <spring.version>4.3.25.RELEASE</spring.version>
-        <hibernate-validator.version>4.3.2.Final</hibernate-validator.version>
+        <hibernate-validator.version>5.3.5.Final</hibernate-validator.version>
         <asm.version>3.3</asm.version>
         <aspectj.version>1.8.13</aspectj.version>
         <mybatis.version>3.4.6</mybatis.version>
