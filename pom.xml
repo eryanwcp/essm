@@ -45,7 +45,7 @@
         <bsh.version>2.0b6</bsh.version>
         <freemarker.version>2.3.19</freemarker.version>
         <velocity.version>1.7</velocity.version>
-        <quartz.version>2.2.1</quartz.version>
+        <quartz.version>2.3.2</quartz.version>
 
         <servlet.version>3.1.0</servlet.version>
         <jsp.version>2.3.2-b02</jsp.version>
