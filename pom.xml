@@ -36,7 +36,7 @@
         <commons-collections.version>3.2.2</commons-collections.version>
         <httpcomponents.version>4.5.9</httpcomponents.version>
         <jackson.version>2.9.9</jackson.version>
-        <xstream.version>1.4.10</xstream.version>
+        <xstream.version>1.4.15</xstream.version>
         <guava.version>20.0</guava.version>
         <joda.version>2.9.9</joda.version>
         <dozer.version>5.4.0</dozer.version>
